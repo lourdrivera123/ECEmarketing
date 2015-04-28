@@ -1,0 +1,34 @@
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.LoginForm1.resources
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.main_menu.resources
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.Resources.resources
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.vbproj.GenerateResource.Cache
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\bin\Debug\ECE MD Clinic APP.exe
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\bin\Debug\ECE MD Clinic APP.pdb
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\bin\Debug\ECE MD Clinic APP.xml
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.exe
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.xml
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.pdb
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.Patients.resources
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.New_Patient.resources
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.Patient_History.resources
+C:\Users\Royette\AppData\Local\Temporary Projects\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.Consultation_Schedule.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\bin\Debug\ECE MD Clinic APP.exe
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\bin\Debug\ECE MD Clinic APP.pdb
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\bin\Debug\ECE MD Clinic APP.xml
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\Interop.MSAdodcLib.dll
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.vbproj.ResolveComReference.cache
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.Consultation_Schedule.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.home_page.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.Patients.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.New_Patient.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.LoginForm1.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.main_menu.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.Resources.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.test_result.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.View_patient.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.patient_gen_info.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE_MD_Clinic_APP.patient_history.resources
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.vbproj.GenerateResource.Cache
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.exe
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.xml
+D:\Files\Projects\ECE MD Clinic APP\ECE MD Clinic APP\obj\x86\Debug\ECE MD Clinic APP.pdb
