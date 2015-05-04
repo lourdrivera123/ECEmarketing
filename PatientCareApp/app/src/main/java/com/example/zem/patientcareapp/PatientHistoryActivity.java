@@ -45,9 +45,9 @@ public class PatientHistoryActivity extends Activity implements AdapterView.OnIt
         dialog.setContentView(R.layout.patient_diagnosis_layout);
         dialog.show();
 
-        view_doctor_btn = (Button) findViewById(R.id.view_doctor_btn);
-        check = 23;
-        view_doctor_btn.setOnClickListener();
+//        view_doctor_btn = (Button) findViewById(R.id.view_doctor_btn);
+//        check = 23;
+//        view_doctor_btn.setOnClickListener();
     }
 
     @Override
