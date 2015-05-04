@@ -47,6 +47,7 @@ public class PatientHistoryActivity extends Activity implements AdapterView.OnIt
 
 //        view_doctor_btn = (Button) findViewById(R.id.view_doctor_btn);
 //        check = 23;
+
 //        view_doctor_btn.setOnClickListener(this);
     }
 
