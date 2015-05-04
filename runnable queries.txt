@@ -1,0 +1,61 @@
+1--treeee
+CREATE PROCEDURE create_tree
+	@agent_id bigint
+AS
+BEGIN
+	with cte_tree
+	as
+	(
+		select a.AGENTID,a.LNAME,a.POSITION,a.SUPERIORID from agent a
+		where AGENTID=@agent_id 
+		union all
+		select a2.AGENTID,a2.LNAME,a2.POSITION,a2.SUPERIORID from agent a2
+		inner join cte_tree ct on ct.SUPERIORID =a2.AGENTID 
+	)
+	select * from cte_tree
+	except
+	select a.AGENTID,a.LNAME,a.POSITION,a.SUPERIORID from agent a
+	where AGENTID=@agent_id 
+END
+GO
+
+-------view for displaying commission details on row enter in invoice tab
+create view vwcommissiondetails
+as
+(
+select cd.INVOICENO, a.AGENTID,coalesce(a.LNAME,'')+' '+coalesce(a.FNAME,'')+' '+coalesce(a.MI,'') as [Agent Name],a.position,
+cd.COMPERCENTAGE agentname
+ from agent a
+ inner join COMMISSIONDETAILS cd on cd.AGENTID=a.AGENTID)
+
+
+------ALTER INVOICE TO REMOVE PC,SD,UM ON DATASET
+USE [GCG]
+GO
+
+/****** Object:  View [dbo].[vwinvoices]    Script Date: 04/15/2015 02:41:56 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+ALTER view [dbo].[vwinvoices]
+as
+select i.invoiceno,i.invoicedate,
+COALESCE (c.lname, '') + ' ' + COALESCE (c.fname, '') + ' ' + COALESCE (c.mi, '') AS [Customer Name],c.CUSTID ,
+i.COMPERCENTAGE,i.COMATDOWN,i.INTEREST,i.TERM,i.MONTHSOFCOMMISSION,cd.AGENTID,cd.COMPERCENTAGE as AGENTPERCENTAGE
+FROM CUSTOMER c inner join  INVOICE i
+ on c.CUSTID=i.CUSTID
+ inner join COMMISSIONDETAILS cd on cd.INVOICENO=i.INVOICENO   
+ where cd.ISAGENT=1
+
+---DON'T FORGET TO ADD COLUMN ISAGENT AND TAG TO 1 IF AGENT
+
+
+
+GO
+
+

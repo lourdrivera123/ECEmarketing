@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ECE MD Clinic APP", "ECE MD Clinic APP\ECE MD Clinic APP.vbproj", "{1DDE3E47-5B3D-41E9-A03A-10AFCF1BB9EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1DDE3E47-5B3D-41E9-A03A-10AFCF1BB9EB}.Debug|x86.ActiveCfg = Debug|x86
+		{1DDE3E47-5B3D-41E9-A03A-10AFCF1BB9EB}.Debug|x86.Build.0 = Debug|x86
+		{1DDE3E47-5B3D-41E9-A03A-10AFCF1BB9EB}.Release|x86.ActiveCfg = Release|x86
+		{1DDE3E47-5B3D-41E9-A03A-10AFCF1BB9EB}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
