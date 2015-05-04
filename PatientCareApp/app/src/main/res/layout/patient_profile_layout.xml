@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TableRow>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:text="PERSONAL INFORMATION"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/birthdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Birthdate: January 1, 1994" />
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/civil_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Civil Status: Single" />
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/height_weight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Height: 5'4 ft. / Weight: 60 kg." />
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/occupation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Occupation: Android Developer" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <TableRow>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:text="CONTACT INFORMATION"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/address_first_line"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="#86 Acacia St., Cabantian" />
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/address_second_line"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Dexter City, Davao del Sur, Philippines, 8000" />
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="doctor@email.com" />
+                </TableRow>
+
+                <TableRow android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/cp_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="0956752434 / 8719876" />
+                </TableRow>
+            </TableLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
