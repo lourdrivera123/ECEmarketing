@@ -17,7 +17,7 @@ import android.widget.Toast;
 /**
  * Created by Zem on 4/29/2015.
  */
-public class PatientHistoryActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class PatientHistoryActivity extends Activity implements AdapterView.OnItemClickListener {
     ListView list_of_history;
     Button view_doctor_btn;
 
@@ -45,21 +45,21 @@ public class PatientHistoryActivity extends Activity implements AdapterView.OnIt
         dialog.setContentView(R.layout.patient_diagnosis_layout);
         dialog.show();
 
-        view_doctor_btn = (Button) findViewById(R.id.view_doctor_btn);
-        check = 23;
-        view_doctor_btn.setOnClickListener();
+//        view_doctor_btn = (Button) findViewById(R.id.view_doctor_btn);
+//        check = 23;
+//        view_doctor_btn.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (check > 0) {
-            switch (v.getId()) {
-                case R.id.view_doctor_btn:
-                    startActivity(new Intent(this, DoctorActivity.class));
-                    break;
-            }
-        } else {
-
-        }
-    }
+//    @Override
+//    public void onClick(View v) {
+//        if (check > 0) {
+//            switch (v.getId()) {
+//                case R.id.view_doctor_btn:
+//                    startActivity(new Intent(this, DoctorActivity.class));
+//                    break;
+//            }
+//        } else {
+//
+//        }
+//    }
 }
