@@ -62,8 +62,8 @@ TextView signup, forgotpw;
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.login_btn:
-//                Intent intent = new Intent(this, HomeTileActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(this, HomeTileActivity.class);
+                startActivity(intent);
 
                 if(dbhelper.insertDoctor()) {
                     Toast.makeText(this, "SUCCESSFUL", Toast.LENGTH_LONG);

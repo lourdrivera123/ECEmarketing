@@ -59,7 +59,7 @@ public class PatientHomeActivity extends Activity{
 //                "Davao del Sur", "Region XI", "Philippines", "8000");
 //        doctor.setContactInfo("dexter@dexter.com", "+63 934-569-4345", "+856-7854");
 
-        ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
 
         XMLParser parser = new XMLParser();
 //        String xml = parser.getXmlFromUrl(URL); // getting XML from URL
@@ -93,7 +93,7 @@ public class PatientHomeActivity extends Activity{
             map.put(KEY_PHOTO, parser.getValue(e, KEY_PHOTO));
 
             // adding HashList to ArrayList
-            songsList.add(map);
+            doctorsList.add(map);
         }
 
 
@@ -101,7 +101,7 @@ public class PatientHomeActivity extends Activity{
         list_of_doctors = (ListView)findViewById(R.id.list_of_doctors);
 
         // Getting adapter by passing xml data ArrayList
-        adapter=new LazyAdapter(this, songsList, "list_of_doctors");
+        adapter=new LazyAdapter(this, doctorsList, "list_of_doctors");
         list_of_doctors.setAdapter(adapter);
 
         // Click event for single list row
