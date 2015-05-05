@@ -101,7 +101,7 @@ public class PatientHomeActivity extends Activity{
         list_of_doctors = (ListView)findViewById(R.id.list_of_doctors);
 
         // Getting adapter by passing xml data ArrayList
-        adapter=new LazyAdapter(this, songsList);
+        adapter=new LazyAdapter(this, songsList, "list_of_doctors");
         list_of_doctors.setAdapter(adapter);
 
         // Click event for single list row

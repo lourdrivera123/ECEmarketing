@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Php 5.35"
-        android:id="@+id/textView"
+        android:id="@+id/product_price"
         android:textStyle="bold"
         android:textSize="14dp"
         android:layout_alignBottom="@+id/product_description"

@@ -1,8 +1,8 @@
 package com.example.zem.patientcareapp;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 /**
  * Created by User PC on 5/5/2015.
  */
-public class ProductsActivity extends ActionBarActivity{
+public class ProductsActivity extends Activity {
     ListView list_of_doctors;
     String[] doctors = new String[] {
             "Dr. Zemiel M. Asma", "Dr. Rosell B. Barnes", "Dr. Dexter M. Bengil"
@@ -38,7 +38,7 @@ public class ProductsActivity extends ActionBarActivity{
     LazyAdapter adapter;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.products_layout);
 
@@ -57,21 +57,25 @@ public class ProductsActivity extends ActionBarActivity{
 
         XMLParser parser = new XMLParser();
 //        String xml = parser.getXmlFromUrl(URL); // getting XML from URL
-        String xml = "<list><entry>\n" +
+        String xml =
+           "<list>" +
+             "<entry>\n" +
                 "<id>14</id>\n" +
                 "<name>Biogesic</name>\n" +
                 "<description>500mg Description ni diri</description>\n" +
                 "<price>Php 1.75</price>\n" +
                 "<photo>\n" +
-                "http://api.androidhive.info/music/images/rihanna.png\n" +
+                    "http://api.androidhive.info/music/images/rihanna.png\n" +
                 "</photo>\n" +
-                "</entry><entry>\n" +
+             "</entry>" +
+             "<entry>\n" +
                 "<id>11</id>\n" +
                 "<name>Neozep</name>\n" +
                 "<description>500mg Description gihapon ni diri</description>\n" +
                 "<price>Php 3.75</price>\n" +
                 "<photo>http://api.androidhive.info/music/images/adele.png</photo>\n" +
-                "</entry></list>";
+             "</entry>" +
+           "</list>";
         Document doc = parser.getDomElement(xml); // getting DOM element
 
 
@@ -98,7 +102,7 @@ public class ProductsActivity extends ActionBarActivity{
         list_of_products = (ListView)findViewById(R.id.product_lists);
 
         // Getting adapter by passing xml data ArrayList
-        adapter=new LazyAdapter(this, products_list);
+        adapter=new LazyAdapter(this, products_list, "product_lists");
         list_of_products.setAdapter(adapter);
 
         // Click event for single list row
