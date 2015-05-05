@@ -58,6 +58,7 @@
         <activity android:name=".LazyAdapter" />
         <activity android:name=".ImageLoader" />
         <activity android:name=".Doctor" />
+        <activity android:name=".Patient" />
 
     </application>
 

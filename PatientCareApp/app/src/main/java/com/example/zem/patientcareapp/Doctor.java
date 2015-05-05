@@ -3,7 +3,7 @@ package com.example.zem.patientcareapp;
 import java.io.Serializable;
 
 /**
- * Created by User PC on 5/4/2015.
+ * Created by Dexter B. on 5/4/2015.
  */
 public class Doctor implements Serializable {
     private String fname = "", mname = "", lname = "", prc_no = "",
