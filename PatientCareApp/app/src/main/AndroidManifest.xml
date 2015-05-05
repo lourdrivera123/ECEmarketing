@@ -59,6 +59,7 @@
         <activity android:name=".ImageLoader" />
         <activity android:name=".Doctor" />
         <activity android:name=".Patient" />
+        <activity android:name=".ProductsActivity" />
 
     </application>
 

@@ -36,7 +36,7 @@ public class MasterTabActivity extends TabActivity implements View.OnClickListen
         mTabHost.addTab(mTabHost.newTabSpec("fourth").setIndicator("News").setContent(new Intent(this , PatientHistoryActivity.class )));
         mTabHost.addTab(mTabHost.newTabSpec("fifth").setIndicator("Promos").setContent(new Intent(this , PatientHistoryActivity.class )));
         mTabHost.addTab(mTabHost.newTabSpec("sixth").setIndicator("Test Results").setContent(new Intent(this , PatientHistoryActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("seventh").setIndicator("Products").setContent(new Intent(this , PatientHistoryActivity.class )));
+        mTabHost.addTab(mTabHost.newTabSpec("seventh").setIndicator("Products").setContent(new Intent(this , ProductsActivity.class )));
         mTabHost.addTab(mTabHost.newTabSpec("eight").setIndicator("Cart").setContent(new Intent(this , PatientHistoryActivity.class )));
         mTabHost.addTab(mTabHost.newTabSpec("ninth").setIndicator("Consultation Schedule").setContent(new Intent(this , PatientHistoryActivity.class )));
         mTabHost.setCurrentTab(current_tab);
