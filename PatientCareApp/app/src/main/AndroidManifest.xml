@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--suppress ALL -->
+<?xml version="1.0" encoding="utf-8"?><!--suppress ALL -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.zem.patientcareapp">
 
@@ -61,6 +60,7 @@
         <activity android:name=".Doctor" />
         <activity android:name=".Patient" />
         <activity android:name=".ProductsActivity" />
+        <activity android:name=".DbHelper" />
 
     </application>
 

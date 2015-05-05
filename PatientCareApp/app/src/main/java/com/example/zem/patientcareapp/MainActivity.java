@@ -11,16 +11,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 TextView signup, forgotpw;
     Button login_btn;
 
+    DbHelper dbhelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_login);
+
+        dbhelper = new DbHelper(this);
 
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
@@ -57,9 +62,16 @@ TextView signup, forgotpw;
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.login_btn:
-//                Intent intent = new Intent(this, PatientHomeActivity.class);
-                Intent intent = new Intent(this, HomeTileActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(this, HomeTileActivity.class);
+//                startActivity(intent);
+
+                if(dbhelper.insertDoctor()) {
+                    Toast.makeText(this, "SUCCESSFUL", Toast.LENGTH_LONG);
+                }
+                else {
+                    Toast.makeText(this, "ERROR", Toast.LENGTH_LONG);
+
+                }
                 break;
             case R.id.signup:
                 Intent intent2 = new Intent(this, SignUpActivity.class);
