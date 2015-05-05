@@ -1,10 +1,14 @@
 package com.example.zem.patientcareapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -12,27 +16,24 @@ import android.widget.Spinner;
 /**
  * Created by Zem on 4/28/2015.
  */
-public class ContactActivity extends ActionBarActivity implements View.OnClickListener {
+public class ContactActivity extends Fragment implements View.OnClickListener {
 
-    Button next_to_account_btn;
     Spinner address_region;
     Resources res;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.patient_contact_info);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.patient_contact_info, container, false);
 
-        next_to_account_btn = (Button) findViewById(R.id.next_to_account_btn);
-        next_to_account_btn.setOnClickListener(this);
-
-        address_region = (Spinner) findViewById(R.id.address_region);
-        ArrayAdapter<String> regions_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.regions));
+        address_region = (Spinner) rootView.findViewById(R.id.address_region);
+        ArrayAdapter<String> regions_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.regions));
         address_region.setAdapter(regions_adapter);
+
+        return rootView;
     }
 
     @Override
     public void onClick(View v) {
-        startActivity(new Intent(this, AccountActivity.class));
+        startActivity(new Intent(getActivity(), AccountActivity.class));
     }
 }

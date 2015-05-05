@@ -10,137 +10,170 @@
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal">
 
-        <TableRow
-            android:gravity="center_horizontal">
-            <ImageButton
-                android:background="#89FF5E"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/d20"
-                android:src="@mipmap/profile_tile"
+        <TableRow>
+
+            <Button
                 android:id="@+id/profile_btn"
-                android:clickable="true"/>
-
-            <ImageButton
-                android:background="#89FF5E"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/d20"
-                android:src="@mipmap/news_tile"
-                android:id="@+id/news_btn" />
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/tile_shape"
+                android:drawableBottom="@mipmap/profile_tile" />
 
-            <ImageButton
-                android:background="#89FF5E"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/news_btn"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/discounts_tile"
-                android:id="@+id/promos_btn" />
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/tile_shape"
+                android:drawableBottom="@mipmap/news_tile" />
+
+            <Button
+                android:id="@+id/promos_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/tile_shape"
+                android:drawableBottom="@mipmap/discounts_tile" />
         </TableRow>
 
-        <TableRow
-            android:gravity="center_horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Profile"
-                android:layout_gravity="center"/>
+        <TableRow>
 
             <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="News"
-                android:layout_gravity="center"/>
+                android:gravity="center"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="Profile" />
 
             <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Discounts"
-                android:layout_gravity="center"/>
+                android:gravity="center"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="News" />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="Promos" />
         </TableRow>
 
-        <TableRow
-            android:gravity="center_horizontal"
-            android:layout_marginTop="@dimen/d20">
-            <ImageButton
-                android:background="#89FF5E"
-                android:layout_width="wrap_content"
+        <TableRow android:layout_marginTop="@dimen/d40">
+
+            <Button
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/d20"
-                android:src="@mipmap/doctors_tile"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/tile_shape"
+                android:drawableBottom="@mipmap/doctors_tile"
                 android:id="@+id/doctors_btn" />
 
-            <ImageButton
-                android:background="#89FF5E"
-                android:layout_width="wrap_content"
+            <Button
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/d20"
-                android:src="@mipmap/history_tile"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/tile_shape"
+                android:drawableBottom="@mipmap/history_tile"
                 android:id="@+id/history_btn" />
 
-            <ImageButton
-                android:background="#89FF5E"
-                android:layout_width="wrap_content"
+            <Button
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/results_tile"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/tile_shape"
+                android:drawableBottom="@mipmap/results_tile"
                 android:id="@+id/test_results_btn" />
         </TableRow>
 
-        <TableRow
-            android:gravity="center_horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Doctors"
-                android:layout_gravity="center"/>
+        <TableRow>
 
             <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Patient History"
-                android:layout_gravity="center"/>
+                android:gravity="center"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="Doctors" />
 
             <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Test Results"
-                android:layout_gravity="center"/>
+                android:gravity="center"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="Patient History" />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="Test Results" />
         </TableRow>
 
-        <TableRow
-            android:gravity="center_horizontal"
-            android:layout_marginTop="@dimen/d20">
-            <ImageButton
-                android:background="#89FF5E"
-                android:layout_width="wrap_content"
+        <TableRow android:layout_marginTop="@dimen/d40">
+
+            <Button
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/d20"
-                android:src="@mipmap/cart_tile"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/tile_shape"
+                android:drawableBottom="@mipmap/history_tile"
                 android:id="@+id/cart_btn" />
 
-            <ImageButton
-                android:background="#89FF5E"
-                android:layout_width="wrap_content"
+            <Button
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/products"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/tile_shape"
+                android:drawableBottom="@mipmap/results_tile"
                 android:id="@+id/products_btn" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
         </TableRow>
 
-        <TableRow
-            android:gravity="center_horizontal"
-            android:textAlignment="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cart"
-                android:layout_gravity="center"/>
+        <TableRow>
 
             <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Products"
-                android:layout_gravity="center"/>
+                android:gravity="center"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="Cart" />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="Products" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1" />
         </TableRow>
     </TableLayout>
 </LinearLayout>

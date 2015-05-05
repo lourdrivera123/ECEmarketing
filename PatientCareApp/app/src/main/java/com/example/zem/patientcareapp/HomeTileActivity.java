@@ -5,27 +5,28 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 /**
  * Created by Zem on 5/2/2015.
  */
 public class HomeTileActivity extends ActionBarActivity implements View.OnClickListener {
-    ImageButton profile_btn, news_btn, promos_btn, doctors_btn, history_btn, test_results_btn, cart_btn, products_btn;
+    Button profile_btn, news_btn, promos_btn, doctors_btn, history_btn, test_results_btn, cart_btn, products_btn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_tile_layout);
 
-        profile_btn = (ImageButton) findViewById(R.id.profile_btn);
-        news_btn = (ImageButton) findViewById(R.id.news_btn);
-        promos_btn = (ImageButton) findViewById(R.id.promos_btn);
-        doctors_btn = (ImageButton) findViewById(R.id.doctors_btn);
-        history_btn = (ImageButton) findViewById(R.id.history_btn);
-        test_results_btn = (ImageButton) findViewById(R.id.test_results_btn);
-        cart_btn = (ImageButton) findViewById(R.id.cart_btn);
-        products_btn = (ImageButton) findViewById(R.id.products_btn);
+        profile_btn = (Button) findViewById(R.id.profile_btn);
+        news_btn = (Button) findViewById(R.id.news_btn);
+        promos_btn = (Button) findViewById(R.id.promos_btn);
+        doctors_btn = (Button) findViewById(R.id.doctors_btn);
+        history_btn = (Button) findViewById(R.id.history_btn);
+        test_results_btn = (Button) findViewById(R.id.test_results_btn);
+        cart_btn = (Button) findViewById(R.id.cart_btn);
+        products_btn = (Button) findViewById(R.id.products_btn);
 
         profile_btn.setOnClickListener(this);
         news_btn.setOnClickListener(this);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
@@ -19,7 +20,7 @@ import android.widget.Toast;
  */
 public class PatientHistoryActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
-    Button view_doctor_btn;
+    Button view_doctor_btn, call_doctor_btn;
 
     ArrayAdapter history_adapter;
     String[] history = new String[]{
@@ -45,21 +46,30 @@ public class PatientHistoryActivity extends Activity implements AdapterView.OnIt
         dialog.setContentView(R.layout.patient_diagnosis_layout);
         dialog.show();
 
-        view_doctor_btn = (Button) findViewById(R.id.view_doctor_btn);
-        check = 23;
-        view_doctor_btn.setOnClickListener();
+        view_doctor_btn = (Button) dialog.findViewById(R.id.view_doctor_btn);
+        call_doctor_btn = (Button) dialog.findViewById(R.id.call_doctor_btn);
+
+        call_doctor_btn.setOnClickListener(this);
+        view_doctor_btn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (check > 0) {
-            switch (v.getId()) {
-                case R.id.view_doctor_btn:
-                    startActivity(new Intent(this, DoctorActivity.class));
-                    break;
-            }
-        } else {
+        switch (v.getId()) {
+            case R.id.view_doctor_btn:
+                startActivity(new Intent(this, DoctorActivity.class));
+                break;
 
+            case R.id.call_doctor_btn:
+                String phoneNumber = "09095331440";
+                String uriTel = "tel:"+phoneNumber;
+
+                //Present you with the dialler
+                Uri telUri  = Uri.parse(uriTel);
+                Intent returnIt = new Intent(Intent.ACTION_DIAL, telUri);
+                startActivity(returnIt);
+
+                break;
         }
     }
 }
