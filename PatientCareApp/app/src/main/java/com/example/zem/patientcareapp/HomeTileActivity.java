@@ -77,7 +77,8 @@ public class HomeTileActivity extends ActionBarActivity implements View.OnClickL
                 break;
 
             case R.id.products_btn:
-
+                intent.putExtra(MasterTabActivity.TAB_REQUEST, 7);
+                startActivity(intent);
                 break;
         }
     }

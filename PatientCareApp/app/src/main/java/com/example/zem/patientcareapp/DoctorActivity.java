@@ -6,9 +6,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Zem on 4/29/2015.
@@ -16,6 +25,8 @@ import android.widget.TextView;
 public class DoctorActivity extends ActionBarActivity implements View.OnClickListener {
     ImageButton call_doctor;
     TextView cp_no;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +37,7 @@ public class DoctorActivity extends ActionBarActivity implements View.OnClickLis
 
         call_doctor.setOnClickListener(this);
         cp_no.setOnClickListener(this);
+
     }
 
     @Override

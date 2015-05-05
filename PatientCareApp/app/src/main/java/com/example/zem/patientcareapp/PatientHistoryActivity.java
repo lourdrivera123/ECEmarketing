@@ -72,4 +72,5 @@ public class PatientHistoryActivity extends Activity implements AdapterView.OnIt
                 break;
         }
     }
+
 }
