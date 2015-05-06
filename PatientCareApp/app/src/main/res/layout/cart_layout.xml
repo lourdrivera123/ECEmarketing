@@ -51,17 +51,6 @@
                     android:text="110.00"/>
             </TableRow>
 
-            <TableRow style="@style/tbody_tr">
-                <TextView style="@style/cart_item_style"
-                    android:text="Pneumonoultramicroscopicsilicovolcanoconiosis @Php 2.75"/>
-
-                <EditText  style="@style/cart_qty_style"
-                    android:text="40" />
-
-                <TextView style="@style/cart_total_style"
-                    android:text="110.00" />
-            </TableRow>
-
             <!-- Table Body Ends Here -->
 
         </TableLayout>

@@ -12,8 +12,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 
 /**
  * Created by Dexter B. on 5/4/2015.
@@ -98,11 +96,11 @@ public class LazyAdapter extends BaseAdapter {
             schedule = data.get(position);
 
             // Setting all values in listview
-            doctor.setText(schedule.get(PatientConsultationActivity.KEY_DOCTOR_NAME));
-            clinic_address.setText(schedule.get(PatientConsultationActivity.KEY_CLINIC_ADDRESS));
+            doctor.setText(schedule.get(PatientConsultationFragment.KEY_DOCTOR_NAME));
+            clinic_address.setText(schedule.get(PatientConsultationFragment.KEY_CLINIC_ADDRESS));
 
-            String sched = schedule.get(PatientConsultationActivity.KEY_DATE)+", "+
-                    ( schedule.get(PatientConsultationActivity.KEY_SCHEDULE).equals("AM")  ?  "Morning" : "Afternoon");
+            String sched = schedule.get(PatientConsultationFragment.KEY_DATE)+", "+
+                    ( schedule.get(PatientConsultationFragment.KEY_SCHEDULE).equals("AM")  ?  "Morning" : "Afternoon");
 
             consultation_schedule.setText(sched);
         }

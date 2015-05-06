@@ -70,7 +70,7 @@
             <item name="android:layout_width">match_parent</item>
             <item name="android:layout_height">wrap_content</item>
             <item name="android:textSize">18dp</item>
-            <item name="android:layout_weight">1</item>
+            <item name="android:layout_weight">0.5</item>
             <item name="android:paddingBottom">5dp</item>
             <item name="android:textAlignment" tools:ignore="NewApi">center</item>
             <item name="android:ems">3</item>
