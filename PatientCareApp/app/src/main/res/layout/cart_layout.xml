@@ -14,15 +14,15 @@
 
         <TextView style="@style/tbl_th"
             android:text="Item"
-            android:layout_weight="0.2"/>
+            android:layout_weight="0.7"/>
 
         <TextView style="@style/tbl_th"
             android:text="Qty"
-            android:layout_weight="0.3"/>
+            android:layout_weight="1"/>
 
         <TextView style="@style/tbl_th"
             android:text="Total"
-            android:layout_weight="0.3"/>
+            android:layout_weight="1"/>
     </LinearLayout>
 
     <ScrollView
@@ -52,16 +52,14 @@
             </TableRow>
 
             <TableRow style="@style/tbody_tr">
-                <TextView
-                    android:text="Pneumonoultramicroscopicsilicovolcanoconiosis @Php 2.75"
-                    style="@style/cart_item_style" />
+                <TextView style="@style/cart_item_style"
+                    android:text="Pneumonoultramicroscopicsilicovolcanoconiosis @Php 2.75"/>
 
                 <EditText  style="@style/cart_qty_style"
-                    android:text="40"
-                    android:inputType="number"/>
+                    android:text="40" />
 
                 <TextView style="@style/cart_total_style"
-                    android:text="110.00"/>
+                    android:text="110.00" />
             </TableRow>
 
             <!-- Table Body Ends Here -->
