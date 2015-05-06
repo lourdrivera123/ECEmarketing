@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.zem.patientcareapp.AccountActivity;
-import com.example.zem.patientcareapp.ContactActivity;
-import com.example.zem.patientcareapp.SignUpActivity;
+import com.example.zem.patientcareapp.AccountFragment;
+import com.example.zem.patientcareapp.ContactsFragment;
+import com.example.zem.patientcareapp.SignUpFragment;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 
@@ -19,11 +19,11 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
         switch (index) {
             case 0:
-                return new SignUpActivity();
+                return new SignUpFragment();
             case 1:
-                return new ContactActivity();
+                return new ContactsFragment();
             case 2:
-                return new AccountActivity();
+                return new AccountFragment();
         }
 
         return null;

@@ -19,7 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class AccountActivity extends Fragment implements View.OnClickListener {
+public class AccountFragment extends Fragment implements View.OnClickListener {
 
     Button choose_image_btn;
     ImageView image_holder;

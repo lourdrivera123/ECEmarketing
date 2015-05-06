@@ -1,20 +1,17 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
+
 import android.app.Dialog;
-import android.app.TabActivity;
-import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
-import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TabHost;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,11 +23,8 @@ import java.util.HashMap;
 /**
  * Created by Zem on 4/29/2015.
  */
-public class PatientHomeActivity extends Activity{
+public class ListOfDoctorsFragment extends Fragment {
     ListView list_of_doctors;
-    String[] doctors = new String[] {
-            "Dr. Zemiel M. Asma", "Dr. Rosell B. Barnes", "Dr. Dexter M. Bengil"
-    };
     ArrayAdapter doctors_adapter;
 
     // XML node keys
@@ -44,20 +38,8 @@ public class PatientHomeActivity extends Activity{
     LazyAdapter adapter;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.patient_home_layout);
-
-//        list_of_doctors = (ListView) findViewById(R.id.list_of_doctors);
-//        doctors_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, doctors);
-//        list_of_doctors.setAdapter(doctors_adapter);
-//        list_of_doctors.setOnItemClickListener(this);
-
-        //        Doctor doctor = new Doctor();
-//        doctor.setFullname("Dexter", "Mangubat", "Bengil");
-//        doctor.setFullAddress("#86 Dexter Bldg.", "Dexter St.", "Cabantian", "Davao City",
-//                "Davao del Sur", "Region XI", "Philippines", "8000");
-//        doctor.setContactInfo("dexter@dexter.com", "+63 934-569-4345", "+856-7854");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
 
         ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 
@@ -79,7 +61,6 @@ public class PatientHomeActivity extends Activity{
         Document doc = parser.getDomElement(xml); // getting DOM element
 
 
-
         NodeList nl = doc.getElementsByTagName(KEY_DOCTOR);
         // looping through all song nodes &lt;song&gt;
         for (int i = 0; i < nl.getLength(); i++) {
@@ -96,12 +77,10 @@ public class PatientHomeActivity extends Activity{
             songsList.add(map);
         }
 
-
-
-        list_of_doctors = (ListView)findViewById(R.id.list_of_doctors);
+        list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
 
         // Getting adapter by passing xml data ArrayList
-        adapter=new LazyAdapter(this, songsList, "list_of_doctors");
+        adapter = new LazyAdapter(getActivity(), songsList, "list_of_doctors");
         list_of_doctors.setAdapter(adapter);
 
         // Click event for single list row
@@ -109,18 +88,10 @@ public class PatientHomeActivity extends Activity{
 
             @Override
             public void onItemClick(AdapterView parent, View view, int position, long id) {
-                Dialog dialog = new Dialog(PatientHomeActivity.this);
-                dialog.setTitle("Medical Records");
-                dialog.setContentView(R.layout.patient_diagnosis_layout);
-                dialog.show();
+                startActivity(new Intent(getActivity(), DoctorActivity.class));
             }
         });
-    }
 
-//    @Override
-//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        String doctor = (String) list_of_doctors.getItemAtPosition(position);
-//        Intent intent = new Intent(this, DoctorActivity.class);
-//        startActivity(intent);
-//    }
+        return rootView;
+    }
 }

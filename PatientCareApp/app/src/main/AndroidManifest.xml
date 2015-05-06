@@ -21,31 +21,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name=".SignUpFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".AccountActivity"
+            android:name=".AccountFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".ContactActivity"
+            android:name=".ContactsFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".PatientHomeActivity"
+            android:name=".ListOfDoctorsFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".DoctorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".PatientProfileActivity"
+            android:name=".PatientProfileFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".PatientHistoryActivity"
+            android:name=".PatientHistoryFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".HomeTileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".MasterTabActivity"
+            android:theme="@android:style/Theme.Holo.Light"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".EditTabsActivity"
@@ -59,7 +60,7 @@
         <activity android:name=".ImageLoader" />
         <activity android:name=".Doctor" />
         <activity android:name=".Patient" />
-        <activity android:name=".ProductsActivity" />
+        <activity android:name=".ProductsFragment" />
         <activity android:name=".DbHelper" />
 
     </application>

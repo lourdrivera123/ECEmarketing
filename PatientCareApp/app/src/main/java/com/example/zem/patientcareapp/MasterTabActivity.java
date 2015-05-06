@@ -1,49 +1,76 @@
 package com.example.zem.patientcareapp;
 
-import android.app.TabActivity;
+import android.app.ActionBar;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TabHost;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+import android.view.Window;
+import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
-/**
- * Created by Zem on 4/30/2015.
- */
-public class MasterTabActivity extends TabActivity implements View.OnClickListener {
-    Button edit_patient_profile_btn;
-    public static final String TAB_REQUEST = "request";
-    public static final int TAB = -1;
-
-    int current_tab = -1;
+public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
+    private MasterTabsAdapter mAdapter;
+    private String[] tabs = {"Profile", "My Records", "Test Results", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
+    private ViewPager viewPager;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
 
-        edit_patient_profile_btn = (Button) findViewById(R.id.edit_patient_profile_btn);
-        edit_patient_profile_btn.setOnClickListener(this);
+        // Initialization
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        actionBar = getActionBar();
+        mAdapter = new MasterTabsAdapter(getSupportFragmentManager());
+
+        viewPager.setAdapter(mAdapter);
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // Adding Tabs
+        for (String tab_name : tabs) {
+            actionBar.addTab(actionBar.newTab().setText(tab_name)
+                    .setTabListener(this));
+        }
 
         Intent intent = getIntent();
-        current_tab = intent.getIntExtra(TAB_REQUEST, -1);
+        actionBar.setSelectedNavigationItem(intent.getIntExtra("selected", 0));
 
-        TabHost mTabHost = (TabHost) findViewById(android.R.id.tabhost);
 
-        mTabHost.addTab(mTabHost.newTabSpec("first").setIndicator("Profile").setContent(new Intent(this , PatientProfileActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("second").setIndicator("Doctors").setContent(new Intent(this  ,PatientHomeActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("third").setIndicator("My Records").setContent(new Intent(this , PatientHistoryActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("fourth").setIndicator("News").setContent(new Intent(this , PatientHistoryActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("fifth").setIndicator("Promos").setContent(new Intent(this , PatientHistoryActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("sixth").setIndicator("Test Results").setContent(new Intent(this , PatientHistoryActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("seventh").setIndicator("Products").setContent(new Intent(this , ProductsActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("eight").setIndicator("Cart").setContent(new Intent(this , PatientHistoryActivity.class )));
-        mTabHost.addTab(mTabHost.newTabSpec("ninth").setIndicator("Consultation Schedule").setContent(new Intent(this , PatientHistoryActivity.class )));
-        mTabHost.setCurrentTab(current_tab);
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                // on changing the page
+                // make respected tab selected
+                System.out.println("position: "+position);
+                actionBar.setSelectedNavigationItem(position);
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
     }
 
     @Override
-    public void onClick(View v) {
-        startActivity(new Intent(this, EditTabsActivity.class));
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
     }
 }

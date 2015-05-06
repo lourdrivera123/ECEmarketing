@@ -1,21 +1,17 @@
 package com.example.zem.patientcareapp;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
-TextView signup, forgotpw;
+    TextView signup, forgotpw;
     Button login_btn;
 
     DbHelper dbhelper;
@@ -60,21 +56,13 @@ TextView signup, forgotpw;
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.login_btn:
-//                Intent intent = new Intent(this, HomeTileActivity.class);
-//                startActivity(intent);
-
-                if(dbhelper.insertDoctor()) {
-                    Toast.makeText(this, "SUCCESSFUL", Toast.LENGTH_LONG);
-                }
-                else {
-                    Toast.makeText(this, "ERROR", Toast.LENGTH_LONG);
-
-                }
+                Intent intent = new Intent(this, HomeTileActivity.class);
+                startActivity(intent);
                 break;
             case R.id.signup:
-                Intent intent2 = new Intent(this, SignUpActivity.class);
+                Intent intent2 = new Intent(this, SignUpFragment.class);
                 startActivity(intent2);
                 break;
         }
