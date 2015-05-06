@@ -41,7 +41,7 @@ public class ListOfDoctorsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
 
-        ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
 
         XMLParser parser = new XMLParser();
 //        String xml = parser.getXmlFromUrl(URL); // getting XML from URL
@@ -74,13 +74,14 @@ public class ListOfDoctorsFragment extends Fragment {
             map.put(KEY_PHOTO, parser.getValue(e, KEY_PHOTO));
 
             // adding HashList to ArrayList
-            songsList.add(map);
+            doctorsList.add(map);
         }
 
         list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
 
         // Getting adapter by passing xml data ArrayList
-        adapter = new LazyAdapter(getActivity(), songsList, "list_of_doctors");
+        adapter=new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
+
         list_of_doctors.setAdapter(adapter);
 
         // Click event for single list row

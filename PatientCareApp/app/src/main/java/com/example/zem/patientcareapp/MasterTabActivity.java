@@ -37,6 +37,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         }
 
         Intent intent = getIntent();
+
         actionBar.setSelectedNavigationItem(intent.getIntExtra("selected", 0));
 
 

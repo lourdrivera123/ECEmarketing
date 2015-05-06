@@ -35,7 +35,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DOC_AFFILIATIONS = "affiliations";
     public static final String DOC_CLINIC_ID = "clinic_id";
     public static final String DOC_EMAIL = "email";
-    public static final String DOC_SEC_ID = "sec_id";
+    public static final String DOC_SEC_ID = "secretary_id";
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

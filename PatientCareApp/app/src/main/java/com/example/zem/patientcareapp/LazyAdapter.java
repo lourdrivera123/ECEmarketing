@@ -12,6 +12,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 
 /**
  * Created by Dexter B. on 5/4/2015.
@@ -52,7 +54,7 @@ public class LazyAdapter extends BaseAdapter {
         System.out.println("id: "+list_type);
 
         if( list_type == "list_of_doctors" ) {
-                vi = inflater.inflate(R.layout.list_row, null);
+            vi = inflater.inflate(R.layout.list_row, null);
 
             TextView title = (TextView) vi.findViewById(R.id.title); // title
             TextView artist = (TextView) vi.findViewById(R.id.specialty); // artist name
@@ -68,7 +70,7 @@ public class LazyAdapter extends BaseAdapter {
             imageLoader.DisplayImage(doctor.get(ListOfDoctorsFragment.KEY_PHOTO), list_image);
 
         }else if( list_type == "product_lists" ){
-                vi = inflater.inflate(R.layout.list_row_products, null);
+            vi = inflater.inflate(R.layout.list_row_products, null);
             TextView product_name = (TextView) vi.findViewById(R.id.product_name); // product name
             TextView product_description = (TextView) vi.findViewById(R.id.product_description); // product description
             TextView product_price = (TextView) vi.findViewById(R.id.product_price); // product price
@@ -84,6 +86,25 @@ public class LazyAdapter extends BaseAdapter {
             product_description.setText(doctor.get(ProductsFragment.KEY_PRODUCT_DESCRIPTION));
             product_price.setText(doctor.get(ProductsFragment.KEY_PRODUCT_PRICE));
             imageLoader.DisplayImage(doctor.get(ProductsFragment.KEY_PRODUCT_PHOTO), list_image);
+
+        }else if( list_type == "consultation_lists" ){
+            vi = inflater.inflate(R.layout.list_row_consultations, null);
+
+            TextView doctor = (TextView) vi.findViewById(R.id.doctor_name);
+            TextView clinic_address = (TextView) vi.findViewById(R.id.clinic_address);
+            TextView consultation_schedule = (TextView) vi.findViewById(R.id.consultation_schedule);
+
+            HashMap<String, String> schedule = new HashMap<String, String>();
+            schedule = data.get(position);
+
+            // Setting all values in listview
+            doctor.setText(schedule.get(PatientConsultationActivity.KEY_DOCTOR_NAME));
+            clinic_address.setText(schedule.get(PatientConsultationActivity.KEY_CLINIC_ADDRESS));
+
+            String sched = schedule.get(PatientConsultationActivity.KEY_DATE)+", "+
+                    ( schedule.get(PatientConsultationActivity.KEY_SCHEDULE).equals("AM")  ?  "Morning" : "Afternoon");
+
+            consultation_schedule.setText(sched);
         }
         return vi;
     }

@@ -60,6 +60,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             case R.id.login_btn:
                 Intent intent = new Intent(this, HomeTileActivity.class);
                 startActivity(intent);
+
                 break;
             case R.id.signup:
                 Intent intent2 = new Intent(this, SignUpFragment.class);
