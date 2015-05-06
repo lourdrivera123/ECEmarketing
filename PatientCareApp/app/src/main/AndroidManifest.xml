@@ -63,6 +63,7 @@
         <activity android:name=".ProductsFragment" />
         <activity android:name=".DbHelper" />
         <activity android:name=".PatientConsultationActivity" />
+        <activity android:name=".ShoppingCartFragment" />
     </application>
 
 </manifest>
