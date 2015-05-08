@@ -6,11 +6,13 @@ import java.io.Serializable;
  * Created by Dexter B. on 5/4/2015.
  */
 public class Doctor implements Serializable {
-    private String fname = "", mname = "", lname = "", prc_no = "",
+    private String fname = "", mname = "", lname = "",
         address_house_no = "", address_street = "", address_barangay = "",
         address_city_municipality = "", address_province = "", address_region = "", address_zip = "",
         specialty = "", sub_specialty = "", cell_no = "", tel_no = "", photo = "", clinic_sched = "",
-        email = "", country = "";
+        email = "", country = "", affiliation = "";
+
+    private int id = 0, clinic_id = 0, secretary_id = 0, prc_no = 0, doc_id = 0;
 
     public Doctor(){
 
@@ -19,7 +21,7 @@ public class Doctor implements Serializable {
 
     /**    SETTERS ------------------------------------------------------------------ **/
         public void setFullAddress(String house_no, String street, String barangay, String city_municipality,
-            String province, String region, String country, String zip){
+                                   String province, String region, String country, String zip){
             this.setAddress_house_no(house_no);
             this.setAddress_street(street);
             this.setAddress_barangay(barangay);
@@ -42,6 +44,8 @@ public class Doctor implements Serializable {
             this.setTel_no(tel_no);
         }
 
+        public void setDoc_id(int doc_id){ this.doc_id = doc_id; }
+
         public void setFname(String fname) {
             this.fname = fname;
         }
@@ -54,7 +58,7 @@ public class Doctor implements Serializable {
             this.lname = lname;
         }
 
-        public void setPrc_no(String prc_no) {
+        public void setPrc_no(int prc_no) {
             this.prc_no = prc_no;
         }
 
@@ -118,6 +122,23 @@ public class Doctor implements Serializable {
             this.country = country;
         }
 
+    public void setID(int id){
+        this.id = id;
+    }
+
+    public void setAffiliation(String affiliation){
+        this.affiliation = affiliation;
+    }
+
+    public void setClinic_id(int clinic_id){
+        this.clinic_id = clinic_id;
+    }
+
+    public void setSecretary_id(int id){
+        this.secretary_id = secretary_id;
+    }
+
+
     /**   GETTERS ------------------------------------------------------------------- **/
         public String getFullname(boolean middlename_is_full){
             if(middlename_is_full == true) {
@@ -132,6 +153,8 @@ public class Doctor implements Serializable {
                     +address_city_municipality+" "+address_province+" "+address_region+" "+country+", "+address_zip;
         }
 
+        public int getDoc_id() { return doc_id; }
+
         public String getFname() {
             return fname;
         }
@@ -144,7 +167,7 @@ public class Doctor implements Serializable {
             return lname;
         }
 
-        public String getPrc_no() {
+        public int getPrc_no() {
             return prc_no;
         }
 
@@ -206,5 +229,21 @@ public class Doctor implements Serializable {
 
         public String getCountry(){
             return country;
+        }
+
+        public int getID(){
+            return id;
+        }
+
+        public int getClinic_id(){
+            return clinic_id;
+        }
+
+        public String getAffiliation(){
+            return affiliation;
+        }
+
+        public int getSecretary_id(){
+            return secretary_id;
         }
 }
