@@ -1,73 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView style="@style/cart_upper_total"
+    <TextView
+        style="@style/cart_upper_total"
         android:text="Php 28,500.00"
         android:id="@+id/upper_cart_total" />
 
     <!-- Table Head -->
-    <LinearLayout style="@style/tbl_th_tr"
+    <LinearLayout
+        style="@style/tbl_th_tr"
         android:layout_below="@+id/upper_cart_total"
         android:id="@+id/tbl_head">
 
-        <TextView style="@style/tbl_th"
+        <TextView
+            style="@style/tbl_th"
             android:text="Item"
-            android:layout_weight="0.7"/>
+            android:layout_weight="0.7" />
 
-        <TextView style="@style/tbl_th"
+        <TextView
+            style="@style/tbl_th"
             android:text="Qty"
-            android:layout_weight="1"/>
+            android:layout_weight="1.2" />
 
-        <TextView style="@style/tbl_th"
+        <TextView
+            style="@style/tbl_th"
             android:text="Total"
-            android:layout_weight="1"/>
+            android:layout_weight="1.2"
+            android:layout_gravity="right"
+            android:gravity="right" />
     </LinearLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
+
+    <ListView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_controls"
+        android:id="@+id/lv_items"
+        android:layout_toStartOf="@+id/upper_cart_total"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/tbl_head"
-        android:id="@+id/div_items">
+        tools:ignore="RtlCompat"
+        android:layout_above="@+id/btn_controls" />
 
-        <TableLayout style="@style/tbl"
-            android:id="@+id/tbl_items"
-            android:layout_below="@+id/upper_cart_total">
+    <LinearLayout
+        style="@style/btn_controls_layout"
+        android:id="@+id/btn_controls">
 
-            <!-- Table Body Starts Here -->
-
-            <TableRow style="@style/tbody_tr">
-                <TextView
-                    android:text="Biogesic @Php 2.75"
-                    style="@style/cart_item_style"/>
-
-                <EditText  style="@style/cart_qty_style"
-                    android:text="40"
-                    android:inputType="number"/>
-
-                <TextView style="@style/cart_total_style"
-                    android:text="110.00"/>
-            </TableRow>
-
-            <!-- Table Body Ends Here -->
-
-        </TableLayout>
-    </ScrollView>
-    <LinearLayout style="@style/btn_controls_layout"
-        android:id="@id/btn_controls">
-
-        <Button style="@style/btn_controls"
+        <Button
+            style="@style/btn_controls"
             android:text="Update Cart"
-            android:id="@+id/update_cart"/>
+            android:id="@+id/update_cart" />
 
-        <Button style="@style/btn_controls"
+        <Button
+            style="@style/btn_controls"
             android:text="Checkout"
-            android:layout_below="@+id/tbl_items"
-            android:layout_alignLeft="@+id/update_cart"/>
+            android:layout_below="@+id/lv_items"
+            android:layout_alignLeft="@+id/update_cart" />
     </LinearLayout>
-
-
-
 </RelativeLayout>
