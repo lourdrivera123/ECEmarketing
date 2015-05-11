@@ -38,48 +38,48 @@ public class PatientConsultationFragment extends Fragment {
         XMLParser parser = new XMLParser();
 
         String xml= "<list>" +
-                "<entry>\n" +
-                "<id>14</id>\n" +
-                "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>24th May 2015</date>\n" +
-                "<schedule>AM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>11</id>\n" +
-                "<doctor>Dr. Esel Barnes</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>19th May 2015</date>\n" +
-                "<schedule>PM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>14</id>\n" +
-                "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>24th May 2015</date>\n" +
-                "<schedule>AM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>11</id>\n" +
-                "<doctor>Dr. Esel Barnes</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>19th May 2015</date>\n" +
-                "<schedule>PM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>14</id>\n" +
-                "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>24th May 2015</date>\n" +
-                "<schedule>AM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>11</id>\n" +
-                "<doctor>Dr. Esel Barnes</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>19th May 2015</date>\n" +
-                "<schedule>PM</schedule>\n" +
-                "</entry>" +
+                        "<entry>\n" +
+                            "<id>14</id>\n" +
+                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
+                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                            "<date>24th May 2015</date>\n" +
+                            "<schedule>AM</schedule>\n" +
+                        "</entry>" +
+                        "<entry>\n" +
+                            "<id>11</id>\n" +
+                            "<doctor>Dr. Esel Barnes</doctor>\n" +
+                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                            "<date>19th May 2015</date>\n" +
+                            "<schedule>PM</schedule>\n" +
+                        "</entry>" +
+                        "<entry>\n" +
+                            "<id>14</id>\n" +
+                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
+                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                            "<date>24th May 2015</date>\n" +
+                            "<schedule>AM</schedule>\n" +
+                        "</entry>" +
+                        "<entry>\n" +
+                            "<id>11</id>\n" +
+                            "<doctor>Dr. Esel Barnes</doctor>\n" +
+                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                            "<date>19th May 2015</date>\n" +
+                            "<schedule>PM</schedule>\n" +
+                        "</entry>" +
+                        "<entry>\n" +
+                            "<id>14</id>\n" +
+                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
+                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                            "<date>24th May 2015</date>\n" +
+                            "<schedule>AM</schedule>\n" +
+                        "</entry>" +
+                        "<entry>\n" +
+                            "<id>11</id>\n" +
+                            "<doctor>Dr. Esel Barnes</doctor>\n" +
+                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                            "<date>19th May 2015</date>\n" +
+                            "<schedule>PM</schedule>\n" +
+                        "</entry>" +
                 "</list>";
         Document doc = parser.getDomElement(xml);
 
