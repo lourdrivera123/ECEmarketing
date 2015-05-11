@@ -8,11 +8,24 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
     private MasterTabsAdapter mAdapter;
@@ -20,11 +33,18 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     private ViewPager viewPager;
     private ActionBar actionBar;
 
+    DbHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
+
+        dbHelper = new DbHelper(this);
+        // Instantiate the RequestQueue.
+//        RequestQueue queue = Volley.newRequestQueue(this);
+//        url = "http://192.168.10.1/db/get_all_doctors.php";
 
         // Initialization
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -43,6 +63,11 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
         Intent intent = getIntent();
 
+        switch(intent.getIntExtra("selected", 0)){
+            case 3:
+                Log.d("the number selected is ", "" + intent.getIntExtra("selected", 0));
+                break;
+        }
         actionBar.setSelectedNavigationItem(intent.getIntExtra("selected", 0));
 
 
@@ -79,4 +104,5 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
     }
+
 }

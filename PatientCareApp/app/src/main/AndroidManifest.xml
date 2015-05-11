@@ -17,7 +17,11 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".SignUpFragment"
@@ -30,7 +34,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".ListOfDoctorsFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboardHidden|orientation|screenSize" >
+            </activity>
         <activity
             android:name=".DoctorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -43,11 +48,6 @@
         <activity
             android:name=".HomeTileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".MasterTabActivity"

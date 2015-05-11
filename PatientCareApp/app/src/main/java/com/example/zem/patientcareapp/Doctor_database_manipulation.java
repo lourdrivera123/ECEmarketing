@@ -1,18 +1,8 @@
 package com.example.zem.patientcareapp;
 
-
-import android.app.Dialog;
-import android.content.Intent;
-import android.support.v4.app.Fragment;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -25,20 +15,11 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
- * Created by Zem on 4/29/2015.
+ * Created by Zem on 5/11/2015.
  */
-public class ListOfDoctorsFragment extends Fragment {
-    ListView list_of_doctors;
-    ArrayAdapter doctors_adapter;
-    DbHelper dbHelper;
+public class Doctor_database_manipulation extends Activity {
 
     JSONArray doctors_json_array_mysql = null;
     JSONArray doctors_json_array_sqlite = null;
@@ -46,24 +27,22 @@ public class ListOfDoctorsFragment extends Fragment {
 
     RequestQueue queue;
     String url;
-
-    ArrayList<Doctor> doctors_array_list;
-
-    // XML node keys
-    static final String KEY_FULL_NAME = "fullname"; // parent node
-    static final String KEY_SPECIALTY = "specialty";
-    static final String KEY_PHOTO = "photo";
-    static final String KEY_ID = "id";
-    static final String KEY_DOCTOR = "doctor";
-
-    LazyAdapter adapter;
+    DbHelper dbHelper;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        dbHelper = new DbHelper(getActivity());
-        queue = Volley.newRequestQueue(getActivity());
+        dbHelper = new DbHelper(this);
+        queue = Volley.newRequestQueue(this);
+        url = "http://192.168.10.1/db/get_all_doctors.php";
+
+
+
+    }
+    public void init(){
+        dbHelper = new DbHelper(this);
+        queue = Volley.newRequestQueue(this);
         url = "http://192.168.10.1/db/get_all_doctors.php";
 
         // Request a string response from the provided URL.
@@ -85,23 +64,25 @@ public class ListOfDoctorsFragment extends Fragment {
                             for (int i = 0; i < doctors_json_array_final.length(); i++) {
                                 JSONObject doctor_json_object = doctors_json_array_final.getJSONObject(i);
 
+                                Log.d("esel", ""+doctor_json_object);
+
                                 if(!doctor_json_object.equals("null")){
                                     if (dbHelper.insertDoctor(setDoctorObject(doctor_json_object))) {
-                                        Toast.makeText(getActivity(), "successfully saved " , Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getBaseContext(), "successfully saved " , Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(getActivity(), "failed to save " , Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getBaseContext(), "failed to save " , Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
                             doctors_json_array_final = null;
                         } else {
-                            Toast.makeText(getActivity(), "the final list is empty", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getBaseContext(), "the final list is empty", Toast.LENGTH_SHORT).show();
                         }
 
                     }
 
                 } catch (JSONException e) {
-                    Toast.makeText(getActivity(), "" + e, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "" + e, Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -109,63 +90,12 @@ public class ListOfDoctorsFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
             }
         });
 
         queue.add(stringRequest);
-// end of request volley
-
-
-        doctors_array_list = dbHelper.getAllDoctors();
-        String xml = dbHelper.getDoctorsStringXml();
-
-        populateDoctorListView(rootView, xml);
-
-        return rootView;
     }
-
-    public void populateDoctorListView(View rootView, String xml) {
-        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
-
-        XMLParser parser = new XMLParser();
-
-        Document doc = parser.getDomElement(xml); // getting DOM element
-
-
-        NodeList nl = doc.getElementsByTagName(KEY_DOCTOR);
-        // looping through all song nodes &lt;song&gt;
-        for (int i = 0; i < nl.getLength(); i++) {
-            // creating new HashMap
-            HashMap<String, String> map = new HashMap<String, String>();
-            Element e = (Element) nl.item(i);
-            // adding each child node to HashMap key =&gt; value
-            map.put(KEY_ID, parser.getValue(e, KEY_ID));
-            map.put(KEY_FULL_NAME, parser.getValue(e, KEY_FULL_NAME));
-            map.put(KEY_SPECIALTY, parser.getValue(e, KEY_SPECIALTY));
-            map.put(KEY_PHOTO, parser.getValue(e, KEY_PHOTO));
-
-            // adding HashList to ArrayList
-            doctorsList.add(map);
-        }
-
-        list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
-
-        // Getting adapter by passing xml data ArrayList
-        adapter = new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
-
-        list_of_doctors.setAdapter(adapter);
-
-        // Click event for single list row
-        list_of_doctors.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), DoctorActivity.class));
-            }
-        });
-    }
-
     public JSONArray checkWhatToInsert(JSONArray doctors_json_array_mysql, JSONArray doctors_json_array_sqlite) throws JSONException {
         JSONArray doctors_json_array_final_storage = new JSONArray();
         try {
@@ -193,7 +123,7 @@ public class ListOfDoctorsFragment extends Fragment {
             }
 
         } catch (JSONException e) {
-            Toast.makeText(getActivity(), "" + e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), "" + e, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -228,5 +158,4 @@ public class ListOfDoctorsFragment extends Fragment {
 
         return doctor_object;
     }
-
 }

@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -15,6 +18,13 @@ import java.util.ArrayList;
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "PatientCare";
     public static final int DB_VERSION = 1;
+
+    //Updates Table
+    public static final String TBL_UPDATES = "updates";
+    public static final String UPDATE_ID = "id";
+    public static final String UPDATE_TBL_NAME = "tbl_name";
+    public static final String UPDATE_TIMESTAMP = "timestamp";
+    public static final String UPDATE_SEEN = "seen";
 
     //DOCTORS_TABLE
     public static final String TBL_DOCTORS = "doctors";
@@ -53,20 +63,41 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql1 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, " +
+        String sql1 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)",
                 TBL_DOCTORS, DOC_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_ADDRESS_HOUSE_NO, DOC_ADDRESS_STREET, DOC_ADDRESS_BARANGAY,
                 DOC_ADDRESS_CITY, DOC_ADDRESS_PROVINCE, DOC_ADDRESS_REGION, DOC_ADDRESS_COUNTRY, DOC_ZIP, DOC_SPECIALTY, DOC_SUB_SPECIALTY, DOC_CELL_NO, DOC_TEL_NO,
                 DOC_PHOTO, DOC_CLINIC_SCHED, DOC_AFFILIATIONS, DOC_CLINIC_ID, DOC_EMAIL, DOC_SEC_ID);
 
+        String sql2 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER)",
+                TBL_UPDATES, UPDATE_ID, UPDATE_TBL_NAME, UPDATE_TIMESTAMP, UPDATE_SEEN);
+
         db.execSQL(sql1);
-    }
+        db.execSQL(sql2);
+
+        insertTableNamesToUpdates(TBL_DOCTORS, db);
+
+        }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         String sql = "DROP TABLE IF EXISTS " + DB_NAME;
         db.execSQL(sql);
+    }
+
+    public boolean insertTableNamesToUpdates(String table_name, SQLiteDatabase db){
+//        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(UPDATE_TBL_NAME, table_name);
+        values.put(UPDATE_TIMESTAMP, "2015-11-05");
+        values.put(UPDATE_SEEN, 0);
+
+        long rowID = db.insert(TBL_UPDATES, null, values);
+
+        return rowID > 0;
+
     }
 
     public boolean insertDoctor(Doctor doctor_object) {
@@ -162,6 +193,56 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public String getDoctorsStringXml(){
         return doctors_string_xml;
+    }
+
+
+    public JSONArray getAllDoctorsJSONArray()
+    {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        String sql = "SELECT * FROM " + TBL_DOCTORS;
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        JSONArray resultSet     = new JSONArray();
+
+        cursor.moveToFirst();
+        while (cursor.isAfterLast() == false) {
+
+            int totalColumn = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for( int i=0 ;  i< totalColumn ; i++ )
+            {
+                if( cursor.getColumnName(i) != null )
+                {
+                    try
+                    {
+                        if( cursor.getString(i) != null )
+                        {
+                            System.out.print("json array of all doctors: " + cursor.getString(i));
+                            rowObject.put(cursor.getColumnName(i) ,  cursor.getString(i) );
+                        }
+                        else
+                        {
+                            rowObject.put( cursor.getColumnName(i) ,  "" );
+                        }
+                    }
+                    catch( Exception e )
+                    {
+//                        Log.d("TAG_NAME", e.getMessage()  );
+                        System.out.print("error in doctors: " + e.getMessage());
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            cursor.moveToNext();
+        }
+        cursor.close();
+//        Log.d("TAG_NAME", resultSet.toString() );
+           System.out.print("json array of all doctors: " + resultSet.toString());
+        return resultSet;
     }
 
 }
