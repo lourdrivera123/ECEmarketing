@@ -2,11 +2,13 @@ package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -36,7 +38,6 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
 
-       
         // Instantiate the RequestQueue.
 //        RequestQueue queue = Volley.newRequestQueue(this);
 //        url = "http://192.168.10.1/db/get_all_doctors.php";
@@ -115,6 +116,12 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }

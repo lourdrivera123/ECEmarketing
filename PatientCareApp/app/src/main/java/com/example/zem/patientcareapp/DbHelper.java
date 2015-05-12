@@ -133,6 +133,41 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
+    public boolean updateDoctor(Doctor doctor_object) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DOC_DOC_ID, doctor_object.getDoc_id());
+        values.put(DOC_LNAME, doctor_object.getLname());
+        values.put(DOC_MNAME, doctor_object.getMname());
+        values.put(DOC_FNAME, doctor_object.getFname());
+        values.put(DOC_PRC_NO, doctor_object.getPrc_no());
+        values.put(DOC_ADDRESS_HOUSE_NO, doctor_object.getAddress_house_no());
+        values.put(DOC_ADDRESS_STREET, doctor_object.getAddress_street());
+        values.put(DOC_ADDRESS_BARANGAY, doctor_object.getAddress_barangay());
+        values.put(DOC_ADDRESS_CITY, doctor_object.getAddress_city_municipality());
+        values.put(DOC_ADDRESS_PROVINCE, doctor_object.getAddress_province());
+        values.put(DOC_ADDRESS_REGION, doctor_object.getAddress_region());
+        values.put(DOC_ADDRESS_COUNTRY, doctor_object.getCountry());
+        values.put(DOC_ZIP, doctor_object.getAddress_zip());
+        values.put(DOC_SPECIALTY, doctor_object.getSpecialty());
+        values.put(DOC_SUB_SPECIALTY, doctor_object.getSub_specialty());
+        values.put(DOC_CELL_NO, doctor_object.getCell_no());
+        values.put(DOC_TEL_NO, doctor_object.getTel_no());
+        values.put(DOC_PHOTO, doctor_object.getPhoto());
+        values.put(DOC_CLINIC_SCHED, doctor_object.getClinic_sched());
+        values.put(DOC_AFFILIATIONS, doctor_object.getAffiliation());
+        values.put(DOC_CLINIC_ID, doctor_object.getClinic_id());
+        values.put(DOC_EMAIL, doctor_object.getEmail());
+        values.put(DOC_SEC_ID, doctor_object.getSecretary_id());
+
+//        long rowID = db.update();
+
+        int rowID = db.update(TBL_DOCTORS, values, DOC_ID +"="+doctor_object.getDoc_id(), null);
+
+        return rowID > 0;
+    }
+
     public ArrayList<Doctor> getAllDoctors() {
 
         ArrayList<Doctor> doctors = new ArrayList<Doctor>();
@@ -243,6 +278,28 @@ public class DbHelper extends SQLiteOpenHelper {
 //        Log.d("TAG_NAME", resultSet.toString() );
            System.out.print("json array of all doctors: " + resultSet.toString());
         return resultSet;
+    }
+
+    public String getLastUpdate(String table_name)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String sql = "SELECT * FROM " + TBL_UPDATES + " WHERE " + UPDATE_TBL_NAME + "= '" + table_name + "'";
+
+
+        String last_update_date = "";
+
+        Cursor cur = db.rawQuery(sql, null);
+//        cur.moveToFirst();
+
+        while (cur.moveToNext()) {
+            last_update_date = cur.getString(2);
+        }
+
+        cur.close();
+        db.close();
+
+        return last_update_date;
     }
 
 }
