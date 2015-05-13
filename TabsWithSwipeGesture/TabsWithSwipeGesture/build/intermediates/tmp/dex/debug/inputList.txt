@@ -1,2 +1,0 @@
-C:\Users\User PC\AndroidStudioProjects\ECEmarketing\TabsWithSwipeGesture\TabsWithSwipeGesture\build\intermediates\classes\debug
-C:\Users\User PC\AndroidStudioProjects\ECEmarketing\TabsWithSwipeGesture\TabsWithSwipeGesture\build\intermediates\pre-dexed\debug\support-v4-18.0.0-18368ae927b9cc718a27cedfc4a63ac787634f36.jar

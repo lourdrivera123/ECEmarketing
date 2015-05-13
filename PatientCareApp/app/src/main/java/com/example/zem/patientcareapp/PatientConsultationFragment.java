@@ -1,7 +1,11 @@
 package com.example.zem.patientcareapp;
 
+import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import org.w3c.dom.Document;
@@ -14,7 +18,7 @@ import java.util.HashMap;
 /**
  * Created by Dexter B. on 5/5/2015.
  */
-public class PatientConsultationActivity extends Activity {
+public class PatientConsultationFragment extends Fragment {
     // XML node keys
     static final String KEY_DOCTOR_NAME = "doctor"; // parent node
     static final String KEY_CLINIC_ADDRESS = "clinic_address";
@@ -27,9 +31,8 @@ public class PatientConsultationActivity extends Activity {
     LazyAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.patient_consultation_layout);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.patient_consultation_layout, container, false);
 
         ArrayList<HashMap<String, String>> consultationScheds = new ArrayList<HashMap<String, String>>();
         XMLParser parser = new XMLParser();
@@ -77,7 +80,7 @@ public class PatientConsultationActivity extends Activity {
                             "<date>19th May 2015</date>\n" +
                             "<schedule>PM</schedule>\n" +
                         "</entry>" +
-                     "</list>";
+                "</list>";
         Document doc = parser.getDomElement(xml);
 
         NodeList nl = doc.getElementsByTagName(KEY_SCHED);
@@ -98,10 +101,10 @@ public class PatientConsultationActivity extends Activity {
             consultationScheds.add(map);
         }
 
-        consultation_schedules = (ListView) findViewById(R.id.consultation_schedules);
-        adapter = new LazyAdapter(this, consultationScheds, "consultation_lists");
+        consultation_schedules = (ListView) rootView.findViewById(R.id.consultation_schedules);
+        adapter = new LazyAdapter(getActivity(), consultationScheds, "consultation_lists");
 
         consultation_schedules.setAdapter(adapter);
-
+        return rootView;
     }
 }
