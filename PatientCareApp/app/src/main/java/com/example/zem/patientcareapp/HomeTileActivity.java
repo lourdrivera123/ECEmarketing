@@ -1,23 +1,24 @@
 package com.example.zem.patientcareapp;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-/**
- * Created by Zem on 5/2/2015.
- */
-public class HomeTileActivity extends ActionBarActivity implements View.OnClickListener {
+public class HomeTileActivity extends Activity implements View.OnClickListener {
     Button profile_btn, news_btn, promos_btn, doctors_btn, history_btn, test_results_btn, cart_btn, products_btn, consultation_btn;
     FragmentTransaction fragmentTransaction;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_tile_layout);
 
@@ -48,7 +49,7 @@ public class HomeTileActivity extends ActionBarActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, MasterTabActivity.class);
-        switch(v.getId()) {
+        switch (v.getId()) {
 
             case R.id.profile_btn:
                 intent.putExtra("selected", 0);
@@ -95,5 +96,30 @@ public class HomeTileActivity extends ActionBarActivity implements View.OnClickL
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.logout_menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.logout) {
+            SharedPreferences sharedpreferences = getSharedPreferences
+                    (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.clear();
+            editor.commit();
+            moveTaskToBack(true);
+            HomeTileActivity.this.finish();
+            startActivity(new Intent(this, MainActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

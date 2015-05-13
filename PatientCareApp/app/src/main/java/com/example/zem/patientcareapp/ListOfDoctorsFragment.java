@@ -6,26 +6,38 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Zem on 4/29/2015.
  */
-public class ListOfDoctorsFragment extends Fragment {
+public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
     ListView list_of_doctors;
-    ArrayAdapter doctors_adapter;
+    EditText search_doctor;
+    String[] doctors = {
+            "Esel", "Dexter", "Zemiel"
+    };
+
+    List<String> findArray = Arrays.asList(doctors);
+
 
     // XML node keys
     static final String KEY_FULL_NAME = "fullname"; // parent node
@@ -42,6 +54,8 @@ public class ListOfDoctorsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
 
         ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
+        search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
+        search_doctor.addTextChangedListener(this);
 
         XMLParser parser = new XMLParser();
 //        String xml = parser.getXmlFromUrl(URL); // getting XML from URL
@@ -80,7 +94,7 @@ public class ListOfDoctorsFragment extends Fragment {
         list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
 
         // Getting adapter by passing xml data ArrayList
-        adapter=new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
+        adapter = new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
 
         list_of_doctors.setAdapter(adapter);
 
@@ -94,5 +108,24 @@ public class ListOfDoctorsFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        String key = search_doctor.getText().toString();
+
+        if (findArray.contains(key)) {
+            Toast.makeText(getActivity(), "" + key, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
     }
 }

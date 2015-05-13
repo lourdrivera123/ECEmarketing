@@ -18,6 +18,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:hint="Firstname"
                 android:id="@+id/fname" />
 
@@ -43,6 +44,14 @@
                 android:ems="10"
                 android:hint="mm/dd/yyyy"
                 android:id="@+id/birthdate" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d10"
+                android:ems="10"
+                android:hint="Occupation (Optional)"
+                android:id="@+id/occupation" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -78,15 +87,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Male"
+                        android:checked="true"
                         android:layout_weight="0.5"
-                        android:id="@+id/radioButton" />
+                        android:id="@+id/male_rb" />
 
                     <RadioButton
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Female"
                         android:layout_weight="0.5"
-                        android:id="@+id/radioButton2" />
+                        android:id="@+id/female_rb" />
                 </RadioGroup>
 
             </LinearLayout>
@@ -102,14 +112,16 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/height"
                     android:layout_weight="0.5"
-                    android:hint="Height" />
+                    android:hint="Height (Ft.)"
+                    android:inputType="numberDecimal"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/weight"
                     android:layout_weight="0.5"
-                    android:hint="Weight" />
+                    android:hint="Weight (Kg)"
+                    android:inputType="numberDecimal"/>
 
             </LinearLayout>
         </LinearLayout>
