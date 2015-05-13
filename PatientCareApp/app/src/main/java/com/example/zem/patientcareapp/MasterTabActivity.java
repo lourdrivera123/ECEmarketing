@@ -90,20 +90,6 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         viewPager.setCurrentItem(tab.getPosition());
-
-        if (tab.getPosition() == 6) {
-            ArrayList<HashMap<String, String>> items = ShoppingCartFragment.items;
-            adapter = new LazyAdapter(this, items, "basket_items");
-
-            for (int x = 0; x < items.size(); x++) {
-
-                int quantity = Integer.parseInt(items.get(x).get("quantity"));
-                final double price = Double.parseDouble(items.get(x).get("price"));
-
-                double total_amount = quantity * price;
-            }
-
-        }
     }
 
     @Override
