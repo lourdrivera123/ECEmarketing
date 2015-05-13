@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/product_name"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/product_price"/>
+        </TableRow>
+        <TableRow>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="123"
+                android:inputType="number"
+                android:layout_weight="0.5"
+                android:id="@+id/update_qty"
+                android:hint="Quantity"/>
+
+        </TableRow>
+        <TableRow>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total: "
+                android:layout_weight="0.4"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/new_total"/>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
