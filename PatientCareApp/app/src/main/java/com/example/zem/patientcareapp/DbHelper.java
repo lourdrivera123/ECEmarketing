@@ -88,6 +88,28 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DOC_EMAIL = "email";
     public static final String DOC_SEC_ID = "secretary_id";
 
+    // PRODUCTS TABLE
+    public static final String PRODUCT_NAME = "name";
+    public static final String PRODUCT_GENERIC_NAME = "generic_name";
+    public static final String PRODUCT_DESCRIPTION = "description";
+    public static final String PRODUCT_PRICE = "price";
+    public static final String PRODUCT_UNIT = "unit";
+    public static final String PRODUCT_CREATED_AT = "created_at";
+    public static final String PRODUCT_UPDATED_AT = "updated_at";
+    public static final String PRODUCT_DELETED_AT = "deleted_at";
+    public static final String TBL_PRODUCTS= "products";
+    public static final String PRODUCTS_ID = "id";
+
+    // BASKET TABLE
+    public static final String TBL_BASKETS = "baskets";
+    public static final String BASKET_ID = "id";
+    public static final String BASKET_PATIENT_ID = "patient_id";
+    public static final String BASKET_PRODUCT_ID = "product_id";
+    public static final String BASKET_QUANTITY = "quantity";
+    public static final String BASKET_CREATED_AT = "created_at";
+    public static final String BASKET_UPDATED_AT = "updated_at";
+    public static final String BASKET_DELETED_AT = "deleted_at";
+
 
     //Doctor string xml
     String doctor_string_xml = "";
@@ -118,9 +140,23 @@ public class DbHelper extends SQLiteOpenHelper {
                 PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_CELL_NO,
                 PTNT_EMAIL, PTNT_PHOTO, PTNT_CREATED_AT, PTNT_UPDATED_AT);
 
+        // SQL to create table "products"
+        String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT , %s TEXT, " +
+                        "%s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCTS, PRODUCTS_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION, PRODUCT_PRICE, PRODUCT_UNIT,
+                PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
+
+        // SQL to create table "baskets"
+        String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, " +
+                        "%s INTEGER, %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_BASKETS, BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY, BASKET_CREATED_AT, BASKET_UPDATED_AT,
+                BASKET_DELETED_AT);
+
         db.execSQL(sql1);
         db.execSQL(sql2);
         db.execSQL(sql3);
+        db.execSQL(sql_create_tbl_baskets);
+        db.execSQL(sql_create_tbl_products);
 
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
