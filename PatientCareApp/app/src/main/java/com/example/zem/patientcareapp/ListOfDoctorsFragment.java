@@ -157,17 +157,14 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
                             pDialog.hide();
                         }
 
-<<<<<<< HEAD
                         doctors_array_list = dbHelper.getAllDoctors();
                         String xml = dbHelper.getDoctorsStringXml();
 
                         populateDoctorListView(rootView, xml);
 
-=======
                     } catch (JSONException e) {
 //                    Toast.makeText(getActivity(), "" + e, Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
->>>>>>> 8d7ab7f4bdcd910f4e9ea9d29c7bab053cc21708
                     }
 
                 }
@@ -187,13 +184,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
             doctors_array_list = dbHelper.getAllDoctors();
             String xml = dbHelper.getDoctorsStringXml();
 
-<<<<<<< HEAD
-
-=======
             populateDoctorListView(rootView, xml);
             pDialog.hide();
         }
->>>>>>> 8d7ab7f4bdcd910f4e9ea9d29c7bab053cc21708
 
         return rootView;
     }
