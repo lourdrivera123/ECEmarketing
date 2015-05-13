@@ -8,179 +8,186 @@
     android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical">
 
-    <TableLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal">
+        android:fillViewport="true">
 
-        <TableRow>
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="@dimen/d20">
 
-            <Button
-                android:id="@+id/profile_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/profile_tile" />
+            <TableRow>
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/history_tile"
-                android:id="@+id/history_btn" />
+                <Button
+                    android:id="@+id/profile_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/profile_tile" />
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/results_tile"
-                android:id="@+id/test_results_btn" />
-        </TableRow>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/history_tile"
+                    android:id="@+id/history_btn" />
 
-        <TableRow>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/results_tile"
+                    android:id="@+id/test_results_btn" />
+            </TableRow>
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="Profile" />
+            <TableRow>
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="Patient History" />
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="Profile" />
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="Test Results" />
-        </TableRow>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="Patient History" />
 
-        <TableRow android:layout_marginTop="@dimen/d40">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="Test Results" />
+            </TableRow>
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/doctors_tile"
-                android:id="@+id/doctors_btn" />
+            <TableRow android:layout_marginTop="@dimen/d40">
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/consultation_tile"
-                android:id="@+id/consultation_btn" />
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/doctors_tile"
+                    android:id="@+id/doctors_btn" />
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/product_tile"
-                android:id="@+id/products_btn" />
-        </TableRow>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/consultation_tile"
+                    android:id="@+id/consultation_btn" />
 
-        <TableRow>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/product_tile"
+                    android:id="@+id/products_btn" />
+            </TableRow>
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="Doctors" />
+            <TableRow>
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="Consultation" />
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="Doctors" />
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="Products" />
-        </TableRow>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="Consultation" />
 
-        <TableRow android:layout_marginTop="@dimen/d40">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="Products" />
+            </TableRow>
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/cart_tile"
-                android:id="@+id/cart_btn" />
+            <TableRow android:layout_marginTop="@dimen/d40">
 
-            <Button
-                android:id="@+id/promos_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/discounts_tile" />
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/cart_tile"
+                    android:id="@+id/cart_btn" />
 
-            <Button
-                android:id="@+id/news_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/tile_shape"
-                android:drawableBottom="@mipmap/news_tile" />
-        </TableRow>
+                <Button
+                    android:id="@+id/promos_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/discounts_tile" />
 
-        <TableRow>
+                <Button
+                    android:id="@+id/news_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tile_shape"
+                    android:drawableBottom="@mipmap/news_tile" />
+            </TableRow>
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="Cart" />
+            <TableRow>
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="Promos" />
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="Cart" />
 
-            <TextView
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:text="News" />
-        </TableRow>
-    </TableLayout>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="Promos" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="News" />
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
 </LinearLayout>

@@ -1,7 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,10 +11,8 @@ import android.widget.Spinner;
 /**
  * Created by Zem on 4/28/2015.
  */
-public class ContactsFragment extends Fragment implements View.OnClickListener {
-
+public class ContactsFragment extends Fragment {
     Spinner address_region;
-    Resources res;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,10 +23,5 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         address_region.setAdapter(regions_adapter);
 
         return rootView;
-    }
-
-    @Override
-    public void onClick(View v) {
-        startActivity(new Intent(getActivity(), AccountFragment.class));
     }
 }

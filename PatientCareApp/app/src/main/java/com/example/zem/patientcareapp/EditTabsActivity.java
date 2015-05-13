@@ -1,11 +1,31 @@
 package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
+import android.app.DatePickerDialog;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
 
@@ -13,21 +33,51 @@ import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
  * Created by User PC on 5/4/2015.
  */
 public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener {
+    int limit = 4, count = 0, unselected;
 
+    Patient patient;
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
     private String[] tabs = {"Gen. Info", "Contact Info", "Acct. Info"};
+    public boolean hasError = true, hasError2 = true, hasError3 = true;
 
+    // SIGN UP FRAGMENT
+    EditText birthdate, fname, lname, mname, height, weight, occupation;
+    RadioGroup sex;
+    Spinner civil_status_spinner;
+    String s_fname, s_lname, s_mname, s_birthdate, s_sex, s_civil_status, s_height, s_weight, s_occupation;
+
+    // CONTACTS FRAGMENT
+    EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_barangay, address_city_municipality, address_province, address_zip,
+            email, tel_no, cell_no;
+    Spinner address_region;
+    int int_unit, int_lot, int_block, int_phase, int_house;
+    String s_unit_no, s_building, s_lot_no, s_block_no, s_phase_no, s_house_no, s_street, s_barangay, s_city, s_province, s_zip, s_email, s_tel_no, s_cell_no, s_region;
+
+    // ACCOUNT INFO FRAGMENT
+    String username = "";
+    ImageView image_holder;
+
+    DbHelper dbHelper;
+    int serverID = 0;
+    Drawable d;
+    int check = 0;
+
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.edit_profile_layout);
 
+        dbHelper = new DbHelper(this);
+        patient = new Patient();
+
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getActionBar();
+
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(mAdapter);
@@ -47,9 +97,68 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
             @Override
             public void onPageSelected(int position) {
-                // on changing the page
-                // make respected tab selected
                 actionBar.setSelectedNavigationItem(position);
+                if (position == 0) {
+                    readFromSignUp();
+                } else if (position == 1) {
+                    if (unselected == 0) {
+                        readFromSignUp();
+                    }
+                    validateAtPosition2();
+                } else if (position == 2) {
+                    Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
+                    image_holder = (ImageView) findViewById(R.id.image_holder);
+
+                    choose_image_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(intent, 111);
+                        }
+                    });
+
+                    if (unselected == 1) {
+                        validateAtPosition2();
+                        setProfilePhoto();
+                    } else if (unselected == 0) {
+                        readFromSignUp();
+                        setProfilePhoto();
+                    }
+
+                    Button btn_submit = (Button) findViewById(R.id.btn_save);
+                    btn_submit.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            validateUserAccountInfo();
+                            //DO SOMETHING! {RUN SOME FUNCTION ... DO CHECKS... ETC}
+                            if (hasError) {
+                                viewPager.setCurrentItem(0);
+                            } else if (hasError2) {
+                                viewPager.setCurrentItem(1);
+                            } else if (!hasError && !hasError2) {
+                                validateUserAccountInfo();
+                                if (!hasError3) {
+                                    long date = System.currentTimeMillis();
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
+                                    String dateString = sdf.format(date);
+
+                                    String uname = patient.getUsername();
+
+                                    if (dbHelper.checkUserIfRegistered(uname) == 0) {
+                                        if (dbHelper.insertPatient(serverID, dateString, patient)) {
+                                            Toast.makeText(EditTabsActivity.this, "Account created", Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+                                            serverID++;
+                                        } else {
+                                            Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(EditTabsActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
             }
 
             @Override
@@ -64,16 +173,349 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        viewPager.setCurrentItem(tab.getPosition());
+        int pos = tab.getPosition();
+        viewPager.setCurrentItem(pos);
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
+        unselected = tab.getPosition();
     }
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+    }
 
+    public void readFromSignUp() {
+        birthdate = (EditText) findViewById(R.id.birthdate);
+        fname = (EditText) findViewById(R.id.fname);
+        lname = (EditText) findViewById(R.id.lname);
+        mname = (EditText) findViewById(R.id.mname);
+        height = (EditText) findViewById(R.id.height);
+        weight = (EditText) findViewById(R.id.weight);
+        occupation = (EditText) findViewById(R.id.occupation);
+        civil_status_spinner = (Spinner) findViewById(R.id.civil_status);
+        sex = (RadioGroup) findViewById(R.id.sex);
+        int selectedId = sex.getCheckedRadioButtonId();
+
+        limit = 5;
+        count = 0;
+
+        s_birthdate = birthdate.getText().toString();
+        s_fname = fname.getText().toString();
+        s_lname = lname.getText().toString();
+        s_mname = mname.getText().toString();
+        s_height = height.getText().toString();
+        s_weight = weight.getText().toString();
+        s_occupation = occupation.getText().toString();
+        s_civil_status = civil_status_spinner.getSelectedItem().toString();
+        s_sex = selectedId == R.id.male_rb ? "Male" : "Female";
+
+        birthdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar cal = Calendar.getInstance();
+
+                DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        String dateStr = String.format("%d/%d/%d", (month + 1), day, year);
+                        birthdate.setText(dateStr);
+                        birthdate.setError(null);
+                        patient.setBirthdate(dateStr);
+                    }
+                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                datePicker.show();
+            }
+        });
+
+        if (s_fname.equals("")) {
+            fname.setError("Field Required");
+        } else {
+            patient.setFname(s_fname);
+            count++;
+        }
+
+        System.out.println("1. count: " + count + " limit: " + limit);
+
+        if (s_lname.equals("")) {
+            lname.setError("Field Required");
+        } else {
+            patient.setLname(s_lname);
+            count++;
+        }
+
+        if (s_birthdate.equals("")) {
+            birthdate.setError("Field Required");
+        } else {
+            patient.setBirthdate(s_birthdate);
+            count++;
+        }
+
+        System.out.println("1. count: " + count + " limit: " + limit);
+
+        if (s_height.equals("")) {
+            height.setError("Field Required");
+        } else {
+            patient.setHeight(s_height);
+            count++;
+        }
+
+        System.out.println("1. count: " + count + " limit: " + limit);
+
+        if (s_weight.equals("")) {
+            weight.setError("Field Required");
+        } else {
+            patient.setWeight(s_weight);
+            count++;
+        }
+
+        System.out.println("1. count: " + count + " limit: " + limit);
+
+        if (count == limit) {
+            this.hasError = false;
+        } else {
+            this.hasError = true;
+        }
+
+        patient.setSex(s_sex);
+
+        //NOT REQUIRED VARIABLES
+        if (s_mname.equals("")) {
+            patient.setMname(null);
+        } else {
+            patient.setMname(s_mname);
+        }
+
+        if (s_occupation.equals("")) {
+            patient.setOccupation(null);
+        } else {
+            patient.setOccupation(s_occupation);
+        }
+
+        patient.setCivil_status(s_civil_status);
+
+        System.out.println("1. count: " + count + " limit: " + limit);
+    }
+
+    public void validateAtPosition2() {
+
+        unit_no = (EditText) findViewById(R.id.unit_no);
+        building = (EditText) findViewById(R.id.building);
+        lot_no = (EditText) findViewById(R.id.lot_no);
+        block_no = (EditText) findViewById(R.id.block_no);
+        phase_no = (EditText) findViewById(R.id.phase_no);
+        address_house_no = (EditText) findViewById(R.id.address_house_no);
+        address_street = (EditText) findViewById(R.id.address_street);
+        address_barangay = (EditText) findViewById(R.id.address_barangay);
+        address_city_municipality = (EditText) findViewById(R.id.address_city_municipality);
+        address_province = (EditText) findViewById(R.id.address_province);
+        address_zip = (EditText) findViewById(R.id.address_zip);
+        email = (EditText) findViewById(R.id.email);
+        tel_no = (EditText) findViewById(R.id.tel_no);
+        cell_no = (EditText) findViewById(R.id.cell_no);
+        address_region = (Spinner) findViewById(R.id.address_region);
+
+        s_house_no = address_house_no.getText().toString();
+        s_unit_no = unit_no.getText().toString();
+        s_building = building.getText().toString();
+        s_lot_no = lot_no.getText().toString();
+        s_block_no = block_no.getText().toString();
+        s_phase_no = phase_no.getText().toString();
+        s_street = address_street.getText().toString();
+        s_barangay = address_barangay.getText().toString();
+        s_city = address_city_municipality.getText().toString();
+        s_province = address_province.getText().toString();
+        s_zip = address_zip.getText().toString();
+        s_email = email.getText().toString();
+        s_tel_no = tel_no.getText().toString();
+        s_cell_no = cell_no.getText().toString();
+        s_region = address_region.getSelectedItem().toString();
+
+        count = 0;
+        limit = 6;
+
+        if (s_street.equals("")) {
+            address_street.setError("Field Required");
+        } else {
+            patient.setAddress_street(s_street);
+            count++;
+        }
+
+        if (s_barangay.equals("")) {
+            address_barangay.setError("Field Required");
+        } else {
+            patient.setAddress_barangay(s_barangay);
+            count++;
+        }
+
+        if (s_city.equals("")) {
+            address_city_municipality.setError("Field Required");
+        } else {
+            patient.setAddress_city_municipality(s_city);
+            count++;
+        }
+
+        if (s_province.equals("")) {
+            address_province.setError("Field Required");
+        } else {
+            patient.setAddress_province(s_province);
+            count++;
+        }
+
+        if (s_zip.equals("")) {
+            address_zip.setError("Field Required");
+        } else {
+            patient.setAddress_zip(s_zip);
+            count++;
+        }
+
+        if (s_cell_no.equals("")) {
+            cell_no.setError("Field Required");
+        } else {
+            patient.setCell_no(s_cell_no);
+            count++;
+        }
+
+        if (count == limit) {
+            this.hasError2 = false;
+        } else {
+            this.hasError2 = true;
+        }
+
+        //NOT REQUIRED VARIABLES
+        if (s_unit_no.equals("")) {
+            int_unit = 0;
+        } else {
+            int_unit = Integer.parseInt(s_unit_no);
+            patient.setUnit_floor_room_no(int_unit);
+        }
+
+        if (s_building.equals("")) {
+            s_building = null;
+        } else {
+            patient.setBuilding(s_building);
+        }
+
+        if (s_lot_no.equals("")) {
+            int_lot = 0;
+        } else {
+            int_lot = Integer.parseInt(s_lot_no);
+            patient.setLot_no(int_lot);
+        }
+
+        if (s_block_no.equals("")) {
+            int_block = 0;
+        } else {
+            int_block = Integer.parseInt(s_block_no);
+            patient.setBlock_no(int_block);
+        }
+
+        if (s_phase_no.equals("")) {
+            int_phase = 0;
+        } else {
+            int_phase = Integer.parseInt(s_phase_no);
+            patient.setPhase_no(int_phase);
+        }
+
+        if (s_house_no.equals("")) {
+            int_house = 0;
+        } else {
+            int_house = Integer.parseInt(s_house_no);
+            patient.setAddress_house_no(int_house);
+        }
+
+        if (s_tel_no.equals("")) {
+            patient.setTel_no(null);
+        } else {
+            patient.setTel_no(s_tel_no);
+        }
+
+        if (s_email.equals("")) {
+            patient.setEmail(null);
+        } else {
+            patient.setEmail(s_email);
+        }
+
+        patient.setAddress_region(s_region);
+    }
+
+    public void validateUserAccountInfo() {
+        EditText et_username = (EditText) findViewById(R.id.username);
+        EditText et_partial_password = (EditText) findViewById(R.id.password);
+        EditText et_confirmed_password = (EditText) findViewById(R.id.confirm_password);
+        image_holder = (ImageView) findViewById(R.id.image_holder);
+
+        username = et_username.getText().toString();
+        String partial_pword = et_partial_password.getText().toString(), confirmed_pword = et_confirmed_password.getText().toString();
+
+        count = 0;
+        limit = 4;
+
+        if (username.equals("")) {
+            et_username.setError("Field is required");
+        } else {
+            patient.setUsername(username);
+            count++;
+        }
+
+        if (partial_pword.equals("")) {
+            et_partial_password.setError("Field is required");
+        } else {
+            count++;
+        }
+
+        if (et_confirmed_password.equals("")) {
+            et_confirmed_password.setError("Field is required");
+        } else {
+            count++;
+        }
+
+
+        if (partial_pword.equals(confirmed_pword)) {
+            patient.setPassword(confirmed_pword);
+            count++;
+        } else {
+            et_confirmed_password.setError("Passwords do not match. Please try again.");
+        }
+
+        if (count == limit) {
+            this.hasError3 = false;
+        }
+    }
+
+    public void setProfilePhoto() {
+        String path = patient.getPhoto();
+
+        if (check > 0) { //IF RETURNED FROM ON ACTIVITY RESULT
+            Bitmap yourSelectedImage = BitmapFactory.decodeFile(path);
+            d = new BitmapDrawable(yourSelectedImage);
+            image_holder.setImageDrawable(d);
+        } else {
+            image_holder = (ImageView) findViewById(R.id.image_holder);
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 111) {
+            Uri uri = data.getData();
+            String[] projection = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(projection[0]);
+            String filePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            patient.setPhoto(filePath);
+
+            Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
+            d = new BitmapDrawable(yourSelectedImage);
+            image_holder.setImageDrawable(d);
+
+            check = 23;
+        }
     }
 }

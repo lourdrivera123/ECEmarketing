@@ -2,16 +2,23 @@ package com.example.zem.patientcareapp;
 
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,23 +36,39 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Zem on 4/29/2015.
  */
-public class ListOfDoctorsFragment extends Fragment {
+public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
     ListView list_of_doctors;
+
+    EditText search_doctor;
+    String[] doctors = {
+            "Esel", "Dexter", "Zemiel"
+    };
+
+    List<String> findArray = Arrays.asList(doctors);
+
+
     ArrayAdapter doctors_adapter;
     DbHelper dbHelper;
 
     JSONArray doctors_json_array_mysql = null;
     JSONArray doctors_json_array_sqlite = null;
     JSONArray doctors_json_array_final = null;
+    JSONArray doctors_json_array_final_update = null;
 
     RequestQueue queue;
     String url;
+    ProgressDialog pDialog;
 
     ArrayList<Doctor> doctors_array_list;
 
@@ -58,6 +81,7 @@ public class ListOfDoctorsFragment extends Fragment {
 
     LazyAdapter adapter;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
@@ -66,69 +90,118 @@ public class ListOfDoctorsFragment extends Fragment {
         queue = Volley.newRequestQueue(getActivity());
         url = "http://192.168.10.1/db/get_all_doctors.php";
 
-        // Request a string response from the provided URL.
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        pDialog = new ProgressDialog(getActivity());
+        pDialog.setMessage("Loading...");
+        pDialog.show();
 
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    int success = response.getInt("success");
-                    if (success == 1) {
-                        doctors_json_array_mysql = response.getJSONArray("doctors");
-                        doctors_json_array_sqlite = dbHelper.getAllDoctorsJSONArray();
+        if (isNetworkAvailable()) {
 
-                        doctors_json_array_final = checkWhatToInsert(doctors_json_array_mysql, doctors_json_array_sqlite);
+            Log.d("Connected to internet", "yes");
+            // Request a string response from the provided URL.
+            JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
-                        Log.d("doctor json array final", "" + doctors_json_array_final);
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        int success = response.getInt("success");
+                        if (success == 1) {
+                            doctors_json_array_mysql = response.getJSONArray("doctors");
+                            doctors_json_array_sqlite = dbHelper.getAllDoctorsJSONArray();
 
-                        if( doctors_json_array_final != null){
-                            for (int i = 0; i < doctors_json_array_final.length(); i++) {
-                                JSONObject doctor_json_object = doctors_json_array_final.getJSONObject(i);
+                            doctors_json_array_final = checkWhatToInsert(doctors_json_array_mysql, doctors_json_array_sqlite);
+                            doctors_json_array_final_update = checkWhatToUpdate(doctors_json_array_mysql, doctors_json_array_sqlite);
 
-                                if(!doctor_json_object.equals("null")){
-                                    if (dbHelper.insertDoctor(setDoctorObject(doctor_json_object))) {
-                                        Toast.makeText(getActivity(), "successfully saved " , Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(getActivity(), "failed to save " , Toast.LENGTH_SHORT).show();
+//                        Log.d("let me know", ""+checkDateTime("2015-05-12 13:00:56", "2015-05-12 13:00:55") );
+                            Log.d("doctor json array final", "" + doctors_json_array_final);
+                            Log.d("doctor json array final update", "" + doctors_json_array_final_update);
+
+                            if (!doctors_json_array_final.equals("null")) {
+                                for (int i = 0; i < doctors_json_array_final.length(); i++) {
+                                    JSONObject doctor_json_object = doctors_json_array_final.getJSONObject(i);
+
+                                    if (!doctor_json_object.equals("null")) {
+                                        if (dbHelper.insertDoctor(setDoctorObject(doctor_json_object))) {
+                                            Toast.makeText(getActivity(), "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(getActivity(), "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }
+                                doctors_json_array_final = null;
+                            } else {
+                                Toast.makeText(getActivity(), "the final list is empty", Toast.LENGTH_SHORT).show();
                             }
-                            doctors_json_array_final = null;
-                        } else {
-                            Toast.makeText(getActivity(), "the final list is empty", Toast.LENGTH_SHORT).show();
+
+                            if (!doctors_json_array_final_update.equals("null")) {
+                                for (int i = 0; i < doctors_json_array_final_update.length(); i++) {
+                                    JSONObject doctor_json_object = doctors_json_array_final_update.getJSONObject(i);
+
+                                    if (!doctor_json_object.equals("null")) {
+                                        if (dbHelper.updateDoctor(setDoctorObject(doctor_json_object))) {
+                                            Toast.makeText(getActivity(), "successfully updated ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(getActivity(), "failed to update", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                                doctors_json_array_final = null;
+                                doctors_json_array_final_update = null;
+                            } else {
+                                Toast.makeText(getActivity(), "the final list is empty", Toast.LENGTH_SHORT).show();
+                            }
+
+                            doctors_array_list = dbHelper.getAllDoctors();
+                            String xml = dbHelper.getDoctorsStringXml();
+
+                            populateDoctorListView(rootView, xml);
+                            pDialog.hide();
                         }
 
+<<<<<<< HEAD
                         doctors_array_list = dbHelper.getAllDoctors();
                         String xml = dbHelper.getDoctorsStringXml();
 
                         populateDoctorListView(rootView, xml);
 
+=======
+                    } catch (JSONException e) {
+//                    Toast.makeText(getActivity(), "" + e, Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+>>>>>>> 8d7ab7f4bdcd910f4e9ea9d29c7bab053cc21708
                     }
 
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(), "" + e, Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
                 }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    pDialog.hide();
+                }
+            });
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        queue.add(stringRequest);
+            queue.add(stringRequest);
 // end of request volley
 
+        } else {
+            Log.d("Connected to internet", "no");
+            doctors_array_list = dbHelper.getAllDoctors();
+            String xml = dbHelper.getDoctorsStringXml();
 
+<<<<<<< HEAD
 
+=======
+            populateDoctorListView(rootView, xml);
+            pDialog.hide();
+        }
+>>>>>>> 8d7ab7f4bdcd910f4e9ea9d29c7bab053cc21708
 
         return rootView;
     }
 
     public void populateDoctorListView(View rootView, String xml) {
         ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
+        search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
+        search_doctor.addTextChangedListener(this);
 
         XMLParser parser = new XMLParser();
 
@@ -175,7 +248,7 @@ public class ListOfDoctorsFragment extends Fragment {
                 JSONObject doctor_json_object_mysql = doctors_json_array_mysql.getJSONObject(i);
                 Boolean flag = false;
 
-                if(doctors_json_array_sqlite == null){
+                if (doctors_json_array_sqlite == null) {
                     doctors_json_array_final_storage.put(doctor_json_object_mysql);
                 } else {
 
@@ -202,7 +275,78 @@ public class ListOfDoctorsFragment extends Fragment {
         return doctors_json_array_final_storage;
     }
 
-    public Doctor setDoctorObject(JSONObject doctor_json_object){
+    public boolean checkDateTime(String str1, String str2) {
+        Boolean something = false;
+        try {
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+//            String str1 = "12/10/2013";
+            Date date1 = formatter.parse(str1);
+
+//            String str2 = "13/10/2013";
+            Date date2 = formatter.parse(str2);
+
+            if (date1.compareTo(date2) < 0) {
+                something = true;
+//                System.out.println("date2 is Greater than my date1");
+//            Log.d("date2 is Greater than my date1", "adsasd");
+            }
+
+
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+
+        return something;
+    }
+
+    public JSONArray checkWhatToUpdate(JSONArray doctors_json_array_mysql, JSONArray doctors_json_array_sqlite) {
+        JSONArray doctors_json_array_final_storage = new JSONArray();
+        try {
+            for (int i = 0; i < doctors_json_array_mysql.length(); i++) {
+
+                JSONObject doctor_json_object_mysql = doctors_json_array_mysql.getJSONObject(i);
+
+                if (checkDateTime(dbHelper.getLastUpdate("doctors"), doctor_json_object_mysql.getString("updated_at"))) { //to be repared
+                    //the sqlite last update is lesser than from mysql
+                    //put your json object into final array here.
+
+                    doctors_json_array_final_storage.put(doctor_json_object_mysql);
+                    Log.d("Updated at Compare", "the updated_at column in mysql is greater than in sqlite");
+
+                } else {
+                    Log.d("Updated at Compare", "the updated_at column in sqlite is greater than in mysql");
+
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return doctors_json_array_final_storage;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        String key = search_doctor.getText().toString();
+
+        if (findArray.contains(key)) {
+            Toast.makeText(getActivity(), "" + key, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
+
+    public Doctor setDoctorObject(JSONObject doctor_json_object) {
 
         Doctor doctor_object = new Doctor();
         try {
@@ -230,5 +374,13 @@ public class ListOfDoctorsFragment extends Fragment {
 
         return doctor_object;
     }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 
 }

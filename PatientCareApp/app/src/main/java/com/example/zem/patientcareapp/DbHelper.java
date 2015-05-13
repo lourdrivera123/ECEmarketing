@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,6 +19,40 @@ import java.util.ArrayList;
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "PatientCare";
     public static final int DB_VERSION = 1;
+
+    //PATIENTS_TABLE
+    public static final String TBL_PATIENTS = "patients";
+    public static final String PTNT_ID = "id";
+    public static final String PTNT_SERVER_ID = "server_id";
+    public static final String PTNT_FNAME = "fname";
+    public static final String PTNT_MNAME = "mname";
+    public static final String PTNT_LNAME = "lname";
+    public static final String PTNT_USERNAME = "username";
+    public static final String PTNT_PASSWORD = "password";
+    public static final String PTNT_OCCUPATION = "occupation";
+    public static final String PTNT_BIRTHDATE = "birthdate";
+    public static final String PTNT_SEX = "sex";
+    public static final String PTNT_CIVIL_STATUS = "civil_status";
+    public static final String PTNT_HEIGHT = "height";
+    public static final String PTNT_WEIGHT = "weight";
+    public static final String PTNT_UNIT_NO = "unit_floor_room_no";
+    public static final String PTNT_BUILDING = "building";
+    public static final String PTNT_LOT_NO = "lot_no";
+    public static final String PTNT_BLOCK_NO = "block_no";
+    public static final String PTNT_PHASE_NO = "phase_no";
+    public static final String PTNT_HOUSE_NO = "address_house_no";
+    public static final String PTNT_STREET = "address_street";
+    public static final String PTNT_BARANGAY = "address_barangay";
+    public static final String PTNT_CITY = "address_city_municipality";
+    public static final String PTNT_PROVINCE = "_address_province";
+    public static final String PTNT_REGION = "address_region";
+    public static final String PTNT_ZIP = "address_zip";
+    public static final String PTNT_TEL_NO = "tel_no";
+    public static final String PTNT_CELL_NO = "cell_no";
+    public static final String PTNT_EMAIL = "email";
+    public static final String PTNT_PHOTO = "photo";
+    public static final String PTNT_CREATED_AT = "created_at";
+    public static final String PTNT_UPDATED_AT = "updated_at";
 
     //Updates Table
     public static final String TBL_UPDATES = "updates";
@@ -53,6 +88,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DOC_EMAIL = "email";
     public static final String DOC_SEC_ID = "secretary_id";
 
+
     //Doctor string xml
     String doctor_string_xml = "";
     public static String doctors_string_xml = "";
@@ -63,6 +99,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         String sql1 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)",
@@ -73,12 +110,22 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql2 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER)",
                 TBL_UPDATES, UPDATE_ID, UPDATE_TBL_NAME, UPDATE_TIMESTAMP, UPDATE_SEEN);
 
+        String sql3 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
+                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, " +
+                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_PATIENTS, PTNT_ID, PTNT_SERVER_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION,
+                PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO,
+                PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_CELL_NO,
+                PTNT_EMAIL, PTNT_PHOTO, PTNT_CREATED_AT, PTNT_UPDATED_AT);
+
         db.execSQL(sql1);
         db.execSQL(sql2);
+        db.execSQL(sql3);
+
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
 
-        }
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -86,7 +133,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-    public boolean insertTableNamesToUpdates(String table_name, SQLiteDatabase db){
+    public boolean insertTableNamesToUpdates(String table_name, SQLiteDatabase db) {
 //        SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -100,7 +147,109 @@ public class DbHelper extends SQLiteOpenHelper {
 
     }
 
+    public boolean LoginUser(String uname, String password) {
+        int login = 0;
+
+        SQLiteDatabase db = getWritableDatabase();
+        String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + password + "'";
+        Cursor cur = db.rawQuery(sql1, null);
+        cur.moveToFirst();
+
+        if (cur.getCount() > 0) {
+            login = 1;
+        }
+        return login > 0;
+    }
+
+    public int checkUserIfRegistered(String username) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + username + "'";
+        Cursor cur = db.rawQuery(sql, null);
+        cur.moveToFirst();
+        int check = 0;
+
+        if (cur.getCount() > 0) {
+            check = 1;
+        }
+
+        return check;
+    }
+
+    public boolean insertPatient(int server_id, String created_at, Patient patient) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(PTNT_SERVER_ID, server_id);
+        values.put(PTNT_FNAME, patient.getFname());
+        values.put(PTNT_MNAME, patient.getMname());
+        values.put(PTNT_LNAME, patient.getLname());
+        values.put(PTNT_USERNAME, patient.getUsername());
+        values.put(PTNT_PASSWORD, patient.getPassword());
+        values.put(PTNT_OCCUPATION, patient.getOccupation());
+        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
+        values.put(PTNT_SEX, patient.getSex());
+        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
+        values.put(PTNT_HEIGHT, patient.getHeight());
+        values.put(PTNT_WEIGHT, patient.getWeight());
+        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
+        values.put(PTNT_BUILDING, patient.getBuilding());
+        values.put(PTNT_LOT_NO, patient.getLot_no());
+        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
+        values.put(PTNT_PHASE_NO, patient.getPhase_no());
+        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
+        values.put(PTNT_STREET, patient.getAddress_street());
+        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
+        values.put(PTNT_CITY, patient.getAddress_city_municipality());
+        values.put(PTNT_PROVINCE, patient.getAddress_province());
+        values.put(PTNT_REGION, patient.getAddress_region());
+        values.put(PTNT_ZIP, patient.getAddress_zip());
+        values.put(PTNT_TEL_NO, patient.getTel_no());
+        values.put(PTNT_CELL_NO, patient.getCell_no());
+        values.put(PTNT_EMAIL, patient.getEmail());
+        values.put(PTNT_PHOTO, patient.getPhoto());
+        values.put(PTNT_CREATED_AT, created_at);
+        values.put(PTNT_UPDATED_AT, created_at);
+
+        long insert_patient = db.insert(TBL_PATIENTS, null, values);
+
+        return insert_patient > 0;
+    }
+
     public boolean insertDoctor(Doctor doctor_object) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DOC_DOC_ID, doctor_object.getDoc_id());
+        values.put(DOC_LNAME, doctor_object.getLname());
+        values.put(DOC_MNAME, doctor_object.getMname());
+        values.put(DOC_FNAME, doctor_object.getFname());
+        values.put(DOC_PRC_NO, doctor_object.getPrc_no());
+        values.put(DOC_ADDRESS_HOUSE_NO, doctor_object.getAddress_house_no());
+        values.put(DOC_ADDRESS_STREET, doctor_object.getAddress_street());
+        values.put(DOC_ADDRESS_BARANGAY, doctor_object.getAddress_barangay());
+        values.put(DOC_ADDRESS_CITY, doctor_object.getAddress_city_municipality());
+        values.put(DOC_ADDRESS_PROVINCE, doctor_object.getAddress_province());
+        values.put(DOC_ADDRESS_REGION, doctor_object.getAddress_region());
+        values.put(DOC_ADDRESS_COUNTRY, doctor_object.getCountry());
+        values.put(DOC_ZIP, doctor_object.getAddress_zip());
+        values.put(DOC_SPECIALTY, doctor_object.getSpecialty());
+        values.put(DOC_SUB_SPECIALTY, doctor_object.getSub_specialty());
+        values.put(DOC_CELL_NO, doctor_object.getCell_no());
+        values.put(DOC_TEL_NO, doctor_object.getTel_no());
+        values.put(DOC_PHOTO, doctor_object.getPhoto());
+        values.put(DOC_CLINIC_SCHED, doctor_object.getClinic_sched());
+        values.put(DOC_AFFILIATIONS, doctor_object.getAffiliation());
+        values.put(DOC_CLINIC_ID, doctor_object.getClinic_id());
+        values.put(DOC_EMAIL, doctor_object.getEmail());
+        values.put(DOC_SEC_ID, doctor_object.getSecretary_id());
+
+        long rowID = db.insert(TBL_DOCTORS, null, values);
+
+        return rowID > 0;
+    }
+
+    public boolean updateDoctor(Doctor doctor_object) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -128,7 +277,9 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DOC_EMAIL, doctor_object.getEmail());
         values.put(DOC_SEC_ID, doctor_object.getSecretary_id());
 
-        long rowID = db.insert(TBL_DOCTORS, null, values);
+//        long rowID = db.update();
+
+        int rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor_object.getDoc_id(), null);
 
         return rowID > 0;
     }
@@ -165,7 +316,7 @@ public class DbHelper extends SQLiteOpenHelper {
             doctor.setMname(cur.getString(2));
             doctor.setFname(cur.getString(3));
 
-            System.out.print("Lname: "+cur.getString(1));
+            System.out.print("Lname: " + cur.getString(1));
 
             doctors.add(doctor);
 
@@ -180,24 +331,22 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
 
-
         cur.close();
         db.close();
 
         Log.d("The Doctor XML String: ", doctors_string_xml);
 
-            doctors_string_xml = "<list>" + doctor_string_xml + "</list>";
+        doctors_string_xml = "<list>" + doctor_string_xml + "</list>";
 
         return doctors;
     }
 
-    public String getDoctorsStringXml(){
+    public String getDoctorsStringXml() {
         return doctors_string_xml;
     }
 
 
-    public JSONArray getAllDoctorsJSONArray()
-    {
+    public JSONArray getAllDoctorsJSONArray() {
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -205,7 +354,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(sql, null);
 
-        JSONArray resultSet     = new JSONArray();
+        JSONArray resultSet = new JSONArray();
 
         cursor.moveToFirst();
         while (cursor.isAfterLast() == false) {
@@ -213,24 +362,16 @@ public class DbHelper extends SQLiteOpenHelper {
             int totalColumn = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
 
-            for( int i=0 ;  i< totalColumn ; i++ )
-            {
-                if( cursor.getColumnName(i) != null )
-                {
-                    try
-                    {
-                        if( cursor.getString(i) != null )
-                        {
+            for (int i = 0; i < totalColumn; i++) {
+                if (cursor.getColumnName(i) != null) {
+                    try {
+                        if (cursor.getString(i) != null) {
                             System.out.print("json array of all doctors: " + cursor.getString(i));
-                            rowObject.put(cursor.getColumnName(i) ,  cursor.getString(i) );
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        } else {
+                            rowObject.put(cursor.getColumnName(i), "");
                         }
-                        else
-                        {
-                            rowObject.put( cursor.getColumnName(i) ,  "" );
-                        }
-                    }
-                    catch( Exception e )
-                    {
+                    } catch (Exception e) {
 //                        Log.d("TAG_NAME", e.getMessage()  );
                         System.out.print("error in doctors: " + e.getMessage());
                     }
@@ -241,8 +382,29 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         cursor.close();
 //        Log.d("TAG_NAME", resultSet.toString() );
-           System.out.print("json array of all doctors: " + resultSet.toString());
+        System.out.print("json array of all doctors: " + resultSet.toString());
         return resultSet;
+    }
+
+    public String getLastUpdate(String table_name) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String sql = "SELECT * FROM " + TBL_UPDATES + " WHERE " + UPDATE_TBL_NAME + "= '" + table_name + "'";
+
+
+        String last_update_date = "";
+
+        Cursor cur = db.rawQuery(sql, null);
+//        cur.moveToFirst();
+
+        while (cur.moveToNext()) {
+            last_update_date = cur.getString(2);
+        }
+
+        cur.close();
+        db.close();
+
+        return last_update_date;
     }
 
 }

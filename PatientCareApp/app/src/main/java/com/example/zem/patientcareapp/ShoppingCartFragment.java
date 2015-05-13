@@ -157,7 +157,7 @@ public class ShoppingCartFragment extends Fragment {
                     final double price = Double.parseDouble(row.get("price"));
 
                     p_name.setText(row.get("name"));
-                    p_total.setText( (old_qty* price) +"");
+                    p_total.setText("Php "+ (old_qty* price));
                     p_price.setText("Php "+price+"/"+row.get("unit"));
 
                     et_qty.addTextChangedListener(new TextWatcher() {

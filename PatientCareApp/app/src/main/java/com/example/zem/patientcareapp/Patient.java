@@ -5,45 +5,75 @@ import java.io.Serializable;
 /**
  * Created by User PC on 5/4/2015.
  */
-public class Patient implements Serializable{
+public class Patient implements Serializable {
     private String fname = "", mname = "", lname = "", username = "", password = "",
-        occupation = "", doctor_referred_by = "", doctor_referred_to = "", birthdate = "",
-        sex = "", civil_status = "", height = "", weight = "", address_house_no = "", address_street = "",
-        address_barangay = "",address_city_municipality = "", address_province = "", address_region = "",
-        country = "", address_zip = "", cell_no = "", tel_no = "", email = "", photo = "";
+            occupation = "", doctor_referred_by = "", doctor_referred_to = "", birthdate = "",
+            sex = "", civil_status = "", height = "", weight = "", address_street = "",
+            address_barangay = "", address_city_municipality = "", address_province = "", address_region = "",
+            country = "", address_zip = "", cell_no = "", tel_no = "", email = "", photo = "", building = "";
 
-    public Patient(){
+    int unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no;
+
+    public Patient() {
 
     }
 
-    public String getFullname(boolean middlename_is_full){
-        if(middlename_is_full == true) {
+    public int getUnit_floor_room_no() {
+        return unit_floor_room_no;
+    }
+
+    public String getBuilding() {
+        return building;
+    }
+
+    public int getLot_no() {
+        return lot_no;
+    }
+
+    public int getBlock_no() {
+        return block_no;
+    }
+
+    public int getPhase_no() {
+        return phase_no;
+    }
+
+    public String getFullname(boolean middlename_is_full) {
+        if (middlename_is_full == true) {
             return fname + " " + mname + " " + lname;
         }
-        return fname+" "+mname.indexOf(0)+". "+lname;
+        return fname + " " + mname.indexOf(0) + ". " + lname;
     }
 
-    public void setFullname(String first_name, String middle_name, String last_name){
+    public void setFullname(String first_name, String middle_name, String last_name) {
         this.setFname(first_name);
         this.setMname(middle_name);
         this.setLname(last_name);
     }
 
-    public String getFullAddress(){
-        return address_house_no+" "+address_street+" "+address_barangay+"\n"
-                +address_city_municipality+" "+address_province+" "+address_region+" "+country+", "+address_zip;
+    public String getFullAddress() {
+        return address_house_no + " " + address_street + " " + address_barangay + "\n"
+                + address_city_municipality + " " + address_province + " " + address_region + " " + country + ", " + address_zip;
     }
 
-    public void setFullAddress(String house_no, String street, String barangay, String city_municipality,
-                               String province, String region, String country, String zip) {
-        this.setAddress_house_no(house_no);
-        this.setAddress_street(street);
-        this.setAddress_barangay(barangay);
-        this.setAddress_city_municipality(city_municipality);
-        this.setAddress_province(province);
-        this.setAddress_zip(zip);
-        this.setAddress_region(region);
-        this.setCountry(country);
+    public void setUnit_floor_room_no(int unit_floor_room_no) {
+        this.unit_floor_room_no = unit_floor_room_no;
+    }
+
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+    public void setLot_no(int lot_no) {
+        this.lot_no = lot_no;
+    }
+
+    public void setBlock_no(int block_no) {
+        this.block_no = block_no;
+    }
+
+    public void setPhase_no(int phase_no) {
+        this.phase_no = phase_no;
     }
 
     public String getFname() {
@@ -150,11 +180,11 @@ public class Patient implements Serializable{
         this.weight = weight;
     }
 
-    public String getAddress_house_no() {
+    public int getAddress_house_no() {
         return address_house_no;
     }
 
-    public void setAddress_house_no(String address_house_no) {
+    public void setAddress_house_no(int address_house_no) {
         this.address_house_no = address_house_no;
     }
 
