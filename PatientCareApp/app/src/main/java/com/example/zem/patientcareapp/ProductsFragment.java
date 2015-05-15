@@ -36,15 +36,20 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     EditText qty;
     ListView list_of_products;
     LazyAdapter adapter;
+    DbHelper dbHelper;
+    Helpers helper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.products_layout, container, false);
 
         ArrayList<HashMap<String, String>> products_list = new ArrayList<HashMap<String, String>>();
+        dbHelper = new DbHelper(getActivity());
+        helper = new Helpers();
+
 
         XMLParser parser = new XMLParser();
-//        String xml = parser.getXmlFromUrl(URL); // getting XML from URL
+//        String xml = parser.getXmlFromUrl("http://localhost/db/get.php?q=get_products"); // getting XML from URL
         String xml =
                 "<list>" +
                         "<entry>\n" +
