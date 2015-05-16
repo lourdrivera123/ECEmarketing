@@ -35,9 +35,7 @@ public class Sync {
     RequestQueue queue;
     String url, tableName, tableId;
     DbHelper dbHelper;
-    ListOfDoctorsFragment ldf;
     Context context;
-    boolean savingSuccess = false;
 
     public void init(Context c, String request, String table_name, String table_id){
         tableName = table_name;
@@ -77,7 +75,6 @@ public class Sync {
                                     }else if( tableName == "doctors" ){
                                        if (dbHelper.insertDoctor(setDoctor(json_object))) {
                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
-                                            savingSuccess = true;
                                         } else {
                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
                                         } 
