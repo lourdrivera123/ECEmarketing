@@ -3,10 +3,13 @@ package com.example.zem.patientcareapp;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,56 +97,6 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.doctors_btn:
-//                // Request a string response from the provided URL.
-//                JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-//
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        try {
-//                            int success = response.getInt("success");
-//                            if (success == 1) {
-//                                doctors_json_array_mysql = response.getJSONArray("doctors");
-//                                doctors_json_array_sqlite = dbHelper.getAllDoctorsJSONArray();
-//
-//                                doctors_json_array_final = checkWhatToInsert(doctors_json_array_mysql, doctors_json_array_sqlite);
-//
-//                                Log.d("doctor json array final", "" + doctors_json_array_final);
-//
-//                                if( doctors_json_array_final != null){
-//                                    for (int i = 0; i < doctors_json_array_final.length(); i++) {
-//                                        JSONObject doctor_json_object = doctors_json_array_final.getJSONObject(i);
-//
-//                                        Log.d("esel", ""+doctor_json_object);
-//
-//                                        if(!doctor_json_object.equals("null")){
-//                                            if (dbHelper.insertDoctor(setDoctorObject(doctor_json_object))) {
-//                                                Toast.makeText(getBaseContext(), "successfully saved " , Toast.LENGTH_SHORT).show();
-//                                            } else {
-//                                                Toast.makeText(getBaseContext(), "failed to save " , Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        }
-//                                    }
-//                                    doctors_json_array_final = null;
-//                                } else {
-//                                    Toast.makeText(getBaseContext(), "the final list is empty", Toast.LENGTH_SHORT).show();
-//                                }
-//
-//                            }
-//
-//                        } catch (JSONException e) {
-//                            Toast.makeText(getBaseContext(), "" + e, Toast.LENGTH_SHORT).show();
-//                            e.printStackTrace();
-//                        }
-//
-//                    }
-//                }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//
-//                queue.add(stringRequest);
                 intent.putExtra("selected", 3);
                 startActivity(intent);
                 break;
