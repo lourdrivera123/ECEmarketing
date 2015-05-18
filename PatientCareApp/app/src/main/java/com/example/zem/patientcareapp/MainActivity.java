@@ -1,11 +1,14 @@
 package com.example.zem.patientcareapp;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -110,11 +113,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void showNotification(){
-
+        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle("It's your Birthday!")
+                        .setSound(uri)
+                        .setDefaults(Notification.DEFAULT_SOUND)
                         .setContentText("I hope, it's your last. ;)");
 
         Intent resultIntent = new Intent(this, MainActivity.class);

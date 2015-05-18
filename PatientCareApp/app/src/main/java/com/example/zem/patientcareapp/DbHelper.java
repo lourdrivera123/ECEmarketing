@@ -91,6 +91,23 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DOC_EMAIL = "email";
     public static final String DOC_SEC_ID = "secretary_id";
 
+    // PRODUCT_CATEGORIES TABLE
+    public static final String PROD_CAT_NAME = "name";
+    public static final String PROD_CAT_CREATED_AT = "created_at";
+    public static final String PROD_CAT_UPDATED_AT = "updated_at";
+    public static final String PROD_CAT_DELETED_AT = "deleted_at";
+    public static final String TBL_PRODUCT_CATEGORIES= "product_categories";
+    public static final String PRODUCT_CATEGORIES_ID = "id";
+
+    // PRODUCT_SUBCATEGORIES TABLE
+    public static final String PROD_SUBCAT_NAME = "name";
+    public static final String PROD_SUBCAT_CATEGORY_ID = "category_id";
+    public static final String PROD_SUBCAT_CREATED_AT = "created_at";
+    public static final String PROD_SUBCAT_UPDATED_AT = "updated_at";
+    public static final String PROD_SUBCAT_DELETED_AT = "deleted_at";
+    public static final String TBL_PRODUCT_SUBCATEGORIES= "product_subcategories";
+    public static final String PRODUCT_SUBCATEGORIES_ID = "id";
+
     // PRODUCTS TABLE
     public static final String TBL_PRODUCTS= "products";
     public static final String PRODUCTS_ID = "id";
@@ -147,6 +164,14 @@ public class DbHelper extends SQLiteOpenHelper {
                 PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_CELL_NO,
                 PTNT_EMAIL, PTNT_PHOTO, PTNT_CREATED_AT, PTNT_UPDATED_AT);
 
+        // SQL to create table "product_categories"
+        String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCT_CATEGORIES, PRODUCT_CATEGORIES_ID, PROD_CAT_NAME, PROD_CAT_CREATED_AT, PROD_CAT_UPDATED_AT, PROD_CAT_DELETED_AT);
+
+        // SQL to create table "product_subcategories"
+        String sql_create_tbl_product_subcategories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCT_SUBCATEGORIES, PRODUCT_SUBCATEGORIES_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, PROD_SUBCAT_CREATED_AT, PROD_SUBCAT_UPDATED_AT, PROD_SUBCAT_DELETED_AT);
+
         // SQL to create table "products"
         String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT," +
                         " %s TEXT , %s TEXT, %s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
@@ -164,6 +189,8 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql2);
         db.execSQL(sql3);
         db.execSQL(sql_create_tbl_baskets);
+        db.execSQL(sql_create_tbl_product_categories);
+        db.execSQL(sql_create_tbl_product_subcategories);
         db.execSQL(sql_create_tbl_products);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
