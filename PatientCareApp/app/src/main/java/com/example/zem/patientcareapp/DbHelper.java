@@ -98,6 +98,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String PROD_CAT_DELETED_AT = "deleted_at";
     public static final String TBL_PRODUCT_CATEGORIES= "product_categories";
     public static final String PRODUCT_CATEGORIES_ID = "id";
+    public static final String SERVER_PRODUCT_CATEGORY_ID = "product_category_id";
 
     // PRODUCT_SUBCATEGORIES TABLE
     public static final String PROD_SUBCAT_NAME = "name";
@@ -107,6 +108,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String PROD_SUBCAT_DELETED_AT = "deleted_at";
     public static final String TBL_PRODUCT_SUBCATEGORIES= "product_subcategories";
     public static final String PRODUCT_SUBCATEGORIES_ID = "id";
+    public static final String SERVER_PRODUCT_SUBCATEGORY_ID = "product_subcategory_id";
 
     // PRODUCTS TABLE
     public static final String TBL_PRODUCTS= "products";
@@ -165,12 +167,12 @@ public class DbHelper extends SQLiteOpenHelper {
                 PTNT_EMAIL, PTNT_PHOTO, PTNT_CREATED_AT, PTNT_UPDATED_AT);
 
         // SQL to create table "product_categories"
-        String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCT_CATEGORIES, PRODUCT_CATEGORIES_ID, PROD_CAT_NAME, PROD_CAT_CREATED_AT, PROD_CAT_UPDATED_AT, PROD_CAT_DELETED_AT);
+        String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT,%s TEXT, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCT_CATEGORIES, PRODUCT_CATEGORIES_ID, SERVER_PRODUCT_CATEGORY_ID, PROD_CAT_NAME, PROD_CAT_CREATED_AT, PROD_CAT_UPDATED_AT, PROD_CAT_DELETED_AT);
 
         // SQL to create table "product_subcategories"
-        String sql_create_tbl_product_subcategories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCT_SUBCATEGORIES, PRODUCT_SUBCATEGORIES_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, PROD_SUBCAT_CREATED_AT, PROD_SUBCAT_UPDATED_AT, PROD_SUBCAT_DELETED_AT);
+        String sql_create_tbl_product_subcategories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCT_SUBCATEGORIES, PRODUCT_SUBCATEGORIES_ID, SERVER_PRODUCT_SUBCATEGORY_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, PROD_SUBCAT_CREATED_AT, PROD_SUBCAT_UPDATED_AT, PROD_SUBCAT_DELETED_AT);
 
         // SQL to create table "products"
         String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT," +
@@ -226,7 +228,6 @@ public class DbHelper extends SQLiteOpenHelper {
         String last_update_date = "";
 
         Cursor cur = db.rawQuery(sql, null);
-//        cur.moveToFirst();
 
         while (cur.moveToNext()) {
             last_update_date = cur.getString(2);
@@ -556,6 +557,106 @@ public class DbHelper extends SQLiteOpenHelper {
         return resultSet;
     }
 
+
+    /* INSERT and UPDATE and other SQL for PRODUCT_CATEGORIES TABLE  */
+        /* Returns all categories */
+        public ArrayList<ProductCategory> getAllProductCategories(){
+            SQLiteDatabase db = getWritableDatabase();
+            String sql = "SELECT * FROM "+TBL_PRODUCT_CATEGORIES+" WHERE deleted_at IS NULL";
+
+            ArrayList<ProductCategory> categories = new ArrayList<ProductCategory>();
+            Cursor cur = db.rawQuery(sql, null);
+            while(cur.moveToNext()){
+                ProductCategory c = new ProductCategory();
+                c.setName(cur.getString(1));
+                categories.add(c);
+            }
+
+            return categories;
+        }
+
+        /* Insert new product category */
+        public boolean insertProductCategory(ProductCategory category){
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put(PROD_CAT_NAME, category.getName());
+            values.put(SERVER_PRODUCT_CATEGORY_ID, category.getCategoryId());
+            values.put(PROD_CAT_CREATED_AT, category.getCreatedAt());
+            values.put(PROD_CAT_UPDATED_AT, category.getUpdatedAt());
+            values.put(PROD_CAT_DELETED_AT, category.getDeletedAt());
+
+            long rowID = db.insert(TBL_PRODUCT_CATEGORIES, null, values);
+
+            return rowID > 0;
+        }
+
+        /* Updates product category */
+        public boolean updateProductCategory(ProductCategory category){
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put(PROD_CAT_NAME, category.getName());
+            values.put(PROD_CAT_CREATED_AT, category.getCreatedAt());
+            values.put(PROD_CAT_UPDATED_AT, category.getUpdatedAt());
+            values.put(PROD_CAT_DELETED_AT, category.getDeletedAt());
+
+            long rowID = db.update(TBL_PRODUCTS, values, PRODUCT_CATEGORIES_ID + "=" + category.getCategoryId(), null);
+
+            return rowID > 0;
+        }
+
+    /* INSERT and UPDATE and other SQL for PRODUCT_SUBCATEGORIES TABLE */
+
+        // Returns all product subcategories for a specific category
+        public ArrayList<ProductSubCategory> getAllProductSubCategories(int productCategoryId){
+            SQLiteDatabase db = getWritableDatabase();
+            String sql = "SELECT * FROM "+TBL_PRODUCT_CATEGORIES+" WHERE category_id="+productCategoryId+" AND deleted_at IS NULL";
+
+            ArrayList<ProductSubCategory> subCategories = new ArrayList<ProductSubCategory>();
+            Cursor cur = db.rawQuery(sql, null);
+            while(cur.moveToNext()){
+                ProductSubCategory s = new ProductSubCategory();
+                s.setName(cur.getString(1));
+                subCategories.add(s);
+            }
+
+            return subCategories;
+        }
+
+        // Inserts a new record for subcategories
+        public boolean insertProductSubCategory(ProductSubCategory subCategory){
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put(PROD_SUBCAT_NAME, subCategory.getName());
+            values.put(PROD_SUBCAT_CATEGORY_ID, subCategory.getCategoryId());
+            values.put(SERVER_PRODUCT_SUBCATEGORY_ID, subCategory.getSubCategoryId());
+            values.put(PROD_SUBCAT_CREATED_AT, subCategory.getCreatedAt());
+            values.put(PROD_SUBCAT_UPDATED_AT, subCategory.getUpdatedAt());
+            values.put(PROD_SUBCAT_DELETED_AT, subCategory.getDeletedAt());
+
+            long rowID = db.insert(TBL_PRODUCT_SUBCATEGORIES, null, values);
+
+            return rowID > 0;
+        }
+
+        /* Updates product subcategory */
+        public boolean updateProductSubCategory(ProductSubCategory subCategory){
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put(PROD_CAT_NAME, subCategory.getName());
+            values.put(PROD_SUBCAT_CATEGORY_ID, subCategory.getCategoryId());
+            values.put(PROD_CAT_CREATED_AT, subCategory.getCreatedAt());
+            values.put(PROD_CAT_UPDATED_AT, subCategory.getUpdatedAt());
+            values.put(PROD_CAT_DELETED_AT, subCategory.getDeletedAt());
+
+            long rowID = db.update(TBL_PRODUCT_SUBCATEGORIES, values, PRODUCT_SUBCATEGORIES_ID + "=" + subCategory.getId(), null);
+
+            return rowID > 0;
+        }
+
     /* INSERT and UPDATE and other SQL's & functions for PRODUCTS TABLE */
 
         /* Returns all products */
@@ -583,49 +684,49 @@ public class DbHelper extends SQLiteOpenHelper {
 
         /* Create a record for "products" table here */
         public boolean insertProduct(Product product){
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        System.out.println(dateFormat.format(date));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            System.out.println(dateFormat.format(date));
 
-        values.put(PRODUCT_NAME, product.getName());
-        values.put(PRODUCT_DOSAGE_FORMAT, product.getDosageFormatAndStrength());
-        values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
-        values.put(PRODUCT_DESCRIPTION, product.getDescription());
-        values.put(PRODUCT_PHOTO, product.getPhoto());
-        values.put(PRODUCT_PRICE, product.getPrice());
-        values.put(PRODUCT_UNIT, product.getUnit());
+            values.put(PRODUCT_NAME, product.getName());
+            values.put(PRODUCT_DOSAGE_FORMAT, product.getDosageFormatAndStrength());
+            values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
+            values.put(PRODUCT_DESCRIPTION, product.getDescription());
+            values.put(PRODUCT_PHOTO, product.getPhoto());
+            values.put(PRODUCT_PRICE, product.getPrice());
+            values.put(PRODUCT_UNIT, product.getUnit());
 
-        values.put(PRODUCT_CREATED_AT, product.getCreatedAt());
-        values.put(PRODUCT_UPDATED_AT, product.getUpdatedAt());
+            values.put(PRODUCT_CREATED_AT, product.getCreatedAt());
+            values.put(PRODUCT_UPDATED_AT, product.getUpdatedAt());
 
-        long rowID = db.insert(TBL_PRODUCTS, null, values);
+            long rowID = db.insert(TBL_PRODUCTS, null, values);
 
-        return rowID > 0;
-    }
+            return rowID > 0;
+        }
         public boolean updateProduct(Product product){
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        System.out.println(dateFormat.format(date));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            System.out.println(dateFormat.format(date));
 
-        values.put(PRODUCT_NAME, product.getName());
-        values.put(PRODUCT_DOSAGE_FORMAT, product.getDosageFormatAndStrength());
-        values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
-        values.put(PRODUCT_DESCRIPTION, product.getDescription());
-        values.put(PRODUCT_PHOTO, product.getPhoto());
-        values.put(PRODUCT_PRICE, product.getPrice());
-        values.put(PRODUCT_UNIT, product.getUnit());
+            values.put(PRODUCT_NAME, product.getName());
+            values.put(PRODUCT_DOSAGE_FORMAT, product.getDosageFormatAndStrength());
+            values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
+            values.put(PRODUCT_DESCRIPTION, product.getDescription());
+            values.put(PRODUCT_PHOTO, product.getPhoto());
+            values.put(PRODUCT_PRICE, product.getPrice());
+            values.put(PRODUCT_UNIT, product.getUnit());
 
-        values.put(PRODUCT_CREATED_AT, product.getCreatedAt());
-        values.put(PRODUCT_UPDATED_AT, product.getUpdatedAt());
+            values.put(PRODUCT_CREATED_AT, product.getCreatedAt());
+            values.put(PRODUCT_UPDATED_AT, product.getUpdatedAt());
 
-        long rowID = db.insert(TBL_PRODUCTS, null, values);
+            long rowID = db.update(TBL_PRODUCTS, values, PRODUCTS_ID+"="+product.getId(), null);
 
-        return rowID > 0;
-    }
+            return rowID > 0;
+        }
 }

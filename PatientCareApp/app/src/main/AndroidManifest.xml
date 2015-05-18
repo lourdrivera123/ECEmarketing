@@ -79,6 +79,7 @@
         <activity android:name=".ProductCategory" />
         <activity android:name=".ProductSubCategory" />
         <activity android:name=".Product" />
+        <activity android:name=".ProductCategoriesFragment" />
     </application>
 
 </manifest>
