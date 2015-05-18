@@ -129,7 +129,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         String sql1 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)",
@@ -167,9 +166,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_tbl_baskets);
         db.execSQL(sql_create_tbl_products);
 
-
         insertTableNamesToUpdates(TBL_DOCTORS, db);
-
     }
 
     @Override
@@ -178,9 +175,10 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+
     /* SYNC CHECKER and etc. */
         public boolean insertTableNamesToUpdates(String table_name, SQLiteDatabase db) {
-    //        SQLiteDatabase db = getWritableDatabase();
+            //        SQLiteDatabase db = getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put(UPDATE_TBL_NAME, table_name);
@@ -190,7 +188,6 @@ public class DbHelper extends SQLiteOpenHelper {
             long rowID = db.insert(TBL_UPDATES, null, values);
 
             return rowID > 0;
-
         }
 
         public String getLastUpdate(String table_name) {
@@ -285,6 +282,91 @@ public class DbHelper extends SQLiteOpenHelper {
         return insert_patient > 0;
     }
 
+    public boolean updatePatient(Patient patient, int ID, String photo) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PTNT_FNAME, patient.getFname());
+        values.put(PTNT_MNAME, patient.getMname());
+        values.put(PTNT_LNAME, patient.getLname());
+        values.put(PTNT_USERNAME, patient.getUsername());
+        values.put(PTNT_PASSWORD, patient.getPassword());
+        values.put(PTNT_OCCUPATION, patient.getOccupation());
+        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
+        values.put(PTNT_SEX, patient.getSex());
+        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
+        values.put(PTNT_HEIGHT, patient.getHeight());
+        values.put(PTNT_WEIGHT, patient.getWeight());
+        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
+        values.put(PTNT_BUILDING, patient.getBuilding());
+        values.put(PTNT_LOT_NO, patient.getLot_no());
+        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
+        values.put(PTNT_PHASE_NO, patient.getPhase_no());
+        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
+        values.put(PTNT_STREET, patient.getAddress_street());
+        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
+        values.put(PTNT_CITY, patient.getAddress_city_municipality());
+        values.put(PTNT_PROVINCE, patient.getAddress_province());
+        values.put(PTNT_REGION, patient.getAddress_region());
+        values.put(PTNT_ZIP, patient.getAddress_zip());
+        values.put(PTNT_TEL_NO, patient.getTel_no());
+        values.put(PTNT_CELL_NO, patient.getCell_no());
+        values.put(PTNT_EMAIL, patient.getEmail());
+        values.put(PTNT_PHOTO, photo);
+
+        int rowID = db.update(TBL_PATIENTS, values, PTNT_ID + "=" + ID, null);
+
+        return rowID > 0;
+    }
+
+    public Patient getloginPatient(String username) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        Patient patient = new Patient();
+
+        String sql = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + username + "'";
+        Cursor cur = db.rawQuery(sql, null);
+        cur.moveToFirst();
+
+        if (cur.getCount() > 0) {
+            patient.setId(cur.getInt(0));
+            patient.setServerID(cur.getInt(1));
+            patient.setFname(cur.getString(2));
+            patient.setLname(cur.getString(4));
+            patient.setUsername(cur.getString(5));
+            patient.setPassword(cur.getString(6));
+            patient.setOccupation(cur.getString(7));
+            patient.setBirthdate(cur.getString(8));
+            patient.setSex(cur.getString(9));
+            patient.setCivil_status(cur.getString(10));
+            patient.setHeight(cur.getString(11));
+            patient.setWeight(cur.getString(12));
+            patient.setUnit_floor_room_no(cur.getInt(13));
+            patient.setBuilding(cur.getString(14));
+            patient.setLot_no(cur.getInt(15));
+            patient.setBlock_no(cur.getInt(16));
+            patient.setPhase_no(cur.getInt(17));
+            patient.setAddress_house_no(cur.getInt(18));
+            patient.setAddress_street(cur.getString(19));
+            patient.setAddress_barangay(cur.getString(20));
+            patient.setAddress_city_municipality(cur.getString(21));
+            patient.setAddress_province(cur.getString(22));
+            patient.setAddress_region(cur.getString(23));
+            patient.setAddress_zip(cur.getString(24));
+            patient.setTel_no(cur.getString(25));
+            patient.setCell_no(cur.getString(26));
+            patient.setEmail(cur.getString(27));
+            patient.setPhoto(cur.getString(28));
+        }
+
+        cur.close();
+        db.close();
+
+        return patient;
+    }
+
+    //DOCTORS..DOCTORS..DOCTORS..DOCTORS..DOCTORS
+
     /* INSERT and UPDATE and other SQL's & functions for DOCTORS TABLE */
         public boolean insertDoctor(Doctor doctor_object) {
             SQLiteDatabase db = getWritableDatabase();
@@ -346,8 +428,6 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DOC_CLINIC_ID, doctor_object.getClinic_id());
         values.put(DOC_EMAIL, doctor_object.getEmail());
         values.put(DOC_SEC_ID, doctor_object.getSecretary_id());
-
-//        long rowID = db.update();
 
         int rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor_object.getDoc_id(), null);
 
@@ -437,7 +517,6 @@ public class DbHelper extends SQLiteOpenHelper {
                             rowObject.put(cursor.getColumnName(i), "");
                         }
                     } catch (Exception e) {
-//                        Log.d("TAG_NAME", e.getMessage()  );
                         System.out.print("error in doctors: " + e.getMessage());
                     }
                 }
@@ -446,11 +525,9 @@ public class DbHelper extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-//        Log.d("TAG_NAME", resultSet.toString() );
         System.out.print("json array of all doctors: " + resultSet.toString());
         return resultSet;
     }
-
 
     /* INSERT and UPDATE and other SQL's & functions for PRODUCTS TABLE */
 
@@ -501,7 +578,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return rowID > 0;
     }
-
         public boolean updateProduct(Product product){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();

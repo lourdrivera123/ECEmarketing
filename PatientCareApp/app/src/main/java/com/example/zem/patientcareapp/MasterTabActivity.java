@@ -4,14 +4,15 @@ import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,9 +31,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     private ViewPager viewPager;
     private ActionBar actionBar;
 
-    TextView total;
     LazyAdapter adapter;
-    public static EditText qty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +39,6 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
 
-        // Instantiate the RequestQueue.
-//        RequestQueue queue = Volley.newRequestQueue(this);
-//        url = "http://192.168.10.1/db/get_all_doctors.php";
-
-        // Initialization
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getActionBar();
         mAdapter = new MasterTabsAdapter(getSupportFragmentManager());
@@ -61,7 +55,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
         Intent intent = getIntent();
 
-        switch(intent.getIntExtra("selected", 0)){
+        switch (intent.getIntExtra("selected", 0)) {
             case 3:
                 Log.d("the number selected is ", "" + intent.getIntExtra("selected", 0));
                 break;
@@ -88,6 +82,36 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mastertabs_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.logout_menu) {
+            SharedPreferences sharedpreferences = getSharedPreferences
+                    (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.clear();
+            editor.commit();
+            MasterTabActivity.this.finish();
+            startActivity(new Intent(this, MainActivity.class));
+
+        } else if (id == R.id.edit_profile) {
+            int edit = 7;
+
+            Intent intent = new Intent(this, EditTabsActivity.class);
+            intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         viewPager.setCurrentItem(tab.getPosition());
     }
@@ -101,10 +125,11 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
     }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 

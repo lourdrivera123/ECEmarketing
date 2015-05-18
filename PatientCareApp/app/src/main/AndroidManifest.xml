@@ -17,6 +17,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
+            launchMode = "singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,6 +50,7 @@
         <activity
             android:name=".HomeTileActivity"
             android:theme="@android:style/Theme.Holo.Light"
+            launchMode = "singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <activity

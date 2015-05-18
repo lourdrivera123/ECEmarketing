@@ -9,48 +9,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBarActivity;
+
 import android.view.Menu;
 import android.view.MenuItem;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class HomeTileActivity extends Activity implements View.OnClickListener {
     Button profile_btn, news_btn, promos_btn, doctors_btn, history_btn, test_results_btn, cart_btn, products_btn, consultation_btn;
     FragmentTransaction fragmentTransaction;
     DbHelper dbHelper;
 
-//    JSONArray doctors_json_array_mysql = null;
-//    JSONArray doctors_json_array_sqlite = null;
-//    JSONArray doctors_json_array_final = null;
-//
-//    RequestQueue queue;
-//    String url;
+    public static SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
+    public static String uname;
+    public static Activity hometile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_tile_layout);
 
-//        queue = Volley.newRequestQueue(this);
+        hometile = this;
+
+        sharedpreferences = getSharedPreferences
+                (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+        editor = sharedpreferences.edit();
+
         dbHelper = new DbHelper(this);
-        // Instantiate the RequestQueue.
-//        RequestQueue queue = Volley.newRequestQueue(this);
-//        url = "http://192.168.10.1/db/get_all_doctors.php";
 
         FragmentManager fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -74,6 +61,16 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         test_results_btn.setOnClickListener(this);
         cart_btn.setOnClickListener(this);
         products_btn.setOnClickListener(this);
+
+        if (dbHelper.checkUserIfRegistered(getUname()) > 0) {
+
+        } else {
+            editor.clear();
+            editor.commit();
+            moveTaskToBack(true);
+            HomeTileActivity.this.finish();
+            startActivity(new Intent(this, MainActivity.class));
+        }
     }
 
     @Override
@@ -123,10 +120,15 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
 
             case R.id.news_btn:
                 intent.putExtra("selected", 8);
-                Toast.makeText(this, ""+dbHelper.getAllDoctorsJSONArray(), Toast.LENGTH_LONG).show();
-//                startActivity(intent);
+                Toast.makeText(this, "" + dbHelper.getAllDoctorsJSONArray(), Toast.LENGTH_LONG).show();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        MainActivity.main.finish();
+        super.onBackPressed();
     }
 
     @Override
@@ -142,9 +144,6 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         int id = item.getItemId();
 
         if (id == R.id.logout) {
-            SharedPreferences sharedpreferences = getSharedPreferences
-                    (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.clear();
             editor.commit();
             moveTaskToBack(true);
@@ -152,5 +151,10 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
             startActivity(new Intent(this, MainActivity.class));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public static String getUname() {
+        uname = sharedpreferences.getString("nameKey", "DEFAULT");
+        return uname;
     }
 }

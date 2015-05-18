@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     EditText username_txtfield, password_txtfield;
 
     DbHelper dbhelper;
+    public static Activity main;
 
     public static final String MyPREFERENCES = "MyPrefs";
     SharedPreferences sharedpreferences;
@@ -35,6 +37,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         setContentView(R.layout.patient_login);
 
         dbhelper = new DbHelper(this);
+        main = this;
 
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
@@ -52,6 +55,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onResume() {
         sharedpreferences = getSharedPreferences(MyPREFERENCES,
                 Context.MODE_PRIVATE);
+
         if (sharedpreferences.contains(name)) {
             if (sharedpreferences.contains(pass)) {
                 showNotification();
@@ -59,7 +63,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 startActivity(i);
             }
         }
+        username_txtfield.setText("");
+        password_txtfield.setText("");
         super.onResume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        HomeTileActivity.hometile.finish();
+        super.onBackPressed();
     }
 
     @Override
@@ -88,7 +100,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
                 break;
             case R.id.signup:
-                startActivity(new Intent(this, EditTabsActivity.class));
+                int signup = 23;
+
+                Intent intent = new Intent(this, EditTabsActivity.class);
+                intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
+                startActivity(intent);
                 break;
         }
     }
