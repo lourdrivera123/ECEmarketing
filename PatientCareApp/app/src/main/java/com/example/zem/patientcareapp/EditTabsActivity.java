@@ -3,7 +3,9 @@ package com.example.zem.patientcareapp;
 import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,16 +28,17 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
 
-/**
- * Created by User PC on 5/4/2015.
- */
-public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener {
+public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener, DatePickerDialog.OnDateSetListener, View.OnClickListener {
     int limit = 4, count = 0, unselected;
 
-    Patient patient;
+    public static Patient patient;
+    DbHelper dbHelper;
+    SignUpFragment fragment;
+
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
@@ -58,11 +61,18 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     // ACCOUNT INFO FRAGMENT
     String username = "";
     ImageView image_holder;
-
-    DbHelper dbHelper;
-    int serverID = 0;
     Drawable d;
+
+    int serverID = 0;
     int check = 0;
+    int int_year, int_month, int_day;
+
+    public static final String SIGNUP_REQUEST = "signup";
+    public static final String EDIT_REQUEST = "edit";
+    public static int signup_int = 0;
+    public static int edit_int = 0;
+
+    Patient editUser;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -73,6 +83,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         dbHelper = new DbHelper(this);
         patient = new Patient();
+        fragment = new SignUpFragment();
+
+        Intent intent = getIntent();
+        signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
+        edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -106,6 +121,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     }
                     validateAtPosition2();
                 } else if (position == 2) {
+//                    patient.setPhoto(null);
+
                     Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
                     image_holder = (ImageView) findViewById(R.id.image_holder);
 
@@ -134,25 +151,59 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                 viewPager.setCurrentItem(0);
                             } else if (hasError2) {
                                 viewPager.setCurrentItem(1);
-                            } else if (!hasError && !hasError2) {
-                                validateUserAccountInfo();
-                                if (!hasError3) {
-                                    long date = System.currentTimeMillis();
-                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
-                                    String dateString = sdf.format(date);
+                            } else {
+                                if (!hasError && !hasError2) {
+                                    validateUserAccountInfo();
+                                    if (!hasError3) {
+                                        long date = System.currentTimeMillis();
+                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
+                                        String dateString = sdf.format(date);
 
-                                    String uname = patient.getUsername();
+                                        String uname = patient.getUsername();
 
-                                    if (dbHelper.checkUserIfRegistered(uname) == 0) {
-                                        if (dbHelper.insertPatient(serverID, dateString, patient)) {
-                                            Toast.makeText(EditTabsActivity.this, "Account created", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
-                                            serverID++;
+                                        if (edit_int > 0) {
+                                            String edit_uname = HomeTileActivity.getUname();
+                                            editUser = dbHelper.getloginPatient(edit_uname);
+                                            int userID = editUser.getId();
+                                            String chosenPhoto = patient.getPhoto();
+                                            String defaultPhoto = editUser.getPhoto();
+                                            String photo = "";
+
+                                            if (chosenPhoto.equals("")) {
+                                                photo = editUser.getPhoto();
+                                            } else {
+                                                photo = patient.getPhoto();
+                                            }
+
+                                            if (defaultPhoto.equals("")) {
+                                                photo = patient.getPhoto();
+                                            } else {
+                                                photo = editUser.getPhoto();
+                                            }
+
+                                            if (dbHelper.updatePatient(patient, userID, photo)) {
+                                                Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(getBaseContext(), MasterTabActivity.class);
+                                                intent.putExtra("selected", 0);
+                                                startActivity(intent);
+                                            } else {
+                                                Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+                                            }
                                         } else {
-                                            Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                            if (dbHelper.checkUserIfRegistered(uname) == 0) {
+                                                if (dbHelper.insertPatient(serverID, dateString, patient)) {
+                                                    SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                    editor.putString("nameKey", uname);
+                                                    editor.commit();
+                                                    startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+                                                } else {
+                                                    Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(EditTabsActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
-                                    } else {
-                                        Toast.makeText(EditTabsActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -187,7 +238,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     public void readFromSignUp() {
-        birthdate = (EditText) findViewById(R.id.birthdate);
         fname = (EditText) findViewById(R.id.fname);
         lname = (EditText) findViewById(R.id.lname);
         mname = (EditText) findViewById(R.id.mname);
@@ -198,10 +248,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         sex = (RadioGroup) findViewById(R.id.sex);
         int selectedId = sex.getCheckedRadioButtonId();
 
-        limit = 5;
-        count = 0;
-
-        s_birthdate = birthdate.getText().toString();
         s_fname = fname.getText().toString();
         s_lname = lname.getText().toString();
         s_mname = mname.getText().toString();
@@ -211,23 +257,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         s_civil_status = civil_status_spinner.getSelectedItem().toString();
         s_sex = selectedId == R.id.male_rb ? "Male" : "Female";
 
-        birthdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Calendar cal = Calendar.getInstance();
+        birthdate = (EditText) findViewById(R.id.birthdate);
+        s_birthdate = birthdate.getText().toString();
+        birthdate.setOnClickListener(this);
 
-                DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        String dateStr = String.format("%d/%d/%d", (month + 1), day, year);
-                        birthdate.setText(dateStr);
-                        birthdate.setError(null);
-                        patient.setBirthdate(dateStr);
-                    }
-                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-                datePicker.show();
-            }
-        });
+        limit = 5;
+        count = 0;
 
         if (s_fname.equals("")) {
             fname.setError("Field Required");
@@ -235,8 +270,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             patient.setFname(s_fname);
             count++;
         }
-
-        System.out.println("1. count: " + count + " limit: " + limit);
 
         if (s_lname.equals("")) {
             lname.setError("Field Required");
@@ -252,8 +285,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-        System.out.println("1. count: " + count + " limit: " + limit);
-
         if (s_height.equals("")) {
             height.setError("Field Required");
         } else {
@@ -261,16 +292,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-        System.out.println("1. count: " + count + " limit: " + limit);
-
         if (s_weight.equals("")) {
             weight.setError("Field Required");
         } else {
             patient.setWeight(s_weight);
             count++;
         }
-
-        System.out.println("1. count: " + count + " limit: " + limit);
 
         if (count == limit) {
             this.hasError = false;
@@ -294,12 +321,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
 
         patient.setCivil_status(s_civil_status);
-
-        System.out.println("1. count: " + count + " limit: " + limit);
     }
 
     public void validateAtPosition2() {
-
         unit_no = (EditText) findViewById(R.id.unit_no);
         building = (EditText) findViewById(R.id.building);
         lot_no = (EditText) findViewById(R.id.lot_no);
@@ -392,7 +416,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
 
         if (s_building.equals("")) {
-            s_building = null;
+            patient.setBuilding(null);
         } else {
             patient.setBuilding(s_building);
         }
@@ -517,5 +541,46 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
             check = 23;
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Calendar cal = Calendar.getInstance();
+        switch (v.getId()) {
+            case R.id.birthdate:
+                if (s_birthdate.equals("")) {
+                    birthdate.setError("Field Required");
+                    DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                    datePicker.show();
+                } else {
+                    if (int_year > 0 && int_month > 0 && int_day > 0) {
+                        updateDate(int_year, int_month, int_day);
+                    } else {
+                        int_year = fragment.int_year;
+                        int_month = fragment.int_month;
+                        int_day = fragment.int_day;
+                        updateDate(int_year, int_month, int_day);
+                    }
+                    patient.setBirthdate(s_birthdate);
+                    count++;
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        String dateStr = String.format("%d/%d/%d", (monthOfYear + 1), dayOfMonth, year);
+        birthdate.setText(dateStr);
+        birthdate.setError(null);
+        patient.setBirthdate(dateStr);
+        int_year = year;
+        int_month = monthOfYear;
+        int_day = dayOfMonth;
+    }
+
+    public void updateDate(int year, int monthOfYear, int dayOfMonth) {
+        DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, year, monthOfYear, dayOfMonth);
+        datePicker.show();
     }
 }

@@ -6,13 +6,32 @@ import java.io.Serializable;
  * Created by User PC on 5/4/2015.
  */
 public class Patient implements Serializable {
+
+
     private String fname = "", mname = "", lname = "", username = "", password = "",
             occupation = "", doctor_referred_by = "", doctor_referred_to = "", birthdate = "",
             sex = "", civil_status = "", height = "", weight = "", address_street = "",
             address_barangay = "", address_city_municipality = "", address_province = "", address_region = "",
             country = "", address_zip = "", cell_no = "", tel_no = "", email = "", photo = "", building = "";
 
-    int unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no;
+    int id = 0, serverID = 0, unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no;
+
+    public void setServerID(int serverID) {
+        this.serverID = serverID;
+    }
+
+    public int getServerID() {
+        return serverID;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+
+    }
+
+    public int getId() {
+        return id;
+    }
 
     public Patient() {
 

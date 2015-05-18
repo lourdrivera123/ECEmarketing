@@ -12,12 +12,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Created by Zem on 4/29/2015.
  */
 public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
+    TextView add_record;
     Button view_doctor_btn, call_doctor_btn;
 
     ArrayAdapter history_adapter;
@@ -30,10 +32,13 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.patient_records_layout, container, false);
 
+        add_record = (TextView) rootView.findViewById(R.id.add_record);
         list_of_history = (ListView) rootView.findViewById(R.id.list_of_history);
         history_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, history);
         list_of_history.setAdapter(history_adapter);
         list_of_history.setOnItemClickListener(this);
+
+        add_record.setOnClickListener(this);
 
         return rootView;
     }
@@ -55,16 +60,23 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.add_record:
+                Dialog dialog = new Dialog(getActivity());
+                dialog.setTitle("New Medical Record");
+                dialog.setContentView(R.layout.dialog_new_medical_record);
+                dialog.show();
+
+                break;
             case R.id.view_doctor_btn:
                 startActivity(new Intent(getActivity(), DoctorActivity.class));
                 break;
 
             case R.id.call_doctor_btn:
                 String phoneNumber = "09095331440";
-                String uriTel = "tel:"+phoneNumber;
+                String uriTel = "tel:" + phoneNumber;
 
                 //Present you with the dialler
-                Uri telUri  = Uri.parse(uriTel);
+                Uri telUri = Uri.parse(uriTel);
                 Intent returnIt = new Intent(Intent.ACTION_DIAL, telUri);
                 startActivity(returnIt);
 
