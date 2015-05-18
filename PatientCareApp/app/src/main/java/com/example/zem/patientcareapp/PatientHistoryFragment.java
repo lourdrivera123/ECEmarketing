@@ -61,11 +61,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_record:
-                Dialog dialog = new Dialog(getActivity());
-                dialog.setTitle("New Medical Record");
-                dialog.setContentView(R.layout.dialog_new_medical_record);
-                dialog.show();
-
+                startActivity(new Intent(getActivity(), PatientMedicalRecordActivity.class));
                 break;
             case R.id.view_doctor_btn:
                 startActivity(new Intent(getActivity(), DoctorActivity.class));

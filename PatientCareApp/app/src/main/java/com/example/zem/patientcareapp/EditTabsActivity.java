@@ -121,8 +121,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     }
                     validateAtPosition2();
                 } else if (position == 2) {
-//                    patient.setPhoto(null);
-
                     Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
                     image_holder = (ImageView) findViewById(R.id.image_holder);
 
@@ -523,23 +521,32 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 111) {
-            Uri uri = data.getData();
-            String[] projection = {MediaStore.Images.Media.DATA};
+            try {
+                if (data.getData() != null && !data.getData().equals(Uri.EMPTY)) {
+                    Uri uri = data.getData();
+                    String[] projection = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-            cursor.moveToFirst();
+                    Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+                    cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndex(projection[0]);
-            String filePath = cursor.getString(columnIndex);
-            cursor.close();
+                    int columnIndex = cursor.getColumnIndex(projection[0]);
+                    String filePath = cursor.getString(columnIndex);
+                    cursor.close();
 
-            patient.setPhoto(filePath);
+                    patient.setPhoto(filePath);
 
-            Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-            d = new BitmapDrawable(yourSelectedImage);
-            image_holder.setImageDrawable(d);
+                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
+                    d = new BitmapDrawable(yourSelectedImage);
+                    image_holder.setImageDrawable(d);
 
-            check = 23;
+                    check = 23;
+
+                } else {
+                    patient.setPhoto("");
+                }
+            } catch (Exception e) {
+
+            }
         }
     }
 
