@@ -138,7 +138,6 @@ public class LazyAdapter extends BaseAdapter {
             qty.setId(position);
             total.setId(position);
 
-            Log.i("qty id", "" + qty.getId());
         }
         return vi;
     }

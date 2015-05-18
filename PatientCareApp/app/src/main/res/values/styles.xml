@@ -102,6 +102,5 @@
         <style name="btn_controls">
             <item name="android:layout_width">match_parent</item>
             <item name="android:layout_height">wrap_content</item>
-            <item name="android:layout_weight">0.5</item>
         </style>
 </resources>

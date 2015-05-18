@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -112,24 +114,6 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         viewPager.setCurrentItem(tab.getPosition());
-
-        if (tab.getPosition() == 6) {
-            ArrayList<HashMap<String, String>> items = ShoppingCartFragment.items;
-            adapter = new LazyAdapter(this, items, "basket_items");
-
-            for (int x = 0; x < items.size(); x++) {
-                //   Log.i("items", "" + items.get(x));
-
-                int quantity = Integer.parseInt(items.get(x).get("quantity"));
-                double price = Double.parseDouble(items.get(x).get("price"));
-
-                double total_amount = quantity * price;
-                // Log.i("total_amount", "" + total_amount);
-            }
-
-//            qty = adapter.qty;
-//            total = adapter.total;
-        }
     }
 
     @Override

@@ -7,7 +7,6 @@
 
     <TextView
         style="@style/cart_upper_total"
-        android:text="Php 28,500.00"
         android:id="@+id/upper_cart_total" />
 
     <!-- Table Head -->
@@ -49,11 +48,6 @@
     <LinearLayout
         style="@style/btn_controls_layout"
         android:id="@+id/btn_controls">
-
-        <Button
-            style="@style/btn_controls"
-            android:text="Update Cart"
-            android:id="@+id/update_cart" />
 
         <Button
             style="@style/btn_controls"
