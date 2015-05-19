@@ -629,11 +629,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
 
-    public JSONArray getAllDoctorsJSONArray() {
+    public JSONArray getAllJSONArrayFrom(String tbl_name) {
 
         SQLiteDatabase db = getWritableDatabase();
 
-        String sql = "SELECT * FROM " + TBL_DOCTORS;
+        String sql = "SELECT * FROM " + tbl_name;
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -663,83 +663,7 @@ public class DbHelper extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        System.out.print("json array of all doctors: " + resultSet.toString());
-        return resultSet;
-    }
-
-    public JSONArray getAllProductsJSONArray() {
-
-        SQLiteDatabase db = getWritableDatabase();
-
-        String sql = "SELECT * FROM " + TBL_PRODUCTS;
-
-        Cursor cursor = db.rawQuery(sql, null);
-
-        JSONArray resultSet = new JSONArray();
-
-        cursor.moveToFirst();
-        while (cursor.isAfterLast() == false) {
-
-            int totalColumn = cursor.getColumnCount();
-            JSONObject rowObject = new JSONObject();
-
-            for (int i = 0; i < totalColumn; i++) {
-                if (cursor.getColumnName(i) != null) {
-                    try {
-                        if (cursor.getString(i) != null) {
-                            System.out.print("json array of all products: " + cursor.getString(i));
-                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
-                        } else {
-                            rowObject.put(cursor.getColumnName(i), "");
-                        }
-                    } catch (Exception e) {
-                        System.out.print("error in products: " + e.getMessage());
-                    }
-                }
-            }
-            resultSet.put(rowObject);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        System.out.print("json array of all products: " + resultSet.toString());
-        return resultSet;
-    }
-
-    public JSONArray getAllDosagesJSONArray() {
-
-        SQLiteDatabase db = getWritableDatabase();
-
-        String sql = "SELECT * FROM " +TBL_DOSAGE;
-
-        Cursor cursor = db.rawQuery(sql, null);
-
-        JSONArray resultSet = new JSONArray();
-
-        cursor.moveToFirst();
-        while (cursor.isAfterLast() == false) {
-
-            int totalColumn = cursor.getColumnCount();
-            JSONObject rowObject = new JSONObject();
-
-            for (int i = 0; i < totalColumn; i++) {
-                if (cursor.getColumnName(i) != null) {
-                    try {
-                        if (cursor.getString(i) != null) {
-                            System.out.print("json array of all dosages: " + cursor.getString(i));
-                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
-                        } else {
-                            rowObject.put(cursor.getColumnName(i), "");
-                        }
-                    } catch (Exception e) {
-                        System.out.print("error in dosages: " + e.getMessage());
-                    }
-                }
-            }
-            resultSet.put(rowObject);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        System.out.print("json array of all dosages: " + resultSet.toString());
+        System.out.print("json array of all " + resultSet.toString());
         return resultSet;
     }
 
@@ -877,6 +801,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Date date = new Date();
         System.out.println(dateFormat.format(date));
 
+        values.put(SERVER_PRODUCT_ID, product.getProductId());
         values.put(PRODUCT_NAME, product.getName());
         values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
         values.put(PRODUCT_DESCRIPTION, product.getDescription());
