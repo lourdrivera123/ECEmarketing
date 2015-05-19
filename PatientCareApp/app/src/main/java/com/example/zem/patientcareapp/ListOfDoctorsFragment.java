@@ -92,7 +92,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
                     populateDoctorListView(rootView, xml);
                     pDialog.hide();
                 }
-            }, 4000);
+            }, 1000);
 
         } else {
             Log.d("Connected to internet", "no");

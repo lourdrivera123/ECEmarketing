@@ -76,7 +76,10 @@
         <activity android:name=".PatientConsultationFragment" />
         <activity android:name=".ShoppingCartFragment" />
         <activity android:name=".Sync" />
+        <activity android:name=".ProductCategory" />
+        <activity android:name=".ProductSubCategory" />
         <activity android:name=".Product" />
+        <activity android:name=".ProductCategoriesFragment" />
     </application>
 
 </manifest>

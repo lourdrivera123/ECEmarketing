@@ -3,6 +3,7 @@ package com.example.zem.patientcareapp;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -11,6 +12,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -21,14 +23,16 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
     AutoCompleteTextView search_doctor;
     Button btn_save, btn_cancel;
     String s_date, s_doctor, s_complaint, s_diagnosis, s_treatment;
-    String[] doctors = {
-            "Zemiel Asma", "Esel Barnes", "Dexter Bengil"
-    };
+    ArrayList<String> doctors;
+
+    DbHelper dbhelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_new_medical_record);
+
+        dbhelper = new DbHelper(this);
 
         date = (EditText) findViewById(R.id.date);
         search_doctor = (AutoCompleteTextView) findViewById(R.id.search_doctor);
@@ -38,6 +42,7 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
         btn_save = (Button) findViewById(R.id.btn_save);
         btn_cancel = (Button) findViewById(R.id.btn_cancel);
 
+        doctors = dbhelper.getDoctorName();
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, doctors);
         search_doctor.setAdapter(adapter);
 
@@ -71,6 +76,12 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
                     s_complaint = complaint.getText().toString();
                     s_diagnosis = diagnosis.getText().toString();
                     s_treatment = treatment.getText().toString();
+
+                    if (doctors.contains(s_doctor)) {
+                        Toast.makeText(this, "found doctor: " + s_doctor, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "no doctor found: " + s_doctor, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
 

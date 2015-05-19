@@ -1,9 +1,15 @@
 package com.example.zem.patientcareapp;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -45,6 +51,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
+
     }
 
     @Override
@@ -54,6 +61,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         if (sharedpreferences.contains(name)) {
             if (sharedpreferences.contains(pass)) {
+                showNotification();
                 Intent i = new Intent(this, HomeTileActivity.class);
                 startActivity(i);
             }
@@ -86,6 +94,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         editor.putString(name, uname);
                         editor.putString(pass, password);
                         editor.commit();
+                        showNotification();
                         Intent i = new Intent(this, HomeTileActivity.class);
                         startActivity(i);
                     } else {
@@ -101,5 +110,38 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
         }
+    }
+
+    public void showNotification(){
+        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("It's your Birthday!")
+                        .setSound(uri)
+                        .setDefaults(Notification.DEFAULT_SOUND)
+                        .setContentText("I hope, it's your last. ;)");
+
+        Intent resultIntent = new Intent(this, MainActivity.class);
+
+        // Because clicking the notification opens a new ("special") activity, there's
+        // no need to create an artificial back stack.
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        // Sets an ID for the notification
+        int mNotificationId = 001;
+        // Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 }

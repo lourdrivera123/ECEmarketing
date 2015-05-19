@@ -6,6 +6,7 @@ package com.example.zem.patientcareapp;
 public class Product {
     String name, dosageFormatAndStrength, genericName, description, unit, photo, createdAt, updatedAt, deletedAt;
     int productId;
+    int id;
     double price;
     public Product(){
 
@@ -14,7 +15,9 @@ public class Product {
     public String getName(){
         return name;
     }
-
+    public int getId(){
+        return id;
+    }
     public String getDosageFormatAndStrength(){
         return dosageFormatAndStrength;
     }
@@ -93,5 +96,9 @@ public class Product {
 
     public void setProductId(int productId) {
         this.productId = productId;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 }
