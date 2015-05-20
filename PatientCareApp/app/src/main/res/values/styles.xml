@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light">
         <item name="android:displayOptions">useLogo|showHome</item>
     </style>
 
@@ -102,6 +102,5 @@
         <style name="btn_controls">
             <item name="android:layout_width">match_parent</item>
             <item name="android:layout_height">wrap_content</item>
-            <item name="android:layout_weight">0.5</item>
         </style>
 </resources>

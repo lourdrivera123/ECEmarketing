@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,13 +37,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
 
@@ -50,13 +48,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by User PC on 5/4/2015.
- */
-public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener {
+public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener, DatePickerDialog.OnDateSetListener, View.OnClickListener {
+
     int limit = 4, count = 0, unselected;
 
-    Patient patient;
+    public static Patient patient;
+    DbHelper dbHelper;
+    SignUpFragment fragment;
+
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
@@ -81,11 +80,18 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     String s_password = "";
     String s_filepath = "";
     ImageView image_holder;
-
-    DbHelper dbHelper;
-    int serverID = 0;
     Drawable d;
+
+    int serverID = 0;
     int check = 0;
+    int int_year, int_month, int_day;
+
+    public static final String SIGNUP_REQUEST = "signup";
+    public static final String EDIT_REQUEST = "edit";
+    public static int signup_int = 0;
+    public static int edit_int = 0;
+
+    Patient editUser;
 
     RequestQueue queue;
     String url;
@@ -103,6 +109,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         dbHelper = new DbHelper(this);
         patient = new Patient();
+        fragment = new SignUpFragment();
+
+        Intent intent = getIntent();
+        signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
+        edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
         queue = Volley.newRequestQueue(this);
         url = "http://192.168.10.1/db/post_register_patient.php";
@@ -172,65 +183,98 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                 viewPager.setCurrentItem(0);
                             } else if (hasError2) {
                                 viewPager.setCurrentItem(1);
-                            } else if (!hasError && !hasError2) {
-                                validateUserAccountInfo();
-                                if (!hasError3) {
-//                                    long date = System.currentTimeMillis();
-//                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
-//                                    String dateString = sdf.format(date);
+                                pDialog.show();
 
-                                    pDialog.show();
+                            } else {
+                                if (!hasError && !hasError2) {
+                                    validateUserAccountInfo();
+                                    if (!hasError3) {
+                                        long date = System.currentTimeMillis();
+                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
+                                        String dateString = sdf.format(date);
 
-                                    if (isNetworkAvailable()) {
+                                        String uname = patient.getUsername();
 
-                                        Map<String, String> params = setParams();
+                                        if (edit_int > 0) {
+                                            String edit_uname = HomeTileActivity.getUname();
+                                            editUser = dbHelper.getloginPatient(edit_uname);
+                                            int userID = editUser.getId();
+                                            String chosenPhoto = patient.getPhoto();
+                                            String defaultPhoto = editUser.getPhoto();
+                                            String photo = "";
 
-                                        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
-                                                new Response.Listener<JSONObject>() {
-                                                    @Override
-                                                    public void onResponse(JSONObject response) {
-
-                                                        try {
-                                                            patient_json_array_mysql = response.getJSONArray("patient");
-                                                            patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-//                                                        Toast.makeText(EditTabsActivity.this, "response: " + response.toString(), Toast.LENGTH_SHORT).show();
-                                                        Log.d("response jsobjrequest", "" + response.toString());
-
-                                                        //saving to sqlite database
-                                                        if (dbHelper.checkUserIfRegistered(patient.getUsername()) == 0) {
-                                                            if (dbHelper.insertPatient(patient_json_object_mysql, patient)) {
-                                                                pDialog.hide();
-                                                                Toast.makeText(EditTabsActivity.this, "Account created", Toast.LENGTH_SHORT).show();
-                                                                startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
-                                                                serverID++;
-                                                            } else {
-                                                                pDialog.hide();
-                                                                Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        } else {
-                                                            pDialog.hide();
-                                                            Toast.makeText(EditTabsActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
-                                                        }
-
-                                                    }
-                                                }, new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                pDialog.hide();
-                                                Log.d("volley error", "" + error.toString());
+                                            if (chosenPhoto.equals("")) {
+                                                photo = editUser.getPhoto();
+                                            } else {
+                                                photo = patient.getPhoto();
                                             }
-                                        });
 
-                                        queue.add(jsObjRequest);
+                                            if (defaultPhoto.equals("")) {
+                                                photo = patient.getPhoto();
+                                            } else {
+                                                photo = editUser.getPhoto();
+                                            }
 
-                                    } else {
-                                        Toast.makeText(EditTabsActivity.this, "Cannot save because there is no internet connection", Toast.LENGTH_SHORT).show();
+                                            if (dbHelper.updatePatient(patient, userID, photo)) {
+                                                Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(getBaseContext(), MasterTabActivity.class);
+                                                intent.putExtra("selected", 0);
+                                                startActivity(intent);
+                                            } else {
+                                                Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else {
+
+                                            if (isNetworkAvailable()) {
+
+                                                Map<String, String> params = setParams();
+
+                                                CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
+                                                        new Response.Listener<JSONObject>() {
+                                                            @Override
+                                                            public void onResponse(JSONObject response) {
+
+                                                                try {
+                                                                    patient_json_array_mysql = response.getJSONArray("patient");
+                                                                    patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
+                                                                } catch (JSONException e) {
+//                                                                    e.printStackTrace();
+                                                                }
+//                                                        Toast.makeText(EditTabsActivity.this, "response: " + response.toString(), Toast.LENGTH_SHORT).show();
+                                                                Log.d("response jsobjrequest", "" + response.toString());
+
+                                                                //saving to sqlite database
+                                                                if (dbHelper.checkUserIfRegistered(patient.getUsername()) == 0) {
+                                                                    if (dbHelper.insertPatient(patient_json_object_mysql, patient)) {
+                                                                        SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                                                                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                                        editor.putString("nameKey", patient.getUsername());
+                                                                        editor.commit();
+                                                                        pDialog.hide();
+                                                                        startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+                                                                    } else {
+                                                                        Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                } else {
+                                                                    Toast.makeText(EditTabsActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                                                                }
+
+                                                            }
+                                                        }, new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+                                                        pDialog.hide();
+                                                        Log.d("volley error", "" + error.toString());
+                                                    }
+                                                });
+
+                                                queue.add(jsObjRequest);
+
+                                            } else {
+                                                Toast.makeText(EditTabsActivity.this, "Cannot save because there is no internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
                                     }
-
-
                                 }
                             }
                         }
@@ -263,7 +307,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
     }
 
-    public Map<String, String> setParams(){
+    public Map<String, String> setParams() {
         Map<String, String> params = new HashMap<String, String>();
 
         params.put("fname", patient.getFname());
@@ -298,7 +342,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     public void readFromSignUp() {
-        birthdate = (EditText) findViewById(R.id.birthdate);
         fname = (EditText) findViewById(R.id.fname);
         lname = (EditText) findViewById(R.id.lname);
         mname = (EditText) findViewById(R.id.mname);
@@ -309,10 +352,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         sex = (RadioGroup) findViewById(R.id.sex);
         int selectedId = sex.getCheckedRadioButtonId();
 
-        limit = 5;
-        count = 0;
-
-        s_birthdate = birthdate.getText().toString();
         s_fname = fname.getText().toString();
         s_lname = lname.getText().toString();
         s_mname = mname.getText().toString();
@@ -322,24 +361,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         s_civil_status = civil_status_spinner.getSelectedItem().toString();
         s_sex = selectedId == R.id.male_rb ? "Male" : "Female";
 
-        birthdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Calendar cal = Calendar.getInstance();
+        birthdate = (EditText) findViewById(R.id.birthdate);
+        s_birthdate = birthdate.getText().toString();
+        birthdate.setOnClickListener(this);
 
-                DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-////                        String dateStr = String.format("%d-%d-%d", year, (month + 1), day);
-//                        String dateStr = year+"-"+(month+1)+"-"+day;
-//                        birthdate.setText("asdasdsad");
-                        birthdate.setError(null);
-//                        patient.setBirthdate(dateStr);
-                    }
-                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-                datePicker.show();
-            }
-        });
+        limit = 5;
+        count = 0;
 
         if (s_fname.equals("")) {
             fname.setError("Field Required");
@@ -347,8 +374,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             patient.setFname(s_fname);
             count++;
         }
-
-        System.out.println("1. count: " + count + " limit: " + limit);
 
         if (s_lname.equals("")) {
             lname.setError("Field Required");
@@ -364,8 +389,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-        System.out.println("1. count: " + count + " limit: " + limit);
-
         if (s_height.equals("")) {
             height.setError("Field Required");
         } else {
@@ -373,16 +396,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-        System.out.println("1. count: " + count + " limit: " + limit);
-
         if (s_weight.equals("")) {
             weight.setError("Field Required");
         } else {
             patient.setWeight(s_weight);
             count++;
         }
-
-        System.out.println("1. count: " + count + " limit: " + limit);
 
         if (count == limit) {
             this.hasError = false;
@@ -406,12 +425,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
 
         patient.setCivil_status(s_civil_status);
-
-        System.out.println("1. count: " + count + " limit: " + limit);
     }
 
     public void validateAtPosition2() {
-
         unit_no = (EditText) findViewById(R.id.unit_no);
         building = (EditText) findViewById(R.id.building);
         lot_no = (EditText) findViewById(R.id.lot_no);
@@ -613,24 +629,58 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 111) {
-            Uri uri = data.getData();
-            String[] projection = {MediaStore.Images.Media.DATA};
+            try {
+                if (data.getData() != null && !data.getData().equals(Uri.EMPTY)) {
+                    Uri uri = data.getData();
+                    String[] projection = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-            cursor.moveToFirst();
+                    Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+                    cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndex(projection[0]);
-            String filePath = cursor.getString(columnIndex);
-            s_filepath = filePath;
-            cursor.close();
+                    int columnIndex = cursor.getColumnIndex(projection[0]);
+                    String filePath = cursor.getString(columnIndex);
+                    s_filepath = filePath;
+                    cursor.close();
 
-            patient.setPhoto(filePath);
+                    patient.setPhoto(filePath);
 
-            Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-            d = new BitmapDrawable(yourSelectedImage);
-            image_holder.setImageDrawable(d);
+                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
+                    d = new BitmapDrawable(yourSelectedImage);
+                    image_holder.setImageDrawable(d);
 
-            check = 23;
+                    check = 23;
+
+                } else {
+                    patient.setPhoto("");
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Calendar cal = Calendar.getInstance();
+        switch (v.getId()) {
+            case R.id.birthdate:
+                if (s_birthdate.equals("")) {
+                    birthdate.setError("Field Required");
+                    DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                    datePicker.show();
+                } else {
+                    if (int_year > 0 && int_month > 0 && int_day > 0) {
+                        updateDate(int_year, int_month, int_day);
+                    } else {
+                        int_year = fragment.int_year;
+                        int_month = fragment.int_month;
+                        int_day = fragment.int_day;
+                        updateDate(int_year, int_month, int_day);
+                    }
+                    patient.setBirthdate(s_birthdate);
+                    count++;
+                }
+                break;
         }
     }
 
@@ -638,5 +688,21 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        String dateStr = String.format("%d/%d/%d", (monthOfYear + 1), dayOfMonth, year);
+        birthdate.setText(dateStr);
+        birthdate.setError(null);
+        patient.setBirthdate(dateStr);
+        int_year = year;
+        int_month = monthOfYear;
+        int_day = dayOfMonth;
+    }
+
+    public void updateDate(int year, int monthOfYear, int dayOfMonth) {
+        DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, year, monthOfYear, dayOfMonth);
+        datePicker.show();
     }
 }
