@@ -145,6 +145,17 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String BASKET_UPDATED_AT = "updated_at";
     public static final String BASKET_DELETED_AT = "deleted_at";
 
+    //PATIENT_RECORDS TABLE
+    public static final String TBL_PATIENT_RECORDS = "patient_records";
+    public static final String RECORDS_ID = "id";
+    public static final String SERVER_RECORDS_ID = "record_id";
+    public static final String RECORDS_PATIENT_ID = "patient_id";
+    public static final String RECORDS_COMPLAINT = "complaints";
+    public static final String RECORDS_FINDINGS = "findings";
+    public static final String RECORDS_TREATMENT_ID = "treatment_id";
+    public static final String RECORDS_CREATED_AT = "created_at";
+    public static final String RECORDS_UPDATED_AT = "updated_at";
+
     //Doctor string xml
     String doctor_string_xml = "";
     public static String doctors_string_xml = "";
@@ -173,6 +184,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_CELL_NO,
                 PTNT_EMAIL, PTNT_PHOTO, PTNT_CREATED_AT, PTNT_UPDATED_AT);
 
+
+
         // SQL to create table "product_categories"
         String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT,%s TEXT, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
                 TBL_PRODUCT_CATEGORIES, PRODUCT_CATEGORIES_ID, SERVER_PRODUCT_CATEGORY_ID, PROD_CAT_NAME, PROD_CAT_CREATED_AT, PROD_CAT_UPDATED_AT, PROD_CAT_DELETED_AT);
@@ -198,6 +211,10 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
                 BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
 
+        //SQL to create PATIENT_RECORDS TABLE
+        String sql_create_patient_records = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT)",
+                TBL_PATIENT_RECORDS, RECORDS_ID, SERVER_RECORDS_ID, RECORDS_PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_TREATMENT_ID, RECORDS_CREATED_AT, RECORDS_UPDATED_AT);
+
         db.execSQL(sql1);
         db.execSQL(sql2);
         db.execSQL(sql3);
@@ -206,6 +223,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_tbl_product_subcategories);
         db.execSQL(sql_create_tbl_products);
         db.execSQL(sql_create_dosage_table);
+        db.execSQL(sql_create_patient_records);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
     }

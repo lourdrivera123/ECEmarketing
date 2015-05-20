@@ -56,8 +56,7 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
         search_doctor.setAdapter(adapter);
 
         treatments = new ArrayList<String>();
-        treatments.add("esel - esel");
-        treatmentsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, treatments);
+        treatmentsAdapter = new ArrayAdapter(this, R.layout.treatments_list_layout, treatments);
         list_of_treatments.setAdapter(treatmentsAdapter);
 
         btn_save.setOnClickListener(this);
