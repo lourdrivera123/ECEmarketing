@@ -75,6 +75,8 @@
         <activity android:name=".StandStrong" />
         <activity android:name=".PatientConsultationFragment" />
         <activity android:name=".ShoppingCartFragment" />
+        <activity android:name=".AppController" />
+        <activity android:name=".LruBitmapCache" />
         <activity android:name=".Sync" />
         <activity android:name=".ProductCategory" />
         <activity android:name=".ProductSubCategory" />
