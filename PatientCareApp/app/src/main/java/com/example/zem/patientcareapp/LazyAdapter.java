@@ -83,7 +83,7 @@ public class LazyAdapter extends BaseAdapter {
             ImageView list_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
 
 
-            HashMap<String, String> doctor = new HashMap<String, String>();
+            HashMap<String, String> doctor = new HashMap<>();
             doctor = data.get(position);
 
             // Setting all values in listview

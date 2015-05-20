@@ -12,7 +12,6 @@ public class ProductSubCategory implements Serializable {
     String updatedAt = "";
     String deletedAt = "";
     int id;
-    int subCategoryId;
 
     public ProductSubCategory(){
 
@@ -24,9 +23,6 @@ public class ProductSubCategory implements Serializable {
         this.id = id;
     }
 
-    public void setSubCategoryId(int subCategoryId) {
-        this.subCategoryId = subCategoryId;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -52,10 +48,6 @@ public class ProductSubCategory implements Serializable {
 
     public int getId() {
         return id;
-    }
-
-    public int getSubCategoryId() {
-        return subCategoryId;
     }
 
     public String getName() {

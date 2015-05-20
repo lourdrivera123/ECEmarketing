@@ -3,9 +3,19 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Browse by Category"
+        android:textSize="12dp"
+        android:layout_marginLeft="2dp"
+        android:textColor="@color/background_floating_material_dark"
+        android:shadowColor="@color/material_blue_grey_800"
+        android:id="@+id/browse_by"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/categories"
+        android:layout_marginLeft="8dp"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>
