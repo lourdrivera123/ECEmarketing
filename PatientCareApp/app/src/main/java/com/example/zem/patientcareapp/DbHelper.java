@@ -209,13 +209,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
                 BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
 
-        // SQL to create table "dosage_format_and_strength"
-        String sql_create_tbl_dosage = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s INTEGER REFERENCES " + TBL_DOSAGE + "(" + PTNT_PATIENT_ID + "), %s INTEGER REFERENCES " + TBL_BASKETS + "(" + SERVER_BASKET_ID + ")," +
-                        " %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
-                BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
-
         db.execSQL(sql1);
         db.execSQL(sql2);
         db.execSQL(sql3);
@@ -504,6 +497,19 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
+    public boolean insertDosage(Dosage dosage){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(SERVER_DOSAGE_ID, dosage.getDosage_id());
+        values.put(DOSAGE_PROD_ID, dosage.getProduct_id());
+        values.put(DOSAGE_NAME, dosage.getName());
+
+        long rowID = db.insert(TBL_DOSAGE, null, values);
+
+        return rowID > 0;
+    }
+
     public ArrayList<Doctor> getAllDoctors() {
 
         ArrayList<Doctor> doctors = new ArrayList<Doctor>();
@@ -597,11 +603,8 @@ public class DbHelper extends SQLiteOpenHelper {
             product_string_xml += product_temporary_string_xml;
         }
 
-
         cur.close();
         db.close();
-
-        Log.d("The Product XML String: ", products_string_xml);
 
         products_string_xml = "<list>" + product_string_xml + "</list>";
 
@@ -640,11 +643,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
 
-    public JSONArray getAllDoctorsJSONArray() {
+    public JSONArray getAllJSONArrayFrom(String tbl_name) {
 
         SQLiteDatabase db = getWritableDatabase();
 
-        String sql = "SELECT * FROM " + TBL_DOCTORS;
+        String sql = "SELECT * FROM " + tbl_name;
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -828,7 +831,7 @@ public class DbHelper extends SQLiteOpenHelper {
     // Returns all product subcategories for a specific category
     public ArrayList<ProductSubCategory> getAllProductSubCategories(int productCategoryId) {
         SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PRODUCT_CATEGORIES + " WHERE category_id=" + productCategoryId + " AND deleted_at IS NULL";
+        String sql = "SELECT * FROM " + TBL_PRODUCT_CATEGORIES + " WHERE category_id=" + productCategoryId + " AND deleted_at='null'";
 
         ArrayList<ProductSubCategory> subCategories = new ArrayList<ProductSubCategory>();
         Cursor cur = db.rawQuery(sql, null);
@@ -950,6 +953,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Date date = new Date();
         System.out.println(dateFormat.format(date));
 
+        values.put(SERVER_PRODUCT_ID, product.getProductId());
         values.put(PRODUCT_NAME, product.getName());
         values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
         values.put(PRODUCT_DESCRIPTION, product.getDescription());

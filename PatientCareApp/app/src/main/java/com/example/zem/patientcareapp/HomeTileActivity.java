@@ -120,7 +120,6 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
 
             case R.id.news_btn:
                 intent.putExtra("selected", 8);
-                Toast.makeText(this, "" + dbHelper.getAllDoctorsJSONArray(), Toast.LENGTH_LONG).show();
                 break;
         }
     }

@@ -68,7 +68,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         dbHelper = new DbHelper(getActivity());
         queue = Volley.newRequestQueue(getActivity());
         helpers = new Helpers();
-        url = "http://192.168.1.10/db/get.php?q=get_products";
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
@@ -83,6 +82,9 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             queue = sync.getQueue();
 
             sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "id");
+
+            sync = new Sync();
+            sync.init(getActivity(), "get_dosages", "dosage_format_and_strength", "dosage_id");
             queue = sync.getQueue();
 
 
@@ -103,8 +105,8 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
         } else {
             Log.d("Connected to internet", "no");
-            dbHelper.getAllDoctors();
-            String xml = dbHelper.getDoctorsStringXml();
+            dbHelper.getAllProducts();
+            String xml = dbHelper.getProductsStringXml();
 
             populateDoctorListView(rootView, xml);
             pDialog.hide();
@@ -236,16 +238,11 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                 String subCategoryName = ((TextView)view).getText().toString();
                 ProductSubCategory subCategory = dbHelper.getSubCategoryByName(subCategoryName);
                 ArrayList<HashMap<String, String>> products = dbHelper.getProductsBySubCategory(subCategory.getId());
-
-                list_of_products = (ListView) root_view.findViewById(R.id.product_lists);
-                list_of_products.removeAllViews();
+                System.out.println("PANGIT KA: "+products.get(0).get("name"));
 
                 // Getting adapter by passing xml data ArrayList
                 adapter = new LazyAdapter(getActivity(), products, "product_lists");
-                list_of_products.setAdapter(adapter);
-
-                // Click event for single list row
-                list_of_products.setOnItemClickListener(this);
+                adapter.notifyDataSetChanged();
             }
         });
     }

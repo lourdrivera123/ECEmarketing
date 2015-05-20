@@ -17,8 +17,9 @@ public class Product {
     public int getId(){
         return id;
     }
-    public String getDosageFormatAndStrength(){
-        return dosageFormatAndStrength;
+
+    public int getProductId() {
+        return productId;
     }
 
     public String getGenericName(){
@@ -71,10 +72,6 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setDosageFormatAndStrength(String dosageFormatAndStrength) {
-        this.dosageFormatAndStrength = dosageFormatAndStrength;
     }
 
     public void setGenericName(String genericName) {
