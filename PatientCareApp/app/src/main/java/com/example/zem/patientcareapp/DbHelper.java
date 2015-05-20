@@ -9,6 +9,7 @@ import android.util.Log;
 
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -175,7 +176,16 @@ public class DbHelper extends SQLiteOpenHelper {
         return check;
     }
 
-    public boolean insertPatient(int server_id, String created_at, Patient patient) {
+    public boolean insertPatient(JSONObject patient_json_object_mysql, Patient patient) {
+        int server_id = 0;
+        String created_at = "";
+
+        try {
+            server_id = patient_json_object_mysql.getInt("id");
+            created_at = patient_json_object_mysql.getString("created_at");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -209,7 +219,6 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_EMAIL, patient.getEmail());
         values.put(PTNT_PHOTO, patient.getPhoto());
         values.put(PTNT_CREATED_AT, created_at);
-        values.put(PTNT_UPDATED_AT, created_at);
 
         long insert_patient = db.insert(TBL_PATIENTS, null, values);
 
@@ -299,16 +308,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
             //for the id
             int id = cur.getInt(0);
-//            //for task name
-//            String taskName = cur.getString(1);
-//            //for notes
-//            String notes = cur.getString(2);
-//            //for deadline
-//            String deadLine = cur.getString(3);
-//            //for the priority
-//            int priority = cur.getInt(4);
-//            //for status
-//            int status = cur.getInt(5);
 
             Doctor doctor = new Doctor();
             doctor.setID(id);

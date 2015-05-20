@@ -9,7 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -89,6 +88,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
         dbHelper = new DbHelper(getActivity());
         queue = Volley.newRequestQueue(getActivity());
         url = "http://192.168.10.1/db/get_all_doctors.php";
+        String tag_json_obj_doctor = "json_obj_doctor";
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
@@ -98,7 +98,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
 
             Log.d("Connected to internet", "yes");
             // Request a string response from the provided URL.
-            JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(JSONObject response) {
@@ -171,7 +171,8 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
                 }
             });
 
-            queue.add(stringRequest);
+            queue.add(jsonRequest);
+//            AppController.getInstance().addToRequestQueue(jsonRequest, tag_json_obj_doctor);
 // end of request volley
 
         } else {

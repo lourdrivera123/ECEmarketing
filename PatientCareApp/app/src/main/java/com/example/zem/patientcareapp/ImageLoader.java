@@ -23,6 +23,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
+import com.android.volley.RequestQueue;
+
 public class ImageLoader {
 
     MemoryCache memoryCache=new MemoryCache();
@@ -36,6 +38,9 @@ public class ImageLoader {
     }
 
     final int stub_id = R.drawable.img_holder;
+
+
+
     public void DisplayImage(String url, ImageView imageView)
     {
         imageViews.put(imageView, url);
