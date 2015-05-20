@@ -44,7 +44,7 @@ public class Sync {
 
         dbHelper = new DbHelper(context);
         queue = Volley.newRequestQueue(context);
-        url = "http://192.168.1.10/db/get.php?q="+request;
+        url = "http://192.168.1.12/db/get.php?q="+request;
 
         // Request a string response from the provided URL.
         JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -55,7 +55,17 @@ public class Sync {
                     int success = response.getInt("success");
                     if (success == 1) {
                         json_array_mysql = response.getJSONArray(tableName);
-                        json_array_sqlite = dbHelper.getAllDoctorsJSONArray();
+
+
+                        if( tableName == "doctors" ) {
+                            json_array_sqlite = dbHelper.getAllDoctorsJSONArray();
+                        } else if( tableName == "products") {
+                            json_array_sqlite = dbHelper.getAllProductsJSONArray();
+                        } else if( tableName == "dosage_format_and_strength") {
+                            json_array_sqlite = dbHelper.getAllDosagesJSONArray();
+                        }
+                        Log.d("jsonarraymysql", ""+json_array_mysql);
+                        Log.d("jsonarraysqlite", ""+json_array_sqlite);
 
                         json_array_final = checkWhatToInsert(json_array_mysql, json_array_sqlite, tableId);
 
@@ -67,17 +77,23 @@ public class Sync {
 
                                 if(!json_object.equals("null")){
                                     if( tableName == "products" ){
-                                        // if (dbHelper.insertProduct(setDoctor(json_object))) {
-                                        //     Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
-                                        // } else {
-                                        //     Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
-                                        // }
+                                         if (dbHelper.insertProduct(setProduct(json_object))) {
+                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+                                         } else {
+                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
+                                         }
                                     }else if( tableName == "doctors" ){
                                        if (dbHelper.insertDoctor(setDoctor(json_object))) {
                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
                                         } 
+                                    } else if( tableName == "dosage_format_and_strength") {
+                                        if (dbHelper.insertDosage(setDosage(json_object))) {
+                                            Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }
                             }
@@ -89,7 +105,7 @@ public class Sync {
                     }
 
                 } catch (JSONException e) {
-                    Toast.makeText(context, "" + e, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "general error" + e, Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -107,6 +123,17 @@ public class Sync {
 
     public RequestQueue getQueue(){
         return this.queue;
+    }
+    public Dosage setDosage(JSONObject json_object){
+        Dosage dosage = new Dosage();
+        try {
+            dosage.setDosage_id(json_object.getInt("id"));
+            dosage.setProduct_id(json_object.getInt("product_id"));
+            dosage.setName(json_object.getString("name"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return dosage;
     }
 
     public JSONArray checkWhatToInsert(JSONArray json_array_mysql, JSONArray json_array_sqlite, String server_id) throws JSONException {
@@ -136,7 +163,7 @@ public class Sync {
             }
 
         } catch (JSONException e) {
-            Toast.makeText(context, "" + e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "error in check what to insert" + e, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -195,5 +222,50 @@ public class Sync {
         }
 
         return doctor_object;
+    }
+
+    public Patient setPatient(JSONObject json_object){
+        Patient patient_object = new Patient();
+        try {
+            patient_object.setServerID(json_object.getInt("id"));
+            patient_object.setUsername(json_object.getString("username"));
+            patient_object.setPassword(json_object.getString("password"));
+            patient_object.setOccupation(json_object.getString("occupation"));
+            patient_object.setBirthdate(json_object.getString("birthdate"));
+            patient_object.setSex(json_object.getString("sex"));
+            patient_object.setCivil_status(json_object.getString("civil_status"));
+            patient_object.setHeight(json_object.getString("height"));
+            patient_object.setWeight(json_object.getString("weight"));
+            patient_object.setFullname(json_object.getString("fname"), json_object.getString("mname"), json_object.getString("lname"));
+            patient_object.setFullAddress(json_object.getInt("unit_floor_room_no"), json_object.getString("building"),
+                    json_object.getInt("lot_no"), json_object.getInt("block_no"), json_object.getInt("phase_no"),
+                    json_object.getInt("address_house_no"), json_object.getString("address_street"),
+                    json_object.getString("address_barangay"), json_object.getString("address_city_municipality"),
+                    json_object.getString("address_province"), json_object.getString("address_region"),
+                    json_object.getString("address_country"), json_object.getString("address_zip"));
+            patient_object.setTel_no(json_object.getString("tel_no"));
+            patient_object.setCell_no(json_object.getString("cell_no"));
+            patient_object.setEmail(json_object.getString("email"));
+            patient_object.setPhoto(json_object.getString("photo"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return patient_object;
+    }
+    public Product setProduct(JSONObject json_object) {
+        Product product_object = new Product();
+
+        try {
+            product_object.setProductId(json_object.getInt("id"));
+            product_object.setName(json_object.getString("name"));
+            product_object.setGenericName(json_object.getString("generic_name"));
+            product_object.setDescription(json_object.getString("description"));
+            product_object.setPrice(json_object.getInt("price"));
+            product_object.setUnit(json_object.getString("unit"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return product_object;
     }
 }

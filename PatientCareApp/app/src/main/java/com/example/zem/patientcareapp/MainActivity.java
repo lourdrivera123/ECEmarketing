@@ -51,7 +51,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
-
     }
 
     @Override
@@ -112,8 +111,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    public void showNotification(){
-        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    public void showNotification() {
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)

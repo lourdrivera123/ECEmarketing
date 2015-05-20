@@ -62,6 +62,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     private String[] tabs = {"Gen. Info", "Contact Info", "Acct. Info"};
     public boolean hasError = true, hasError2 = true, hasError3 = true;
 
+
+
     // SIGN UP FRAGMENT
     EditText birthdate, fname, lname, mname, height, weight, occupation;
     RadioGroup sex;

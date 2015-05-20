@@ -70,6 +70,24 @@ public class Patient implements Serializable {
         this.setLname(last_name);
     }
 
+    public void setFullAddress(int unit_floor_room_no, String building, int lot_no, int block_no,
+                               int phase_no, int address_house_no, String street, String barangay, String city_municipality,
+                               String province, String region, String country, String zip){
+        this.setUnit_floor_room_no(unit_floor_room_no);
+        this.setBuilding(building);
+        this.setLot_no(lot_no);
+        this.setBlock_no(block_no);
+        this.setPhase_no(phase_no);
+        this.setAddress_house_no(address_house_no);
+        this.setAddress_street(street);
+        this.setAddress_barangay(barangay);
+        this.setAddress_city_municipality(city_municipality);
+        this.setAddress_province(province);
+        this.setAddress_zip(zip);
+        this.setAddress_region(region);
+        this.setCountry(country);
+    }
+
     public String getFullAddress() {
         return address_house_no + " " + address_street + " " + address_barangay + "\n"
                 + address_city_municipality + " " + address_province + " " + address_region + " " + country + ", " + address_zip;
