@@ -115,7 +115,6 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String PRODUCTS_ID = "id";
     public static final String SERVER_PRODUCT_ID = "product_id";
     public static final String PRODUCT_NAME = "name";
-    public static final String PRODUCT_DOSAGE_FORMAT = "dosage_format_and_strength";
     public static final String PRODUCT_GENERIC_NAME = "generic_name";
     public static final String PRODUCT_DESCRIPTION = "description";
     public static final String PRODUCT_PRICE = "price";
@@ -124,6 +123,15 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String PRODUCT_CREATED_AT = "created_at";
     public static final String PRODUCT_UPDATED_AT = "updated_at";
     public static final String PRODUCT_DELETED_AT = "deleted_at";
+
+    //DOSAGE_FORMAT_AND_STRENGTH TABLE
+    public static final String TBL_DOSAGE = "dosage_format_and_strength";
+    public static final String DOSAGE_ID = "id";
+    public static final String SERVER_DOSAGE_ID = "dosage_id";
+    public static final String DOSAGE_PROD_ID = "product_id";
+    public static final String DOSAGE_NAME = "name";
+    public static final String DOSAGE_CREATED_AT = "created_at";
+    public static final String DOSAGE_UPDATED_AT = "updated_at";
 
     // BASKET TABLE
     public static final String TBL_BASKETS = "baskets";
@@ -173,10 +181,14 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_PRODUCT_SUBCATEGORIES, PRODUCT_SUBCATEGORIES_ID, SERVER_PRODUCT_SUBCATEGORY_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, PROD_SUBCAT_CREATED_AT, PROD_SUBCAT_UPDATED_AT, PROD_SUBCAT_DELETED_AT);
 
         // SQL to create table "products"
-        String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT," +
+        String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT," +
                         " %s TEXT , %s TEXT, %s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCTS, PRODUCTS_ID, SERVER_PRODUCT_ID, PRODUCT_NAME, PRODUCT_DOSAGE_FORMAT, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION, PRODUCT_PRICE,
+                TBL_PRODUCTS, PRODUCTS_ID, SERVER_PRODUCT_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION, PRODUCT_PRICE,
                 PRODUCT_UNIT, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
+
+        //SQL TO CREATE TABLE "TBL_DOSAGE"
+        String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_DOSAGE, DOSAGE_ID, SERVER_DOSAGE_ID, DOSAGE_PROD_ID, DOSAGE_NAME, DOSAGE_CREATED_AT, DOSAGE_UPDATED_AT);
 
         // SQL to create table "baskets"
         String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
@@ -192,6 +204,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_tbl_product_categories);
         db.execSQL(sql_create_tbl_product_subcategories);
         db.execSQL(sql_create_tbl_products);
+        db.execSQL(sql_create_dosage_table);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
     }
@@ -383,10 +396,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return patient;
     }
-
-//    public boolean insertPatientRecord() {
-//
-//    }
 
     //DOCTORS..DOCTORS..DOCTORS..DOCTORS..DOCTORS
 
@@ -710,7 +719,6 @@ public class DbHelper extends SQLiteOpenHelper {
         System.out.println(dateFormat.format(date));
 
         values.put(PRODUCT_NAME, product.getName());
-        values.put(PRODUCT_DOSAGE_FORMAT, product.getDosageFormatAndStrength());
         values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
         values.put(PRODUCT_DESCRIPTION, product.getDescription());
         values.put(PRODUCT_PHOTO, product.getPhoto());
@@ -734,7 +742,6 @@ public class DbHelper extends SQLiteOpenHelper {
         System.out.println(dateFormat.format(date));
 
         values.put(PRODUCT_NAME, product.getName());
-        values.put(PRODUCT_DOSAGE_FORMAT, product.getDosageFormatAndStrength());
         values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
         values.put(PRODUCT_DESCRIPTION, product.getDescription());
         values.put(PRODUCT_PHOTO, product.getPhoto());
