@@ -68,9 +68,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
 
         dbHelper = new DbHelper(getActivity());
         queue = Volley.newRequestQueue(getActivity());
+
         url = "http://192.168.1.10/db/get.php?q=get_doctors";
         helpers = new Helpers();
-
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");

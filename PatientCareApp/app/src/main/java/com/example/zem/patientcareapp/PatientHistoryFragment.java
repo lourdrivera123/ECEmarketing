@@ -27,6 +27,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             "Dr. Zemiel Asma, January 9, 1995", "Dr. Dexter Bengil, March 5, 2000"
     };
     int check = 0;
+    public static final int new_treatment_request = 10;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,10 +62,8 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_record:
-                Dialog dialog = new Dialog(getActivity());
-                dialog.setTitle("New Medical Record");
-                dialog.setContentView(R.layout.dialog_new_medical_record);
-                dialog.show();
+                Intent intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
+                startActivity(intent);
 
                 break;
             case R.id.view_doctor_btn:

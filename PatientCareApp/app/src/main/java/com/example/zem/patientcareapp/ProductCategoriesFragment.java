@@ -34,8 +34,9 @@ import java.util.Queue;
 /**
  * Created by Dexter B. on 5/18/2015.
  */
-public class ProductCategoriesFragment extends Fragment implements AdapterView.OnItemClickListener {
-    ListView lv_categories;
+public class ProductCategoriesFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+    Spinner lv_categories;
+    ListView lv_subcategories;
     Helpers helpers;
     View root_view;
     Sync sync;
@@ -57,7 +58,7 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
         pDialog.show();
         helpers = new Helpers();
 
-        lv_categories = (ListView) rootView.findViewById(R.id.categories);
+        lv_categories = (Spinner) rootView.findViewById(R.id.categories);
 
         final String list[] = {};
         if (helpers.isNetworkAvailable(getActivity())) {
@@ -89,17 +90,24 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
     }
 
     public void populateListView(View rootView, String[] categories){
-        lv_categories = (ListView) rootView.findViewById(R.id.categories);
+        lv_categories = (Spinner) rootView.findViewById(R.id.categories);
+        lv_subcategories = (ListView) rootView.findViewById(R.id.subcategories);
 
         category_list_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, categories);
         lv_categories.setAdapter(category_list_adapter);
-
-        lv_categories.setOnItemClickListener(this);
-
+        lv_subcategories.setVisibility(View.GONE);
+//        lv_categories.setOnItemClickListener(this);
+        lv_categories.setOnItemSelectedListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(getActivity(), ProductsFragment.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = ((TextView)view).getText().toString();
         Toast.makeText(getActivity(), item, Toast.LENGTH_LONG).show();
 
@@ -107,15 +115,24 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
         String []arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
 
         Dialog dialog = new Dialog(getActivity());
-        dialog.setTitle(item+" subcategories");
+        dialog.setTitle(item + " subcategories");
         dialog.setContentView(R.layout.categories_layout);
-        dialog.show();
+
+        if(position != 0) dialog.show();
 
         TextView browseBy = (TextView) dialog.findViewById(R.id.browse_by);
         browseBy.setText("");
-        lv_categories = (ListView) dialog.findViewById(R.id.categories);
+        lv_subcategories = (ListView) dialog.findViewById(R.id.subcategories);
+        lv_categories = (Spinner) dialog.findViewById(R.id.categories);
 
         category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arr);
-        lv_categories.setAdapter(category_list_adapter);
+        lv_subcategories.setAdapter(category_list_adapter);
+        lv_categories.setVisibility(View.GONE);
+        lv_subcategories.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

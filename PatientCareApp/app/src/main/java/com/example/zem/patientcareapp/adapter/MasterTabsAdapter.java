@@ -35,8 +35,8 @@ public class MasterTabsAdapter extends FragmentPagerAdapter {
             case 4:
                 return new PatientConsultationFragment();
             case 5:
-//                return new ProductsFragment();
-                return new ProductCategoriesFragment();
+                return new ProductsFragment();
+//                return new ProductCategoriesFragment();
             case 6:
                 return new ShoppingCartFragment();
             case 7:

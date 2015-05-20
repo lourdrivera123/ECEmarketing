@@ -1,21 +1,32 @@
 package com.example.zem.patientcareapp;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +34,7 @@ import java.util.HashMap;
 /**
  * Created by User PC on 5/5/2015. Updated 5/5/15
  */
-public class ProductsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher {
+public class ProductsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher, AdapterView.OnItemSelectedListener {
     // XML node keys
     static final String KEY_PRODUCT_NAME = "name"; // parent node
     static final String KEY_PRODUCT_DESCRIPTION = "description";
@@ -34,43 +45,82 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     Button add_to_cart_btn;
     EditText qty;
-    ListView list_of_products;
+    ListView list_of_products, lv_subcategories;
+    Spinner lv_categories;
     LazyAdapter adapter;
+    ArrayAdapter category_list_adapter;
     DbHelper dbHelper;
-    Helpers helper;
+    Helpers helpers;
+    Sync sync;
+    String[] category_list;
+
+    RequestQueue queue;
+    String url;
+    ProgressDialog pDialog;
+    View root_view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.products_layout, container, false);
+        final View rootView = inflater.inflate(R.layout.products_layout, container, false);
+        root_view = rootView;
+        lv_categories = (Spinner) rootView.findViewById(R.id.categories);
 
-        ArrayList<HashMap<String, String>> products_list = new ArrayList<HashMap<String, String>>();
         dbHelper = new DbHelper(getActivity());
-        helper = new Helpers();
+        queue = Volley.newRequestQueue(getActivity());
+        helpers = new Helpers();
+        url = "http://192.168.1.10/db/get.php?q=get_products";
 
+        pDialog = new ProgressDialog(getActivity());
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+        if (helpers.isNetworkAvailable(getActivity())) {
+            sync = new Sync();
+            sync.init(getActivity(), "get_products", "products", "product_id");
+            queue = sync.getQueue();
+
+            sync.init(getActivity(), "get_product_categories", "product_categories", "id");
+            queue = sync.getQueue();
+
+            sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "id");
+            queue = sync.getQueue();
+
+
+            rootView.postDelayed(new Runnable() {
+                public void run() {
+                    // Actions to do after 3 seconds
+
+                    dbHelper.getAllProducts();
+                    String xml = dbHelper.getProductsStringXml();
+
+                    populateDoctorListView(rootView, xml);
+                    category_list = dbHelper.getAllProductcategoriesArray();
+                    populateListView(rootView, category_list);
+                    pDialog.hide();
+                }
+
+            }, 3000);
+
+        } else {
+            Log.d("Connected to internet", "no");
+            dbHelper.getAllDoctors();
+            String xml = dbHelper.getDoctorsStringXml();
+
+            populateDoctorListView(rootView, xml);
+            pDialog.hide();
+        }
+
+
+        return rootView;
+    }
+
+    public void populateDoctorListView(View rootView, String xml) {
+        ArrayList<HashMap<String, String>> products_list = new ArrayList<HashMap<String, String>>();
 
         XMLParser parser = new XMLParser();
 //        String xml = parser.getXmlFromUrl("http://localhost/db/get.php?q=get_products"); // getting XML from URL
-        String xml =
-                "<list>" +
-                        "<entry>\n" +
-                        "<id>14</id>\n" +
-                        "<name>Biogesic</name>\n" +
-                        "<description>500mg Description ni diri</description>\n" +
-                        "<price>Php 1.75</price>\n" +
-                        "<photo>\n" +
-                        "http://api.androidhive.info/music/images/rihanna.png\n" +
-                        "</photo>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                        "<id>11</id>\n" +
-                        "<name>Neozep</name>\n" +
-                        "<description>500mg Description gihapon ni diri</description>\n" +
-                        "<price>Php 3.75</price>\n" +
-                        "<photo>http://api.androidhive.info/music/images/adele.png</photo>\n" +
-                        "</entry>" +
-                        "</list>";
-        Document doc = parser.getDomElement(xml); // getting DOM element
 
+        Document doc = parser.getDomElement(xml); // getting DOM element
 
         NodeList nl = doc.getElementsByTagName(KEY_PRODUCT);
         // looping through all song nodes &lt;song&gt;
@@ -97,8 +147,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
         // Click event for single list row
         list_of_products.setOnItemClickListener(this);
-
-        return rootView;
     }
 
     @Override
@@ -147,6 +195,63 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void afterTextChanged(Editable s) {
+
+    }
+
+    public void populateListView(View rootView, String[] categories){
+        lv_categories = (Spinner) rootView.findViewById(R.id.categories);
+        lv_subcategories = (ListView) rootView.findViewById(R.id.subcategories);
+
+        category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, categories);
+        lv_categories.setAdapter(category_list_adapter);
+        lv_subcategories.setVisibility(View.GONE);
+        lv_categories.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String item = ((TextView)view).getText().toString();
+        Toast.makeText(getActivity(), item, Toast.LENGTH_LONG).show();
+
+        int categoryId = dbHelper.categoryGetIdByName(item);
+        String []arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
+
+        Dialog dialog = new Dialog(getActivity());
+        dialog.setTitle(item + " subcategories");
+        dialog.setContentView(R.layout.categories_layout);
+
+        dialog.show();
+
+        TextView browseBy = (TextView) dialog.findViewById(R.id.browse_by);
+        browseBy.setText("");
+        lv_subcategories = (ListView) dialog.findViewById(R.id.subcategories);
+        lv_categories = (Spinner) dialog.findViewById(R.id.categories);
+
+        category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arr);
+        lv_subcategories.setAdapter(category_list_adapter);
+        lv_categories.setVisibility(View.GONE);
+        lv_subcategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String subCategoryName = ((TextView)view).getText().toString();
+                ProductSubCategory subCategory = dbHelper.getSubCategoryByName(subCategoryName);
+                ArrayList<HashMap<String, String>> products = dbHelper.getProductsBySubCategory(subCategory.getId());
+
+                list_of_products = (ListView) root_view.findViewById(R.id.product_lists);
+                list_of_products.removeAllViews();
+
+                // Getting adapter by passing xml data ArrayList
+                adapter = new LazyAdapter(getActivity(), products, "product_lists");
+                list_of_products.setAdapter(adapter);
+
+                // Click event for single list row
+                list_of_products.setOnItemClickListener(this);
+            }
+        });
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 }

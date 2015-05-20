@@ -3,6 +3,7 @@ package com.example.zem.patientcareapp;
 import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,11 +12,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -26,13 +30,26 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener, DatePickerDialog.OnDateSetListener, View.OnClickListener {
+
     int limit = 4, count = 0, unselected;
 
     public static Patient patient;
@@ -49,7 +66,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     EditText birthdate, fname, lname, mname, height, weight, occupation;
     RadioGroup sex;
     Spinner civil_status_spinner;
-    String s_fname, s_lname, s_mname, s_birthdate, s_sex, s_civil_status, s_height, s_weight, s_occupation;
+    String s_fname, s_lname, s_mname, s_birthdate, s_formatted_birthdate, s_sex, s_civil_status, s_height, s_weight, s_occupation;
 
     // CONTACTS FRAGMENT
     EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_barangay, address_city_municipality, address_province, address_zip,
@@ -60,6 +77,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     // ACCOUNT INFO FRAGMENT
     String username = "";
+    String s_password = "";
+    String s_filepath = "";
     ImageView image_holder;
     Drawable d;
 
@@ -73,6 +92,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public static int edit_int = 0;
 
     Patient editUser;
+
+    RequestQueue queue;
+    String url;
+    ProgressDialog pDialog;
+
+    JSONObject patient_json_object_mysql = null;
+    JSONArray patient_json_array_mysql = null;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -88,6 +114,14 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         Intent intent = getIntent();
         signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
+
+        queue = Volley.newRequestQueue(this);
+        url = "http://192.168.10.1/db/post_register_patient.php";
+        String tag_json_obj_doctor = "json_obj_doctor";
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+
 
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -121,8 +155,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     }
                     validateAtPosition2();
                 } else if (position == 2) {
-//                    patient.setPhoto(null);
-
                     Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
                     image_holder = (ImageView) findViewById(R.id.image_holder);
 
@@ -151,6 +183,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                 viewPager.setCurrentItem(0);
                             } else if (hasError2) {
                                 viewPager.setCurrentItem(1);
+                                pDialog.show();
+
                             } else {
                                 if (!hasError && !hasError2) {
                                     validateUserAccountInfo();
@@ -190,18 +224,54 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
                                             }
                                         } else {
-                                            if (dbHelper.checkUserIfRegistered(uname) == 0) {
-                                                if (dbHelper.insertPatient(serverID, dateString, patient)) {
-                                                    SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-                                                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                                                    editor.putString("nameKey", uname);
-                                                    editor.commit();
-                                                    startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
-                                                } else {
-                                                    Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                                                }
+
+                                            if (isNetworkAvailable()) {
+
+                                                Map<String, String> params = setParams();
+
+                                                CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
+                                                        new Response.Listener<JSONObject>() {
+                                                            @Override
+                                                            public void onResponse(JSONObject response) {
+
+                                                                try {
+                                                                    patient_json_array_mysql = response.getJSONArray("patient");
+                                                                    patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
+                                                                } catch (JSONException e) {
+//                                                                    e.printStackTrace();
+                                                                }
+//                                                        Toast.makeText(EditTabsActivity.this, "response: " + response.toString(), Toast.LENGTH_SHORT).show();
+                                                                Log.d("response jsobjrequest", "" + response.toString());
+
+                                                                //saving to sqlite database
+                                                                if (dbHelper.checkUserIfRegistered(patient.getUsername()) == 0) {
+                                                                    if (dbHelper.insertPatient(patient_json_object_mysql, patient)) {
+                                                                        SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                                                                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                                        editor.putString("nameKey", patient.getUsername());
+                                                                        editor.commit();
+                                                                        pDialog.hide();
+                                                                        startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+                                                                    } else {
+                                                                        Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                } else {
+                                                                    Toast.makeText(EditTabsActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                                                                }
+
+                                                            }
+                                                        }, new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+                                                        pDialog.hide();
+                                                        Log.d("volley error", "" + error.toString());
+                                                    }
+                                                });
+
+                                                queue.add(jsObjRequest);
+
                                             } else {
-                                                Toast.makeText(EditTabsActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(EditTabsActivity.this, "Cannot save because there is no internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }
@@ -235,6 +305,40 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+    }
+
+    public Map<String, String> setParams() {
+        Map<String, String> params = new HashMap<String, String>();
+
+        params.put("fname", patient.getFname());
+        params.put("lname", patient.getLname());
+        params.put("mname", patient.getMname());
+        params.put("username", patient.getUsername());
+        params.put("password", patient.getPassword());
+        params.put("occupation", patient.getOccupation());
+        params.put("birthdate", patient.getBirthdate());
+        params.put("sex", patient.getSex());
+        params.put("civil_status", patient.getCivil_status());
+        params.put("height", patient.getHeight());
+        params.put("weight", patient.getWeight());
+        params.put("unit_floor_room_no", "" + patient.getUnit_floor_room_no());
+        params.put("building", patient.getBuilding());
+        params.put("lot_no", "" + patient.getLot_no());
+        params.put("block_no", "" + patient.getBlock_no());
+        params.put("phase_no", "" + patient.getPhase_no());
+        params.put("address_house_no", "" + patient.getAddress_house_no());
+        params.put("address_street", patient.getAddress_street());
+        params.put("address_barangay", patient.getAddress_barangay());
+        params.put("address_city_municipality", patient.getAddress_city_municipality());
+        params.put("address_province", patient.getAddress_province());
+        params.put("address_region", patient.getAddress_region());
+        params.put("address_zip", patient.getAddress_zip());
+        params.put("tel_no", patient.getTel_no());
+        params.put("cell_no", patient.getCell_no());
+        params.put("email", patient.getEmail());
+        params.put("photo", patient.getPhoto());
+
+        return params;
     }
 
     public void readFromSignUp() {
@@ -309,13 +413,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         //NOT REQUIRED VARIABLES
         if (s_mname.equals("")) {
-            patient.setMname(null);
+            patient.setMname("");
         } else {
             patient.setMname(s_mname);
         }
 
         if (s_occupation.equals("")) {
-            patient.setOccupation(null);
+            patient.setOccupation("");
         } else {
             patient.setOccupation(s_occupation);
         }
@@ -416,7 +520,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
 
         if (s_building.equals("")) {
-            patient.setBuilding(null);
+            s_building = null;
+            patient.setBuilding("");
         } else {
             patient.setBuilding(s_building);
         }
@@ -450,13 +555,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
 
         if (s_tel_no.equals("")) {
-            patient.setTel_no(null);
+            patient.setTel_no("");
         } else {
             patient.setTel_no(s_tel_no);
         }
 
         if (s_email.equals("")) {
-            patient.setEmail(null);
+            patient.setEmail("");
         } else {
             patient.setEmail(s_email);
         }
@@ -498,6 +603,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         if (partial_pword.equals(confirmed_pword)) {
             patient.setPassword(confirmed_pword);
+            s_password = confirmed_pword;
             count++;
         } else {
             et_confirmed_password.setError("Passwords do not match. Please try again.");
@@ -523,23 +629,33 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 111) {
-            Uri uri = data.getData();
-            String[] projection = {MediaStore.Images.Media.DATA};
+            try {
+                if (data.getData() != null && !data.getData().equals(Uri.EMPTY)) {
+                    Uri uri = data.getData();
+                    String[] projection = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-            cursor.moveToFirst();
+                    Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+                    cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndex(projection[0]);
-            String filePath = cursor.getString(columnIndex);
-            cursor.close();
+                    int columnIndex = cursor.getColumnIndex(projection[0]);
+                    String filePath = cursor.getString(columnIndex);
+                    s_filepath = filePath;
+                    cursor.close();
 
-            patient.setPhoto(filePath);
+                    patient.setPhoto(filePath);
 
-            Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-            d = new BitmapDrawable(yourSelectedImage);
-            image_holder.setImageDrawable(d);
+                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
+                    d = new BitmapDrawable(yourSelectedImage);
+                    image_holder.setImageDrawable(d);
 
-            check = 23;
+                    check = 23;
+
+                } else {
+                    patient.setPhoto("");
+                }
+            } catch (Exception e) {
+
+            }
         }
     }
 
@@ -566,6 +682,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                 }
                 break;
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override

@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            launchMode = "singleInstance"
+            launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,8 +36,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".ListOfDoctorsFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" >
-            </activity>
+            android:configChanges="keyboardHidden|orientation|screenSize"></activity>
         <activity
             android:name=".DoctorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -50,7 +49,7 @@
         <activity
             android:name=".HomeTileActivity"
             android:theme="@android:style/Theme.Holo.Light"
-            launchMode = "singleInstance"
+            launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <activity
@@ -61,6 +60,7 @@
             android:name=".EditTabsActivity"
             android:theme="@android:style/Theme.Holo.Light"
             android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".PatientMedicalRecordActivity" />
 
         <activity android:name=".FileCache" />
         <activity android:name=".Utils" />
@@ -72,9 +72,11 @@
         <activity android:name=".ProductsFragment" />
         <activity android:name=".DbHelper" />
         <activity android:name=".PatientConsultationActivity" />
-        <activity android:name=".StandStrong"/>
+        <activity android:name=".StandStrong" />
         <activity android:name=".PatientConsultationFragment" />
         <activity android:name=".ShoppingCartFragment" />
+        <activity android:name=".AppController" />
+        <activity android:name=".LruBitmapCache" />
         <activity android:name=".Sync" />
         <activity android:name=".ProductCategory" />
         <activity android:name=".ProductSubCategory" />
