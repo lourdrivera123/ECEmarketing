@@ -57,7 +57,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         dbHelper = new DbHelper(getActivity());
         queue = Volley.newRequestQueue(getActivity());
         helpers = new Helpers();
-        url = "http://192.168.1.10/db/get.php?q=get_products";
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
@@ -66,6 +65,10 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         if (helpers.isNetworkAvailable(getActivity())) {
             sync = new Sync();
             sync.init(getActivity(), "get_products", "products", "product_id");
+            queue = sync.getQueue();
+
+            sync = new Sync();
+            sync.init(getActivity(), "get_dosages", "dosage_format_and_strength", "dosage_id");
             queue = sync.getQueue();
 
 
@@ -84,8 +87,8 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
         } else {
             Log.d("Connected to internet", "no");
-            dbHelper.getAllDoctors();
-            String xml = dbHelper.getDoctorsStringXml();
+            dbHelper.getAllProducts();
+            String xml = dbHelper.getProductsStringXml();
 
             populateDoctorListView(rootView, xml);
             pDialog.hide();

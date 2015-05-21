@@ -44,7 +44,7 @@ public class Sync {
 
         dbHelper = new DbHelper(context);
         queue = Volley.newRequestQueue(context);
-        url = "http://192.168.1.10/db/get.php?q="+request;
+        url = "http://192.168.1.15/db/get.php?q="+request;
 
         // Request a string response from the provided URL.
         JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -61,7 +61,11 @@ public class Sync {
                             json_array_sqlite = dbHelper.getAllDoctorsJSONArray();
                         } else if( tableName == "products") {
                             json_array_sqlite = dbHelper.getAllProductsJSONArray();
+                        } else if( tableName == "dosage_format_and_strength") {
+                            json_array_sqlite = dbHelper.getAllDosagesJSONArray();
                         }
+                        Log.d("jsonarraymysql", ""+json_array_mysql);
+                        Log.d("jsonarraysqlite", ""+json_array_sqlite);
 
                         json_array_final = checkWhatToInsert(json_array_mysql, json_array_sqlite, tableId);
 
@@ -84,6 +88,12 @@ public class Sync {
                                         } else {
                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
                                         } 
+                                    } else if( tableName == "dosage_format_and_strength") {
+                                        if (dbHelper.insertDosage(setDosage(json_object))) {
+                                            Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }
                             }
@@ -95,7 +105,7 @@ public class Sync {
                     }
 
                 } catch (JSONException e) {
-                    Toast.makeText(context, "" + e, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "general error" + e, Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -113,6 +123,17 @@ public class Sync {
 
     public RequestQueue getQueue(){
         return this.queue;
+    }
+    public Dosage setDosage(JSONObject json_object){
+        Dosage dosage = new Dosage();
+        try {
+            dosage.setDosage_id(json_object.getInt("id"));
+            dosage.setProduct_id(json_object.getInt("product_id"));
+            dosage.setName(json_object.getString("name"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return dosage;
     }
 
     public JSONArray checkWhatToInsert(JSONArray json_array_mysql, JSONArray json_array_sqlite, String server_id) throws JSONException {
@@ -142,7 +163,7 @@ public class Sync {
             }
 
         } catch (JSONException e) {
-            Toast.makeText(context, "" + e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "error in check what to insert" + e, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 

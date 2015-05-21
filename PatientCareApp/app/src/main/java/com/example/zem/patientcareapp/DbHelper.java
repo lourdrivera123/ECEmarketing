@@ -145,15 +145,6 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String BASKET_UPDATED_AT = "updated_at";
     public static final String BASKET_DELETED_AT = "deleted_at";
 
-    //Diagnosis format and strength
-    public static final String TBL_DOSAGE = "dosage_format_and_strength";
-    public static final String DOSAGE_ID = "id";
-    public static final String DOSAGE_SERVER_ID = "dosage_id";
-    public static final String DOSAGE_PRODUCT_ID = "product_id";
-    public static final String DOSAGE_NAME = "name";
-    public static final String DOSAGE_CREATED_AT = "created_at";
-    public static final String DOSAGE_UPDATED_AT = "updated_at";
-    public static final String DOSAGE_DELETED_AT = "deleted_at";
     //string xml
     String doctor_string_xml = "", product_string_xml = "";
     public static String doctors_string_xml = "";
@@ -204,13 +195,6 @@ public class DbHelper extends SQLiteOpenHelper {
         // SQL to create table "baskets"
         String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
                         "%s INTEGER REFERENCES " + TBL_PATIENTS + "(" + PTNT_PATIENT_ID + "), %s INTEGER REFERENCES " + TBL_BASKETS + "(" + SERVER_BASKET_ID + ")," +
-                        " %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
-                BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
-
-        // SQL to create table "dosage_format_and_strength"
-        String sql_create_tbl_dosage = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s INTEGER REFERENCES " + TBL_DOSAGE + "(" + PTNT_PATIENT_ID + "), %s INTEGER REFERENCES " + TBL_BASKETS + "(" + SERVER_BASKET_ID + ")," +
                         " %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
                 TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
                 BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
@@ -496,6 +480,19 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
+    public boolean insertDosage(Dosage dosage){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(SERVER_DOSAGE_ID, dosage.getDosage_id());
+        values.put(DOSAGE_PROD_ID, dosage.getProduct_id());
+        values.put(DOSAGE_NAME, dosage.getName());
+
+        long rowID = db.insert(TBL_DOSAGE, null, values);
+
+        return rowID > 0;
+    }
+
     public ArrayList<Doctor> getAllDoctors() {
 
         ArrayList<Doctor> doctors = new ArrayList<Doctor>();
@@ -705,6 +702,44 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         System.out.print("json array of all products: " + resultSet.toString());
+        return resultSet;
+    }
+
+    public JSONArray getAllDosagesJSONArray() {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        String sql = "SELECT * FROM " +TBL_DOSAGE;
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        JSONArray resultSet = new JSONArray();
+
+        cursor.moveToFirst();
+        while (cursor.isAfterLast() == false) {
+
+            int totalColumn = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i = 0; i < totalColumn; i++) {
+                if (cursor.getColumnName(i) != null) {
+                    try {
+                        if (cursor.getString(i) != null) {
+                            System.out.print("json array of all dosages: " + cursor.getString(i));
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        } else {
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    } catch (Exception e) {
+                        System.out.print("error in dosages: " + e.getMessage());
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        System.out.print("json array of all dosages: " + resultSet.toString());
         return resultSet;
     }
 
