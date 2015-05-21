@@ -53,7 +53,6 @@ public class ShoppingCartFragment extends Fragment {
         total_amount = (TextView) rootView.findViewById(R.id.upper_cart_total);
 
         items = new ArrayList<HashMap<String, String>>();
-        TableRow.LayoutParams lparams;
         map = new HashMap<String, String>();
 
         map.put("id", "100");

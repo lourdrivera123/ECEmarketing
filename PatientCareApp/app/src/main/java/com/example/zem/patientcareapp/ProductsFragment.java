@@ -58,6 +58,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     String url;
     ProgressDialog pDialog;
     View root_view;
+    ArrayList<HashMap<String, String>> products_list;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -117,7 +118,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     }
 
     public void populateDoctorListView(View rootView, String xml) {
-        ArrayList<HashMap<String, String>> products_list = new ArrayList<HashMap<String, String>>();
+        products_list = new ArrayList<HashMap<String, String>>();
 
         XMLParser parser = new XMLParser();
 //        String xml = parser.getXmlFromUrl("http://localhost/db/get.php?q=get_products"); // getting XML from URL
@@ -237,11 +238,11 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String subCategoryName = ((TextView)view).getText().toString();
                 ProductSubCategory subCategory = dbHelper.getSubCategoryByName(subCategoryName);
-                ArrayList<HashMap<String, String>> products = dbHelper.getProductsBySubCategory(subCategory.getId());
-                System.out.println("PANGIT KA: "+products.get(0).get("name"));
+                products_list = dbHelper.getProductsBySubCategory(subCategory.getId());
+                System.out.println("PANGIT KA: "+products_list.get(0).get("name"));
 
                 // Getting adapter by passing xml data ArrayList
-                adapter = new LazyAdapter(getActivity(), products, "product_lists");
+//                adapter = new LazyAdapter(getActivity(), products_list, "product_lists");
                 adapter.notifyDataSetChanged();
             }
         });
