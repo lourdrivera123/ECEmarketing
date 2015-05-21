@@ -1,15 +1,17 @@
 package com.example.zem.patientcareapp;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -19,13 +21,19 @@ import java.util.Calendar;
  * Created by User PC on 5/18/2015.
  */
 public class PatientMedicalRecordActivity extends ActionBarActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
-    EditText date, complaint, diagnosis, treatment;
-    AutoCompleteTextView search_doctor;
-    Button btn_save, btn_cancel;
-    String s_date, s_doctor, s_complaint, s_diagnosis, s_treatment;
+    EditText date, complaint, diagnosis, generic_name, qty, dosage;
+    TextView add_treatment;
+    ListView list_of_treatments;
+    AutoCompleteTextView search_doctor, search_medicine;
+    Button btn_save, btn_cancel, save_treatment, cancel_treatment;
+    String s_date, s_doctor, s_complaint, s_diagnosis, s_generic_name, s_qty, s_dosage, s_medicine;
+
     ArrayList<String> doctors;
+    ArrayList<String> treatments;
+    ArrayAdapter treatmentsAdapter;
 
     DbHelper dbhelper;
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +43,11 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
         dbhelper = new DbHelper(this);
 
         date = (EditText) findViewById(R.id.date);
+        list_of_treatments = (ListView) findViewById(R.id.list_of_treatments);
         search_doctor = (AutoCompleteTextView) findViewById(R.id.search_doctor);
         complaint = (EditText) findViewById(R.id.complaint);
         diagnosis = (EditText) findViewById(R.id.diagnosis);
-        treatment = (EditText) findViewById(R.id.treatment);
+        add_treatment = (TextView) findViewById(R.id.add_treatment);
         btn_save = (Button) findViewById(R.id.btn_save);
         btn_cancel = (Button) findViewById(R.id.btn_cancel);
 
@@ -46,9 +55,15 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, doctors);
         search_doctor.setAdapter(adapter);
 
+        treatments = new ArrayList<String>();
+        treatments.add("esel - esel");
+        treatmentsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, treatments);
+        list_of_treatments.setAdapter(treatmentsAdapter);
+
         btn_save.setOnClickListener(this);
         btn_cancel.setOnClickListener(this);
         date.setOnClickListener(this);
+        add_treatment.setOnClickListener(this);
     }
 
     @Override
@@ -66,16 +81,12 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
                 }
                 if (diagnosis.getText().toString().equals("")) {
                     diagnosis.setError("Field required");
-                }
-                if (treatment.getText().toString().equals("")) {
-                    treatment.setError("Field required");
                 } else {
                     s_date = date.getText().toString();
                     s_date = date.getText().toString();
                     s_doctor = search_doctor.getText().toString();
                     s_complaint = complaint.getText().toString();
                     s_diagnosis = diagnosis.getText().toString();
-                    s_treatment = treatment.getText().toString();
 
                     if (doctors.contains(s_doctor)) {
                         Toast.makeText(this, "found doctor: " + s_doctor, Toast.LENGTH_SHORT).show();
@@ -105,6 +116,53 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
 
                     updateDate(year, month - 1, day);
                 }
+                break;
+
+            case R.id.add_treatment:
+                dialog = new Dialog(this);
+                dialog.setTitle("Add Treatment");
+                dialog.setContentView(R.layout.dialog_new_treatment);
+                dialog.show();
+
+                generic_name = (EditText) dialog.findViewById(R.id.generic_name);
+                qty = (EditText) dialog.findViewById(R.id.qty);
+                dosage = (EditText) dialog.findViewById(R.id.dosage);
+                search_medicine = (AutoCompleteTextView) dialog.findViewById(R.id.search_medicine);
+                save_treatment = (Button) dialog.findViewById(R.id.save_treatment);
+                cancel_treatment = (Button) dialog.findViewById(R.id.cancel_treatment);
+
+                cancel_treatment.setOnClickListener(this);
+                save_treatment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (generic_name.getText().toString().equals("")) {
+                            generic_name.setError("Field required");
+                        }
+                        if (qty.getText().toString().equals("")) {
+                            qty.setError("Field required");
+                        }
+                        if (dosage.getText().toString().equals("")) {
+                            dosage.equals("Field required");
+                        }
+                        if (search_medicine.getText().toString().equals("")) {
+                            search_medicine.setError("Field required");
+                        } else {
+                            s_generic_name = generic_name.getText().toString();
+                            s_qty = qty.getText().toString();
+                            s_dosage = dosage.getText().toString();
+                            s_medicine = search_medicine.getText().toString();
+
+                            treatments.add(s_medicine + " - " + s_dosage);
+                            treatmentsAdapter.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    }
+                });
+
+                break;
+
+            case R.id.cancel_treatment:
+                dialog.dismiss();
                 break;
         }
     }

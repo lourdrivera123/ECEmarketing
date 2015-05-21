@@ -2,6 +2,79 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <AutoCompleteTextView
+                android:id="@+id/search_medicine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_search"
+                android:paddingTop="0dip"
+                android:paddingBottom="0dip"
+                android:paddingLeft="0dip"
+                android:hint="Medicine" />
+
+            <EditText
+                android:id="@+id/generic_name"
+                android:layout_marginTop="@dimen/d10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Generic name" />
+
+            <EditText
+                android:id="@+id/qty"
+                android:layout_marginTop="@dimen/d10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Quantity" />
+
+
+            <EditText
+                android:id="@+id/dosage"
+                android:layout_marginTop="@dimen/d10"
+                android:inputType="textMultiLine"
+                android:lines="2"
+                android:minLines="2"
+                android:maxLines="5"
+                android:gravity="bottom|left"
+                android:hint="Dosage"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:scrollbars="vertical" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/d20">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:id="@+id/save_treatment" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/cancel_treatment" />
+    </LinearLayout>
 </LinearLayout>

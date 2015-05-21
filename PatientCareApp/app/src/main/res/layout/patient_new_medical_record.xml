@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +10,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -49,7 +50,7 @@
                         android:hint="Doctor" />
                 </TableRow>
 
-                <TableRow android:layout_marginTop="@dimen/d10">
+                <TableRow>
 
                     <TextView
                         android:text="Complaint:"
@@ -71,7 +72,7 @@
                         android:scrollbars="vertical" />
                 </TableRow>
 
-                <TableRow android:layout_marginTop="@dimen/d20">
+                <TableRow>
 
                     <TextView
                         android:text="Diagnosis:"
@@ -93,7 +94,7 @@
                         android:scrollbars="vertical" />
                 </TableRow>
 
-                <TableRow android:layout_marginTop="@dimen/d20">
+                <TableRow android:layout_marginTop="@dimen/d10">
 
                     <TextView
                         android:text="Treatment:"
@@ -101,21 +102,27 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content" />
 
-                    <EditText
-                        android:id="@+id/treatment"
-                        android:inputType="textMultiLine"
-                        android:lines="2"
-                        android:minLines="2"
-                        android:maxLines="5"
-                        android:gravity="top|left"
-                        android:hint="..."
-                        android:layout_height="wrap_content"
+                    <TextView
+                        android:id="@+id/add_treatment"
+                        android:text="+ Add treatment"
                         android:layout_width="0dp"
-                        android:layout_weight=".7"
-                        android:scrollbars="vertical" />
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".7" />
                 </TableRow>
             </TableLayout>
         </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/d10">
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_of_treatments" />
     </LinearLayout>
 
     <LinearLayout
@@ -137,4 +144,4 @@
             android:text="Cancel"
             android:id="@+id/btn_cancel" />
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>
