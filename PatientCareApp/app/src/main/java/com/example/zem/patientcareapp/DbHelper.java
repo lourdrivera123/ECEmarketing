@@ -27,7 +27,7 @@ public class DbHelper extends SQLiteOpenHelper {
     //PATIENTS_TABLE
     public static final String TBL_PATIENTS = "patients";
     public static final String PTNT_ID = "id";
-    public static final String PTNT_SERVER_ID = "server_id";
+    public static final String PTNT_PATIENT_ID = "patient_id";
     public static final String PTNT_FNAME = "fname";
     public static final String PTNT_MNAME = "mname";
     public static final String PTNT_LNAME = "lname";
@@ -137,9 +137,19 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String BASKET_UPDATED_AT = "updated_at";
     public static final String BASKET_DELETED_AT = "deleted_at";
 
-    //Doctor string xml
-    String doctor_string_xml = "";
+    //Diagnosis format and strength
+    public static final String TBL_DOSAGE = "dosage_format_and_strength";
+    public static final String DOSAGE_ID = "id";
+    public static final String DOSAGE_SERVER_ID = "dosage_id";
+    public static final String DOSAGE_PRODUCT_ID = "product_id";
+    public static final String DOSAGE_NAME = "name";
+    public static final String DOSAGE_CREATED_AT = "created_at";
+    public static final String DOSAGE_UPDATED_AT = "updated_at";
+    public static final String DOSAGE_DELETED_AT = "deleted_at";
+    //string xml
+    String doctor_string_xml = "", product_string_xml = "";
     public static String doctors_string_xml = "";
+    public static String products_string_xml = "";
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -160,7 +170,7 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql3 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_PATIENTS, PTNT_ID, PTNT_SERVER_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION,
+                TBL_PATIENTS, PTNT_ID, PTNT_PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION,
                 PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO,
                 PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_CELL_NO,
                 PTNT_EMAIL, PTNT_PHOTO, PTNT_CREATED_AT, PTNT_UPDATED_AT);
@@ -181,7 +191,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table "baskets"
         String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s INTEGER REFERENCES " + TBL_PATIENTS + "(" + PTNT_SERVER_ID + "), %s INTEGER REFERENCES " + TBL_BASKETS + "(" + SERVER_BASKET_ID + ")," +
+                        "%s INTEGER REFERENCES " + TBL_PATIENTS + "(" + PTNT_PATIENT_ID + "), %s INTEGER REFERENCES " + TBL_BASKETS + "(" + SERVER_BASKET_ID + ")," +
+                        " %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
+                BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
+
+        // SQL to create table "dosage_format_and_strength"
+        String sql_create_tbl_dosage = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
+                        "%s INTEGER REFERENCES " + TBL_DOSAGE + "(" + PTNT_PATIENT_ID + "), %s INTEGER REFERENCES " + TBL_BASKETS + "(" + SERVER_BASKET_ID + ")," +
                         " %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
                 TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
                 BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
@@ -247,6 +264,10 @@ public class DbHelper extends SQLiteOpenHelper {
         return login > 0;
     }
 
+    public void populateDiagnosis() {
+
+    }
+
     public int checkUserIfRegistered(String username) {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + username + "'";
@@ -262,11 +283,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public boolean insertPatient(JSONObject patient_json_object_mysql, Patient patient) {
-        int server_id = 0;
+        int patient_id = 0;
         String created_at = "";
 
         try {
-            server_id = patient_json_object_mysql.getInt("id");
+            patient_id = patient_json_object_mysql.getInt("id");
             created_at = patient_json_object_mysql.getString("created_at");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -275,7 +296,7 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(PTNT_SERVER_ID, server_id);
+        values.put(PTNT_PATIENT_ID, patient_id);
         values.put(PTNT_FNAME, patient.getFname());
         values.put(PTNT_MNAME, patient.getMname());
         values.put(PTNT_LNAME, patient.getLname());
@@ -518,6 +539,58 @@ public class DbHelper extends SQLiteOpenHelper {
         return doctors;
     }
 
+    public ArrayList<Product> getAllProducts() {
+
+        ArrayList<Product> products = new ArrayList<Product>();
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        String sql = "SELECT * FROM " + TBL_PRODUCTS;
+
+        Cursor cur = db.rawQuery(sql, null);
+
+        int i_name, i_description, i_price;
+
+        while (cur.moveToNext()) {
+            i_name = cur.getColumnIndex("name");
+            i_description = cur.getColumnIndex("description");
+            i_price = cur.getColumnIndex("price");
+
+            //for the id
+            int id = cur.getInt(0);
+
+            Product product = new Product();
+            product.setId(id);
+            product.setName(cur.getString(i_name));
+            product.setDescription(cur.getString(i_description));
+            product.setPrice(cur.getDouble(i_price));
+
+//            System.out.print("Lname: " + cur.getString(i_lname));
+
+            products.add(product);
+
+            String product_temporary_string_xml = "<entry>\n" +
+                    "<id>" + cur.getString(0) + "</id>\n" +
+                    "<name>" + cur.getString(i_name) + "</name>\n" +
+                    "<description>" + cur.getString(i_description) + "</description>\n" +
+                    "<price> Php "+ cur.getDouble(i_price)+ "</price>\n" +
+                    "<photo>" + "http://api.androidhive.info/music/images/rihanna.png" + "</photo>\n" +
+                    "</entry>";
+
+            product_string_xml += product_temporary_string_xml;
+        }
+
+
+        cur.close();
+        db.close();
+
+        Log.d("The Product XML String: ", products_string_xml);
+
+        products_string_xml = "<list>" + product_string_xml + "</list>";
+
+        return products;
+    }
+
     public ArrayList<String> getDoctorName() {
         ArrayList<String> doctors = new ArrayList<String>();
 
@@ -543,6 +616,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public String getDoctorsStringXml() {
         return doctors_string_xml;
+    }
+
+    public String getProductsStringXml() {
+        return products_string_xml;
     }
 
 
@@ -581,6 +658,44 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         System.out.print("json array of all doctors: " + resultSet.toString());
+        return resultSet;
+    }
+
+    public JSONArray getAllProductsJSONArray() {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        String sql = "SELECT * FROM " + TBL_PRODUCTS;
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        JSONArray resultSet = new JSONArray();
+
+        cursor.moveToFirst();
+        while (cursor.isAfterLast() == false) {
+
+            int totalColumn = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i = 0; i < totalColumn; i++) {
+                if (cursor.getColumnName(i) != null) {
+                    try {
+                        if (cursor.getString(i) != null) {
+                            System.out.print("json array of all products: " + cursor.getString(i));
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        } else {
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    } catch (Exception e) {
+                        System.out.print("error in products: " + e.getMessage());
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        System.out.print("json array of all products: " + resultSet.toString());
         return resultSet;
     }
 
@@ -686,28 +801,28 @@ public class DbHelper extends SQLiteOpenHelper {
 
     /* INSERT and UPDATE and other SQL's & functions for PRODUCTS TABLE */
 
-    /* Returns all products */
-    public ArrayList<Product> getAllProducts() {
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PRODUCTS + " WHERE deleted_at IS NULL";
-
-        ArrayList<Product> products = new ArrayList<Product>();
-
-        Cursor cur = db.rawQuery(sql, null);
-        while (cur.moveToNext()) {
-            Product p = new Product();
-            p.setName(cur.getString(1));
-            p.setDosageFormatAndStrength(cur.getString(2));
-            p.setGenericName(cur.getString(3));
-            p.setDescription(cur.getString(4));
-            p.setPrice(cur.getDouble(5));
-            p.setUnit(cur.getString(6));
-
-            products.add(p);
-        }
-
-        return products;
-    }
+//    /* Returns all products */
+//    public ArrayList<Product> getAllProducts() {
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sql = "SELECT * FROM " + TBL_PRODUCTS + " WHERE deleted_at IS NULL";
+//
+//        ArrayList<Product> products = new ArrayList<Product>();
+//
+//        Cursor cur = db.rawQuery(sql, null);
+//        while (cur.moveToNext()) {
+//            Product p = new Product();
+//            p.setName(cur.getString(1));
+//            p.setDosageFormatAndStrength(cur.getString(2));
+//            p.setGenericName(cur.getString(3));
+//            p.setDescription(cur.getString(4));
+//            p.setPrice(cur.getDouble(5));
+//            p.setUnit(cur.getString(6));
+//
+//            products.add(p);
+//        }
+//
+//        return products;
+//    }
 
     /* Create a record for "products" table here */
     public boolean insertProduct(Product product) {

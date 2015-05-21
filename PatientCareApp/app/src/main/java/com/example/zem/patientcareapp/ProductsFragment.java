@@ -1,10 +1,13 @@
 package com.example.zem.patientcareapp;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,9 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,40 +43,65 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     ListView list_of_products;
     LazyAdapter adapter;
     DbHelper dbHelper;
-    Helpers helper;
+    Helpers helpers;
+    Sync sync;
+
+    RequestQueue queue;
+    String url;
+    ProgressDialog pDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.products_layout, container, false);
+        final View rootView = inflater.inflate(R.layout.products_layout, container, false);
 
-        ArrayList<HashMap<String, String>> products_list = new ArrayList<HashMap<String, String>>();
         dbHelper = new DbHelper(getActivity());
-        helper = new Helpers();
+        queue = Volley.newRequestQueue(getActivity());
+        helpers = new Helpers();
+        url = "http://192.168.1.10/db/get.php?q=get_products";
 
+        pDialog = new ProgressDialog(getActivity());
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+
+        if (helpers.isNetworkAvailable(getActivity())) {
+            sync = new Sync();
+            sync.init(getActivity(), "get_products", "products", "product_id");
+            queue = sync.getQueue();
+
+
+            rootView.postDelayed(new Runnable() {
+                public void run() {
+                    // Actions to do after 4 seconds
+
+                    dbHelper.getAllProducts();
+                    String xml = dbHelper.getProductsStringXml();
+
+                    populateDoctorListView(rootView, xml);
+                    pDialog.hide();
+                }
+
+            }, 3000);
+
+        } else {
+            Log.d("Connected to internet", "no");
+            dbHelper.getAllDoctors();
+            String xml = dbHelper.getDoctorsStringXml();
+
+            populateDoctorListView(rootView, xml);
+            pDialog.hide();
+        }
+
+
+        return rootView;
+    }
+
+    public void populateDoctorListView(View rootView, String xml) {
+        ArrayList<HashMap<String, String>> products_list = new ArrayList<HashMap<String, String>>();
 
         XMLParser parser = new XMLParser();
 //        String xml = parser.getXmlFromUrl("http://localhost/db/get.php?q=get_products"); // getting XML from URL
-        String xml =
-                "<list>" +
-                        "<entry>\n" +
-                        "<id>14</id>\n" +
-                        "<name>Biogesic</name>\n" +
-                        "<description>500mg Description ni diri</description>\n" +
-                        "<price>Php 1.75</price>\n" +
-                        "<photo>\n" +
-                        "http://api.androidhive.info/music/images/rihanna.png\n" +
-                        "</photo>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                        "<id>11</id>\n" +
-                        "<name>Neozep</name>\n" +
-                        "<description>500mg Description gihapon ni diri</description>\n" +
-                        "<price>Php 3.75</price>\n" +
-                        "<photo>http://api.androidhive.info/music/images/adele.png</photo>\n" +
-                        "</entry>" +
-                        "</list>";
-        Document doc = parser.getDomElement(xml); // getting DOM element
 
+        Document doc = parser.getDomElement(xml); // getting DOM element
 
         NodeList nl = doc.getElementsByTagName(KEY_PRODUCT);
         // looping through all song nodes &lt;song&gt;
@@ -97,8 +128,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
         // Click event for single list row
         list_of_products.setOnItemClickListener(this);
-
-        return rootView;
     }
 
     @Override
