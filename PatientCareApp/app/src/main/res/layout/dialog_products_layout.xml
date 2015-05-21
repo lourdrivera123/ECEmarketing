@@ -54,6 +54,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="10dp"
                     android:textStyle="bold"
+                    android:id="@+id/product_description"
                     android:text="Biogesic for Kids 100 mg/mL Suspension (Oral Drops)\nBiogesic for Kids 120 mg/ 5 mL Suspension\nBiogesic for Kids 250 mg/5 mL Suspension\nBiogesic 500 mg Tablet" />
 
                 <TableRow android:layout_marginTop="20dp">

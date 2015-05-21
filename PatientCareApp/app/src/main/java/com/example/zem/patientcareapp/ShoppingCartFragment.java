@@ -171,7 +171,6 @@ public class ShoppingCartFragment extends Fragment {
                                 String cs = s.toString();
                                 if (cs.equals("") || cs.equals("0")) {
                                     cs = "1";
-                                    et_qty.setText("" + cs);
                                 }
                                 int new_qty = Integer.parseInt(cs);
                                 p_total.setText("Php " + (price * new_qty));

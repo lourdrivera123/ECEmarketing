@@ -301,8 +301,10 @@ public class Sync {
         try {
             product_object.setProductId(json_object.getInt("id"));
             product_object.setName(json_object.getString("name"));
+            product_object.setSubCategoryId(Integer.parseInt(json_object.getString("subcategory_id")));
             product_object.setGenericName(json_object.getString("generic_name"));
             product_object.setDescription(json_object.getString("description"));
+            product_object.setPrescriptionRequired(Integer.parseInt(json_object.getString("prescription_required")));
             product_object.setPrice(json_object.getInt("price"));
             product_object.setUnit(json_object.getString("unit"));
         } catch (JSONException e) {

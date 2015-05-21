@@ -56,10 +56,9 @@
         android:textStyle="bold"
         android:textSize="14dp"
         android:layout_alignBottom="@+id/product_description"
-        android:layout_alignRight="@+id/arrow"
-        android:layout_alignEnd="@+id/arrow"
         android:layout_alignTop="@+id/product_name"
         android:textColor="#10bcc9"
         android:layout_alignParentRight="true" />
+
 
 </RelativeLayout>

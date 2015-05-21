@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -83,14 +85,15 @@ public class LazyAdapter extends BaseAdapter {
             ImageView list_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
 
 
-            HashMap<String, String> doctor = new HashMap<>();
-            doctor = data.get(position);
+            HashMap<String, String> map = new HashMap<>();
+            map = data.get(position);
 
             // Setting all values in listview
-            product_name.setText(doctor.get(ProductsFragment.KEY_PRODUCT_NAME));
-            product_description.setText(doctor.get(ProductsFragment.KEY_PRODUCT_DESCRIPTION));
-            product_price.setText(doctor.get(ProductsFragment.KEY_PRODUCT_PRICE));
-            imageLoader.DisplayImage(doctor.get(ProductsFragment.KEY_PRODUCT_PHOTO), list_image);
+            vi.setTag(map.get(ProductsFragment.KEY_PRODUCT_ID));
+            product_name.setText(map.get(ProductsFragment.KEY_PRODUCT_NAME));
+            product_description.setText(map.get(ProductsFragment.KEY_PRODUCT_DESCRIPTION));
+            product_price.setText(map.get(ProductsFragment.KEY_PRODUCT_PRICE));
+            imageLoader.DisplayImage(map.get(ProductsFragment.KEY_PRODUCT_PHOTO), list_image);
 
         } else if (list_type == "consultation_lists") {
             vi = inflater.inflate(R.layout.list_row_consultations, null);

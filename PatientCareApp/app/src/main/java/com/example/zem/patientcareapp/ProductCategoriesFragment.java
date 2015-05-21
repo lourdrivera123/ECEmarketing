@@ -1,11 +1,8 @@
 package com.example.zem.patientcareapp;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,12 +18,6 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Queue;
 
 /**
@@ -72,7 +61,7 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
             rootView.postDelayed(new Runnable() {
                 public void run() {
                     // Actions to do after 3 seconds
-                    category_list = dbHelper.getAllProductcategoriesArray();
+                    category_list = dbHelper.getAllProductCategoriesArray();
                     populateListView(rootView, category_list);
                     pDialog.hide();
                 }
@@ -80,7 +69,7 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
 
         } else {
             Log.d("Connected to internet", "no");
-            category_list = dbHelper.getAllProductcategoriesArray();
+            category_list = dbHelper.getAllProductCategoriesArray();
 
             populateListView(rootView, category_list);
             pDialog.hide();

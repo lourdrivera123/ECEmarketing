@@ -2,7 +2,6 @@ package com.example.zem.patientcareapp;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -26,7 +25,6 @@ import com.android.volley.toolbox.Volley;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +56,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     String url;
     ProgressDialog pDialog;
     View root_view;
-    ArrayList<HashMap<String, String>> products_list;
+    public static ArrayList<HashMap<String, String>> products_list;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,10 +77,13 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             sync.init(getActivity(), "get_products", "products", "product_id");
             queue = sync.getQueue();
 
+            sync = new Sync();
             sync.init(getActivity(), "get_product_categories", "product_categories", "id");
             queue = sync.getQueue();
 
+            sync = new Sync();
             sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "id");
+            queue = sync.getQueue();
 
             sync = new Sync();
             sync.init(getActivity(), "get_dosages", "dosage_format_and_strength", "dosage_id");
@@ -97,7 +98,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                     String xml = dbHelper.getProductsStringXml();
 
                     populateDoctorListView(rootView, xml);
-                    category_list = dbHelper.getAllProductcategoriesArray();
+                    category_list = dbHelper.getAllProductCategoriesArray();
                     populateListView(rootView, category_list);
                     pDialog.hide();
                 }
@@ -154,12 +155,24 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Product prod;
+        prod = dbHelper.getProductById(Integer.parseInt(view.getTag().toString()));
+
         Dialog dialog = new Dialog(getActivity());
-        dialog.setTitle("Product Name");
+        dialog.setTitle(prod.getName());
         dialog.setContentView(R.layout.dialog_products_layout);
         dialog.show();
 
+        TextView name, price, description;
+        name = (TextView) dialog.findViewById(R.id.product_name);
+        price = (TextView) dialog.findViewById(R.id.product_price);
+        description = (TextView) dialog.findViewById(R.id.product_description);
         add_to_cart_btn = (Button) dialog.findViewById(R.id.add_to_cart_btn);
+
+        name.setText("("+prod.getGenericName()+")\n"+prod.getName());
+        price.setText("Php "+prod.getPrice());
+        description.setText(prod.getDescription());
+        add_to_cart_btn.setText("Add to Cart | Php "+prod.getPrice());
         qty = (EditText) dialog.findViewById(R.id.qty);
 
         add_to_cart_btn.setOnClickListener(this);
@@ -168,7 +181,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-
     }
 
     @Override
@@ -214,13 +226,12 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = ((TextView)view).getText().toString();
-        Toast.makeText(getActivity(), item, Toast.LENGTH_LONG).show();
 
         int categoryId = dbHelper.categoryGetIdByName(item);
         String []arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
 
-        Dialog dialog = new Dialog(getActivity());
-        dialog.setTitle(item + " subcategories");
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setTitle("subcategories");
         dialog.setContentView(R.layout.categories_layout);
 
         dialog.show();
@@ -236,14 +247,24 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         lv_subcategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Dialog dia = dialog;
                 String subCategoryName = ((TextView)view).getText().toString();
                 ProductSubCategory subCategory = dbHelper.getSubCategoryByName(subCategoryName);
                 products_list = dbHelper.getProductsBySubCategory(subCategory.getId());
-                System.out.println("PANGIT KA: "+products_list.get(0).get("name"));
 
-                // Getting adapter by passing xml data ArrayList
-//                adapter = new LazyAdapter(getActivity(), products_list, "product_lists");
+                Toast.makeText(getActivity(), subCategoryName+" : "+subCategory.getName()+" : "+products_list.size()
+                        , Toast.LENGTH_SHORT).show();
+//
+//                // Getting adapter by passing xml data ArrayList
+////                adapter = new LazyAdapter(getActivity(), products_list, "product_lists");
+                if(products_list.size() > 0){
+                    System.out.print("FUCK YOU NINYO: "+products_list.get(0).toString());
+                }
+
+                adapter.myItems.clear();
+                adapter.myItems.addAll(products_list);
                 adapter.notifyDataSetChanged();
+                dia.hide();
             }
         });
     }

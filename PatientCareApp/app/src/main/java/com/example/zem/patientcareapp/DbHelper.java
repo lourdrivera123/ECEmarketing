@@ -51,7 +51,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String PTNT_STREET = "address_street";
     public static final String PTNT_BARANGAY = "address_barangay";
     public static final String PTNT_CITY = "address_city_municipality";
-    public static final String PTNT_PROVINCE = "_address_province";
+    public static final String PTNT_PROVINCE = "address_province";
     public static final String PTNT_REGION = "address_region";
     public static final String PTNT_ZIP = "address_zip";
     public static final String PTNT_TEL_NO = "tel_no";
@@ -193,10 +193,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table "products"
         String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s TEXT, %s TEXT, " +
-                        " %s TEXT , %s TEXT, %s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCTS, PRODUCTS_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION, PRODUCT_PRESCRIPTION_REQUIRED,
-                PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
+                        "%s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCTS, PRODUCTS_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION,
+                PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
 
         //SQL TO CREATE TABLE "TBL_DOSAGE"
         String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
@@ -736,7 +735,7 @@ public class DbHelper extends SQLiteOpenHelper {
             return categories;
         }
 
-        public String[] getAllProductcategoriesArray(){
+        public String[] getAllProductCategoriesArray(){
 
             List<String> list = new ArrayList<String>();
             SQLiteDatabase db = getWritableDatabase();
@@ -884,6 +883,7 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql = "SELECT * FROM "+TBL_PRODUCT_SUBCATEGORIES+" where name='"+name+"'";
         Cursor cur = db.rawQuery(sql, null);
         while(cur.moveToNext()){
+            subCategory.setId(cur.getInt(0));
             subCategory.setName(cur.getString(2));
             subCategory.setCategoryId(Integer.parseInt(cur.getString(3)));
             subCategory.setCreatedAt(cur.getString(4));
@@ -923,10 +923,12 @@ public class DbHelper extends SQLiteOpenHelper {
     public ArrayList<HashMap<String, String>> getProductsBySubCategory(int subCategoryId){
         ArrayList<HashMap<String, String>> products = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM "+TBL_PRODUCTS+" WHERE subcategory_id='"+subCategoryId+"'";
+        String sql = "SELECT * FROM "+TBL_PRODUCTS+" as p INNER JOIN product_subcategories as sc ON p.subcategory_id = sc.id WHERE sc.category_id IN (SELECT category_id FROM product_subcategories WHERE product_subcategory_id='"+subCategoryId+"')";
         Cursor cur = db.rawQuery(sql, null);
+        System.out.println("PANGITKA: SQL_getProductsBySubCategory: "+sql);
 
-        while(cur.moveToNext()){
+        cur.moveToFirst();
+        while(cur.isAfterLast() == false){
             HashMap<String, String> map = new HashMap<>();
             map.put(PRODUCT_NAME, cur.getString(2));
             map.put(PRODUCT_GENERIC_NAME, cur.getString(3));
@@ -939,9 +941,40 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_DELETED_AT, cur.getString(10));
 
             products.add(map);
+            cur.moveToNext();
         }
-
+        cur.close();
         return products;
+    }
+
+    /* Returns product information
+    * @param int id
+    * */
+    public Product getProductById(int id){
+        Product prod = new Product();
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "Select * from "+TBL_PRODUCTS+" where product_id='"+id+"'";
+
+        Cursor cur = db.rawQuery(sql, null);
+        cur.moveToFirst();
+        while(!cur.isAfterLast()){
+            prod.setId(cur.getInt(0));
+            prod.setProductId(cur.getInt(1));
+            prod.setSubCategoryId(cur.getInt(2));
+            prod.setName(cur.getString(3));
+            prod.setGenericName(cur.getString(4));
+            prod.setDescription(cur.getString(5));
+            prod.setPrescriptionRequired(cur.getInt(6));
+            prod.setPrice(cur.getDouble(7));
+            prod.setUnit(cur.getString(8));
+            prod.setPhoto(cur.getString(9));
+            prod.setCreatedAt(cur.getString(10));
+            prod.setUpdatedAt(cur.getString(11));
+            prod.setDeletedAt(cur.getString(12));
+            cur.moveToNext();
+        }
+        cur.close();
+        return prod;
     }
 
     /* Create a record for "products" table here */
@@ -954,9 +987,11 @@ public class DbHelper extends SQLiteOpenHelper {
         System.out.println(dateFormat.format(date));
 
         values.put(SERVER_PRODUCT_ID, product.getProductId());
+        values.put(PRODUCT_SUBCATEGORY_ID, product.getSubCategoryId());
         values.put(PRODUCT_NAME, product.getName());
         values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
         values.put(PRODUCT_DESCRIPTION, product.getDescription());
+        values.put(PRODUCT_PRESCRIPTION_REQUIRED, product.getPrescriptionRequired());
         values.put(PRODUCT_PHOTO, product.getPhoto());
         values.put(PRODUCT_PRICE, product.getPrice());
         values.put(PRODUCT_UNIT, product.getUnit());
