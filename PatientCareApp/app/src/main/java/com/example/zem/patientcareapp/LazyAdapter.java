@@ -35,8 +35,8 @@ public class LazyAdapter extends BaseAdapter {
     public ArrayList myItems = new ArrayList();
 
 
-    public LazyAdapter(Activity a, ArrayList<HashMap<String, String>> d, String lt) {
-        list_type = lt;
+    public LazyAdapter(Activity a, ArrayList<HashMap<String, String>> d, String listType) {
+        list_type = listType;
         activity = a;
         data = d;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -85,14 +85,14 @@ public class LazyAdapter extends BaseAdapter {
             ImageView list_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
 
 
-            HashMap<String, String> map = new HashMap<>();
+            HashMap<String, String> map;
             map = data.get(position);
 
             // Setting all values in listview
             vi.setTag(map.get(ProductsFragment.KEY_PRODUCT_ID));
             product_name.setText(map.get(ProductsFragment.KEY_PRODUCT_NAME));
             product_description.setText(map.get(ProductsFragment.KEY_PRODUCT_DESCRIPTION));
-            product_price.setText(map.get(ProductsFragment.KEY_PRODUCT_PRICE));
+            product_price.setText("Php "+map.get(ProductsFragment.KEY_PRODUCT_PRICE));
             imageLoader.DisplayImage(map.get(ProductsFragment.KEY_PRODUCT_PHOTO), list_image);
 
         } else if (list_type == "consultation_lists") {
@@ -102,7 +102,7 @@ public class LazyAdapter extends BaseAdapter {
             TextView clinic_address = (TextView) vi.findViewById(R.id.clinic_address);
             TextView consultation_schedule = (TextView) vi.findViewById(R.id.consultation_schedule);
 
-            HashMap<String, String> schedule = new HashMap<String, String>();
+            HashMap<String, String> schedule;
             schedule = data.get(position);
 
             // Setting all values in listview
@@ -116,9 +116,8 @@ public class LazyAdapter extends BaseAdapter {
 
         } else if (list_type == "basket_items") {
             vi = inflater.inflate(R.layout.list_row_basket_items, null);
-            // qty.addTextChangedListener(this);
 
-            HashMap<String, String> basket_items = new HashMap<String, String>();
+            HashMap<String, String> basket_items;
 
 
             basket_items = data.get(position);
@@ -128,18 +127,18 @@ public class LazyAdapter extends BaseAdapter {
             total = (TextView) vi.findViewById(R.id.total);
 
             // Do the fucking stuffs here
-            price = Double.parseDouble(basket_items.get("price"));
-            quantity = Integer.parseInt(basket_items.get("quantity"));
+            price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
+            quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
 
             // Setting all values in listview
-            product_name.setText(basket_items.get("name") + " @Php " + price);
+            product_name.setText(basket_items.get(DbHelper.PRODUCT_NAME) + " @Php " + price);
             total_amount = price * quantity;
 
             total.setText(total_amount + "");
             qty.setText(quantity + "");
 
-            qty.setId(position);
-            total.setId(position);
+            qty.setId(Integer.parseInt(basket_items.get(DbHelper.BASKET_ID)));
+            total.setId(Integer.parseInt(basket_items.get(DbHelper.BASKET_ID)));
 
         }
         return vi;

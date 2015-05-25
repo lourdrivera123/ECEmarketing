@@ -28,6 +28,9 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 /**
  * Created by User PC on 5/5/2015. Updated 5/5/15
@@ -50,10 +53,10 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     DbHelper dbHelper;
     Helpers helpers;
     Sync sync;
-    String[] category_list;
+    List<String> category_list;
 
     RequestQueue queue;
-    String url;
+    Dialog loc_dialog;
     ProgressDialog pDialog;
     View root_view;
     public static ArrayList<HashMap<String, String>> products_list;
@@ -97,7 +100,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                     dbHelper.getAllProducts();
                     String xml = dbHelper.getProductsStringXml();
 
-                    populateDoctorListView(rootView, xml);
+                    populateProductsListView(rootView, xml);
                     category_list = dbHelper.getAllProductCategoriesArray();
                     populateListView(rootView, category_list);
                     pDialog.hide();
@@ -110,7 +113,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             dbHelper.getAllProducts();
             String xml = dbHelper.getProductsStringXml();
 
-            populateDoctorListView(rootView, xml);
+            populateProductsListView(rootView, xml);
             pDialog.hide();
         }
 
@@ -118,7 +121,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         return rootView;
     }
 
-    public void populateDoctorListView(View rootView, String xml) {
+    public void populateProductsListView(View rootView, String xml) {
         products_list = new ArrayList<HashMap<String, String>>();
 
         XMLParser parser = new XMLParser();
@@ -159,6 +162,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         prod = dbHelper.getProductById(Integer.parseInt(view.getTag().toString()));
 
         Dialog dialog = new Dialog(getActivity());
+        loc_dialog = dialog;
         dialog.setTitle(prod.getName());
         dialog.setContentView(R.layout.dialog_products_layout);
         dialog.show();
@@ -169,11 +173,16 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         description = (TextView) dialog.findViewById(R.id.product_description);
         add_to_cart_btn = (Button) dialog.findViewById(R.id.add_to_cart_btn);
 
-        name.setText("("+prod.getGenericName()+")\n"+prod.getName());
-        price.setText("Php "+prod.getPrice());
+        name.setText("(" + prod.getGenericName() + ")\n" + prod.getName());
+        price.setText("Php " + prod.getPrice() + " / " + prod.getUnit());
+
         description.setText(prod.getDescription());
         add_to_cart_btn.setText("Add to Cart | Php "+prod.getPrice());
         qty = (EditText) dialog.findViewById(R.id.qty);
+
+        add_to_cart_btn.setTag(prod.getProductId());
+        qty.setTag(prod.getPrice());
+
 
         add_to_cart_btn.setOnClickListener(this);
         qty.addTextChangedListener(this);
@@ -181,6 +190,48 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.add_to_cart_btn :
+                if(helpers.isNetworkAvailable(getActivity())){
+                    Basket basket;
+
+                    int productId, patientId;
+                    double new_qty;
+                    productId = Integer.parseInt(add_to_cart_btn.getTag().toString());
+
+                    new_qty = Double.parseDouble(qty.getText().toString());
+
+                    boolean res = false;
+
+                    /* let's check if the product already exists in our basket */
+                    basket = dbHelper.getBasket(productId);
+                    System.out.println("BASKETID: "+basket.getId());
+                    //  if(basket.getBasketId() > 0  ){
+                    if(basket.getId() > 0  ){  /* Replace this with the line above, when it's connected to the server  */
+                        double old_qty = basket.getQuantity();
+                        basket.setQuantity(new_qty+old_qty);
+
+                        res = dbHelper.updateBasket(basket);
+                    }else{
+                    /* since, we can't find the product in baskets table, let's insert a new one */
+                        basket.setProductId(productId);
+                        basket.setQuantity(new_qty);
+
+                        res = dbHelper.insertBasket(basket);
+                    }
+
+                    if( res ){
+                        Toast.makeText(getActivity(), "Successfully added to your cart.", Toast.LENGTH_SHORT).show();
+
+                    }else{
+                        Toast.makeText(getActivity(), "Sorry, we can't process your request right now.", Toast.LENGTH_SHORT).show();
+                    }
+
+                }else{
+                    Toast.makeText(getActivity(), "Sorry, please connect to the internet.", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
 
     @Override
@@ -191,7 +242,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String qty_str = qty.getText().toString();
-        Double price = 3.00;
+        Double price = Double.parseDouble(qty.getTag().toString());
 
         if(!qty_str.isEmpty()) {
             try {
@@ -204,7 +255,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             }
         }
         else {
-            add_to_cart_btn.setText("Add to Cart | Php 3.00");
+            add_to_cart_btn.setText("Add to Cart | Php ");
         }
     }
 
@@ -213,9 +264,10 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     }
 
-    public void populateListView(View rootView, String[] categories){
+    public void populateListView(View rootView, List<String> categories){
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);
         lv_subcategories = (ListView) rootView.findViewById(R.id.subcategories);
+        categories.add(0, "Select Category");
 
         category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, categories);
         lv_categories.setAdapter(category_list_adapter);
@@ -225,48 +277,54 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String item = ((TextView)view).getText().toString();
+        if(position != 0){
+            String item = ((TextView)view).getText().toString();
 
-        int categoryId = dbHelper.categoryGetIdByName(item);
-        String []arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
+            final int categoryId = dbHelper.categoryGetIdByName(item);
+            String []arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
 
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setTitle("subcategories");
-        dialog.setContentView(R.layout.categories_layout);
+            final Dialog dialog = new Dialog(getActivity());
+            dialog.setTitle("subcategories");
+            dialog.setContentView(R.layout.categories_layout);
 
-        dialog.show();
+            dialog.show();
 
-        TextView browseBy = (TextView) dialog.findViewById(R.id.browse_by);
-        browseBy.setText("");
-        lv_subcategories = (ListView) dialog.findViewById(R.id.subcategories);
-        lv_categories = (Spinner) dialog.findViewById(R.id.categories);
+            TextView browseBy = (TextView) dialog.findViewById(R.id.browse_by);
+            browseBy.setText("");
+            lv_subcategories = (ListView) dialog.findViewById(R.id.subcategories);
+            lv_categories = (Spinner) dialog.findViewById(R.id.categories);
 
-        category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arr);
-        lv_subcategories.setAdapter(category_list_adapter);
-        lv_categories.setVisibility(View.GONE);
-        lv_subcategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Dialog dia = dialog;
-                String subCategoryName = ((TextView)view).getText().toString();
-                ProductSubCategory subCategory = dbHelper.getSubCategoryByName(subCategoryName);
-                products_list = dbHelper.getProductsBySubCategory(subCategory.getId());
+            category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arr);
+            lv_subcategories.setAdapter(category_list_adapter);
+            lv_categories.setVisibility(View.GONE);
+            lv_subcategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String subCategoryName = ((TextView) view).getText().toString();
+                    ProductSubCategory subCategory = dbHelper.getSubCategoryByName(subCategoryName, categoryId);
 
-                Toast.makeText(getActivity(), subCategoryName+" : "+subCategory.getName()+" : "+products_list.size()
-                        , Toast.LENGTH_SHORT).show();
+                    ArrayList<HashMap<String, String>> list = dbHelper.getProductsBySubCategory(subCategory.getId());
+
+                    Toast.makeText(getActivity(), subCategoryName + " : " + subCategory.getName() + " : " + list.size()
+                            , Toast.LENGTH_SHORT).show();
 //
 //                // Getting adapter by passing xml data ArrayList
-////                adapter = new LazyAdapter(getActivity(), products_list, "product_lists");
-                if(products_list.size() > 0){
-                    System.out.print("FUCK YOU NINYO: "+products_list.get(0).toString());
+                    if (list.size() > 0) {
+                        products_list.clear();
+                        products_list.addAll(list);
+                        adapter.notifyDataSetChanged();
+                    }
+                    dialog.dismiss();
                 }
+            });
+        }else{
+            ArrayList<HashMap<String, String>> prods = dbHelper.getProductsBySubCategory(0);
+            products_list.clear();
+            products_list.addAll(prods);
+            adapter.notifyDataSetChanged();
+        }
 
-                adapter.myItems.clear();
-                adapter.myItems.addAll(products_list);
-                adapter.notifyDataSetChanged();
-                dia.hide();
-            }
-        });
+
     }
 
     @Override

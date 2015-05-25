@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -32,7 +33,7 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
     RequestQueue queue;
     ProgressDialog pDialog;
     DbHelper dbHelper;
-    String[] category_list;
+    List<String> category_list;
     public static ArrayAdapter category_list_adapter;
     Queue fq ;
 
@@ -78,14 +79,13 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
         return rootView;
     }
 
-    public void populateListView(View rootView, String[] categories){
+    public void populateListView(View rootView, List<String> categories){
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);
         lv_subcategories = (ListView) rootView.findViewById(R.id.subcategories);
 
-        category_list_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, categories);
+        category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, categories);
         lv_categories.setAdapter(category_list_adapter);
         lv_subcategories.setVisibility(View.GONE);
-//        lv_categories.setOnItemClickListener(this);
         lv_categories.setOnItemSelectedListener(this);
     }
 
@@ -100,24 +100,31 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
         String item = ((TextView)view).getText().toString();
         Toast.makeText(getActivity(), item, Toast.LENGTH_LONG).show();
 
-        int categoryId = dbHelper.categoryGetIdByName(item);
-        String []arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
+        if(position != 0){
+            Dialog dialog = new Dialog(getActivity());
+            dialog.setTitle(item + " subcategories");
+            dialog.setContentView(R.layout.categories_layout);
 
-        Dialog dialog = new Dialog(getActivity());
-        dialog.setTitle(item + " subcategories");
-        dialog.setContentView(R.layout.categories_layout);
+            TextView browseBy = (TextView) dialog.findViewById(R.id.browse_by);
+            browseBy.setText("");
+            lv_subcategories = (ListView) dialog.findViewById(R.id.subcategories);
+            lv_categories = (Spinner) dialog.findViewById(R.id.categories);
 
-        if(position != 0) dialog.show();
+            dialog.show();
 
-        TextView browseBy = (TextView) dialog.findViewById(R.id.browse_by);
-        browseBy.setText("");
-        lv_subcategories = (ListView) dialog.findViewById(R.id.subcategories);
-        lv_categories = (Spinner) dialog.findViewById(R.id.categories);
+            int categoryId = dbHelper.categoryGetIdByName(item);
+            String []arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
+            category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arr);
+            lv_subcategories.setAdapter(category_list_adapter);
+            lv_categories.setVisibility(View.GONE);
+            lv_subcategories.setOnItemClickListener(this);
+        }else{
 
-        category_list_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arr);
-        lv_subcategories.setAdapter(category_list_adapter);
-        lv_categories.setVisibility(View.GONE);
-        lv_subcategories.setOnItemClickListener(this);
+        }
+
+
+
+
     }
 
     @Override

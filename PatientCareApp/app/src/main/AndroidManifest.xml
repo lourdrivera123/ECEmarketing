@@ -82,6 +82,7 @@
         <activity android:name=".ProductSubCategory" />
         <activity android:name=".Product" />
         <activity android:name=".ProductCategoriesFragment" />
+        <activity android:name=".Basket" />
     </application>
 
 </manifest>

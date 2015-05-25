@@ -25,16 +25,17 @@
                 <TableRow android:layout_marginBottom="10dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="Biogesic "
                         android:layout_marginBottom="10dp"
                         android:textStyle="bold"
                         android:id="@+id/product_name" />
-
+                </TableRow>
+                <TableRow>
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="(Php 3.00 / tablet)"
                         android:layout_marginBottom="10dp"
