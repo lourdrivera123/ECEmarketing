@@ -130,6 +130,7 @@ public class LazyAdapter extends BaseAdapter {
             price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
             quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
 
+
             // Setting all values in listview
             product_name.setText(basket_items.get(DbHelper.PRODUCT_NAME) + " @Php " + price);
             total_amount = price * quantity;

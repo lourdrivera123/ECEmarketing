@@ -1048,7 +1048,7 @@ public class DbHelper extends SQLiteOpenHelper {
         /* Create new record for "basket" table */
         public boolean insertBasket(Basket basket){
 
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = new Date();
             String datenow = dateFormat.format(date);
 
@@ -1073,7 +1073,8 @@ public class DbHelper extends SQLiteOpenHelper {
         public Basket getBasket(int productId){
             Basket basket = new Basket();
 
-            String sql = "Select * from "+TBL_BASKETS+" where basket_id="+productId+" and patient_id="+this.getCurrentLoggedInPatient().getServerID();
+//            String sql = "Select * from "+TBL_BASKETS+" where basket_id="+productId+" and patient_id="+this.getCurrentLoggedInPatient().getServerID();
+            String sql = "Select * from "+TBL_BASKETS+" where id="+productId+" and patient_id="+this.getCurrentLoggedInPatient().getServerID();
             System.out.println("\ngetBasket: "+sql);
             SQLiteDatabase db = getWritableDatabase();
             Cursor cur = db.rawQuery(sql, null);

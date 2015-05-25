@@ -157,6 +157,7 @@ public class ShoppingCartFragment extends Fragment {
 
                                /* Note: replace row.get("id") with row.get("basket_id") if we're already connected to the server */
                                Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("id")));
+                               System.out.println(basket.getId()+" "+basket.getQuantity() + " "+basket.getProductId());
                                basket.setQuantity(new_qty);
                                if( dbHelper.updateBasket(basket) ){
                                    tv_amount.setText(new_total+"");
