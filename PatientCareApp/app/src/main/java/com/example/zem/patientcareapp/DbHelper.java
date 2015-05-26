@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 
 import org.json.JSONArray;
@@ -28,132 +27,133 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final int DB_VERSION = 1;
 
     //PATIENTS_TABLE
-    public static final String TBL_PATIENTS = "patients";
-    public static final String PTNT_ID = "id";
-    public static final String PTNT_PATIENT_ID = "patient_id";
-    public static final String PTNT_FNAME = "fname";
-    public static final String PTNT_MNAME = "mname";
-    public static final String PTNT_LNAME = "lname";
-    public static final String PTNT_USERNAME = "username";
-    public static final String PTNT_PASSWORD = "password";
-    public static final String PTNT_OCCUPATION = "occupation";
-    public static final String PTNT_BIRTHDATE = "birthdate";
-    public static final String PTNT_SEX = "sex";
-    public static final String PTNT_CIVIL_STATUS = "civil_status";
-    public static final String PTNT_HEIGHT = "height";
-    public static final String PTNT_WEIGHT = "weight";
-    public static final String PTNT_UNIT_NO = "unit_floor_room_no";
-    public static final String PTNT_BUILDING = "building";
-    public static final String PTNT_LOT_NO = "lot_no";
-    public static final String PTNT_BLOCK_NO = "block_no";
-    public static final String PTNT_PHASE_NO = "phase_no";
-    public static final String PTNT_HOUSE_NO = "address_house_no";
-    public static final String PTNT_STREET = "address_street";
-    public static final String PTNT_BARANGAY = "address_barangay";
-    public static final String PTNT_CITY = "address_city_municipality";
-    public static final String PTNT_PROVINCE = "address_province";
-    public static final String PTNT_REGION = "address_region";
-    public static final String PTNT_ZIP = "address_zip";
-    public static final String PTNT_TEL_NO = "tel_no";
-    public static final String PTNT_CELL_NO = "cell_no";
-    public static final String PTNT_EMAIL = "email";
-    public static final String PTNT_PHOTO = "photo";
-    public static final String PTNT_CREATED_AT = "created_at";
-    public static final String PTNT_UPDATED_AT = "updated_at";
+    public static final String TBL_PATIENTS = "patients",
+            PTNT_ID = "id",
+            PTNT_PATIENT_ID = "patient_id",
+            PTNT_FNAME = "fname",
+            PTNT_MNAME = "mname",
+            PTNT_LNAME = "lname",
+            PTNT_USERNAME = "username",
+            PTNT_PASSWORD = "password",
+            PTNT_OCCUPATION = "occupation",
+            PTNT_BIRTHDATE = "birthdate",
+            PTNT_SEX = "sex",
+            PTNT_CIVIL_STATUS = "civil_status",
+            PTNT_HEIGHT = "height",
+            PTNT_WEIGHT = "weight",
+            PTNT_UNIT_NO = "unit_floor_room_no",
+            PTNT_BUILDING = "building",
+            PTNT_LOT_NO = "lot_no",
+            PTNT_BLOCK_NO = "block_no",
+            PTNT_PHASE_NO = "phase_no",
+            PTNT_HOUSE_NO = "address_house_no",
+            PTNT_STREET = "address_street",
+            PTNT_BARANGAY = "address_barangay",
+            PTNT_CITY = "address_city_municipality",
+            PTNT_PROVINCE = "address_province",
+            PTNT_REGION = "address_region",
+            PTNT_ZIP = "address_zip",
+            PTNT_TEL_NO = "tel_no",
+            PTNT_CELL_NO = "cell_no",
+            PTNT_EMAIL = "email",
+            PTNT_PHOTO = "photo",
+            PTNT_CREATED_AT = "created_at",
+            PTNT_UPDATED_AT = "updated_at";
 
     //Updates Table
-    public static final String TBL_UPDATES = "updates";
-    public static final String UPDATE_ID = "id";
-    public static final String UPDATE_TBL_NAME = "tbl_name";
-    public static final String UPDATE_TIMESTAMP = "timestamp";
-    public static final String UPDATE_SEEN = "seen";
+    public static final String TBL_UPDATES = "updates",
+            UPDATE_ID = "id",
+            UPDATE_TBL_NAME = "tbl_name",
+            UPDATE_TIMESTAMP = "timestamp",
+            UPDATE_SEEN = "seen";
 
     //DOCTORS_TABLE
-    public static final String TBL_DOCTORS = "doctors";
-    public static final String DOC_ID = "id";
-    public static final String DOC_DOC_ID = "doc_id";
-    public static final String DOC_LNAME = "lname";
-    public static final String DOC_MNAME = "mname";
-    public static final String DOC_FNAME = "fname";
-    public static final String DOC_PRC_NO = "prc_no";
-    public static final String DOC_ADDRESS_HOUSE_NO = "address_house_no";
-    public static final String DOC_ADDRESS_STREET = "address_street";
-    public static final String DOC_ADDRESS_BARANGAY = "address_barangay";
-    public static final String DOC_ADDRESS_CITY = "address_city_municipality";
-    public static final String DOC_ADDRESS_PROVINCE = "address_province";
-    public static final String DOC_ADDRESS_REGION = "address_region";
-    public static final String DOC_ADDRESS_COUNTRY = "address_country";
-    public static final String DOC_ZIP = "address_zip";
-    public static final String DOC_SPECIALTY = "specialty";
-    public static final String DOC_SUB_SPECIALTY = "sub_specialty";
-    public static final String DOC_CELL_NO = "cellNo";
-    public static final String DOC_TEL_NO = "telNo";
-    public static final String DOC_PHOTO = "photo";
-    public static final String DOC_CLINIC_SCHED = "clinic_sched";
-    public static final String DOC_AFFILIATIONS = "affiliations";
-    public static final String DOC_CLINIC_ID = "clinic_id";
-    public static final String DOC_EMAIL = "email";
-    public static final String DOC_SEC_ID = "secretary_id";
+    public static final String TBL_DOCTORS = "doctors",
+            DOC_ID = "id",
+            DOC_DOC_ID = "doc_id",
+            DOC_LNAME = "lname",
+            DOC_MNAME = "mname",
+            DOC_FNAME = "fname",
+            DOC_USERNAME = "username",
+            DOC_PASSWORD = "password",
+            DOC_PRC_NO = "prc_no",
+            DOC_ADDRESS_HOUSE_NO = "address_house_no",
+            DOC_ADDRESS_STREET = "address_street",
+            DOC_ADDRESS_BARANGAY = "address_barangay",
+            DOC_ADDRESS_CITY = "address_city_municipality",
+            DOC_ADDRESS_PROVINCE = "address_province",
+            DOC_ADDRESS_REGION = "address_region",
+            DOC_ADDRESS_COUNTRY = "address_country",
+            DOC_ZIP = "address_zip",
+            DOC_SPECIALTY = "specialty",
+            DOC_SUB_SPECIALTY = "sub_specialty",
+            DOC_CELL_NO = "cellNo",
+            DOC_TEL_NO = "telNo",
+            DOC_PHOTO = "photo",
+            DOC_CLINIC_SCHED = "clinic_sched",
+            DOC_AFFILIATIONS = "affiliations",
+            DOC_CLINIC_ID = "clinic_id",
+            DOC_EMAIL = "email",
+            DOC_SEC_ID = "secretary_id";
 
     // PRODUCT_CATEGORIES TABLE
-    public static final String PROD_CAT_NAME = "name";
-    public static final String PROD_CAT_CREATED_AT = "created_at";
-    public static final String PROD_CAT_UPDATED_AT = "updated_at";
-    public static final String PROD_CAT_DELETED_AT = "deleted_at";
-    public static final String TBL_PRODUCT_CATEGORIES = "product_categories";
-    public static final String PRODUCT_CATEGORIES_ID = "id";
-    public static final String SERVER_PRODUCT_CATEGORY_ID = "product_category_id";
+    public static final String PROD_CAT_NAME = "name",
+            PROD_CAT_CREATED_AT = "created_at",
+            PROD_CAT_UPDATED_AT = "updated_at",
+            PROD_CAT_DELETED_AT = "deleted_at",
+            TBL_PRODUCT_CATEGORIES = "product_categories",
+            PRODUCT_CATEGORIES_ID = "id",
+            SERVER_PRODUCT_CATEGORY_ID = "product_category_id";
 
     // PRODUCT_SUBCATEGORIES TABLE
-    public static final String PROD_SUBCAT_NAME = "name";
-    public static final String PROD_SUBCAT_CATEGORY_ID = "category_id";
-    public static final String PROD_SUBCAT_CREATED_AT = "created_at";
-    public static final String PROD_SUBCAT_UPDATED_AT = "updated_at";
-    public static final String PROD_SUBCAT_DELETED_AT = "deleted_at";
-    public static final String TBL_PRODUCT_SUBCATEGORIES = "product_subcategories";
-    public static final String PRODUCT_SUBCATEGORIES_ID = "id";
-    public static final String SERVER_PRODUCT_SUBCATEGORY_ID = "product_subcategory_id";
+    public static final String PROD_SUBCAT_NAME = "name",
+            PROD_SUBCAT_CATEGORY_ID = "category_id",
+            PROD_SUBCAT_CREATED_AT = "created_at",
+            PROD_SUBCAT_UPDATED_AT = "updated_at",
+            PROD_SUBCAT_DELETED_AT = "deleted_at",
+            TBL_PRODUCT_SUBCATEGORIES = "product_subcategories",
+            PRODUCT_SUBCATEGORIES_ID = "id",
+            SERVER_PRODUCT_SUBCATEGORY_ID = "product_subcategory_id";
 
     // PRODUCTS TABLE
-    public static final String TBL_PRODUCTS = "products";
-    public static final String PRODUCTS_ID = "id";
-    public static final String PRODUCT_SUBCATEGORY_ID = "subcategory_id";
-    public static final String SERVER_PRODUCT_ID = "product_id";
-    public static final String PRODUCT_NAME = "name";
-    public static final String PRODUCT_GENERIC_NAME = "generic_name";
-    public static final String PRODUCT_DESCRIPTION = "description";
-    public static final String PRODUCT_PRESCRIPTION_REQUIRED = "presciption_required";
-    public static final String PRODUCT_PRICE = "price";
-    public static final String PRODUCT_UNIT = "unit";
-    public static final String PRODUCT_PHOTO = "photo";
-    public static final String PRODUCT_CREATED_AT = "created_at";
-    public static final String PRODUCT_UPDATED_AT = "updated_at";
-    public static final String PRODUCT_DELETED_AT = "deleted_at";
+    public static final String TBL_PRODUCTS = "products",
+            PRODUCTS_ID = "id",
+            PRODUCT_SUBCATEGORY_ID = "subcategory_id",
+            SERVER_PRODUCT_ID = "product_id",
+            PRODUCT_NAME = "name",
+            PRODUCT_GENERIC_NAME = "generic_name",
+            PRODUCT_DESCRIPTION = "description",
+            PRODUCT_PRESCRIPTION_REQUIRED = "presciption_required",
+            PRODUCT_PRICE = "price",
+            PRODUCT_UNIT = "unit",
+            PRODUCT_PHOTO = "photo",
+            PRODUCT_CREATED_AT = "created_at",
+            PRODUCT_UPDATED_AT = "updated_at",
+            PRODUCT_DELETED_AT = "deleted_at";
 
     //DOSAGE_FORMAT_AND_STRENGTH TABLE
-    public static final String TBL_DOSAGE = "dosage_format_and_strength";
-    public static final String DOSAGE_ID = "id";
-    public static final String SERVER_DOSAGE_ID = "dosage_id";
-    public static final String DOSAGE_PROD_ID = "product_id";
-    public static final String DOSAGE_NAME = "name";
-    public static final String DOSAGE_CREATED_AT = "created_at";
-    public static final String DOSAGE_UPDATED_AT = "updated_at";
+    public static final String TBL_DOSAGE = "dosage_format_and_strength",
+            DOSAGE_ID = "id",
+            SERVER_DOSAGE_ID = "dosage_id",
+            DOSAGE_PROD_ID = "product_id",
+            DOSAGE_NAME = "name",
+            DOSAGE_CREATED_AT = "created_at",
+            DOSAGE_UPDATED_AT = "updated_at";
 
     // BASKET TABLE
-    public static final String TBL_BASKETS = "baskets";
-    public static final String BASKET_ID = "id";
-    public static final String SERVER_BASKET_ID = "basket_id";
-    public static final String BASKET_PATIENT_ID = "patient_id";
-    public static final String BASKET_PRODUCT_ID = "product_id";
-    public static final String BASKET_QUANTITY = "quantity";
-    public static final String BASKET_CREATED_AT = "created_at";
-    public static final String BASKET_UPDATED_AT = "updated_at";
-    public static final String BASKET_DELETED_AT = "deleted_at";
+    public static final String TBL_BASKETS = "baskets",
+            BASKET_ID = "id",
+            SERVER_BASKET_ID = "basket_id",
+            BASKET_PATIENT_ID = "patient_id",
+            BASKET_PRODUCT_ID = "product_id",
+            BASKET_QUANTITY = "quantity",
+            BASKET_CREATED_AT = "created_at",
+            BASKET_UPDATED_AT = "updated_at",
+            BASKET_DELETED_AT = "deleted_at";
 
     //string xml
     String doctor_string_xml = "", product_string_xml = "";
-    public static String doctors_string_xml = "";
-    public static String products_string_xml = "";
+    public static String doctors_string_xml = "", products_string_xml = "";
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -438,6 +438,8 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DOC_LNAME, doctor_object.getLname());
         values.put(DOC_MNAME, doctor_object.getMname());
         values.put(DOC_FNAME, doctor_object.getFname());
+        values.put(DOC_USERNAME, doctor_object.getUsername());
+        values.put(DOC_PASSWORD, doctor_object.getPassword());
         values.put(DOC_PRC_NO, doctor_object.getPrc_no());
         values.put(DOC_ADDRESS_HOUSE_NO, doctor_object.getAddress_house_no());
         values.put(DOC_ADDRESS_STREET, doctor_object.getAddress_street());
@@ -519,32 +521,30 @@ public class DbHelper extends SQLiteOpenHelper {
 
         Cursor cur = db.rawQuery(sql, null);
 
-        int i_lname, i_fname, i_mname, i_specialty, i_photo;
+        String i_lname, i_fname, i_mname, i_specialty, i_photo;
         while (cur.moveToNext()) {
-            i_lname = cur.getColumnIndex("lname");
-            i_fname = cur.getColumnIndex("fname");
-            i_mname = cur.getColumnIndex("mname");
-            i_specialty = cur.getColumnIndex("specialty");
-            i_photo = cur.getColumnIndex("photo");
+            i_lname = Helpers.curGetStr(cur, DOC_LNAME);
+            i_fname = Helpers.curGetStr(cur, DOC_FNAME);
+            i_mname = Helpers.curGetStr(cur, DOC_MNAME);
+            i_specialty = Helpers.curGetStr(cur, DOC_SPECIALTY);
+            i_photo = Helpers.curGetStr(cur, DOC_PHOTO);
 
             //for the id
             int id = cur.getInt(0);
 
             Doctor doctor = new Doctor();
             doctor.setID(id);
-            doctor.setLname(cur.getString(i_lname));
-            doctor.setMname(cur.getString(i_mname));
-            doctor.setFname(cur.getString(i_fname));
-
-            System.out.print("Lname: " + cur.getString(i_lname));
+            doctor.setLname(i_lname);
+            doctor.setMname(i_mname);
+            doctor.setFname(i_fname);
 
             doctors.add(doctor);
 
             String doctor_temporary_string_xml = "<doctor>\n" +
                     "<id>" + cur.getString(0) + "</id>\n" +
-                    "<fullname> Dr. " + cur.getString(i_fname) + " " + cur.getString(i_lname) + "</fullname>\n" +
-                    "<specialty>" + cur.getString(i_specialty) + "</specialty>\n" +
-                    "<photo>" + cur.getString(i_photo) + "</photo>\n" +
+                    "<fullname> Dr. " + i_fname + " " + i_lname + "</fullname>\n" +
+                    "<specialty>" + i_specialty + "</specialty>\n" +
+                    "<photo>" + i_photo + "</photo>\n" +
                     "</doctor>";
 
             doctor_string_xml += doctor_temporary_string_xml;
@@ -553,8 +553,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         cur.close();
         db.close();
-
-        Log.d("The Doctor XML String: ", doctors_string_xml);
 
         doctors_string_xml = "<list>" + doctor_string_xml + "</list>";
 

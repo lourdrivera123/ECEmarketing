@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -26,5 +27,10 @@ public class Helpers {
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    /* Returns db row column value */
+    public static String curGetStr(Cursor cursor, String columnName){
+        return cursor.getString(cursor.getColumnIndex(columnName));
     }
 }

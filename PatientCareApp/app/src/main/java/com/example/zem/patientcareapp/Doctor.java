@@ -10,7 +10,7 @@ public class Doctor implements Serializable {
         address_house_no = "", address_street = "", address_barangay = "",
         address_city_municipality = "", address_province = "", address_region = "", address_zip = "",
         specialty = "", sub_specialty = "", cell_no = "", tel_no = "", photo = "", clinic_sched = "",
-        email = "", country = "", affiliation = "";
+        email = "", country = "", affiliation = "", username = "", password = "";
 
     private int id = 0, clinic_id = 0, secretary_id = 0, prc_no = 0, doc_id = 0;
 
@@ -20,6 +20,14 @@ public class Doctor implements Serializable {
 
 
     /**    SETTERS ------------------------------------------------------------------ **/
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
         public void setFullAddress(String house_no, String street, String barangay, String city_municipality,
                                    String province, String region, String country, String zip){
             this.setAddress_house_no(house_no);
@@ -122,24 +130,32 @@ public class Doctor implements Serializable {
             this.country = country;
         }
 
-    public void setID(int id){
-        this.id = id;
-    }
+        public void setID(int id){
+            this.id = id;
+        }
 
-    public void setAffiliation(String affiliation){
-        this.affiliation = affiliation;
-    }
+        public void setAffiliation(String affiliation){
+            this.affiliation = affiliation;
+        }
 
-    public void setClinic_id(int clinic_id){
-        this.clinic_id = clinic_id;
-    }
+        public void setClinic_id(int clinic_id){
+            this.clinic_id = clinic_id;
+        }
 
-    public void setSecretary_id(int id){
-        this.secretary_id = secretary_id;
-    }
+        public void setSecretary_id(int id){
+            this.secretary_id = secretary_id;
+        }
 
 
     /**   GETTERS ------------------------------------------------------------------- **/
+        public String getUsername() {
+            return username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
         public String getFullname(boolean middlename_is_full){
             if(middlename_is_full == true) {
                 return fname + " " + mname + " " + lname;
