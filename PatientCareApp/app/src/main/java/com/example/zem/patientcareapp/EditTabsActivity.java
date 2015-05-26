@@ -54,6 +54,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     public static Patient patient;
     DbHelper dbHelper;
+    Helpers helpers;
     SignUpFragment fragment;
 
     private ViewPager viewPager;
@@ -108,6 +109,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         setContentView(R.layout.edit_profile_layout);
 
         dbHelper = new DbHelper(this);
+        helpers = new Helpers();
         patient = new Patient();
         fragment = new SignUpFragment();
 
@@ -116,7 +118,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
         queue = Volley.newRequestQueue(this);
-        url = "http://192.168.10.1/db/post_register_patient.php";
+        url = "http://vinzry.0fees.us/db/post.php";
         String tag_json_obj_doctor = "json_obj_doctor";
 
         pDialog = new ProgressDialog(this);
@@ -183,8 +185,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                 viewPager.setCurrentItem(0);
                             } else if (hasError2) {
                                 viewPager.setCurrentItem(1);
-                                pDialog.show();
-
                             } else {
                                 if (!hasError && !hasError2) {
                                     validateUserAccountInfo();
@@ -224,8 +224,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
                                             }
                                         } else {
-
-                                            if (isNetworkAvailable()) {
+                                            pDialog.setMessage("Remember: Patient is a Virtue. So please wait while we save your information");
+                                            pDialog.show();
+                                            if (helpers.isNetworkAvailable(getBaseContext())) {
 
                                                 Map<String, String> params = setParams();
 
@@ -233,30 +234,41 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                         new Response.Listener<JSONObject>() {
                                                             @Override
                                                             public void onResponse(JSONObject response) {
+                                                                System.out.println("response is: " + response);
 
                                                                 try {
-                                                                    patient_json_array_mysql = response.getJSONArray("patient");
-                                                                    patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
+                                                                    int success = response.getInt("success");
+                                                                    System.out.println("success is: " + success);
+//                                                                    success = response.getInt("success");
+//                                                                    Toast.makeText(EditTabsActivity.this, "response is: "+response, Toast.LENGTH_SHORT).show();
+                                                                    if (success == 2) {
+                                                                        pDialog.hide();
+                                                                        Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
+//                                                                    }
+                                                                    } else if (success == 1) {
+                                                                        patient_json_array_mysql = response.getJSONArray("patient");
+                                                                        patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
+                                                                        Log.d("response jsobjrequest", "" + response.toString());
+
+                                                                        //saving to sqlite database
+                                                                        if (dbHelper.insertPatient(patient_json_object_mysql, patient)) {
+                                                                            SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                                                                            SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                                            editor.putString("nameKey", patient.getUsername());
+                                                                            editor.commit();
+                                                                            pDialog.hide();
+                                                                            helpers.showNotification(getBaseContext());
+                                                                            startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+                                                                        } else {
+                                                                            Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    } else {
+                                                                        Toast.makeText(EditTabsActivity.this, "Sorry to interrupt the process but there is some problem with our server.", Toast.LENGTH_SHORT).show();
+
+                                                                    }
+
                                                                 } catch (JSONException e) {
 //                                                                    e.printStackTrace();
-                                                                }
-//                                                        Toast.makeText(EditTabsActivity.this, "response: " + response.toString(), Toast.LENGTH_SHORT).show();
-                                                                Log.d("response jsobjrequest", "" + response.toString());
-
-                                                                //saving to sqlite database
-                                                                if (dbHelper.checkUserIfRegistered(patient.getUsername()) == 0) {
-                                                                    if (dbHelper.insertPatient(patient_json_object_mysql, patient)) {
-                                                                        SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-                                                                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                                                                        editor.putString("nameKey", patient.getUsername());
-                                                                        editor.commit();
-                                                                        pDialog.hide();
-                                                                        startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
-                                                                    } else {
-                                                                        Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                                                                    }
-                                                                } else {
-                                                                    Toast.makeText(EditTabsActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
                                                                 }
 
                                                             }
@@ -264,7 +276,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
                                                         pDialog.hide();
-                                                        Log.d("volley error", "" + error.toString());
+                                                        Log.d("volley error ", "" + error.toString());
+                                                        System.out.println("error is: " + error);
                                                     }
                                                 });
 
@@ -310,6 +323,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public Map<String, String> setParams() {
         Map<String, String> params = new HashMap<String, String>();
 
+        params.put("request", "register");
         params.put("fname", patient.getFname());
         params.put("lname", patient.getLname());
         params.put("mname", patient.getMname());
@@ -682,12 +696,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                 }
                 break;
         }
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
