@@ -521,13 +521,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
         Cursor cur = db.rawQuery(sql, null);
 
-        String i_lname, i_fname, i_mname, i_specialty, i_photo;
+        String i_lname, i_fname, i_mname, i_specialty, i_photo, i_uname;
         while (cur.moveToNext()) {
             i_lname = Helpers.curGetStr(cur, DOC_LNAME);
             i_fname = Helpers.curGetStr(cur, DOC_FNAME);
             i_mname = Helpers.curGetStr(cur, DOC_MNAME);
             i_specialty = Helpers.curGetStr(cur, DOC_SPECIALTY);
             i_photo = Helpers.curGetStr(cur, DOC_PHOTO);
+            i_uname = Helpers.curGetStr(cur, DOC_USERNAME);
 
             //for the id
             int id = cur.getInt(0);
@@ -543,6 +544,7 @@ public class DbHelper extends SQLiteOpenHelper {
             String doctor_temporary_string_xml = "<doctor>\n" +
                     "<id>" + cur.getString(0) + "</id>\n" +
                     "<fullname> Dr. " + i_fname + " " + i_lname + "</fullname>\n" +
+                    "<username>"+ i_uname + "</username>"+
                     "<specialty>" + i_specialty + "</specialty>\n" +
                     "<photo>" + i_photo + "</photo>\n" +
                     "</doctor>";

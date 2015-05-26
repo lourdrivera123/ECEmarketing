@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by Zem on 5/11/2015.
+ * Created by Dexter on 5/11/2015.
  */
 public class Sync {
 
@@ -45,7 +45,8 @@ public class Sync {
         dbHelper = new DbHelper(context);
         queue = Volley.newRequestQueue(context);
 //        url = "http://192.168.1.15/db/get.php?q="+request;
-        url = "http://192.168.1.10/db/get.php?q="+request;
+
+        url = "http://vinzry.0fees.us/db/get.php?q="+request;
 
         // Request a string response from the provided URL.
         JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
