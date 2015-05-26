@@ -4,6 +4,27 @@
     android:layout_height="match_parent"
     android:id="@+id/fuckyounimo">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Browse by Category"
+        android:textSize="12dp"
+        android:layout_marginLeft="2dp"
+        android:textColor="@color/background_floating_material_dark"
+        android:id="@+id/browse_by"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/categories"
+        android:layout_gravity="center_horizontal" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/subcategories"
+        android:layout_gravity="center_horizontal" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

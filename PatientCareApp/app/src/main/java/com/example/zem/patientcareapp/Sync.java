@@ -45,6 +45,7 @@ public class Sync {
         dbHelper = new DbHelper(context);
         queue = Volley.newRequestQueue(context);
 //        url = "http://192.168.1.15/db/get.php?q="+request;
+
         url = "http://vinzry.0fees.us/db/get.php?q="+request;
 
         // Request a string response from the provided URL.
@@ -67,9 +68,10 @@ public class Sync {
                             for (int i = 0; i < json_array_final.length(); i++) {
                                 JSONObject json_object = json_array_final.getJSONObject(i);
 
-                                Log.d("esel", ""+json_object);
+                                System.out.print("GWAPO LAGI KO: ");
+                                System.out.println(json_object);
 
-                                if(!json_object.equals("null")){
+                                if(!json_object.equals("null") && !json_object.equals(null)){
                                     if( tableName == "products" ){
                                          if (dbHelper.insertProduct(setProduct(json_object))) {
                                              Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
@@ -79,7 +81,23 @@ public class Sync {
                                     }else if( tableName == "doctors" ){
                                        if (dbHelper.insertDoctor(setDoctor(json_object))) {
                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
-                                        } else {
+                                       } else {
+                                            Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
+                                       }
+                                    }else if( tableName == "product_categories" ){
+                                        try{
+                                            if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
+                                                Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
+                                            }
+                                        }catch (Exception e){
+                                            Toast.makeText(context, "Something went wrong! "+e.getMessage() , Toast.LENGTH_SHORT).show();
+                                        }
+                                    }else if( tableName == "product_subcategories" ){
+                                        if( dbHelper.insertProductSubCategory(setProductSubCategory(json_object)) ){
+                                            Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+                                        }else{
                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
                                         } 
                                     } else if( tableName == "dosage_format_and_strength") {
@@ -191,6 +209,8 @@ public class Sync {
         return something;
     }
 
+    // SETTERS
+
     public Doctor setDoctor(JSONObject json_object) {
         Doctor doctor_object = new Doctor();
         try {
@@ -217,6 +237,35 @@ public class Sync {
         }
 
         return doctor_object;
+    }
+
+    public ProductCategory setProductCategory(JSONObject json_object)throws JSONException{
+        ProductCategory pc = new ProductCategory();
+        try{
+            pc.setName(json_object.getString("name"));
+            pc.setCategoryId(Integer.parseInt(json_object.getString("id")));
+            pc.setCreatedAt(json_object.getString("created_at"));
+            pc.setUpdatedAt(json_object.getString("updated_at"));
+            pc.setDeletedAt(json_object.getString("deleted_at"));
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+        return pc;
+    }
+
+    public ProductSubCategory setProductSubCategory(JSONObject json_object)throws JSONException {
+        ProductSubCategory sc = new ProductSubCategory();
+        try {
+            sc.setName(json_object.getString("name"));
+            sc.setId(Integer.parseInt(json_object.getString("id")));
+            sc.setCategoryId(Integer.parseInt(json_object.getString("category_id")));
+            sc.setCreatedAt(json_object.getString("created_at"));
+            sc.setUpdatedAt(json_object.getString("updated_at"));
+            sc.setDeletedAt(json_object.getString("deleted_at"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return sc;
     }
 
     public Patient setPatient(JSONObject json_object){
@@ -253,8 +302,10 @@ public class Sync {
         try {
             product_object.setProductId(json_object.getInt("id"));
             product_object.setName(json_object.getString("name"));
+            product_object.setSubCategoryId(Integer.parseInt(json_object.getString("subcategory_id")));
             product_object.setGenericName(json_object.getString("generic_name"));
             product_object.setDescription(json_object.getString("description"));
+            product_object.setPrescriptionRequired(Integer.parseInt(json_object.getString("prescription_required")));
             product_object.setPrice(json_object.getInt("price"));
             product_object.setUnit(json_object.getString("unit"));
         } catch (JSONException e) {

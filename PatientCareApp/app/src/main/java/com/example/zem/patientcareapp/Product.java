@@ -5,8 +5,7 @@ package com.example.zem.patientcareapp;
  */
 public class Product {
     String name, dosageFormatAndStrength, genericName, description, unit, photo, createdAt, updatedAt, deletedAt;
-    int productId;
-    int id;
+    int id, prescriptionRequired, productId,subCategoryId;
     double price;
     public Product(){
 
@@ -23,12 +22,24 @@ public class Product {
         return productId;
     }
 
+    public int getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(int subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
     public String getGenericName(){
         return genericName;
     }
 
     public String getDescription(){
         return description;
+    }
+
+    public int getPrescriptionRequired(){
+        return prescriptionRequired;
     }
 
     public String getUnit(){
@@ -77,6 +88,10 @@ public class Product {
 
     public void setDescription(String description){
         this.description = description;
+    }
+
+    public void setPrescriptionRequired(int prescriptionRequired){
+        this.prescriptionRequired = prescriptionRequired;
     }
 
     public void setUnit(String unit) {

@@ -25,16 +25,17 @@
                 <TableRow android:layout_marginBottom="10dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="Biogesic "
                         android:layout_marginBottom="10dp"
                         android:textStyle="bold"
                         android:id="@+id/product_name" />
-
+                </TableRow>
+                <TableRow>
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="(Php 3.00 / tablet)"
                         android:layout_marginBottom="10dp"
@@ -54,6 +55,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="10dp"
                     android:textStyle="bold"
+                    android:id="@+id/product_description"
                     android:text="Biogesic for Kids 100 mg/mL Suspension (Oral Drops)\nBiogesic for Kids 120 mg/ 5 mL Suspension\nBiogesic for Kids 250 mg/5 mL Suspension\nBiogesic 500 mg Tablet" />
 
                 <TableRow android:layout_marginTop="20dp">
