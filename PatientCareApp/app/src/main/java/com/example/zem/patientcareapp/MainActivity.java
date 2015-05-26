@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,11 +13,25 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
@@ -25,7 +40,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     EditText username_txtfield, password_txtfield;
 
-    DbHelper dbhelper;
+    DbHelper dbHelper;
+    Helpers helpers;
     public static Activity main;
 
     public static final String MyPREFERENCES = "MyPrefs";
@@ -33,14 +49,31 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public static final String name = "nameKey";
     public static final String pass = "passwordKey";
     String uname, password;
+    String url = "http://vinzry.0fees.us/db/post.php";
+
+    ProgressDialog pDialog;
+    RequestQueue queue;
+
+    Patient patient;
+    Sync sync;
+
+    JSONArray patient_json_array_mysql = null;
+    JSONObject patient_json_object_mysql = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_login);
 
-        dbhelper = new DbHelper(this);
+        dbHelper = new DbHelper(this);
+        helpers = new Helpers();
         main = this;
+        queue = Volley.newRequestQueue(this);
+        sync = new Sync();
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+
 
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
@@ -60,7 +93,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         if (sharedpreferences.contains(name)) {
             if (sharedpreferences.contains(pass)) {
-                showNotification();
+                helpers.showNotification(this);
                 Intent i = new Intent(this, HomeTileActivity.class);
                 startActivity(i);
             }
@@ -88,16 +121,86 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 } else if (password.equals("")) {
                     password_txtfield.setError("Field Required");
                 } else {
-                    if (dbhelper.LoginUser(uname, password)) {
-                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                        editor.putString(name, uname);
-                        editor.putString(pass, password);
-                        editor.commit();
-                        showNotification();
-                        Intent i = new Intent(this, HomeTileActivity.class);
-                        startActivity(i);
+                    pDialog.show();
+                    patient = new Patient();
+                    patient.setUsername(uname);
+                    patient.setPassword(password);
+                    if (helpers.isNetworkAvailable(getBaseContext())) {
+
+                        Map<String, String> params = setParams();
+
+                        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+
+                                        try {
+                                            int success = response.getInt("success");
+                                            if (success == 1) {
+                                                patient_json_array_mysql = response.getJSONArray("patient");
+
+                                                Log.d("activity", "over here");
+
+
+                                                JSONArray checked_json_array = sync.checkWhatToInsert(patient_json_array_mysql, dbHelper.getAllJSONArrayFrom("patients"), "patient_id");
+                                                Log.d("checked json array", "" + checked_json_array);
+
+                                                if(checked_json_array.length() > 0){
+                                                    //json object from server
+                                                    patient_json_object_mysql = checked_json_array.getJSONObject(0);
+
+                                                    //sync.setPatient here.
+                                                    Patient syncedPatient = sync.setPatient(patient_json_object_mysql);
+
+                                                    //then save on db
+                                                    dbHelper.insertPatient(patient_json_object_mysql, syncedPatient);
+
+                                                }
+
+                                                if (dbHelper.LoginUser(uname, password)) {
+                                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                    editor.putString(name, uname);
+                                                    editor.putString(pass, password);
+                                                    editor.commit();
+                                                    helpers.showNotification(getBaseContext());
+                                                    Intent i = new Intent(getBaseContext(), HomeTileActivity.class);
+                                                    startActivity(i);
+                                                } else {
+                                                    Toast.makeText(MainActivity.this, "Username or Password is incorrect", Toast.LENGTH_SHORT).show();
+                                                }
+
+                                                pDialog.hide();
+
+                                                Toast.makeText(MainActivity.this, "Username and Password Correct", Toast.LENGTH_SHORT).show();
+
+                                            } else {
+                                                Toast.makeText(MainActivity.this, "Invalid Username or Password ", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        } catch (JSONException e) {
+//                                                                    e.printStackTrace();
+                                            Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                                        }
+//                                                        Toast.makeText(EditTabsActivity.this, "response: " + response.toString(), Toast.LENGTH_SHORT).show();
+                                        Log.d("uname", patient.getUsername());
+                                        Log.d("pword", patient.getPassword());
+                                        Log.d("response jsobjrequest", "" + response.toString());
+
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                pDialog.hide();
+                                Toast.makeText(getBaseContext(), "error" + error.toString(), Toast.LENGTH_SHORT).show();
+
+                                Log.d("volley error", "" + error.toString());
+                            }
+                        });
+
+                        queue.add(jsObjRequest);
+
                     } else {
-                        Toast.makeText(this, "Username or Password is incorrect", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "Cannot save because there is no internet connection", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -111,36 +214,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    public void showNotification() {
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("It's your Birthday!")
-                        .setSound(uri)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setContentText("I hope, it's your last. ;)");
+    public Map<String, String> setParams() {
+        Map<String, String> params = new HashMap<String, String>();
 
-        Intent resultIntent = new Intent(this, MainActivity.class);
+        params.put("request", "login");
+        params.put("username", patient.getUsername());
+        params.put("password", patient.getPassword());
+        return params;
 
-        // Because clicking the notification opens a new ("special") activity, there's
-        // no need to create an artificial back stack.
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        // Sets an ID for the notification
-        int mNotificationId = 001;
-        // Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 }

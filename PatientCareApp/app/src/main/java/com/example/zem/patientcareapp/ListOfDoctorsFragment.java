@@ -84,7 +84,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
 
             rootView.postDelayed(new Runnable() {
                 public void run() {
-                    // Actions to do after 4 seconds
+                    // Actions to do after 3 seconds
 
                     doctors_array_list = dbHelper.getAllDoctors();
                     String xml = dbHelper.getDoctorsStringXml();
@@ -92,7 +92,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
                     populateDoctorListView(rootView, xml);
                     pDialog.hide();
                 }
-
             }, 3000);
 
         } else {
@@ -108,7 +107,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
     }
 
     public void populateDoctorListView(View rootView, String xml) {
-        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<>();
         search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
         search_doctor.addTextChangedListener(this);
 
