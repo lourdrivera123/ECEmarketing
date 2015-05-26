@@ -62,6 +62,8 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         pDialog.setMessage("Loading...");
         pDialog.show();
 
+
+
         if (helpers.isNetworkAvailable(getActivity())) {
             sync = new Sync();
             sync.init(getActivity(), "get_products", "products", "product_id");

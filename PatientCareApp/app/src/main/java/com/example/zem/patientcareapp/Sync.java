@@ -55,15 +55,8 @@ public class Sync {
                     int success = response.getInt("success");
                     if (success == 1) {
                         json_array_mysql = response.getJSONArray(tableName);
+                        json_array_sqlite = dbHelper.getAllJSONArrayFrom(tableName);
 
-
-                        if( tableName == "doctors" ) {
-                            json_array_sqlite = dbHelper.getAllDoctorsJSONArray();
-                        } else if( tableName == "products") {
-                            json_array_sqlite = dbHelper.getAllProductsJSONArray();
-                        } else if( tableName == "dosage_format_and_strength") {
-                            json_array_sqlite = dbHelper.getAllDosagesJSONArray();
-                        }
                         Log.d("jsonarraymysql", ""+json_array_mysql);
                         Log.d("jsonarraysqlite", ""+json_array_sqlite);
 
@@ -124,6 +117,7 @@ public class Sync {
     public RequestQueue getQueue(){
         return this.queue;
     }
+
     public Dosage setDosage(JSONObject json_object){
         Dosage dosage = new Dosage();
         try {

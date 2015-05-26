@@ -118,7 +118,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
         queue = Volley.newRequestQueue(this);
-        url = "http://192.168.10.1/db/post_register_patient.php";
+        url = "http://192.168.1.12/db/post_register_patient.php";
         String tag_json_obj_doctor = "json_obj_doctor";
 
         pDialog = new ProgressDialog(this);

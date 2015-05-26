@@ -19,12 +19,15 @@ import android.widget.Toast;
 public class HomeTileActivity extends Activity implements View.OnClickListener {
     Button profile_btn, news_btn, promos_btn, doctors_btn, history_btn, test_results_btn, cart_btn, products_btn, consultation_btn;
     FragmentTransaction fragmentTransaction;
-    DbHelper dbHelper;
 
     public static SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
     public static String uname;
+    public static int userID;
     public static Activity hometile;
+
+    static Patient patient;
+    static DbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +123,6 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
 
             case R.id.news_btn:
                 intent.putExtra("selected", 8);
-                Toast.makeText(this, "" + dbHelper.getAllDoctorsJSONArray(), Toast.LENGTH_LONG).show();
                 break;
         }
     }
@@ -156,5 +158,12 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
     public static String getUname() {
         uname = sharedpreferences.getString("nameKey", "DEFAULT");
         return uname;
+    }
+
+    public static int getUserID() {
+        patient = dbHelper.getloginPatient(getUname());
+        userID = patient.getServerID();
+
+        return userID;
     }
 }

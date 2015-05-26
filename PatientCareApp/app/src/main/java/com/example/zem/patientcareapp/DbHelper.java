@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Esel on 5/5/2015.
@@ -149,21 +150,24 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String TBL_PATIENT_RECORDS = "patient_records";
     public static final String RECORDS_ID = "id";
     public static final String SERVER_RECORDS_ID = "record_id";
+    public static final String RECORDS_DOCTOR_ID = "doctor_id";
+    public static final String RECORDS_DOCTOR_NAME = "doctor_name";
     public static final String RECORDS_PATIENT_ID = "patient_id";
     public static final String RECORDS_COMPLAINT = "complaints";
     public static final String RECORDS_FINDINGS = "findings";
-    public static final String RECORDS_TREATMENT_ID = "treatment_id";
+    public static final String RECORDS_DATE = "record_date";
     public static final String RECORDS_CREATED_AT = "created_at";
     public static final String RECORDS_UPDATED_AT = "updated_at";
 
     //TREATMENTS TABLE
     public static final String TBL_TREATMENTS = "treatments";
     public static final String TREATMENTS_ID = "id";
+    public static final String TREATMENTS_RECORD_ID = "patient_record_id";
     public static final String SERVER_TREATMENTS_ID = "treatments_id";
     public static final String TREATMENTS_MEDICINE_NAME = "medicine_name";
     public static final String TREATMENTS_GENERIC_NAME = "generic_name";
     public static final String TREATMENTS_QUANITY = "quantity";
-    public static final String TREATMENTS_PRESCRIPTION = "quantity";
+    public static final String TREATMENTS_PRESCRIPTION = "prescription";
     public static final String TREATMENTS_CREATED_AT = "created_at";
     public static final String TREATMENTS_UPDATED_AT = "updated_at";
 
@@ -223,12 +227,14 @@ public class DbHelper extends SQLiteOpenHelper {
                 BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
 
         //SQL to create PATIENT_RECORDS TABLE
-        String sql_create_patient_records = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT)",
-                TBL_PATIENT_RECORDS, RECORDS_ID, SERVER_RECORDS_ID, RECORDS_PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_TREATMENT_ID, RECORDS_CREATED_AT, RECORDS_UPDATED_AT);
+        //GITANGGAL NKO ANG UNIQUE SA SERVER_ID
+        String sql_create_patient_records = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_PATIENT_RECORDS, RECORDS_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_DOCTOR_NAME, RECORDS_PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, RECORDS_CREATED_AT, RECORDS_UPDATED_AT);
 
         //SQL TO create TREATMENTS TABLE
-        String sql_create_treatments_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_TREATMENTS, TREATMENTS_ID, SERVER_TREATMENTS_ID, TREATMENTS_MEDICINE_NAME, TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, TREATMENTS_CREATED_AT, TREATMENTS_UPDATED_AT);
+        //GITANGGAL NAKO ANG UNIQUE SA SERVER_TREATMENT_ID
+        String sql_create_treatments_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_TREATMENTS, TREATMENTS_ID, TREATMENTS_RECORD_ID, SERVER_TREATMENTS_ID, TREATMENTS_MEDICINE_NAME, TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, TREATMENTS_CREATED_AT, TREATMENTS_UPDATED_AT);
 
         db.execSQL(sql1);
         db.execSQL(sql2);
@@ -250,67 +256,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-    /* SYNC CHECKER and etc. */
-    public boolean insertTableNamesToUpdates(String table_name, SQLiteDatabase db) {
-        ContentValues values = new ContentValues();
-        values.put(UPDATE_TBL_NAME, table_name);
-        values.put(UPDATE_TIMESTAMP, "2015-11-05");
-        values.put(UPDATE_SEEN, 0);
-
-        long rowID = db.insert(TBL_UPDATES, null, values);
-
-        return rowID > 0;
-    }
-
-    public String getLastUpdate(String table_name) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        String sql = "SELECT * FROM " + TBL_UPDATES + " WHERE " + UPDATE_TBL_NAME + "= '" + table_name + "'";
-        String last_update_date = "";
-        Cursor cur = db.rawQuery(sql, null);
-
-        while (cur.moveToNext()) {
-            last_update_date = cur.getString(2);
-        }
-
-        cur.close();
-        db.close();
-
-        return last_update_date;
-    }
-
-    /*  USERS TABLE */
-    public boolean LoginUser(String uname, String password) {
-        int login = 0;
-
-        SQLiteDatabase db = getWritableDatabase();
-        String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + password + "'";
-        Cursor cur = db.rawQuery(sql1, null);
-        cur.moveToFirst();
-
-        if (cur.getCount() > 0) {
-            login = 1;
-        }
-        return login > 0;
-    }
-
-    public void populateDiagnosis() {
-
-    }
-
-    public int checkUserIfRegistered(String username) {
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + username + "'";
-        Cursor cur = db.rawQuery(sql, null);
-        cur.moveToFirst();
-        int check = 0;
-
-        if (cur.getCount() > 0) {
-            check = 1;
-        }
-
-        return check;
-    }
+    //INSERT METHODS
 
     public boolean insertPatient(JSONObject patient_json_object_mysql, Patient patient) {
         int patient_id = 0;
@@ -359,6 +305,98 @@ public class DbHelper extends SQLiteOpenHelper {
         long insert_patient = db.insert(TBL_PATIENTS, null, values);
 
         return insert_patient > 0;
+    }
+
+    /* SYNC CHECKER and etc. */
+    public boolean insertTableNamesToUpdates(String table_name, SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(UPDATE_TBL_NAME, table_name);
+        values.put(UPDATE_TIMESTAMP, "2015-11-05");
+        values.put(UPDATE_SEEN, 0);
+
+        long rowID = db.insert(TBL_UPDATES, null, values);
+
+        return rowID > 0;
+    }
+
+    public long insertPatientRecord(PatientRecord record) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(RECORDS_PATIENT_ID, record.getPatientID());
+        values.put(RECORDS_COMPLAINT, record.getComplaints());
+        values.put(RECORDS_FINDINGS, record.getFindings());
+        values.put(RECORDS_DATE, record.getDate());
+        values.put(RECORDS_DOCTOR_ID, record.getDoctorID());
+        values.put(RECORDS_DOCTOR_NAME, record.getDoctorName());
+
+        long rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
+
+        return rowID;
+    }
+
+    public ArrayList<Integer> insertTreatment(ArrayList<HashMap<String, String>> items, long recordID) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        ArrayList<Integer> arrayOfID = new ArrayList<Integer>();
+
+        for (int x = 0; x < items.size(); x++) {
+            values.put(TREATMENTS_RECORD_ID, recordID);
+            values.put(TREATMENTS_MEDICINE_NAME, items.get(x).get("treatment_name"));
+            values.put(TREATMENTS_GENERIC_NAME, items.get(x).get("generic_name"));
+            values.put(TREATMENTS_QUANITY, items.get(x).get("qty"));
+            values.put(TREATMENTS_PRESCRIPTION, items.get(x).get("dosage"));
+
+            long rowID = db.insert(TBL_TREATMENTS, null, values);
+            arrayOfID.add((int) rowID);
+        }
+        return arrayOfID;
+    }
+
+    public String getLastUpdate(String table_name) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String sql = "SELECT * FROM " + TBL_UPDATES + " WHERE " + UPDATE_TBL_NAME + "= '" + table_name + "'";
+        String last_update_date = "";
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            last_update_date = cur.getString(2);
+        }
+
+        cur.close();
+        db.close();
+
+        return last_update_date;
+    }
+
+    /*  USERS TABLE */
+    public boolean LoginUser(String uname, String password) {
+        int login = 0;
+
+        SQLiteDatabase db = getWritableDatabase();
+        String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + password + "'";
+        Cursor cur = db.rawQuery(sql1, null);
+        cur.moveToFirst();
+
+        if (cur.getCount() > 0) {
+            login = 1;
+        }
+        return login > 0;
+    }
+
+    public int checkUserIfRegistered(String username) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + username + "'";
+        Cursor cur = db.rawQuery(sql, null);
+        cur.moveToFirst();
+        int check = 0;
+
+        if (cur.getCount() > 0) {
+            check = 1;
+        }
+
+        return check;
     }
 
     public boolean updatePatient(Patient patient, int ID, String photo) {
@@ -603,9 +641,6 @@ public class DbHelper extends SQLiteOpenHelper {
             product.setName(cur.getString(i_name));
             product.setDescription(cur.getString(i_description));
             product.setPrice(cur.getDouble(i_price));
-
-//            System.out.print("Lname: " + cur.getString(i_lname));
-
             products.add(product);
 
             String product_temporary_string_xml = "<entry>\n" +
@@ -619,7 +654,6 @@ public class DbHelper extends SQLiteOpenHelper {
             product_string_xml += product_temporary_string_xml;
         }
 
-
         cur.close();
         db.close();
 
@@ -630,21 +664,70 @@ public class DbHelper extends SQLiteOpenHelper {
         return products;
     }
 
-    public ArrayList<String> getDoctorName() {
-        ArrayList<String> doctors = new ArrayList<String>();
+    public ArrayList<String> getMedicine() {
+        ArrayList<String> medicine = new ArrayList<String>();
+        String sql = "SELECT p.name, generic_name, d.name FROM products as p LEFT OUTER JOIN dosage_format_and_strength as d ON d.product_id = p.product_id";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cur = db.rawQuery(sql, null);
+        String med, name, joinedMedicine = "";
+
+        while (cur.moveToNext()) {
+            med = cur.getString(0);
+            if (cur.getString(2) == null) {
+                joinedMedicine = med + "";
+            } else {
+                name = cur.getString(2);
+                joinedMedicine = med + " (" + name + ")";
+            }
+            medicine.add(joinedMedicine);
+        }
+        cur.close();
+        db.close();
+
+        return medicine;
+    }
+
+    public Medicine getSpecificMedicine(String med_name, Medicine medicine) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_PRODUCTS + " WHERE " + PRODUCT_NAME + " = '" + med_name + "'";
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            medicine.setId(cur.getInt(0));
+            medicine.setServerID(cur.getInt(1));
+            medicine.setMedicine_name(cur.getString(2));
+            medicine.setGeneric_name(cur.getString(3));
+            medicine.setDescription(cur.getString(4));
+            medicine.setPrice(cur.getDouble(5));
+            medicine.setUnit(cur.getString(6));
+            medicine.setPhoto(cur.getString(7));
+        }
+
+        cur.close();
+        db.close();
+
+        return medicine;
+    }
+
+    public ArrayList<HashMap<String, String>> getDoctorName() {
 
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_DOCTORS;
         Cursor cur = db.rawQuery(sql, null);
+        HashMap<String, String> map;
+        ArrayList<HashMap<String, String>> doctors = new ArrayList<HashMap<String, String>>();
+
 
         String fullname, fname, lname;
         while (cur.moveToNext()) {
-            int id = cur.getInt(0);
-
             lname = cur.getString(2);
             fname = cur.getString(4);
             fullname = fname + " " + lname;
-            doctors.add(fullname);
+
+            map = new HashMap<String, String>();
+            map.put("ID", String.valueOf(cur.getInt(0)));
+            map.put("fullname", fullname);
+            doctors.add(map);
         }
 
         cur.close();
@@ -662,11 +745,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
 
-    public JSONArray getAllDoctorsJSONArray() {
+    public JSONArray getAllJSONArrayFrom(String tbl_name) {
 
         SQLiteDatabase db = getWritableDatabase();
 
-        String sql = "SELECT * FROM " + TBL_DOCTORS;
+        String sql = "SELECT * FROM " + tbl_name;
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -696,83 +779,6 @@ public class DbHelper extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        System.out.print("json array of all doctors: " + resultSet.toString());
-        return resultSet;
-    }
-
-    public JSONArray getAllProductsJSONArray() {
-
-        SQLiteDatabase db = getWritableDatabase();
-
-        String sql = "SELECT * FROM " + TBL_PRODUCTS;
-
-        Cursor cursor = db.rawQuery(sql, null);
-
-        JSONArray resultSet = new JSONArray();
-
-        cursor.moveToFirst();
-        while (cursor.isAfterLast() == false) {
-
-            int totalColumn = cursor.getColumnCount();
-            JSONObject rowObject = new JSONObject();
-
-            for (int i = 0; i < totalColumn; i++) {
-                if (cursor.getColumnName(i) != null) {
-                    try {
-                        if (cursor.getString(i) != null) {
-                            System.out.print("json array of all products: " + cursor.getString(i));
-                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
-                        } else {
-                            rowObject.put(cursor.getColumnName(i), "");
-                        }
-                    } catch (Exception e) {
-                        System.out.print("error in products: " + e.getMessage());
-                    }
-                }
-            }
-            resultSet.put(rowObject);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        System.out.print("json array of all products: " + resultSet.toString());
-        return resultSet;
-    }
-
-    public JSONArray getAllDosagesJSONArray() {
-
-        SQLiteDatabase db = getWritableDatabase();
-
-        String sql = "SELECT * FROM " + TBL_DOSAGE;
-
-        Cursor cursor = db.rawQuery(sql, null);
-
-        JSONArray resultSet = new JSONArray();
-
-        cursor.moveToFirst();
-        while (cursor.isAfterLast() == false) {
-
-            int totalColumn = cursor.getColumnCount();
-            JSONObject rowObject = new JSONObject();
-
-            for (int i = 0; i < totalColumn; i++) {
-                if (cursor.getColumnName(i) != null) {
-                    try {
-                        if (cursor.getString(i) != null) {
-                            System.out.print("json array of all dosages: " + cursor.getString(i));
-                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
-                        } else {
-                            rowObject.put(cursor.getColumnName(i), "");
-                        }
-                    } catch (Exception e) {
-                        System.out.print("error in dosages: " + e.getMessage());
-                    }
-                }
-            }
-            resultSet.put(rowObject);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        System.out.print("json array of all dosages: " + resultSet.toString());
         return resultSet;
     }
 
@@ -876,31 +882,6 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
-    /* INSERT and UPDATE and other SQL's & functions for PRODUCTS TABLE */
-
-//    /* Returns all products */
-//    public ArrayList<Product> getAllProducts() {
-//        SQLiteDatabase db = getWritableDatabase();
-//        String sql = "SELECT * FROM " + TBL_PRODUCTS + " WHERE deleted_at IS NULL";
-//
-//        ArrayList<Product> products = new ArrayList<Product>();
-//
-//        Cursor cur = db.rawQuery(sql, null);
-//        while (cur.moveToNext()) {
-//            Product p = new Product();
-//            p.setName(cur.getString(1));
-//            p.setDosageFormatAndStrength(cur.getString(2));
-//            p.setGenericName(cur.getString(3));
-//            p.setDescription(cur.getString(4));
-//            p.setPrice(cur.getDouble(5));
-//            p.setUnit(cur.getString(6));
-//
-//            products.add(p);
-//        }
-//
-//        return products;
-//    }
-
     /* Create a record for "products" table here */
     public boolean insertProduct(Product product) {
         SQLiteDatabase db = getWritableDatabase();
@@ -910,6 +891,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Date date = new Date();
         System.out.println(dateFormat.format(date));
 
+        values.put(SERVER_PRODUCT_ID, product.getProductId());
         values.put(PRODUCT_NAME, product.getName());
         values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
         values.put(PRODUCT_DESCRIPTION, product.getDescription());
@@ -946,5 +928,50 @@ public class DbHelper extends SQLiteOpenHelper {
         long rowID = db.update(TBL_PRODUCTS, values, PRODUCTS_ID + "=" + product.getId(), null);
 
         return rowID > 0;
+    }
+
+    //GET METHODS
+
+    public ArrayList<HashMap<String, String>> getPatientRecord(int patientID) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "select * FROM " + TBL_PATIENT_RECORDS + " WHERE " + RECORDS_PATIENT_ID + " = " + patientID;
+        Cursor cur = db.rawQuery(sql, null);
+        ArrayList<HashMap<String, String>> arrayOfRecords = new ArrayList<>();
+        HashMap<String, String> map;
+
+        while (cur.moveToNext()) {
+            map = new HashMap<String, String>();
+            map.put("recordID", String.valueOf(cur.getInt(cur.getColumnIndex(RECORDS_ID))));
+            map.put("complaints", cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
+            map.put("findings", cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
+            map.put("record_date", cur.getString(cur.getColumnIndex(RECORDS_DATE)));
+            map.put("doctor_name", cur.getString(cur.getColumnIndex(RECORDS_DOCTOR_NAME)));
+            arrayOfRecords.add(map);
+        }
+        cur.close();
+        db.close();
+
+        return arrayOfRecords;
+    }
+
+    public ArrayList<HashMap<String, String>> getTreatmentRecord(int recordID) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_TREATMENTS + " WHERE " + TREATMENTS_RECORD_ID + " = " + recordID;
+        Cursor cursor = db.rawQuery(sql, null);
+        ArrayList<HashMap<String, String>> arrayOfTreatments = new ArrayList<>();
+        HashMap<String, String> map;
+
+        while (cursor.moveToNext()) {
+            map = new HashMap<String, String>();
+            map.put("medicine_name", cursor.getString(cursor.getColumnIndex(TREATMENTS_MEDICINE_NAME)));
+            map.put("generic_name", cursor.getString(cursor.getColumnIndex(TREATMENTS_GENERIC_NAME)));
+            map.put("quantity", cursor.getString(cursor.getColumnIndex(TREATMENTS_QUANITY)));
+            map.put("prescription", cursor.getString(cursor.getColumnIndex(TREATMENTS_PRESCRIPTION)));
+            arrayOfTreatments.add(map);
+        }
+        cursor.close();
+        db.close();
+
+        return arrayOfTreatments;
     }
 }
