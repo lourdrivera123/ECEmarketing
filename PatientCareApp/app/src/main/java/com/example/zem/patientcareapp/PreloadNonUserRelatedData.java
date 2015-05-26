@@ -2,8 +2,10 @@ package com.example.zem.patientcareapp;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 
@@ -50,25 +52,19 @@ public class PreloadNonUserRelatedData extends Activity {
             sync.init(this, "get_dosages", "dosage_format_and_strength", "dosage_id");
             queue = sync.getQueue();
 
-//            rootView.postDelayed(new Runnable() {
-//                public void run() {
-                    // Actions to do after 4 seconds
+            pDialog.hide();
 
-//                    dbHelper.getAllDoctors();
-//                    String xml = dbHelper.getDoctorsStringXml();
+            Intent mainactivity = new Intent(getBaseContext(), MainActivity.class);
+            startActivity(mainactivity);
 
-//                    populateDoctorListView(rootView, xml);
-//                    pDialog.hide();
-//                }
-
-//            }, 3000);
 
         } else {
             Log.d("Connected to internet", "no");
             dbHelper.getAllDoctors();
             String xml = dbHelper.getDoctorsStringXml();
         pDialog.setMessage("No Internet");
-
+        pDialog.hide();
+            Toast.makeText(this, "No Internet", Toast.LENGTH_LONG).show();
 //            populateDoctorListView(rootView, xml);
 //            pDialog.hide();
         }
