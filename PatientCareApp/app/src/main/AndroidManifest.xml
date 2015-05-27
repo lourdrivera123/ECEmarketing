@@ -18,9 +18,8 @@
         <activity
             android:name=".MainActivity"
             launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize">
-
-        </activity>
+            android:theme="@android:style/Theme.Holo.Light"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".SignUpFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />

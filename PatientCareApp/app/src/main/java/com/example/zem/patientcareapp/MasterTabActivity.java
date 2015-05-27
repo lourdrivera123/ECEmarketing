@@ -31,6 +31,9 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
 
+        ActionBar actionbar = getActionBar();
+        MainActivity.setCustomActionBar(actionbar);
+
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getActionBar();
         mAdapter = new MasterTabsAdapter(getSupportFragmentManager());

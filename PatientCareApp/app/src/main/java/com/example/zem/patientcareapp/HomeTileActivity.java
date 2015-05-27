@@ -1,5 +1,6 @@
 package com.example.zem.patientcareapp;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -35,6 +36,8 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.home_tile_layout);
 
         hometile = this;
+        ActionBar actionbar = getActionBar();
+        MainActivity.setCustomActionBar(actionbar);
 
         sharedpreferences = getSharedPreferences
                 (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
