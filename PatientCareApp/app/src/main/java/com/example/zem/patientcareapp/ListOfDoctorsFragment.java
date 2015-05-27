@@ -69,7 +69,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
         dbHelper = new DbHelper(getActivity());
         queue = Volley.newRequestQueue(getActivity());
 
-        url = "http://192.168.1.10/db/get.php?q=get_doctors";
+//        url = "http://192.168.1.10/db/get.php?q=get_doctors";
         helpers = new Helpers();
 
         pDialog = new ProgressDialog(getActivity());
@@ -104,6 +104,14 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
         }
 
         return rootView;
+    }
+
+    public void callresponse(){
+        doctors_array_list = dbHelper.getAllDoctors();
+        String xml = dbHelper.getDoctorsStringXml();
+
+        populateDoctorListView(root_view, xml);
+        pDialog.hide();
     }
 
     public void populateDoctorListView(View rootView, String xml) {

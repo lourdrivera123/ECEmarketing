@@ -3,6 +3,7 @@ package com.example.zem.patientcareapp;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -20,6 +21,8 @@ public class PreloadNonUserRelatedData extends Activity {
     Sync sync;
     RequestQueue queue;
     DbHelper dbHelper;
+    public static final String MyPREFERENCES = "MyPrefs";
+    SharedPreferences sharedpreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,8 +65,8 @@ public class PreloadNonUserRelatedData extends Activity {
             Log.d("Connected to internet", "no");
             dbHelper.getAllDoctors();
             String xml = dbHelper.getDoctorsStringXml();
-        pDialog.setMessage("No Internet");
-        pDialog.hide();
+            pDialog.setMessage("No Internet");
+            pDialog.hide();
             Toast.makeText(this, "No Internet", Toast.LENGTH_LONG).show();
 //            populateDoctorListView(rootView, xml);
 //            pDialog.hide();

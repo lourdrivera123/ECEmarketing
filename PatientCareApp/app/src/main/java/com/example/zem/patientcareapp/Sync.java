@@ -36,6 +36,7 @@ public class Sync {
     String url, tableName, tableId;
     DbHelper dbHelper;
     Context context;
+    ListOfDoctorsFragment listOfDoctorsFragment;
 
     public void init(Context c, String request, String table_name, String table_id){
         tableName = table_name;
@@ -81,6 +82,9 @@ public class Sync {
                                     }else if( tableName == "doctors" ){
                                        if (dbHelper.insertDoctor(setDoctor(json_object))) {
                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+                                           listOfDoctorsFragment = new ListOfDoctorsFragment();
+////                            ListOfDoctorsFragment.callresponse();
+                                        listOfDoctorsFragment.callresponse();
                                        } else {
                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
                                        }
@@ -109,6 +113,7 @@ public class Sync {
                                     }
                                 }
                             }
+
                            json_array_final = null;
                         } else {
                             Toast.makeText(context, "the final list is empty", Toast.LENGTH_SHORT).show();
