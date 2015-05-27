@@ -43,7 +43,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
     DbHelper dbHelper;
 
     RequestQueue queue;
-    String url;
     ProgressDialog pDialog;
 
     public ArrayList<Doctor> doctors_array_list;
@@ -69,7 +68,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
         dbHelper = new DbHelper(getActivity());
         queue = Volley.newRequestQueue(getActivity());
 
-//        url = "http://192.168.1.10/db/get.php?q=get_doctors";
         helpers = new Helpers();
 
         pDialog = new ProgressDialog(getActivity());
