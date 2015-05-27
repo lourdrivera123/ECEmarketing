@@ -82,9 +82,9 @@ public class Sync {
                                     }else if( tableName == "doctors" ){
                                        if (dbHelper.insertDoctor(setDoctor(json_object))) {
                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
-                                           listOfDoctorsFragment = new ListOfDoctorsFragment();
+//                                           listOfDoctorsFragment = new ListOfDoctorsFragment();
 ////                            ListOfDoctorsFragment.callresponse();
-                                        listOfDoctorsFragment.callresponse();
+//                                        listOfDoctorsFragment.callresponse();
                                        } else {
                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
                                        }
