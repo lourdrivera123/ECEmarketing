@@ -226,7 +226,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
                                             }
                                         } else {
-                                            pDialog.setMessage("Remember: Patient is a Virtue. So please wait while we save your information");
+                                            pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
                                             pDialog.show();
                                             if (helpers.isNetworkAvailable(getBaseContext())) {
 
