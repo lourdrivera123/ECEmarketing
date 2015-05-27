@@ -16,6 +16,10 @@ public class Patient implements Serializable {
 
     int id = 0, serverID = 0, unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no;
 
+    public Patient() {
+
+    }
+
     public void setServerID(int serverID) {
         this.serverID = serverID;
     }
@@ -31,10 +35,6 @@ public class Patient implements Serializable {
 
     public int getId() {
         return id;
-    }
-
-    public Patient() {
-
     }
 
     public int getUnit_floor_room_no() {
@@ -72,7 +72,7 @@ public class Patient implements Serializable {
 
     public void setFullAddress(int unit_floor_room_no, String building, int lot_no, int block_no,
                                int phase_no, int address_house_no, String street, String barangay, String city_municipality,
-                               String province, String region, String country, String zip){
+                               String province, String region, String country, String zip) {
         this.setUnit_floor_room_no(unit_floor_room_no);
         this.setBuilding(building);
         this.setLot_no(lot_no);

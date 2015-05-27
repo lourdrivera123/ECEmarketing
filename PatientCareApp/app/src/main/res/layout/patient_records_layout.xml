@@ -23,15 +23,19 @@
         android:text="Medical History"
         android:textStyle="bold" />
 
-    <ScrollView
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="No records found"
+        android:id="@+id/noResults"
+        android:layout_marginTop="100dp"
+        android:visibility="gone"
+        android:gravity="center" />
 
-
-        <ListView
-            android:id="@+id/list_of_history"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+    <ListView
+        android:id="@+id/list_of_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d10" />
 </LinearLayout>

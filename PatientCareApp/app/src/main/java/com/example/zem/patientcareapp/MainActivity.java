@@ -84,7 +84,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
-
     }
 
     @Override

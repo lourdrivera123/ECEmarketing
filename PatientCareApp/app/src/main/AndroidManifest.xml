@@ -62,17 +62,19 @@
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".PatientMedicalRecordActivity" />
 
+        <activity android:name=".Patient" />
+        <activity android:name=".Medicine" />
+        <activity android:name=".Doctor" />
+        <activity android:name=".PatientRecord" />
+
         <activity android:name=".FileCache" />
         <activity android:name=".Utils" />
         <activity android:name=".MemoryCache" />
         <activity android:name=".LazyAdapter" />
         <activity android:name=".ImageLoader" />
-        <activity android:name=".Doctor" />
-        <activity android:name=".Patient" />
         <activity android:name=".ProductsFragment" />
         <activity android:name=".DbHelper" />
         <activity android:name=".PatientConsultationActivity" />
-        <activity android:name=".StandStrong" />
         <activity android:name=".PatientConsultationFragment" />
         <activity android:name=".ShoppingCartFragment" />
         <activity android:name=".AppController" />

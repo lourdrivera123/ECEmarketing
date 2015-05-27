@@ -146,7 +146,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
         adapter = new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
 
         list_of_doctors.setAdapter(adapter);
-
         // Click event for single list row
         list_of_doctors.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -176,7 +175,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
 
     }
 
-    public void doSomeShit(String xml){
+    public void doSomeShit(String xml) {
         populateDoctorListView(root_view, xml);
     }
 }

@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.database.Cursor;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -33,6 +34,12 @@ public class Helpers {
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+    /* Returns db row column value */
+    public static String curGetStr(Cursor cursor, String columnName) {
+        return cursor.getString(cursor.getColumnIndex(columnName));
     }
 
     public void showNotification(Context context) {
