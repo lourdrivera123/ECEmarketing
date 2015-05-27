@@ -216,8 +216,6 @@ public class Sync {
         try {
 
             doctor.setDoc_id(json.getInt("id"));
-            doctor.setUsername(json.getString("username"));
-            doctor.setPassword(json.getString("password"));
             doctor.setClinic_id(json.getInt("clinic_id"));
             doctor.setSecretary_id(json.getInt("secretary_id"));
             doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
