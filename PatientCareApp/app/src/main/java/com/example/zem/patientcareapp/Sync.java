@@ -211,107 +211,109 @@ public class Sync {
 
     // SETTERS
 
-    public Doctor setDoctor(JSONObject json_object) {
-        Doctor doctor_object = new Doctor();
+    public Doctor setDoctor(JSONObject json) {
+        Doctor doctor = new Doctor();
         try {
 
-            doctor_object.setDoc_id(json_object.getInt("id"));
-            doctor_object.setClinic_id(json_object.getInt("clinic_id"));
-            doctor_object.setSecretary_id(json_object.getInt("secretary_id"));
-            doctor_object.setFullname(json_object.getString("fname"), json_object.getString("mname"), json_object.getString("lname"));
-            doctor_object.setFullAddress(json_object.getString("address_house_no"), json_object.getString("address_street"),
-                    json_object.getString("address_barangay"), json_object.getString("address_city_municipality"),
-                    json_object.getString("address_province"), json_object.getString("address_region"),
-                    json_object.getString("address_country"), json_object.getString("address_zip"));
-            doctor_object.setPrc_no(json_object.getInt("prc_no"));
-            doctor_object.setSpecialty(json_object.getString("specialty"));
-            doctor_object.setSub_specialty(json_object.getString("sub_specialty"));
-            doctor_object.setCell_no(json_object.getString("cell_no"));
-            doctor_object.setTel_no(json_object.getString("tel_no"));
-            doctor_object.setPhoto(json_object.getString("photo"));
-            doctor_object.setClinic_sched(json_object.getString("clinic_sched"));
-            doctor_object.setEmail(json_object.getString("email"));
-            doctor_object.setAffiliation(json_object.getString("affiliation"));
+            doctor.setDoc_id(json.getInt("id"));
+            doctor.setUsername(json.getString("username"));
+            doctor.setPassword(json.getString("password"));
+            doctor.setClinic_id(json.getInt("clinic_id"));
+            doctor.setSecretary_id(json.getInt("secretary_id"));
+            doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
+            doctor.setFullAddress(json.getString("address_house_no"), json.getString("address_street"),
+                    json.getString("address_barangay"), json.getString("address_city_municipality"),
+                    json.getString("address_province"), json.getString("address_region"),
+                    json.getString("address_country"), json.getString("address_zip"));
+            doctor.setPrc_no(json.getInt("prc_no"));
+            doctor.setSpecialty(json.getString("specialty"));
+            doctor.setSub_specialty(json.getString("sub_specialty"));
+            doctor.setCell_no(json.getString("cell_no"));
+            doctor.setTel_no(json.getString("tel_no"));
+            doctor.setPhoto(json.getString("photo"));
+            doctor.setClinic_sched(json.getString("clinic_sched"));
+            doctor.setEmail(json.getString("email"));
+            doctor.setAffiliation(json.getString("affiliation"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return doctor_object;
+        return doctor;
     }
 
-    public ProductCategory setProductCategory(JSONObject json_object)throws JSONException{
+    public ProductCategory setProductCategory(JSONObject json)throws JSONException{
         ProductCategory pc = new ProductCategory();
         try{
-            pc.setName(json_object.getString("name"));
-            pc.setCategoryId(Integer.parseInt(json_object.getString("id")));
-            pc.setCreatedAt(json_object.getString("created_at"));
-            pc.setUpdatedAt(json_object.getString("updated_at"));
-            pc.setDeletedAt(json_object.getString("deleted_at"));
+            pc.setName(json.getString("name"));
+            pc.setCategoryId(Integer.parseInt(json.getString("id")));
+            pc.setCreatedAt(json.getString("created_at"));
+            pc.setUpdatedAt(json.getString("updated_at"));
+            pc.setDeletedAt(json.getString("deleted_at"));
         }catch(JSONException e){
             e.printStackTrace();
         }
         return pc;
     }
 
-    public ProductSubCategory setProductSubCategory(JSONObject json_object)throws JSONException {
+    public ProductSubCategory setProductSubCategory(JSONObject json)throws JSONException {
         ProductSubCategory sc = new ProductSubCategory();
         try {
-            sc.setName(json_object.getString("name"));
-            sc.setId(Integer.parseInt(json_object.getString("id")));
-            sc.setCategoryId(Integer.parseInt(json_object.getString("category_id")));
-            sc.setCreatedAt(json_object.getString("created_at"));
-            sc.setUpdatedAt(json_object.getString("updated_at"));
-            sc.setDeletedAt(json_object.getString("deleted_at"));
+            sc.setName(json.getString("name"));
+            sc.setId(Integer.parseInt(json.getString("id")));
+            sc.setCategoryId(Integer.parseInt(json.getString("category_id")));
+            sc.setCreatedAt(json.getString("created_at"));
+            sc.setUpdatedAt(json.getString("updated_at"));
+            sc.setDeletedAt(json.getString("deleted_at"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return sc;
     }
 
-    public Patient setPatient(JSONObject json_object){
-        Patient patient_object = new Patient();
+    public Patient setPatient(JSONObject json){
+        Patient patient = new Patient();
         try {
-            patient_object.setServerID(json_object.getInt("id"));
-            patient_object.setUsername(json_object.getString("username"));
-            patient_object.setPassword(json_object.getString("password"));
-            patient_object.setOccupation(json_object.getString("occupation"));
-            patient_object.setBirthdate(json_object.getString("birthdate"));
-            patient_object.setSex(json_object.getString("sex"));
-            patient_object.setCivil_status(json_object.getString("civil_status"));
-            patient_object.setHeight(json_object.getString("height"));
-            patient_object.setWeight(json_object.getString("weight"));
-            patient_object.setFullname(json_object.getString("fname"), json_object.getString("mname"), json_object.getString("lname"));
-            patient_object.setFullAddress(json_object.getInt("unit_floor_room_no"), json_object.getString("building"),
-                    json_object.getInt("lot_no"), json_object.getInt("block_no"), json_object.getInt("phase_no"),
-                    json_object.getInt("address_house_no"), json_object.getString("address_street"),
-                    json_object.getString("address_barangay"), json_object.getString("address_city_municipality"),
-                    json_object.getString("address_province"), json_object.getString("address_region"),
-                    json_object.getString("address_country"), json_object.getString("address_zip"));
-            patient_object.setTel_no(json_object.getString("tel_no"));
-            patient_object.setCell_no(json_object.getString("cell_no"));
-            patient_object.setEmail(json_object.getString("email"));
-            patient_object.setPhoto(json_object.getString("photo"));
+            patient.setServerID(json.getInt("id"));
+            patient.setUsername(json.getString("username"));
+            patient.setPassword(json.getString("password"));
+            patient.setOccupation(json.getString("occupation"));
+            patient.setBirthdate(json.getString("birthdate"));
+            patient.setSex(json.getString("sex"));
+            patient.setCivil_status(json.getString("civil_status"));
+            patient.setHeight(json.getString("height"));
+            patient.setWeight(json.getString("weight"));
+            patient.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
+            patient.setFullAddress(json.getInt("unit_floor_room_no"), json.getString("building"),
+                    json.getInt("lot_no"), json.getInt("block_no"), json.getInt("phase_no"),
+                    json.getInt("address_house_no"), json.getString("address_street"),
+                    json.getString("address_barangay"), json.getString("address_city_municipality"),
+                    json.getString("address_province"), json.getString("address_region"),
+                    json.getString("address_country"), json.getString("address_zip"));
+            patient.setTel_no(json.getString("tel_no"));
+            patient.setCell_no(json.getString("cell_no"));
+            patient.setEmail(json.getString("email"));
+            patient.setPhoto(json.getString("photo"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return patient_object;
+        return patient;
     }
-    public Product setProduct(JSONObject json_object) {
-        Product product_object = new Product();
+    public Product setProduct(JSONObject json) {
+        Product product = new Product();
 
         try {
-            product_object.setProductId(json_object.getInt("id"));
-            product_object.setName(json_object.getString("name"));
-            product_object.setSubCategoryId(Integer.parseInt(json_object.getString("subcategory_id")));
-            product_object.setGenericName(json_object.getString("generic_name"));
-            product_object.setDescription(json_object.getString("description"));
-            product_object.setPrescriptionRequired(Integer.parseInt(json_object.getString("prescription_required")));
-            product_object.setPrice(json_object.getInt("price"));
-            product_object.setUnit(json_object.getString("unit"));
+            product.setProductId(json.getInt("id"));
+            product.setName(json.getString("name"));
+            product.setSubCategoryId(Integer.parseInt(json.getString("subcategory_id")));
+            product.setGenericName(json.getString("generic_name"));
+            product.setDescription(json.getString("description"));
+            product.setPrescriptionRequired(Integer.parseInt(json.getString("prescription_required")));
+            product.setPrice(json.getInt("price"));
+            product.setUnit(json.getString("unit"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return product_object;
+        return product;
     }
 }

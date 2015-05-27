@@ -161,10 +161,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql1 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)",
-                TBL_DOCTORS, DOC_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_ADDRESS_HOUSE_NO, DOC_ADDRESS_STREET, DOC_ADDRESS_BARANGAY,
+        String sql1 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, " +
+                    "%s TEXT UNIQUE, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
+                    "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)",
+                TBL_DOCTORS, DOC_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_USERNAME, DOC_PASSWORD, DOC_PRC_NO,
+                DOC_ADDRESS_HOUSE_NO, DOC_ADDRESS_STREET, DOC_ADDRESS_BARANGAY,
                 DOC_ADDRESS_CITY, DOC_ADDRESS_PROVINCE, DOC_ADDRESS_REGION, DOC_ADDRESS_COUNTRY, DOC_ZIP, DOC_SPECIALTY, DOC_SUB_SPECIALTY, DOC_CELL_NO, DOC_TEL_NO,
                 DOC_PHOTO, DOC_CLINIC_SCHED, DOC_AFFILIATIONS, DOC_CLINIC_ID, DOC_EMAIL, DOC_SEC_ID);
 
@@ -203,8 +204,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table "baskets"
         String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s INTEGER REFERENCES " + TBL_PATIENTS + "(" + PTNT_PATIENT_ID + "), %s INTEGER REFERENCES " + TBL_BASKETS + "(" + SERVER_BASKET_ID + ")," +
-                        " %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                        "%s INTEGER, %s INTEGER, %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
                 TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
                 BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
 
@@ -430,35 +430,35 @@ public class DbHelper extends SQLiteOpenHelper {
     //DOCTORS..DOCTORS..DOCTORS..DOCTORS..DOCTORS
 
     /* INSERT and UPDATE and other SQL's & functions for DOCTORS TABLE */
-    public boolean insertDoctor(Doctor doctor_object) {
+    public boolean insertDoctor(Doctor doctor) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(DOC_DOC_ID, doctor_object.getDoc_id());
-        values.put(DOC_LNAME, doctor_object.getLname());
-        values.put(DOC_MNAME, doctor_object.getMname());
-        values.put(DOC_FNAME, doctor_object.getFname());
-        values.put(DOC_USERNAME, doctor_object.getUsername());
-        values.put(DOC_PASSWORD, doctor_object.getPassword());
-        values.put(DOC_PRC_NO, doctor_object.getPrc_no());
-        values.put(DOC_ADDRESS_HOUSE_NO, doctor_object.getAddress_house_no());
-        values.put(DOC_ADDRESS_STREET, doctor_object.getAddress_street());
-        values.put(DOC_ADDRESS_BARANGAY, doctor_object.getAddress_barangay());
-        values.put(DOC_ADDRESS_CITY, doctor_object.getAddress_city_municipality());
-        values.put(DOC_ADDRESS_PROVINCE, doctor_object.getAddress_province());
-        values.put(DOC_ADDRESS_REGION, doctor_object.getAddress_region());
-        values.put(DOC_ADDRESS_COUNTRY, doctor_object.getCountry());
-        values.put(DOC_ZIP, doctor_object.getAddress_zip());
-        values.put(DOC_SPECIALTY, doctor_object.getSpecialty());
-        values.put(DOC_SUB_SPECIALTY, doctor_object.getSub_specialty());
-        values.put(DOC_CELL_NO, doctor_object.getCell_no());
-        values.put(DOC_TEL_NO, doctor_object.getTel_no());
-        values.put(DOC_PHOTO, doctor_object.getPhoto());
-        values.put(DOC_CLINIC_SCHED, doctor_object.getClinic_sched());
-        values.put(DOC_AFFILIATIONS, doctor_object.getAffiliation());
-        values.put(DOC_CLINIC_ID, doctor_object.getClinic_id());
-        values.put(DOC_EMAIL, doctor_object.getEmail());
-        values.put(DOC_SEC_ID, doctor_object.getSecretary_id());
+        values.put(DOC_DOC_ID, doctor.getDoc_id());
+        values.put(DOC_LNAME, doctor.getLname());
+        values.put(DOC_MNAME, doctor.getMname());
+        values.put(DOC_FNAME, doctor.getFname());
+        values.put(DOC_USERNAME, doctor.getUsername());
+        values.put(DOC_PASSWORD, doctor.getPassword());
+        values.put(DOC_PRC_NO, doctor.getPrc_no());
+        values.put(DOC_ADDRESS_HOUSE_NO, doctor.getAddress_house_no());
+        values.put(DOC_ADDRESS_STREET, doctor.getAddress_street());
+        values.put(DOC_ADDRESS_BARANGAY, doctor.getAddress_barangay());
+        values.put(DOC_ADDRESS_CITY, doctor.getAddress_city_municipality());
+        values.put(DOC_ADDRESS_PROVINCE, doctor.getAddress_province());
+        values.put(DOC_ADDRESS_REGION, doctor.getAddress_region());
+        values.put(DOC_ADDRESS_COUNTRY, doctor.getCountry());
+        values.put(DOC_ZIP, doctor.getAddress_zip());
+        values.put(DOC_SPECIALTY, doctor.getSpecialty());
+        values.put(DOC_SUB_SPECIALTY, doctor.getSub_specialty());
+        values.put(DOC_CELL_NO, doctor.getCell_no());
+        values.put(DOC_TEL_NO, doctor.getTel_no());
+        values.put(DOC_PHOTO, doctor.getPhoto());
+        values.put(DOC_CLINIC_SCHED, doctor.getClinic_sched());
+        values.put(DOC_AFFILIATIONS, doctor.getAffiliation());
+        values.put(DOC_CLINIC_ID, doctor.getClinic_id());
+        values.put(DOC_EMAIL, doctor.getEmail());
+        values.put(DOC_SEC_ID, doctor.getSecretary_id());
 
         long rowID = db.insert(TBL_DOCTORS, null, values);
 
