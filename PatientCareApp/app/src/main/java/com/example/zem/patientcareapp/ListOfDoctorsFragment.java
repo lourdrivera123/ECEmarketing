@@ -104,13 +104,13 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
         return rootView;
     }
 
-    public void callresponse(){
-        doctors_array_list = dbHelper.getAllDoctors();
-        String xml = dbHelper.getDoctorsStringXml();
-
-        populateDoctorListView(root_view, xml);
-        pDialog.hide();
-    }
+//    public void callresponse(){
+//        doctors_array_list = dbHelper.getAllDoctors();
+//        String xml = dbHelper.getDoctorsStringXml();
+//
+//        populateDoctorListView(root_view, xml);
+//        pDialog.hide();
+//    }
 
     public void populateDoctorListView(View rootView, String xml) {
         ArrayList<HashMap<String, String>> doctorsList = new ArrayList<>();
