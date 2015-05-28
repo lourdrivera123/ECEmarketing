@@ -36,9 +36,8 @@ public class Sync {
     String url, tableName, tableId;
     DbHelper dbHelper;
     Context context;
-    ListOfDoctorsFragment listOfDoctorsFragment;
 
-    public void init(Context c, String request, String table_name, String table_id){
+    public void init(Context c, String request, String table_name, String table_id, JSONObject response){
         tableName = table_name;
         tableId = table_id;
         context = c;
@@ -49,11 +48,11 @@ public class Sync {
 
         url = "http://vinzry.0fees.us/db/get.php?q="+request;
 
-        // Request a string response from the provided URL.
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response){
+//        // Request a string response from the provided URL.
+//        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+//
+//            @Override
+//            public void onResponse(JSONObject response){
                 try {
                     int success = response.getInt("success");
                     if (success == 1) {
@@ -103,7 +102,7 @@ public class Sync {
                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
                                         }else{
                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
-                                        } 
+                                        }
                                     } else if( tableName == "dosage_format_and_strength") {
                                         if (dbHelper.insertDosage(setDosage(json_object))) {
                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
@@ -127,20 +126,20 @@ public class Sync {
                 }
 
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, "Error on request", Toast.LENGTH_SHORT).show();
-                System.out.println("GWAPO DAW KO: " + error);
-            }
-        });
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(context, "Error on request", Toast.LENGTH_SHORT).show();
+//                System.out.println("GWAPO DAW KO: " + error);
+//            }
+//        });
+//
+//        queue.add(stringRequest);
+//    }
 
-        queue.add(stringRequest);
-    }
-
-    public RequestQueue getQueue(){
-        return this.queue;
-    }
+//    public RequestQueue getQueue(){
+//        return this.queue;
+//    }
 
     public Dosage setDosage(JSONObject json_object){
         Dosage dosage = new Dosage();

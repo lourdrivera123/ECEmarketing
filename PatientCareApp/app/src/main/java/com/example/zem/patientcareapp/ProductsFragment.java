@@ -78,21 +78,21 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
 
         if (helpers.isNetworkAvailable(getActivity())) {
-            sync = new Sync();
-            sync.init(getActivity(), "get_products", "products", "product_id");
-            queue = sync.getQueue();
-
-            sync = new Sync();
-            sync.init(getActivity(), "get_product_categories", "product_categories", "id");
-            queue = sync.getQueue();
-
-            sync = new Sync();
-            sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "id");
-            queue = sync.getQueue();
-
-            sync = new Sync();
-            sync.init(getActivity(), "get_dosages", "dosage_format_and_strength", "dosage_id");
-            queue = sync.getQueue();
+//            sync = new Sync();
+//            sync.init(getActivity(), "get_products", "products", "product_id");
+//            queue = sync.getQueue();
+//
+//            sync = new Sync();
+//            sync.init(getActivity(), "get_product_categories", "product_categories", "id");
+//            queue = sync.getQueue();
+//
+//            sync = new Sync();
+//            sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "id");
+//            queue = sync.getQueue();
+//
+//            sync = new Sync();
+//            sync.init(getActivity(), "get_dosages", "dosage_format_and_strength", "dosage_id");
+//            queue = sync.getQueue();
 
 
             rootView.postDelayed(new Runnable() {

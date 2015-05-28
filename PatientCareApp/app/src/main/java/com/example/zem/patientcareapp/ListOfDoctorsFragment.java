@@ -15,9 +15,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -75,14 +80,16 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
         pDialog.show();
 
         if (helpers.isNetworkAvailable(getActivity())) {
-            sync = new Sync();
-            sync.init(getActivity(), "get_doctors", "doctors", "doc_id");
-            queue = sync.getQueue();
 
+//            queue = sync.getQueue();
 
-            rootView.postDelayed(new Runnable() {
-                public void run() {
-                    // Actions to do after 3 seconds
+            // Request a string response from the provided URL.
+            JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response){
+                    sync = new Sync();
+                    sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
 
                     doctors_array_list = dbHelper.getAllDoctors();
                     String xml = dbHelper.getDoctorsStringXml();
@@ -90,7 +97,27 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
                     populateDoctorListView(rootView, xml);
                     pDialog.hide();
                 }
-            }, 3000);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    System.out.println("GWAPO DAW KO: " + error);
+                }
+            });
+
+            queue.add(stringRequest);
+
+//            rootView.postDelayed(new Runnable() {
+//                public void run() {
+//                    // Actions to do after 3 seconds
+//
+//                    doctors_array_list = dbHelper.getAllDoctors();
+//                    String xml = dbHelper.getDoctorsStringXml();
+//
+//                    populateDoctorListView(rootView, xml);
+//                    pDialog.hide();
+//                }
+//            }, 3000);
 
         } else {
             Log.d("Connected to internet", "no");
