@@ -107,7 +107,6 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
         add_treatment.setOnClickListener(this);
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

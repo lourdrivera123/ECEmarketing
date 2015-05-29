@@ -11,7 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,22 +39,21 @@ import java.util.List;
 /**
  * Created by Zem on 4/29/2015.
  */
-public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
+public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnItemClickListener, TextWatcher, View.OnClickListener {
     ListView list_of_doctors;
+    AutoCompleteTextView search_doctor;
+    ImageButton refresh_doctors_list;
 
-    EditText search_doctor;
-    String[] doctors = {
-            "Esel", "Dexter", "Zemiel"
-    };
+    ArrayAdapter doctoradapter;
+    ArrayList<String> arrayOfSearchDoctors;
+    ArrayList<HashMap<String, String>> doctorsList;
+    public ArrayList<Doctor> doctors_array_list;
 
-    List<String> findArray = Arrays.asList(doctors);
+    String s_doctor;
 
     DbHelper dbHelper;
-
     RequestQueue queue;
     ProgressDialog pDialog;
-
-    public ArrayList<Doctor> doctors_array_list;
 
     // XML node keys
     static final String KEY_FULL_NAME = "fullname"; // parent node
@@ -64,22 +67,26 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
     Sync sync;
     View root_view;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
         root_view = rootView;
 
+        helpers = new Helpers();
         dbHelper = new DbHelper(getActivity());
+        arrayOfSearchDoctors = new ArrayList<String>();
         queue = Volley.newRequestQueue(getActivity());
 
-        helpers = new Helpers();
+        search_doctor = (AutoCompleteTextView) rootView.findViewById(R.id.search_doctor);
+        refresh_doctors_list = (ImageButton) rootView.findViewById(R.id.refresh_doctors_list);
+
+        refresh_doctors_list.setOnClickListener(this);
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-        if (helpers.isNetworkAvailable(getActivity())) {
+            if (helpers.isNetworkAvailable(getActivity())) {
 
 //            queue = sync.getQueue();
 
@@ -120,34 +127,20 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
 //            }, 3000);
 
         } else {
-            Log.d("Connected to internet", "no");
             doctors_array_list = dbHelper.getAllDoctors();
             String xml = dbHelper.getDoctorsStringXml();
 
             populateDoctorListView(rootView, xml);
             pDialog.hide();
         }
-
         return rootView;
     }
 
-//    public void callresponse(){
-//        doctors_array_list = dbHelper.getAllDoctors();
-//        String xml = dbHelper.getDoctorsStringXml();
-//
-//        populateDoctorListView(root_view, xml);
-//        pDialog.hide();
-//    }
-
     public void populateDoctorListView(View rootView, String xml) {
-        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<>();
-        search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
-        search_doctor.addTextChangedListener(this);
+        doctorsList = new ArrayList<HashMap<String, String>>();
 
         XMLParser parser = new XMLParser();
-
         Document doc = parser.getDomElement(xml); // getting DOM element
-
 
         NodeList nl = doc.getElementsByTagName(KEY_DOCTOR);
         // looping through all song nodes &lt;song&gt;
@@ -163,14 +156,13 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
 
             // adding HashList to ArrayList
             doctorsList.add(map);
+            arrayOfSearchDoctors.add(doctorsList.get(i).get(KEY_FULL_NAME));
         }
 
-        list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
-
-        // Getting adapter by passing xml data ArrayList
         adapter = new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
-
+        list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
         list_of_doctors.setAdapter(adapter);
+
         // Click event for single list row
         list_of_doctors.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -179,6 +171,31 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
                 startActivity(new Intent(getActivity(), DoctorActivity.class));
             }
         });
+
+        doctoradapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, arrayOfSearchDoctors);
+        search_doctor.setAdapter(doctoradapter);
+        search_doctor.setOnItemClickListener(this);
+        search_doctor.addTextChangedListener(this);
+    }
+
+    public void doSomeShit(String xml) {
+        populateDoctorListView(root_view, xml);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String item_clicked = parent.getItemAtPosition(position).toString();
+        int doctorindex = arrayOfSearchDoctors.indexOf(item_clicked);
+        HashMap<String, String> map = new HashMap<String, String>();
+
+        map.put(KEY_ID, doctorsList.get(doctorindex).get(KEY_ID));
+        map.put(KEY_FULL_NAME, doctorsList.get(doctorindex).get(KEY_FULL_NAME));
+        map.put(KEY_SPECIALTY, doctorsList.get(doctorindex).get(KEY_SPECIALTY));
+        map.put(KEY_PHOTO, doctorsList.get(doctorindex).get(KEY_PHOTO));
+
+        doctorsList.clear();
+        doctorsList.add(map);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -187,20 +204,25 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
     }
 
     @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        String key = search_doctor.getText().toString();
-
-        if (findArray.contains(key)) {
-            Toast.makeText(getActivity(), "" + key, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
     public void afterTextChanged(Editable s) {
 
     }
 
-    public void doSomeShit(String xml) {
-        populateDoctorListView(root_view, xml);
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        s_doctor = search_doctor.getText().toString();
+
+        if (arrayOfSearchDoctors.contains(s_doctor)) {
+            Toast.makeText(getActivity(), "search for: " + s_doctor, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "no results found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent =  new Intent(getActivity(), MasterTabActivity.class);
+        intent.putExtra("selected", 3);
+        startActivity(intent);
     }
 }

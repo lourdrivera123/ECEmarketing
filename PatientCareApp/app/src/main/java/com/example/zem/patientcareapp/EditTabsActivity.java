@@ -63,13 +63,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     private String[] tabs = {"Gen. Info", "Contact Info", "Acct. Info"};
     public boolean hasError = true, hasError2 = true, hasError3 = true;
 
-
-
     // SIGN UP FRAGMENT
     EditText birthdate, fname, lname, mname, height, weight, occupation;
     RadioGroup sex;
     Spinner civil_status_spinner;
-    String s_fname, s_lname, s_mname, s_birthdate, s_formatted_birthdate, s_sex, s_civil_status, s_height, s_weight, s_occupation;
+    String s_fname, s_lname, s_mname, s_birthdate, s_sex, s_civil_status, s_height, s_weight, s_occupation;
 
     // CONTACTS FRAGMENT
     EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_barangay, address_city_municipality, address_province, address_zip,
@@ -85,7 +83,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     ImageView image_holder;
     Drawable d;
 
-    int serverID = 0;
     int check = 0;
     int int_year, int_month, int_day;
 
@@ -115,17 +112,18 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         patient = new Patient();
         fragment = new SignUpFragment();
 
+        ActionBar actionbar = getActionBar();
+        MainActivity.setCustomActionBar(actionbar);
+
         Intent intent = getIntent();
         signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
         queue = Volley.newRequestQueue(this);
         url = "http://vinzry.0fees.us/db/post.php";
-        String tag_json_obj_doctor = "json_obj_doctor";
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
-
 
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
