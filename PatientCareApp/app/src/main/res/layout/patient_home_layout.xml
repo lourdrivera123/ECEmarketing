@@ -8,11 +8,11 @@
     android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical">
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/search_doctor"
+        android:hint="Search..."
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search..." />
+        android:layout_height="wrap_content" />
 
     <ScrollView
         android:layout_width="match_parent"

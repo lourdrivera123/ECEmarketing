@@ -5,6 +5,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -48,15 +50,9 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
                     .setTabListener(this));
         }
 
+
         Intent intent = getIntent();
-
-        switch (intent.getIntExtra("selected", 0)) {
-            case 3:
-                Log.d("the number selected is ", "" + intent.getIntExtra("selected", 0));
-                break;
-        }
         actionBar.setSelectedNavigationItem(intent.getIntExtra("selected", 0));
-
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

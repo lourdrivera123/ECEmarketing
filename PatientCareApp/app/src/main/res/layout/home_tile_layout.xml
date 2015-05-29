@@ -14,44 +14,43 @@
         android:fillViewport="true">
 
         <TableLayout
+            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="@dimen/d20">
+            android:layout_height="match_parent">
 
             <TableRow>
 
-                <Button
+                <ImageButton
                     android:id="@+id/profile_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/profile_tile" />
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/profile_tile" />
 
-                <Button
+                <ImageButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/history_tile"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/history_tile"
                     android:id="@+id/history_btn" />
 
-                <Button
+                <ImageButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/results_tile"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/results_tile"
                     android:id="@+id/test_results_btn" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/d10">
 
                 <TextView
                     android:layout_height="wrap_content"
@@ -77,38 +76,38 @@
 
             <TableRow android:layout_marginTop="@dimen/d40">
 
-                <Button
+                <ImageButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/doctors_tile"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/doctors_tile"
                     android:id="@+id/doctors_btn" />
 
-                <Button
+                <ImageButton
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/consultation_tile"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/consultation_tile"
                     android:id="@+id/consultation_btn" />
 
-                <Button
+                <ImageButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/product_tile"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/product_tile"
                     android:id="@+id/products_btn" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/d10">
 
                 <TextView
                     android:layout_height="wrap_content"
@@ -134,38 +133,38 @@
 
             <TableRow android:layout_marginTop="@dimen/d40">
 
-                <Button
+                <ImageButton
+                    android:id="@+id/cart_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/cart_tile"
-                    android:id="@+id/cart_btn" />
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/cart_tile" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/promos_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/discounts_tile" />
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/discounts_tile" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/news_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/tile_shape"
-                    android:drawableBottom="@mipmap/news_tile" />
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/news_tile" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/d10">
 
                 <TextView
                     android:layout_height="wrap_content"

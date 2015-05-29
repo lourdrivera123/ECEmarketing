@@ -68,6 +68,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_login);
 
+        if (savedInstanceState == null) {
+
+        }
+
         ActionBar actionbar = getActionBar();
         setCustomActionBar(actionbar);
 
@@ -93,8 +97,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onResume() {
-        sharedpreferences = getSharedPreferences(MyPREFERENCES,
-                Context.MODE_PRIVATE);
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         if (sharedpreferences.contains(name)) {
             if (sharedpreferences.contains(pass)) {
@@ -175,9 +178,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                                 }
 
                                                 pDialog.hide();
-
-                                                Toast.makeText(MainActivity.this, "Username and Password Correct", Toast.LENGTH_SHORT).show();
-
                                             } else {
                                                 Toast.makeText(MainActivity.this, "Invalid Username or Password ", Toast.LENGTH_SHORT).show();
                                             }
@@ -185,7 +185,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         } catch (JSONException e) {
                                             Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
                                         }
-                                        Log.d("response jsobjrequest", "" + response.toString());
                                     }
                                 }, new Response.ErrorListener() {
                             @Override

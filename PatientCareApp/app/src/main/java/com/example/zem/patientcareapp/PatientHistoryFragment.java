@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,8 +26,9 @@ import java.util.HashMap;
 
 public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
-    TextView add_record, noResults;
+    TextView noResults;
     Button view_doctor_btn, call_doctor_btn;
+    ImageButton add_record;
 
     TextView date, doctor_name;
     EditText complaints, findings, treatments;
@@ -53,7 +55,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             medRecords.add(hashHistory.get(x).get("doctor_name") + " - " + hashHistory.get(x).get("record_date"));
         }
 
-        add_record = (TextView) rootView.findViewById(R.id.add_record);
+        add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
         list_of_history = (ListView) rootView.findViewById(R.id.list_of_history);
 
@@ -126,5 +128,4 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 break;
         }
     }
-
 }

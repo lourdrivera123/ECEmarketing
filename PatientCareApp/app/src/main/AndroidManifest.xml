@@ -19,7 +19,13 @@
             android:name=".MainActivity"
             launchMode="singleInstance"
             android:theme="@android:style/Theme.Holo.Light"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboardHidden|orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SignUpFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -80,11 +86,7 @@
         <activity android:name=".Product" />
         <activity android:name=".ProductCategoriesFragment" />
         <activity android:name=".PreloadNonUserRelatedData">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".Basket" />
     </application>
