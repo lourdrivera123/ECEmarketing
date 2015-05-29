@@ -68,7 +68,6 @@ public class LazyAdapter extends BaseAdapter {
             TextView artist = (TextView) vi.findViewById(R.id.specialty); // artist name
             ImageView list_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
 
-
             HashMap<String, String> doctor = new HashMap<String, String>();
             doctor = data.get(position);
 
@@ -119,7 +118,6 @@ public class LazyAdapter extends BaseAdapter {
 
             HashMap<String, String> basket_items;
 
-
             basket_items = data.get(position);
 
             TextView product_name = (TextView) vi.findViewById(R.id.product_name);
@@ -130,7 +128,6 @@ public class LazyAdapter extends BaseAdapter {
             price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
             quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
 
-
             // Setting all values in listview
             product_name.setText(basket_items.get(DbHelper.PRODUCT_NAME) + " @Php " + price);
             total_amount = price * quantity;
@@ -140,7 +137,6 @@ public class LazyAdapter extends BaseAdapter {
 
             qty.setId(Integer.parseInt(basket_items.get(DbHelper.BASKET_ID)));
             total.setId(Integer.parseInt(basket_items.get(DbHelper.BASKET_ID)));
-
         }
         return vi;
     }
