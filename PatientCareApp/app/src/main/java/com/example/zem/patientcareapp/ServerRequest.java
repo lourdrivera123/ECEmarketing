@@ -26,8 +26,8 @@ public class ServerRequest {
     RequestQueue queue;
     Helpers helpers;
     HashMap<String, String> params;
-//    String url = "http://vinzry.0fees.us/db/post.php";
-    String url = "http://192.168.1.12/db/post.php";
+    String url = "http://vinzry.0fees.us/db/post.php";
+//    String url = "http://192.168.1.12/db/post.php";
     DbHelper dbHelper;
     boolean isSuccessful;
     Context activity;
