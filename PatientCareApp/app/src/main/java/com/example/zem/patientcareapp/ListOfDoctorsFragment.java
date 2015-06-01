@@ -97,7 +97,11 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
                 public void onResponse(JSONObject response){
                     sync = new Sync();
                     sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
-
+                    try {
+                        dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
+                    } catch (Exception e) {
+                        System.out.println("error fetching server timestamp: "+ e);
+                    }
                     doctors_array_list = dbHelper.getAllDoctors();
                     String xml = dbHelper.getDoctorsStringXml();
 

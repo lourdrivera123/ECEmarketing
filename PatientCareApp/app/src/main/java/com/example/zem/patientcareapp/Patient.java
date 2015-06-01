@@ -72,7 +72,7 @@ public class Patient implements Serializable {
 
     public void setFullAddress(int unit_floor_room_no, String building, int lot_no, int block_no,
                                int phase_no, int address_house_no, String street, String barangay, String city_municipality,
-                               String province, String region, String country, String zip) {
+                               String province, String region, String zip) {
         this.setUnit_floor_room_no(unit_floor_room_no);
         this.setBuilding(building);
         this.setLot_no(lot_no);
@@ -273,11 +273,11 @@ public class Patient implements Serializable {
         this.address_zip = address_zip;
     }
 
-    public String getCell_no() {
+    public String getMobile_no() {
         return cell_no;
     }
 
-    public void setCell_no(String cell_no) {
+    public void setMobile_no(String cell_no) {
         this.cell_no = cell_no;
     }
 

@@ -55,8 +55,8 @@ public class DbHelper extends SQLiteOpenHelper {
             PTNT_REGION = "address_region",
             PTNT_ZIP = "address_zip",
             PTNT_TEL_NO = "tel_no",
-            PTNT_CELL_NO = "cell_no",
-            PTNT_EMAIL = "email",
+            PTNT_MOBILE_NO = "mobile_no",
+            PTNT_EMAIL = "email_address",
             PTNT_PHOTO = "photo",
             PTNT_CREATED_AT = "created_at",
             PTNT_UPDATED_AT = "updated_at";
@@ -76,24 +76,16 @@ public class DbHelper extends SQLiteOpenHelper {
             DOC_MNAME = "mname",
             DOC_FNAME = "fname",
             DOC_PRC_NO = "prc_no",
-            DOC_ADDRESS_HOUSE_NO = "address_house_no",
-            DOC_ADDRESS_STREET = "address_street",
-            DOC_ADDRESS_BARANGAY = "address_barangay",
-            DOC_ADDRESS_CITY = "address_city_municipality",
-            DOC_ADDRESS_PROVINCE = "address_province",
-            DOC_ADDRESS_REGION = "address_region",
-            DOC_ADDRESS_COUNTRY = "address_country",
-            DOC_ZIP = "address_zip",
-            DOC_SPECIALTY = "specialty",
-            DOC_SUB_SPECIALTY = "sub_specialty",
+            DOC_SUB_SPECIALTY_ID = "sub_specialty",
             DOC_CELL_NO = "cellNo",
             DOC_TEL_NO = "telNo",
             DOC_PHOTO = "photo",
-            DOC_CLINIC_SCHED = "clinic_sched",
             DOC_AFFILIATIONS = "affiliations",
-            DOC_CLINIC_ID = "clinic_id",
             DOC_EMAIL = "email",
-            DOC_SEC_ID = "secretary_id";
+            DOC_SEC_ID = "secretary_id",
+            DOC_CREATED_AT = "created_at",
+            DOC_UPDATED_AT = "updated_at",
+            DOC_DELETED_AT = "deleted_at";
 
     // PRODUCT_CATEGORIES TABLE
     public static final String PROD_CAT_NAME = "name",
@@ -186,23 +178,23 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql1 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, " +
-                        "%s TEXT UNIQUE, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)",
+        String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, " +
+                        "%s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, " +
+                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_DOCTORS, DOC_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO,
-                DOC_ADDRESS_HOUSE_NO, DOC_ADDRESS_STREET, DOC_ADDRESS_BARANGAY,
-                DOC_ADDRESS_CITY, DOC_ADDRESS_PROVINCE, DOC_ADDRESS_REGION, DOC_ADDRESS_COUNTRY, DOC_ZIP, DOC_SPECIALTY, DOC_SUB_SPECIALTY, DOC_CELL_NO, DOC_TEL_NO,
-                DOC_PHOTO, DOC_CLINIC_SCHED, DOC_AFFILIATIONS, DOC_CLINIC_ID, DOC_EMAIL, DOC_SEC_ID);
+                DOC_SUB_SPECIALTY_ID, DOC_CELL_NO, DOC_TEL_NO,
+            DOC_PHOTO, DOC_AFFILIATIONS, DOC_EMAIL, DOC_CREATED_AT, DOC_UPDATED_AT, DOC_DELETED_AT);
 
-        String sql2 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER)",
+        String sql_create_tbl_updates = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER)",
                 TBL_UPDATES, UPDATE_ID, UPDATE_TBL_NAME, UPDATE_TIMESTAMP, UPDATE_SEEN);
 
-        String sql3 = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
+
+        String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_PATIENTS, PTNT_ID, PTNT_PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION,
                 PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO,
-                PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_CELL_NO,
+                PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_MOBILE_NO,
                 PTNT_EMAIL, PTNT_PHOTO, PTNT_CREATED_AT, PTNT_UPDATED_AT);
 
         // SQL to create table "product_categories"
@@ -243,9 +235,9 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_create_treatments_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_TREATMENTS, TREATMENTS_ID, TREATMENTS_RECORD_ID, SERVER_TREATMENTS_ID, TREATMENTS_MEDICINE_NAME, TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, TREATMENTS_CREATED_AT, TREATMENTS_UPDATED_AT);
 
-        db.execSQL(sql1);
-        db.execSQL(sql2);
-        db.execSQL(sql3);
+        db.execSQL(sql_create_tbl_doctors);
+        db.execSQL(sql_create_tbl_updates);
+        db.execSQL(sql_create_tbl_patients);
         db.execSQL(sql_create_tbl_baskets);
         db.execSQL(sql_create_tbl_product_categories);
         db.execSQL(sql_create_tbl_product_subcategories);
@@ -304,7 +296,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_REGION, patient.getAddress_region());
         values.put(PTNT_ZIP, patient.getAddress_zip());
         values.put(PTNT_TEL_NO, patient.getTel_no());
-        values.put(PTNT_CELL_NO, patient.getCell_no());
+        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
         values.put(PTNT_EMAIL, patient.getEmail());
         values.put(PTNT_PHOTO, patient.getPhoto());
         values.put(PTNT_CREATED_AT, created_at);
@@ -329,6 +321,24 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(UPDATE_SEEN, 0);
 
         long rowID = db.insert(TBL_UPDATES, null, values);
+
+        return rowID > 0;
+    }
+
+    //to be worked out
+    public boolean updateLastUpdatedTable(String table_name, String server_timestamp){
+                SQLiteDatabase db = getWritableDatabase();
+
+
+//        Date now = new Date();
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+
+        ContentValues values = new ContentValues();
+        values.put(UPDATE_TIMESTAMP, server_timestamp);
+
+//        long rowID = db.insert(TBL_UPDATES, null, values);
+        int rowID = db.update(TBL_UPDATES, values, UPDATE_TBL_NAME + "=" + table_name, null);
 
         return rowID > 0;
     }
@@ -441,7 +451,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_REGION, patient.getAddress_region());
         values.put(PTNT_ZIP, patient.getAddress_zip());
         values.put(PTNT_TEL_NO, patient.getTel_no());
-        values.put(PTNT_CELL_NO, patient.getCell_no());
+        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
         values.put(PTNT_EMAIL, patient.getEmail());
         values.put(PTNT_PHOTO, photo);
 
@@ -485,7 +495,7 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setAddress_region(cur.getString(23));
             patient.setAddress_zip(cur.getString(24));
             patient.setTel_no(cur.getString(25));
-            patient.setCell_no(cur.getString(26));
+            patient.setMobile_no(cur.getString(26));
             patient.setEmail(cur.getString(27));
             patient.setPhoto(cur.getString(28));
         }
@@ -499,7 +509,8 @@ public class DbHelper extends SQLiteOpenHelper {
     //DOCTORS..DOCTORS..DOCTORS..DOCTORS..DOCTORS
 
     /* INSERT and UPDATE and other SQL's & functions for DOCTORS TABLE */
-    public boolean insertDoctor(Doctor doctor) {
+    public boolean saveDoctor(Doctor doctor, String request) {
+        long rowID = 0;
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -508,62 +519,61 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DOC_MNAME, doctor.getMname());
         values.put(DOC_FNAME, doctor.getFname());
         values.put(DOC_PRC_NO, doctor.getPrc_no());
-        values.put(DOC_ADDRESS_HOUSE_NO, doctor.getAddress_house_no());
-        values.put(DOC_ADDRESS_STREET, doctor.getAddress_street());
-        values.put(DOC_ADDRESS_BARANGAY, doctor.getAddress_barangay());
-        values.put(DOC_ADDRESS_CITY, doctor.getAddress_city_municipality());
-        values.put(DOC_ADDRESS_PROVINCE, doctor.getAddress_province());
-        values.put(DOC_ADDRESS_REGION, doctor.getAddress_region());
-        values.put(DOC_ADDRESS_COUNTRY, doctor.getCountry());
-        values.put(DOC_ZIP, doctor.getAddress_zip());
-        values.put(DOC_SPECIALTY, doctor.getSpecialty());
-        values.put(DOC_SUB_SPECIALTY, doctor.getSub_specialty());
+        values.put(DOC_SUB_SPECIALTY_ID, doctor.getSub_specialty_id());
         values.put(DOC_CELL_NO, doctor.getCell_no());
         values.put(DOC_TEL_NO, doctor.getTel_no());
         values.put(DOC_PHOTO, doctor.getPhoto());
-        values.put(DOC_CLINIC_SCHED, doctor.getClinic_sched());
         values.put(DOC_AFFILIATIONS, doctor.getAffiliation());
-        values.put(DOC_CLINIC_ID, doctor.getClinic_id());
         values.put(DOC_EMAIL, doctor.getEmail());
-        values.put(DOC_SEC_ID, doctor.getSecretary_id());
+        values.put(DOC_CREATED_AT, doctor.getCreated_at());
+        values.put(DOC_UPDATED_AT, doctor.getUpdated_at());
+        values.put(DOC_DELETED_AT, doctor.getDeleted_at());
 
-        long rowID = db.insert(TBL_DOCTORS, null, values);
+        switch(request) {
+            case "insert":
+                rowID = db.insert(TBL_DOCTORS, null, values);
+                break;
+            case "update":
+                rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor.getDoc_id(), null);
+                break;
+        }
 
-        return rowID > 0;
-    }
-
-    public boolean updateDoctor(Doctor doctor_object) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(DOC_DOC_ID, doctor_object.getDoc_id());
-        values.put(DOC_LNAME, doctor_object.getLname());
-        values.put(DOC_MNAME, doctor_object.getMname());
-        values.put(DOC_FNAME, doctor_object.getFname());
-        values.put(DOC_PRC_NO, doctor_object.getPrc_no());
-        values.put(DOC_ADDRESS_HOUSE_NO, doctor_object.getAddress_house_no());
-        values.put(DOC_ADDRESS_STREET, doctor_object.getAddress_street());
-        values.put(DOC_ADDRESS_BARANGAY, doctor_object.getAddress_barangay());
-        values.put(DOC_ADDRESS_CITY, doctor_object.getAddress_city_municipality());
-        values.put(DOC_ADDRESS_PROVINCE, doctor_object.getAddress_province());
-        values.put(DOC_ADDRESS_REGION, doctor_object.getAddress_region());
-        values.put(DOC_ADDRESS_COUNTRY, doctor_object.getCountry());
-        values.put(DOC_ZIP, doctor_object.getAddress_zip());
-        values.put(DOC_SPECIALTY, doctor_object.getSpecialty());
-        values.put(DOC_SUB_SPECIALTY, doctor_object.getSub_specialty());
-        values.put(DOC_CELL_NO, doctor_object.getCell_no());
-        values.put(DOC_TEL_NO, doctor_object.getTel_no());
-        values.put(DOC_PHOTO, doctor_object.getPhoto());
-        values.put(DOC_CLINIC_SCHED, doctor_object.getClinic_sched());
-        values.put(DOC_AFFILIATIONS, doctor_object.getAffiliation());
-        values.put(DOC_CLINIC_ID, doctor_object.getClinic_id());
-        values.put(DOC_EMAIL, doctor_object.getEmail());
-        values.put(DOC_SEC_ID, doctor_object.getSecretary_id());
-
-        int rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor_object.getDoc_id(), null);
 
         return rowID > 0;
     }
+
+//    public boolean updateDoctor(Doctor doctor_object) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(DOC_DOC_ID, doctor_object.getDoc_id());
+//        values.put(DOC_LNAME, doctor_object.getLname());
+//        values.put(DOC_MNAME, doctor_object.getMname());
+//        values.put(DOC_FNAME, doctor_object.getFname());
+//        values.put(DOC_PRC_NO, doctor_object.getPrc_no());
+//        values.put(DOC_ADDRESS_HOUSE_NO, doctor_object.getAddress_house_no());
+//        values.put(DOC_ADDRESS_STREET, doctor_object.getAddress_street());
+//        values.put(DOC_ADDRESS_BARANGAY, doctor_object.getAddress_barangay());
+//        values.put(DOC_ADDRESS_CITY, doctor_object.getAddress_city_municipality());
+//        values.put(DOC_ADDRESS_PROVINCE, doctor_object.getAddress_province());
+//        values.put(DOC_ADDRESS_REGION, doctor_object.getAddress_region());
+//        values.put(DOC_ADDRESS_COUNTRY, doctor_object.getCountry());
+//        values.put(DOC_ZIP, doctor_object.getAddress_zip());
+//        values.put(DOC_SPECIALTY, doctor_object.getSpecialty());
+//        values.put(DOC_SUB_SPECIALTY, doctor_object.getSub_specialty());
+//        values.put(DOC_CELL_NO, doctor_object.getCell_no());
+//        values.put(DOC_TEL_NO, doctor_object.getTel_no());
+//        values.put(DOC_PHOTO, doctor_object.getPhoto());
+//        values.put(DOC_CLINIC_SCHED, doctor_object.getClinic_sched());
+//        values.put(DOC_AFFILIATIONS, doctor_object.getAffiliation());
+//        values.put(DOC_CLINIC_ID, doctor_object.getClinic_id());
+//        values.put(DOC_EMAIL, doctor_object.getEmail());
+//        values.put(DOC_SEC_ID, doctor_object.getSecretary_id());
+//
+//        int rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor_object.getDoc_id(), null);
+//
+//        return rowID > 0;
+//    }
 
     public boolean insertDosage(Dosage dosage) {
         SQLiteDatabase db = getWritableDatabase();
@@ -594,7 +604,7 @@ public class DbHelper extends SQLiteOpenHelper {
             i_lname = Helpers.curGetStr(cur, DOC_LNAME);
             i_fname = Helpers.curGetStr(cur, DOC_FNAME);
             i_mname = Helpers.curGetStr(cur, DOC_MNAME);
-            i_specialty = Helpers.curGetStr(cur, DOC_SPECIALTY);
+            i_specialty = Helpers.curGetStr(cur, DOC_LNAME);
             i_photo = Helpers.curGetStr(cur, DOC_PHOTO);
 
             //for the id

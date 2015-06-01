@@ -79,8 +79,9 @@ public class Sync {
                                              Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
                                          }
                                     }else if( tableName == "doctors" ){
-                                       if (dbHelper.insertDoctor(setDoctor(json_object))) {
+                                       if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+
 //                                           listOfDoctorsFragment = new ListOfDoctorsFragment();
 ////                            ListOfDoctorsFragment.callresponse();
 //                                        listOfDoctorsFragment.callresponse();
@@ -220,22 +221,26 @@ public class Sync {
         try {
 
             doctor.setDoc_id(json.getInt("id"));
-            doctor.setClinic_id(json.getInt("clinic_id"));
-            doctor.setSecretary_id(json.getInt("secretary_id"));
+//            doctor.setClinic_id(json.getInt("clinic_id"));
+//            doctor.setSecretary_id(json.getInt("secretary_id"));
             doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
-            doctor.setFullAddress(json.getString("address_house_no"), json.getString("address_street"),
-                    json.getString("address_barangay"), json.getString("address_city_municipality"),
-                    json.getString("address_province"), json.getString("address_region"),
-                    json.getString("address_country"), json.getString("address_zip"));
+//            doctor.setFullAddress(json.getString("address_house_no"), json.getString("address_street"),
+//                    json.getString("address_barangay"), json.getString("address_city_municipality"),
+//                    json.getString("address_province"), json.getString("address_region"),
+//                    json.getString("address_country"), json.getString("address_zip"));
             doctor.setPrc_no(json.getInt("prc_no"));
-            doctor.setSpecialty(json.getString("specialty"));
-            doctor.setSub_specialty(json.getString("sub_specialty"));
+//            doctor.setSpecialty(json.getString("specialty"));
+            doctor.setSub_specialty_id(json.getInt("sub_specialty_id"));
             doctor.setCell_no(json.getString("cell_no"));
             doctor.setTel_no(json.getString("tel_no"));
             doctor.setPhoto(json.getString("photo"));
-            doctor.setClinic_sched(json.getString("clinic_sched"));
-            doctor.setEmail(json.getString("email"));
+//            doctor.setClinic_sched(json.getString("clinic_sched"));
             doctor.setAffiliation(json.getString("affiliation"));
+            doctor.setEmail(json.getString("email"));
+            doctor.setCreated_at(json.getString("created_at"));
+            doctor.setUpdated_at(json.getString("updated_at"));
+            doctor.setDeleted_at(json.getString("deleted_at"));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -290,10 +295,10 @@ public class Sync {
                     json.getInt("address_house_no"), json.getString("address_street"),
                     json.getString("address_barangay"), json.getString("address_city_municipality"),
                     json.getString("address_province"), json.getString("address_region"),
-                    json.getString("address_country"), json.getString("address_zip"));
+                    json.getString("address_zip"));
             patient.setTel_no(json.getString("tel_no"));
-            patient.setCell_no(json.getString("cell_no"));
-            patient.setEmail(json.getString("email"));
+            patient.setMobile_no(json.getString("mobile_no"));
+            patient.setEmail(json.getString("email_address"));
             patient.setPhoto(json.getString("photo"));
         } catch (JSONException e) {
             e.printStackTrace();
