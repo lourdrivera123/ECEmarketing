@@ -113,7 +113,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher {
 //    }
 
     public void populateDoctorListView(View rootView, String xml) {
-        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<>();
+        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
         search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
         search_doctor.addTextChangedListener(this);
 

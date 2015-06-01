@@ -847,6 +847,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 c.setDeletedAt(cur.getString(5));
                 categories.add(c);
             }
+            cur.close();
             return categories;
         }
 
@@ -859,11 +860,12 @@ public class DbHelper extends SQLiteOpenHelper {
             int x = 0;
 
             cur.moveToFirst();
-            while(cur.isAfterLast() == false){
+            while(!cur.isAfterLast()){
                 list.add(x, cur.getString(2));
                 x++;
                 cur.moveToNext();
             }
+            cur.close();
             db.close();
             return list;
         }
@@ -1051,7 +1053,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
         Cursor cur = db.rawQuery(sql, null);
-        System.out.println("\nPANGITKA: SQL_getProductsBySubCategory: "+sql);
+        System.out.println("\nPANGITKA: SQL_getProductsBySubCategory: " + sql);
 
         cur.moveToFirst();
         while(!cur.isAfterLast()){
@@ -1135,6 +1137,9 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
+    /**
+    * @param product
+    */
     public boolean updateProduct(Product product) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -1159,6 +1164,9 @@ public class DbHelper extends SQLiteOpenHelper {
     }
     //GET METHODS
 
+    /**
+    * @param patientID
+    */
     public ArrayList<HashMap<String, String>> getPatientRecord(int patientID) {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "select * FROM " + TBL_PATIENT_RECORDS + " WHERE " + RECORDS_PATIENT_ID + " = " + patientID;
@@ -1181,6 +1189,9 @@ public class DbHelper extends SQLiteOpenHelper {
         return arrayOfRecords;
     }
 
+    /**
+    * @param recordID
+    */
     public ArrayList<HashMap<String, String>> getTreatmentRecord(int recordID) {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_TREATMENTS + " WHERE " + TREATMENTS_RECORD_ID + " = " + recordID;
@@ -1203,7 +1214,10 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     /* INSERT UPDATE DELETE SQLs for BASKET TABLE */
-        /* Create new record for "basket" table */
+        /**
+        *  @param basket
+        *  Create new record for "basket" table
+        **/
         public boolean insertBasket(Basket basket){
 
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1215,6 +1229,7 @@ public class DbHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
 
+            values.put(SERVER_BASKET_ID, basket.getBasketId());
             values.put(BASKET_PATIENT_ID, patient_id);
             values.put(BASKET_PRODUCT_ID, basket.getProductId());
             values.put(BASKET_QUANTITY, basket.getQuantity());
@@ -1225,15 +1240,14 @@ public class DbHelper extends SQLiteOpenHelper {
             return row > 0;
         }
 
-        /* Returns basket
-        * @param Integer id
+        /** Returns basket
+        * @param productId
         * */
         public Basket getBasket(int productId){
             Basket basket = new Basket();
 
-//            String sql = "Select * from "+TBL_BASKETS+" where basket_id="+productId+" and patient_id="+this.getCurrentLoggedInPatient().getServerID();
-            String sql = "Select * from "+TBL_BASKETS+" where id="+productId+" and patient_id="+this.getCurrentLoggedInPatient().getServerID();
-            System.out.println("\ngetBasket: "+sql);
+            String sql = "Select * from "+TBL_BASKETS+" where product_id="+productId+" and patient_id="+this.getCurrentLoggedInPatient().getServerID();
+            System.out.println("\ngetBasket: " + sql);
             SQLiteDatabase db = getWritableDatabase();
             Cursor cur = db.rawQuery(sql, null);
 
@@ -1253,8 +1267,8 @@ public class DbHelper extends SQLiteOpenHelper {
             return basket;
         }
 
-        /* Update basket
-        *  @param Basket basket;
+        /** Update basket
+        *  @param basket;
         * */
         public boolean updateBasket(Basket basket){
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -1267,8 +1281,7 @@ public class DbHelper extends SQLiteOpenHelper {
             values.put(BASKET_QUANTITY, basket.getQuantity());
             values.put(BASKET_UPDATED_AT, datenow);
 
-//            long row = db.update(TBL_BASKETS, values, SERVER_BASKET_ID+"="+basket.getBasketId(), null);
-            long row = db.update(TBL_BASKETS, values, BASKET_ID+"="+basket.getId(), null);
+            long row = db.update(TBL_BASKETS, values, SERVER_BASKET_ID + "=" + basket.getBasketId(), null);
             db.close();
             return row > 0;
         }
@@ -1277,7 +1290,7 @@ public class DbHelper extends SQLiteOpenHelper {
         public ArrayList<HashMap<String, String>> getAllBasketItems(){
             ArrayList<HashMap<String, String>> items = new ArrayList<HashMap<String, String>>();
 
-            String sql = "Select b.id, b.basket_id, p.name, p.price, b.quantity, p.unit from "+TBL_BASKETS+" as b " +
+            String sql = "Select b.id, b.basket_id, p.product_id, p.name, p.price, b.quantity, p.unit from "+TBL_BASKETS+" as b " +
                     "inner join "+TBL_PRODUCTS+" as p on p.product_id = b.product_id where b.patient_id="+this.getCurrentLoggedInPatient().getServerID()+"";
 
             SQLiteDatabase db = getWritableDatabase();
@@ -1287,6 +1300,7 @@ public class DbHelper extends SQLiteOpenHelper {
             while(!cur.isAfterLast()){
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put(BASKET_ID, cur.getString(cur.getColumnIndex(BASKET_ID)));
+                map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
                 map.put(SERVER_BASKET_ID, cur.getString(cur.getColumnIndex(SERVER_BASKET_ID)));
                 map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)) );
                 map.put(PRODUCT_PRICE, String.valueOf( cur.getInt( cur.getColumnIndex(PRODUCT_PRICE) ) ));
@@ -1301,12 +1315,11 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
         /** Deletes an item from table "baskets"
-        *   @param "id"
+        *   @param basketId
         * */
         public boolean deleteBasketItem(int basketId){
             SQLiteDatabase db = getWritableDatabase();
-//          long row = db.delete(TBL_BASKETS, SERVER_BASKET_ID+"="+basketId, null);
-            long row = db.delete(TBL_BASKETS, BASKET_ID+"="+basketId, null); /* Use above query when it's connected to server; Partial pa ni*/
+            long row = db.delete(TBL_BASKETS, SERVER_BASKET_ID+"="+basketId, null);
 
             return row > 0;
         }

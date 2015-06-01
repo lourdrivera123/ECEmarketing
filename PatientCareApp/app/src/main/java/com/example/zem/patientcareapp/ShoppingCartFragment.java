@@ -15,16 +15,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.security.spec.EllipticCurve;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Dexter B. on 5/6/2015.
@@ -35,11 +30,11 @@ public class ShoppingCartFragment extends Fragment {
     public static ArrayList<HashMap<String, String>> items;
     HashMap<String, String> map;
     public static TextView total_amount;
-    public Double TotalAmount = 0.00;
+    public Double TotalAmount = 0.00, oldTotal = 0.00, newTotal = 0.00;
 
     EditText et_qty;
     TextView tv_amount, p_name, p_total, p_price ;
-    int gbl_pos = 0, old_qty = 0;
+    int gbl_pos = 0, old_qty = 0, newQty = 0;
 
     HashMap<String, String> row;
     DbHelper dbHelper;
@@ -57,8 +52,8 @@ public class ShoppingCartFragment extends Fragment {
         items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
 
         for(HashMap<String, String> item : items){
-            double price = Double.parseDouble(item.get(dbHelper.PRODUCT_PRICE));
-            double quantity = Double.parseDouble(item.get(dbHelper.BASKET_QUANTITY));
+            double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
+            double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
             double total = price*quantity;
             TotalAmount+= total;
         }
@@ -91,7 +86,7 @@ public class ShoppingCartFragment extends Fragment {
 
             row = items.get(pos);
             gbl_pos = pos;
-            old_qty = Integer.parseInt(row.get(dbHelper.BASKET_QUANTITY));
+            old_qty = Integer.parseInt(row.get(DbHelper.BASKET_QUANTITY));
 
             switch (item.getItemId()){
                 case R.id.update_cart:
@@ -100,7 +95,7 @@ public class ShoppingCartFragment extends Fragment {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                     LayoutInflater inflater= getActivity().getLayoutInflater();
                     //this is what I did to add the layout to the alert dialog
-                    View layout=inflater.inflate(R.layout._partials_update_cart,null);
+                    View layout=inflater.inflate(R.layout._partials_update_cart, null);
                     alert.setView(layout);
                     alert.setTitle("Update quantity");
                     alert.setCancelable(true);
@@ -108,16 +103,16 @@ public class ShoppingCartFragment extends Fragment {
 
                     et_qty = (EditText) layout.findViewById(R.id.update_qty);
                     tv_amount = (TextView) layout.findViewById(R.id.new_total);
-                    et_qty.setText(row.get(dbHelper.BASKET_QUANTITY));
+                    et_qty.setText(row.get(DbHelper.BASKET_QUANTITY));
                     p_name = (TextView) layout.findViewById(R.id.product_name);
                     p_total = (TextView) layout.findViewById(R.id.new_total);
                     p_price = (TextView) layout.findViewById(R.id.product_price);
 
-                    final double price = Double.parseDouble(row.get(dbHelper.PRODUCT_PRICE));
+                    final double price = Double.parseDouble(row.get(DbHelper.PRODUCT_PRICE));
 
-                    p_name.setText(row.get(dbHelper.PRODUCT_NAME));
+                    p_name.setText(row.get(DbHelper.PRODUCT_NAME));
                     p_total.setText("Php "+ (old_qty* price));
-                    p_price.setText("Php "+price+"/"+row.get(dbHelper.PRODUCT_UNIT));
+                    p_price.setText("Php "+price+"/"+row.get(DbHelper.PRODUCT_UNIT));
 
                     et_qty.addTextChangedListener(new TextWatcher() {
                         @Override
@@ -151,18 +146,37 @@ public class ShoppingCartFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                            try {
                                int new_qty = Integer.parseInt(et_qty.getText().toString());
+                               newQty = new_qty;
 
                                double old_total = price * old_qty;
                                double new_total = price * new_qty;
+                               oldTotal = old_total;
+                               newTotal = new_total;
 
-                               /* Note: replace row.get("id") with row.get("basket_id") if we're already connected to the server */
-                               Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("id")));
-                               System.out.println(basket.getId()+" "+basket.getQuantity() + " "+basket.getProductId());
+                               System.out.println("PAKING BASKET ROW: "+row.toString() );
+
+                               ServerRequest serverRequest = new ServerRequest();
+                               Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
+                               System.out.println("PAKING BASKET: "+basket.getId()+" "+basket.getQuantity() + " "+basket.getProductId());
                                basket.setQuantity(new_qty);
+
+                               HashMap<String, String> hashMap = new HashMap<String, String>();
+                               hashMap.put("product_id", String.valueOf(basket.getProductId()));
+                               hashMap.put("quantity", String.valueOf(new_qty));
+                               hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
+                               hashMap.put("table", "baskets");
+                               hashMap.put("request", "crud");
+                               hashMap.put("action", "update");
+                               hashMap.put("id", String.valueOf(basket.getBasketId()));
+
+                               serverRequest.setSuccessMessage("Your cart has been updated.");
+                               serverRequest.setErrorMessage("Sorry, we can't update your cart this time.");
+
                                if( dbHelper.updateBasket(basket) ){
+                                   serverRequest.init(getActivity(), hashMap, "insert_basket");
                                    tv_amount.setText(new_total+"");
 
-                                   row.put(dbHelper.BASKET_QUANTITY, new_qty + "");
+                                   row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
                                    items.set(gbl_pos, row);
 
                                    TotalAmount -= old_total;
@@ -170,11 +184,13 @@ public class ShoppingCartFragment extends Fragment {
                                    total_amount.setText("Php " + TotalAmount);
 
                                    adapter.notifyDataSetChanged();
+
                                }else{
                                    Toast.makeText(getActivity(), "Sorry, Something went wrong.", Toast.LENGTH_SHORT).show();
                                }
                            }catch (Exception e){
-
+                               System.out.println("PAKING BASKET ERROR: "+e.getMessage());
+                               e.printStackTrace();
                            }
                         }
                     });
@@ -183,10 +199,19 @@ public class ShoppingCartFragment extends Fragment {
 
                     return true;
                 case R.id.delete_cart:
-                    /* Note: use row.get("basket_id") if connected to server, because partial pani. */
                     Toast.makeText(getActivity(), "Item with ID:" + row.get("id") + " successfully removed.", Toast.LENGTH_SHORT).show();
                     double amount = Double.parseDouble(row.get("price")) * Double.parseDouble(row.get("quantity"));
-                    if( dbHelper.deleteBasketItem(Integer.parseInt(row.get("id"))) )   {
+                    if( dbHelper.deleteBasketItem(Integer.parseInt(row.get("basket_id"))) )   {
+                        ServerRequest serverRequest = new ServerRequest();
+                        HashMap<String, String> hashMap = new HashMap<String, String>();
+                        hashMap.put("table", "baskets");
+                        hashMap.put("request", "crud");
+                        hashMap.put("action", "delete");
+                        hashMap.put("id", String.valueOf(row.get("basket_id")));
+                        serverRequest.setSuccessMessage("Item successfully deleted.");
+                        serverRequest.setSuccessMessage("Sorry, we can't delete your item right now. Please try again later.");
+                        serverRequest.init(getActivity(), hashMap,"insert");
+
                         this.TotalAmount -= amount;
                         total_amount.setText("Php " + TotalAmount);
                         items.remove(pos);
