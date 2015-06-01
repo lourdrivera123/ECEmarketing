@@ -3,13 +3,22 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+<<<<<<< HEAD
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+=======
+<<<<<<< HEAD
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
+=======
+<<<<<<< HEAD
+>>>>>>> cf4642f096632b34f7d3dbc1c09473147701df11
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+<<<<<<< HEAD
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
@@ -19,12 +28,20 @@
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
+=======
+>>>>>>> cf4642f096632b34f7d3dbc1c09473147701df11
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 2024b7a57b3afaa93fdcf332e4e1a75fcd01db56
+>>>>>>> 04670ea6fb5324b19dc4cde7d83ebd670f985640
+>>>>>>> cf4642f096632b34f7d3dbc1c09473147701df11
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
   </component>
 </project>

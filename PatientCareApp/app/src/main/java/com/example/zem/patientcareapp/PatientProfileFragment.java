@@ -101,20 +101,19 @@ public class PatientProfileFragment extends Fragment {
         address_second_line.setText(loginUser.getAddress_city_municipality() + ", " + loginUser.getAddress_region() + ", Philippines, " +
                 loginUser.getAddress_zip());
 
-        if (loginUser.getEmail() == null) {
+        if (loginUser.getEmail() == null || loginUser.getEmail().equals("")) {
             email.setVisibility(View.GONE);
         } else {
             email.setText(loginUser.getEmail());
         }
 
-        if (loginUser.getTel_no() == null) {
-            cp_no.setText(loginUser.getCell_no());
+        if (loginUser.getTel_no() == null || loginUser.getTel_no().equals("")) {
+            cp_no.setText(loginUser.getMobile_no());
         } else {
-            cp_no.setText(loginUser.getTel_no() + " / " + loginUser.getCell_no());
+            cp_no.setText(loginUser.getTel_no() + " / " + loginUser.getMobile_no());
         }
 
         String imgFile = loginUser.getPhoto();
-        //Toast.makeText(getActivity(), "Profile photo:" + imgFile, Toast.LENGTH_SHORT).show();
 
         if (imgFile != null) {
 

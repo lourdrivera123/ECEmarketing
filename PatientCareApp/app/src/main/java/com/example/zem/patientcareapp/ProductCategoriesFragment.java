@@ -52,21 +52,21 @@ public class ProductCategoriesFragment extends Fragment implements AdapterView.O
 
         final String list[] = {};
         if (helpers.isNetworkAvailable(getActivity())) {
-            sync = new Sync();
-            sync.init(getActivity(), "get_product_categories", "product_categories", "id");
-            queue = sync.getQueue();
-
-            sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "id");
-            queue = sync.getQueue();
-
-            rootView.postDelayed(new Runnable() {
-                public void run() {
-                    // Actions to do after 3 seconds
-                    category_list = dbHelper.getAllProductCategoriesArray();
-                    populateListView(rootView, category_list);
-                    pDialog.hide();
-                }
-            }, 3000);
+//            sync = new Sync();
+//            sync.init(getActivity(), "get_product_categories", "product_categories", "id");
+//            queue = sync.getQueue();
+//
+//            sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "id");
+//            queue = sync.getQueue();
+//
+//            rootView.postDelayed(new Runnable() {
+//                public void run() {
+//                    // Actions to do after 3 seconds
+//                    category_list = dbHelper.getAllProductCategoriesArray();
+//                    populateListView(rootView, category_list);
+//                    pDialog.hide();
+//                }
+//            }, 3000);
 
         } else {
             Log.d("Connected to internet", "no");

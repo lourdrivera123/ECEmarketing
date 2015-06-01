@@ -41,19 +41,19 @@ public class PreloadNonUserRelatedData extends Activity {
 
             pDialog.setMessage("Preparing Products...");
 
-            sync = new Sync();
-            sync.init(this, "get_doctors", "doctors", "doc_id");
-            queue = sync.getQueue();
-
-            pDialog.setMessage("Gathering Doctors...");
-
-            sync = new Sync();
-            sync.init(this, "get_products", "products", "product_id");
-            queue = sync.getQueue();
-
-            sync = new Sync();
-            sync.init(this, "get_dosages", "dosage_format_and_strength", "dosage_id");
-            queue = sync.getQueue();
+//            sync = new Sync();
+//            sync.init(this, "get_doctors", "doctors", "doc_id");
+//            queue = sync.getQueue();
+//
+//            pDialog.setMessage("Gathering Doctors...");
+//
+//            sync = new Sync();
+//            sync.init(this, "get_products", "products", "product_id");
+//            queue = sync.getQueue();
+//
+//            sync = new Sync();
+//            sync.init(this, "get_dosages", "dosage_format_and_strength", "dosage_id");
+//            queue = sync.getQueue();
 
             pDialog.hide();
 

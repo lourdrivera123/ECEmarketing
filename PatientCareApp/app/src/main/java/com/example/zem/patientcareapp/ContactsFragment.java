@@ -84,7 +84,7 @@ public class ContactsFragment extends Fragment {
             address_zip.setText(patient.getAddress_zip());
             email.setText(patient.getEmail());
             tel_no.setText(patient.getTel_no());
-            cell_no.setText(patient.getCell_no());
+            cell_no.setText(patient.getMobile_no());
             address_region.setSelection(regions_adapter.getPosition(patient.getAddress_region()));
         }
 

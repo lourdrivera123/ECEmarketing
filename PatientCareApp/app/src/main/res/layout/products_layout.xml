@@ -1,32 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fuckyounimo"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/fuckyounimo">
+    android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Browse by Category"
-        android:textSize="12dp"
-        android:layout_marginLeft="2dp"
-        android:textColor="@color/background_floating_material_dark"
-        android:id="@+id/browse_by"/>
+        android:orientation="vertical">
 
-    <Spinner
+        <TextView
+            android:id="@+id/browse_by"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:text="Browse by Category"
+            android:textColor="@color/background_floating_material_dark"
+            android:textSize="12dp" />
+
+        <Spinner
+            android:id="@+id/categories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+        <ListView
+            android:id="@+id/subcategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+        <ListView
+            android:id="@+id/product_lists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/categories"
-        android:layout_gravity="center_horizontal" />
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom|right">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/subcategories"
-        android:layout_gravity="center_horizontal" />
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/product_lists" />
-</LinearLayout>
+        <ImageButton
+            android:id="@+id/refresh_products_list"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/circle"
+            android:src="@mipmap/ic_refresher_orb" />
+    </LinearLayout>
+</RelativeLayout>

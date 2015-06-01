@@ -1,5 +1,6 @@
 package com.example.zem.patientcareapp;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -14,10 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 public class HomeTileActivity extends Activity implements View.OnClickListener {
-    Button profile_btn, news_btn, promos_btn, doctors_btn, history_btn, test_results_btn, cart_btn, products_btn, consultation_btn;
+    ImageButton profile_btn, news_btn, promos_btn, cart_btn, history_btn, products_btn, test_results_btn, doctors_btn, consultation_btn;
     FragmentTransaction fragmentTransaction;
 
     public static SharedPreferences sharedpreferences;
@@ -35,6 +37,8 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.home_tile_layout);
 
         hometile = this;
+        ActionBar actionbar = getActionBar();
+        MainActivity.setCustomActionBar(actionbar);
 
         sharedpreferences = getSharedPreferences
                 (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
@@ -45,15 +49,15 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
 
-        profile_btn = (Button) findViewById(R.id.profile_btn);
-        news_btn = (Button) findViewById(R.id.news_btn);
-        promos_btn = (Button) findViewById(R.id.promos_btn);
-        doctors_btn = (Button) findViewById(R.id.doctors_btn);
-        history_btn = (Button) findViewById(R.id.history_btn);
-        test_results_btn = (Button) findViewById(R.id.test_results_btn);
-        cart_btn = (Button) findViewById(R.id.cart_btn);
-        products_btn = (Button) findViewById(R.id.products_btn);
-        consultation_btn = (Button) findViewById(R.id.consultation_btn);
+        profile_btn = (ImageButton) findViewById(R.id.profile_btn);
+        news_btn = (ImageButton) findViewById(R.id.news_btn);
+        promos_btn = (ImageButton) findViewById(R.id.promos_btn);
+        doctors_btn = (ImageButton) findViewById(R.id.doctors_btn);
+        history_btn = (ImageButton) findViewById(R.id.history_btn);
+        test_results_btn = (ImageButton) findViewById(R.id.test_results_btn);
+        cart_btn = (ImageButton) findViewById(R.id.cart_btn);
+        products_btn = (ImageButton) findViewById(R.id.products_btn);
+        consultation_btn = (ImageButton) findViewById(R.id.consultation_btn);
 
         consultation_btn.setOnClickListener(this);
         profile_btn.setOnClickListener(this);
@@ -148,7 +152,6 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         if (id == R.id.logout) {
             editor.clear();
             editor.commit();
-            moveTaskToBack(true);
             HomeTileActivity.this.finish();
             startActivity(new Intent(this, MainActivity.class));
         }

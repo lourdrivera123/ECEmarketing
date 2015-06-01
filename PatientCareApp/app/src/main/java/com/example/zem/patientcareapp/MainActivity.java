@@ -1,5 +1,6 @@
 package com.example.zem.patientcareapp;
 
+import android.app.ActionBar;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,6 +9,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
@@ -34,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener {
     TextView signup, forgotpw;
     Button login_btn;
 
@@ -65,6 +68,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_login);
 
+        if (savedInstanceState == null) {
+
+        }
+
+        ActionBar actionbar = getActionBar();
+        setCustomActionBar(actionbar);
+
         dbHelper = new DbHelper(this);
         helpers = new Helpers();
         main = this;
@@ -74,13 +84,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
 
-
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
         login_btn = (Button) findViewById(R.id.login_btn);
         username_txtfield = (EditText) findViewById(R.id.username_txtfield);
         password_txtfield = (EditText) findViewById(R.id.password_txtfield);
 
+        login_btn.setBackgroundColor(0xFF5B9A68);
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
@@ -88,8 +98,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-        sharedpreferences = getSharedPreferences(MyPREFERENCES,
-                Context.MODE_PRIVATE);
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         if (sharedpreferences.contains(name)) {
             if (sharedpreferences.contains(pass)) {
@@ -97,15 +106,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 Intent i = new Intent(this, HomeTileActivity.class);
                 startActivity(i);
             }
+        } else {
+            username_txtfield.setText("");
+            password_txtfield.setText("");
         }
-        username_txtfield.setText("");
-        password_txtfield.setText("");
         super.onResume();
     }
 
     @Override
     public void onBackPressed() {
-        HomeTileActivity.hometile.finish();
+        this.finish();
         super.onBackPressed();
     }
 
@@ -145,7 +155,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                                                 JSONArray checked_json_array = sync.checkWhatToInsert(patient_json_array_mysql, dbHelper.getAllJSONArrayFrom("patients"), "patient_id");
                                                 Log.d("checked json array", "" + checked_json_array);
 
-                                                if(checked_json_array.length() > 0){
+                                                if (checked_json_array.length() > 0) {
                                                     //json object from server
                                                     patient_json_object_mysql = checked_json_array.getJSONObject(0);
 
@@ -156,7 +166,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                                                     dbHelper.insertPatient(patient_json_object_mysql, syncedPatient);
 
                                                 }
-
                                                 if (dbHelper.LoginUser(uname, password)) {
                                                     SharedPreferences.Editor editor = sharedpreferences.edit();
                                                     editor.putString(name, uname);
@@ -170,22 +179,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                                                 }
 
                                                 pDialog.hide();
-
-                                                Toast.makeText(MainActivity.this, "Username and Password Correct", Toast.LENGTH_SHORT).show();
-
                                             } else {
                                                 Toast.makeText(MainActivity.this, "Invalid Username or Password ", Toast.LENGTH_SHORT).show();
                                             }
 
                                         } catch (JSONException e) {
-//                                                                    e.printStackTrace();
                                             Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
                                         }
-//                                                        Toast.makeText(EditTabsActivity.this, "response: " + response.toString(), Toast.LENGTH_SHORT).show();
-                                        Log.d("uname", patient.getUsername());
-                                        Log.d("pword", patient.getPassword());
-                                        Log.d("response jsobjrequest", "" + response.toString());
-
                                     }
                                 }, new Response.ErrorListener() {
                             @Override
@@ -200,7 +200,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         queue.add(jsObjRequest);
 
                     } else {
-                        Toast.makeText(getBaseContext(), "Cannot save because there is no internet connection", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -221,6 +221,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         params.put("username", patient.getUsername());
         params.put("password", patient.getPassword());
         return params;
+    }
 
+    public static void setCustomActionBar(ActionBar actionbar) {
+        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
+        actionbar.setBackgroundDrawable(colorDrawable);
+        actionbar.setDisplayShowTitleEnabled(false);
     }
 }

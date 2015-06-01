@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="@dimen/activity_vertical_margin"
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/add_record"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="+ Add record"
-        android:gravity="right"
-        android:layout_marginBottom="@dimen/d10" />
+    android:layout_marginTop="@dimen/activity_vertical_margin">
 
     <TextView
         android:layout_width="match_parent"
@@ -37,5 +28,19 @@
         android:id="@+id/list_of_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/d10" />
-</LinearLayout>
+        android:layout_marginTop="@dimen/d20" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom|right">
+
+        <ImageButton
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/circle"
+            android:src="@drawable/ic_action"
+            android:id="@+id/add_record" />
+    </LinearLayout>
+</RelativeLayout>
