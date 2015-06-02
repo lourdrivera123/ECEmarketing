@@ -88,8 +88,6 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
 
             if (helpers.isNetworkAvailable(getActivity())) {
 
-//            queue = sync.getQueue();
-
             // Request a string response from the provided URL.
             JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
 
@@ -118,18 +116,6 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
 
             queue.add(stringRequest);
 
-//            rootView.postDelayed(new Runnable() {
-//                public void run() {
-//                    // Actions to do after 3 seconds
-//
-//                    doctors_array_list = dbHelper.getAllDoctors();
-//                    String xml = dbHelper.getDoctorsStringXml();
-//
-//                    populateDoctorListView(rootView, xml);
-//                    pDialog.hide();
-//                }
-//            }, 3000);
-
         } else {
             doctors_array_list = dbHelper.getAllDoctors();
             String xml = dbHelper.getDoctorsStringXml();
@@ -141,7 +127,7 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
     }
 
     public void populateDoctorListView(View rootView, String xml) {
-        ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
+        final ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
         search_doctor = (AutoCompleteTextView) rootView.findViewById(R.id.search_doctor);
         search_doctor.addTextChangedListener(this);
 
@@ -174,7 +160,10 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
 
             @Override
             public void onItemClick(AdapterView parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), DoctorActivity.class));
+                System.out.println("FUCKING DOCTOR: " + doctorsList.toString());
+                Intent intent = new Intent(getActivity(), DoctorActivity.class);
+                intent.putExtra(KEY_ID, doctorsList.get(position).get("id"));
+                startActivity(intent);
             }
         });
 
@@ -182,10 +171,6 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
         search_doctor.setAdapter(doctoradapter);
         search_doctor.setOnItemClickListener(this);
         search_doctor.addTextChangedListener(this);
-    }
-
-    public void doSomeShit(String xml) {
-        populateDoctorListView(root_view, xml);
     }
 
     @Override

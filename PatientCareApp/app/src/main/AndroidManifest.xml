@@ -84,7 +84,6 @@
         <activity android:name=".ProductCategory" />
         <activity android:name=".ProductSubCategory" />
         <activity android:name=".Product" />
-        <activity android:name=".ProductCategoriesFragment" />
         <activity android:name=".PreloadNonUserRelatedData"/>
         <activity android:name=".ServerRequest" />
         <activity android:name=".Basket" />

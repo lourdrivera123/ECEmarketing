@@ -51,7 +51,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
                                     android:layout_weight="0.7"
-                                    android:gravity="right"
+                                    android:gravity="end"
+                                    android:id="@+id/doctor_full"
                                     android:text="Lastname, Firstname, MI. PhD" />
                             </TableRow>
 
@@ -180,7 +181,7 @@
                 <TableRow android:gravity="center_horizontal">
 
                     <TextView
-                        android:id="@+id/clicnic_address_first_line"
+                        android:id="@+id/clinic_address_first_line"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -190,7 +191,7 @@
                 <TableRow android:gravity="center_horizontal">
 
                     <TextView
-                        android:id="@+id/clicnic_address_second_line"
+                        android:id="@+id/clinic_address_second_line"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

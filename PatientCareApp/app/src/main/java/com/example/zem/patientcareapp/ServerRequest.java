@@ -27,11 +27,11 @@ public class ServerRequest {
     Helpers helpers;
     HashMap<String, String> params;
     String url = "http://vinzry.0fees.us/db/post.php";
-//    String url = "http://192.168.1.12/db/post.php";
+
     DbHelper dbHelper;
     boolean isSuccessful;
     Context activity;
-    String request, updateSource;
+    String request;
     ProgressDialog pDialog;
 
     String  successMessage = "Success!.",
