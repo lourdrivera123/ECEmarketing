@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,9 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -32,20 +31,19 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Zem on 4/29/2015.
  */
-public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnItemClickListener, TextWatcher, View.OnClickListener {
+
+public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_doctors;
-    AutoCompleteTextView search_doctor;
+    EditText search_doctor;
     ImageButton refresh_doctors_list;
 
-    ArrayAdapter doctoradapter;
     ArrayList<String> arrayOfSearchDoctors;
+    ArrayList<HashMap<String, String>> temp_doctors;
     ArrayList<HashMap<String, String>> doctorsList;
     public ArrayList<Doctor> doctors_array_list;
 
@@ -67,6 +65,7 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
     Sync sync;
     View root_view;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
@@ -74,31 +73,33 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
 
         helpers = new Helpers();
         dbHelper = new DbHelper(getActivity());
-        arrayOfSearchDoctors = new ArrayList<String>();
         queue = Volley.newRequestQueue(getActivity());
 
-        search_doctor = (AutoCompleteTextView) rootView.findViewById(R.id.search_doctor);
-        refresh_doctors_list = (ImageButton) rootView.findViewById(R.id.refresh_doctors_list);
+        arrayOfSearchDoctors = new ArrayList<String>();
+        temp_doctors = new ArrayList<HashMap<String, String>>();
 
+        search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
+        refresh_doctors_list = (ImageButton) rootView.findViewById(R.id.refresh_doctors_list);
         refresh_doctors_list.setOnClickListener(this);
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-            if ( helpers.isNetworkAvailable(getActivity()) ) {
+        if ( helpers.isNetworkAvailable(getActivity()) ) {
+
 
             // Request a string response from the provided URL.
             JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
 
                 @Override
-                public void onResponse(JSONObject response){
+                public void onResponse(JSONObject response) {
                     sync = new Sync();
                     sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
                     try {
                         dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
                     } catch (Exception e) {
-                        System.out.println("error fetching server timestamp: "+ e);
+                        System.out.println("error fetching server timestamp: " + e);
                     }
                     doctors_array_list = dbHelper.getAllDoctors();
                     String xml = dbHelper.getDoctorsStringXml();
@@ -127,8 +128,7 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
     }
 
     public void populateDoctorListView(View rootView, String xml) {
-        final ArrayList<HashMap<String, String>> doctorsList = new ArrayList<HashMap<String, String>>();
-        search_doctor = (AutoCompleteTextView) rootView.findViewById(R.id.search_doctor);
+        doctorsList = new ArrayList<HashMap<String, String>>();
         search_doctor.addTextChangedListener(this);
 
         XMLParser parser = new XMLParser();
@@ -148,72 +148,60 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
 
             // adding HashList to ArrayList
             doctorsList.add(map);
-            arrayOfSearchDoctors.add(doctorsList.get(i).get(KEY_FULL_NAME));
+            temp_doctors.add(map);
+            arrayOfSearchDoctors.add(doctorsList.get(i).get(KEY_FULL_NAME).trim());
         }
 
         adapter = new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
         list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
         list_of_doctors.setAdapter(adapter);
 
-        // Click event for single list row
-        list_of_doctors.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView parent, View view, int position, long id) {
-                System.out.println("FUCKING DOCTOR: " + doctorsList.toString());
-                Intent intent = new Intent(getActivity(), DoctorActivity.class);
-                intent.putExtra(KEY_ID, doctorsList.get(position).get("id"));
-                startActivity(intent);
-            }
-        });
-
-        doctoradapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, arrayOfSearchDoctors);
-        search_doctor.setAdapter(doctoradapter);
-        search_doctor.setOnItemClickListener(this);
+        list_of_doctors.setOnItemClickListener(this);
         search_doctor.addTextChangedListener(this);
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String item_clicked = parent.getItemAtPosition(position).toString();
-        int doctorindex = arrayOfSearchDoctors.indexOf(item_clicked);
-        HashMap<String, String> map = new HashMap<String, String>();
-
-        map.put(KEY_ID, doctorsList.get(doctorindex).get(KEY_ID));
-        map.put(KEY_FULL_NAME, doctorsList.get(doctorindex).get(KEY_FULL_NAME));
-        map.put(KEY_SPECIALTY, doctorsList.get(doctorindex).get(KEY_SPECIALTY));
-        map.put(KEY_PHOTO, doctorsList.get(doctorindex).get(KEY_PHOTO));
-
-        doctorsList.clear();
-        doctorsList.add(map);
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
     }
 
     @Override
     public void afterTextChanged(Editable s) {
-
     }
+
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         s_doctor = search_doctor.getText().toString();
+        doctorsList.clear();
 
-        if (arrayOfSearchDoctors.contains(s_doctor)) {
-            Toast.makeText(getActivity(), "search for: " + s_doctor, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getActivity(), "no results found", Toast.LENGTH_SHORT).show();
+        for (String doctor : arrayOfSearchDoctors) {
+            if (doctor.toLowerCase().contains(s_doctor.toLowerCase())) {
+                int doctorindex = arrayOfSearchDoctors.indexOf(doctor);
+
+                HashMap<String, String> map = new HashMap<String, String>();
+
+                map.put(KEY_ID, temp_doctors.get(doctorindex).get(KEY_ID));
+                map.put(KEY_FULL_NAME, temp_doctors.get(doctorindex).get(KEY_FULL_NAME));
+                map.put(KEY_SPECIALTY, temp_doctors.get(doctorindex).get(KEY_SPECIALTY));
+                map.put(KEY_PHOTO, temp_doctors.get(doctorindex).get(KEY_PHOTO));
+                doctorsList.add(map);
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
     @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int ID = Integer.parseInt(doctorsList.get(position).get(KEY_ID));
+        Intent intent = new Intent(getActivity(), DoctorActivity.class);
+        intent.putExtra("doctor_ID", ID);
+        startActivity(intent);
+    }
+
     public void onClick(View v) {
-        Intent intent =  new Intent(getActivity(), MasterTabActivity.class);
+        Intent intent = new Intent(getActivity(), MasterTabActivity.class);
         intent.putExtra("selected", 3);
         startActivity(intent);
     }
 }
+

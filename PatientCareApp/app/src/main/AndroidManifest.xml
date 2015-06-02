@@ -40,6 +40,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
         <activity
             android:name=".DoctorActivity"
+            android:theme="@android:style/Theme.Holo.Light"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".PatientProfileFragment"
