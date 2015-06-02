@@ -529,13 +529,12 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DOC_UPDATED_AT, doctor.getUpdated_at());
         values.put(DOC_DELETED_AT, doctor.getDeleted_at());
 
-        switch(request) {
-            case "insert":
-                rowID = db.insert(TBL_DOCTORS, null, values);
-                break;
-            case "update":
-                rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor.getDoc_id(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_DOCTORS, null, values);
+
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor.getDoc_id(), null);
+
         }
 
 
@@ -1317,8 +1316,13 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
     /* Returns currently loggedin patient */
-    public Patient getCurrentLoggedInPatient() {
-        Patient patient = this.getloginPatient(HomeTileActivity.getUname());
-        return patient;
-    }
+        public Patient getCurrentLoggedInPatient() {
+            Patient patient = this.getloginPatient(HomeTileActivity.getUname());
+            return patient;
+        }
+
+
+    /**
+     *
+     */
 }

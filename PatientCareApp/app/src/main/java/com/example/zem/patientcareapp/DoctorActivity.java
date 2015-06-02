@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -17,17 +18,20 @@ import org.w3c.dom.Text;
  */
 public class DoctorActivity extends ActionBarActivity implements View.OnClickListener {
     ImageButton call_doctor;
-    TextView cp_no, fullname, specialty, sub_spcialty, address_first_line, address_second_line,
+    TextView cp_no, fullname, specialty, sub_spcialty,
         email, clinic_name, clinic_address_first_line, clinic_address_second_line;
+    TableLayout tbl_doctors_clinic;
     Intent intent;
     int id = 0;
     DbHelper dbHelper;
+    Doctor doctor;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.doctors_layout);
+        tbl_doctors_clinic = (TableLayout) findViewById(R.id.tbl_doctors_clinic);
 
         intent = getIntent();
         dbHelper = new DbHelper(getBaseContext());
@@ -36,8 +40,6 @@ public class DoctorActivity extends ActionBarActivity implements View.OnClickLis
         fullname = (TextView) findViewById(R.id.doctor_full);
         specialty = (TextView) findViewById(R.id.specialty);
         sub_spcialty = (TextView) findViewById(R.id.sub_specialty);
-        address_first_line = (TextView) findViewById(R.id.address_first_line);
-        address_second_line = (TextView) findViewById(R.id.address_second_line);
         email = (TextView) findViewById(R.id.email);
         clinic_name = (TextView) findViewById(R.id.clinic_name);
         clinic_address_first_line = (TextView) findViewById(R.id.clinic_address_first_line);

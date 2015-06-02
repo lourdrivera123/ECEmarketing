@@ -86,7 +86,7 @@ public class ListOfDoctorsFragment extends Fragment implements AdapterView.OnIte
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-            if (helpers.isNetworkAvailable(getActivity())) {
+            if ( helpers.isNetworkAvailable(getActivity()) ) {
 
             // Request a string response from the provided URL.
             JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
