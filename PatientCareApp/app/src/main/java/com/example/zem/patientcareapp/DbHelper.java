@@ -1204,6 +1204,37 @@ public class DbHelper extends SQLiteOpenHelper {
         return arrayOfTreatments;
     }
 
+    public Doctor getDoctorByID(int doctorID) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_DOCTORS + " WHERE " + DOC_ID + " = " + doctorID;
+        Cursor cur = db.rawQuery(sql, null);
+        Doctor doctor = new Doctor();
+
+        if (cur.getCount() > 0) {
+            doctor.setLname(cur.getString(cur.getColumnIndex(DOC_LNAME)));
+            doctor.setMname(cur.getString(cur.getColumnIndex(DOC_MNAME)));
+            doctor.setFname(cur.getString(cur.getColumnIndex(DOC_FNAME)));
+            doctor.setPrc_no(cur.getInt(cur.getColumnIndex(DOC_PRC_NO)));
+            doctor.setSpecialty(cur.getString(cur.getColumnIndex(DOC_SPECIALTY)));
+            doctor.setSub_specialty(cur.getString(cur.getColumnIndex(DOC_SUB_SPECIALTY)));
+            doctor.setCell_no(cur.getString(cur.getColumnIndex(DOC_CELL_NO)));
+            doctor.setTel_no(cur.getString(cur.getColumnIndex(DOC_TEL_NO)));
+            doctor.setPhoto(cur.getString(cur.getColumnIndex(DOC_PHOTO)));
+            doctor.setClinic_sched(cur.getString(cur.getColumnIndex(DOC_CLINIC_SCHED)));
+            doctor.setAffiliation(cur.getString(cur.getColumnIndex(DOC_AFFILIATIONS)));
+            doctor.setClinic_id(cur.getInt(cur.getColumnIndex(DOC_CLINIC_ID)));
+            doctor.setEmail(cur.getString(cur.getColumnIndex(DOC_EMAIL)));
+            doctor.setSecretary_id(cur.getInt(cur.getColumnIndex(DOC_SEC_ID)));
+        }
+
+        cur.close();
+        db.close();
+
+        return doctor;
+    }
+
+    //END OF GET METHODS
+
     /* INSERT UPDATE DELETE SQLs for BASKET TABLE */
         /* Create new record for "basket" table */
     public boolean insertBasket(Basket basket) {

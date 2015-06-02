@@ -13,6 +13,11 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
     ImageButton call_doctor;
     TextView doctor_name, specialty, sub_specialty, address_first_line, address_second_line, email, cp_no, clinic_name, clinic_address_first_line, clinic_address_second_line;
 
+    int doctorID;
+
+    DbHelper dbHelper;
+    Doctor doctor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +25,9 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
 
         ActionBar actionBar = getActionBar();
         MainActivity.setCustomActionBar(actionBar);
+
+        Intent intent = getIntent();
+        doctorID = intent.getIntExtra("doctor_ID", 0);
 
         call_doctor = (ImageButton) findViewById(R.id.call_doctor);
         doctor_name = (TextView) findViewById(R.id.doctor_name);
@@ -34,6 +42,13 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
         clinic_address_second_line = (TextView) findViewById(R.id.clinic_address_second_line);
 
         call_doctor.setOnClickListener(this);
+
+        if (doctorID == 0) {
+
+        } else {
+            dbHelper = new DbHelper(this);
+            doctor = dbHelper.getDoctorByID(doctorID);
+        }
     }
 
     @Override

@@ -5,6 +5,10 @@
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
 <<<<<<< HEAD
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
+=======
+<<<<<<< HEAD
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
@@ -18,6 +22,7 @@
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
 =======
 >>>>>>> 2024b7a57b3afaa93fdcf332e4e1a75fcd01db56
+>>>>>>> 04670ea6fb5324b19dc4cde7d83ebd670f985640
     <mapping directory="$PROJECT_DIR$/volley" vcs="Git" />
   </component>
 </project>

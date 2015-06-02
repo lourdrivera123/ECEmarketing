@@ -503,6 +503,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         } else {
             patient.setAddress_province(s_province);
             count++;
+            count++;
         }
 
         if (s_zip.equals("")) {

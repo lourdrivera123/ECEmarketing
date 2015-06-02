@@ -17,6 +17,7 @@ import android.support.v4.app.NotificationCompat;
  * Created by User PC on 5/7/2015.
  */
 public class Helpers {
+
     public void Helpers(){
 
     }
@@ -73,5 +74,9 @@ public class Helpers {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    }
+
+    public String get_url(String request){
+        return "http://vinzry.0fees.us/db/get.php?q="+request;
     }
 }

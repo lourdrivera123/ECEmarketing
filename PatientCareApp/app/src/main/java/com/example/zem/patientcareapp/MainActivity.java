@@ -90,6 +90,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         username_txtfield = (EditText) findViewById(R.id.username_txtfield);
         password_txtfield = (EditText) findViewById(R.id.password_txtfield);
 
+        login_btn.setBackgroundColor(0xFF5B9A68);
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);

@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,14 +15,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -54,6 +61,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     Helpers helpers;
     Sync sync;
     List<String> category_list;
+    ImageButton refresh_products_list;
 
     RequestQueue queue;
     Dialog loc_dialog;
@@ -66,6 +74,9 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         final View rootView = inflater.inflate(R.layout.products_layout, container, false);
         root_view = rootView;
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);
+        refresh_products_list = (ImageButton) rootView.findViewById(R.id.refresh_products_list);
+
+        refresh_products_list.setOnClickListener(this);
 
         dbHelper = new DbHelper(getActivity());
         queue = Volley.newRequestQueue(getActivity());
@@ -76,28 +87,16 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         pDialog.show();
 
 
-
         if (helpers.isNetworkAvailable(getActivity())) {
-            sync = new Sync();
-            sync.init(getActivity(), "get_products", "products", "product_id");
-            queue = sync.getQueue();
 
-            sync = new Sync();
-            sync.init(getActivity(), "get_product_categories", "product_categories", "id");
-            queue = sync.getQueue();
+            // Request a string response from the provided URL.
+            JsonObjectRequest prod_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
 
-            sync = new Sync();
-            sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "id");
-            queue = sync.getQueue();
+                @Override
+                public void onResponse(JSONObject response) {
 
-            sync = new Sync();
-            sync.init(getActivity(), "get_dosages", "dosage_format_and_strength", "dosage_id");
-            queue = sync.getQueue();
-
-
-            rootView.postDelayed(new Runnable() {
-                public void run() {
-                    // Actions to do after 3 seconds
+                    sync = new Sync();
+                    sync.init(getActivity(), "get_products", "products", "product_id", response);
 
                     dbHelper.getAllProducts();
                     String xml = dbHelper.getProductsStringXml();
@@ -107,8 +106,80 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                     populateListView(rootView, category_list);
                     pDialog.hide();
                 }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-            }, 3000);
+            // Request a string response from the provided URL.
+            JsonObjectRequest prod_category_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_product_categories"), null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    sync = new Sync();
+                    sync.init(getActivity(), "get_product_categories", "product_categories", "product_category_id", response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            // Request a string response from the provided URL.
+            JsonObjectRequest prod_sub_cat_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_product_subcategories&cat=all"), null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    sync = new Sync();
+                    sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "product_subcategory_id", response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            // Request a string response from the provided URL.
+            JsonObjectRequest dosage_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("dosage_format_and_strength"), null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    sync = new Sync();
+                    sync.init(getActivity(), "get_dosages", "dosage_format_and_strength", "dosage_id", response);
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            queue.add(prod_category_request);
+            queue.add(prod_sub_cat_request);
+            queue.add(dosage_request);
+            queue.add(prod_request);
+
+
+//            rootView.postDelayed(new Runnable() {
+//                public void run() {
+//                    // Actions to do after 3 seconds
+//
+//                    dbHelper.getAllProducts();
+//                    String xml = dbHelper.getProductsStringXml();
+//
+//                    populateProductsListView(rootView, xml);
+//                    category_list = dbHelper.getAllProductCategoriesArray();
+//                    populateListView(rootView, category_list);
+//                    pDialog.hide();
+//                }
+//
+//            }, 3000);
 
         } else {
             Log.d("Connected to internet", "no");
@@ -179,7 +250,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         price.setText("Php " + prod.getPrice() + " / " + prod.getUnit());
 
         description.setText(prod.getDescription());
-        add_to_cart_btn.setText("Add to Cart | Php "+prod.getPrice());
+        add_to_cart_btn.setText("Add to Cart | Php " + prod.getPrice());
         qty = (EditText) dialog.findViewById(R.id.qty);
 
         add_to_cart_btn.setTag(prod.getProductId());
@@ -192,9 +263,9 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.add_to_cart_btn :
-                if(helpers.isNetworkAvailable(getActivity())){
+        switch (v.getId()) {
+            case R.id.add_to_cart_btn:
+                if (helpers.isNetworkAvailable(getActivity())) {
                     Basket basket;
 
                     int productId, patientId;
@@ -207,14 +278,14 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
                     /* let's check if the product already exists in our basket */
                     basket = dbHelper.getBasket(productId);
-                    System.out.println("BASKETID: "+basket.getId());
+                    System.out.println("BASKETID: " + basket.getId());
                     //  if(basket.getBasketId() > 0  ){
-                    if(basket.getId() > 0  ){  /* Replace this with the line above, when it's connected to the server  */
+                    if (basket.getId() > 0) {  /* Replace this with the line above, when it's connected to the server  */
                         double old_qty = basket.getQuantity();
-                        basket.setQuantity(new_qty+old_qty);
+                        basket.setQuantity(new_qty + old_qty);
 
                         res = dbHelper.updateBasket(basket);
-                    }else{
+                    } else {
                     /* since, we can't find the product in baskets table, let's insert a new one */
                         basket.setProductId(productId);
                         basket.setQuantity(new_qty);
@@ -222,16 +293,22 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                         res = dbHelper.insertBasket(basket);
                     }
 
-                    if( res ){
+                    if (res) {
                         Toast.makeText(getActivity(), "Successfully added to your cart.", Toast.LENGTH_SHORT).show();
 
-                    }else{
+                    } else {
                         Toast.makeText(getActivity(), "Sorry, we can't process your request right now.", Toast.LENGTH_SHORT).show();
                     }
 
-                }else{
+                } else {
                     Toast.makeText(getActivity(), "Sorry, please connect to the internet.", Toast.LENGTH_SHORT).show();
                 }
+                break;
+
+            case R.id.refresh_products_list:
+                Intent intent = new Intent(getActivity(), MasterTabActivity.class);
+                intent.putExtra("selected", 5);
+                startActivity(intent);
                 break;
         }
     }
@@ -246,17 +323,16 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         String qty_str = qty.getText().toString();
         Double price = Double.parseDouble(qty.getTag().toString());
 
-        if(!qty_str.isEmpty()) {
+        if (!qty_str.isEmpty()) {
             try {
                 Double qty_int = Double.parseDouble(qty_str);
                 Double product = qty_int * price;
 
-                add_to_cart_btn.setText("Add to Cart | Php "+product);
-            } catch(Exception e) {
+                add_to_cart_btn.setText("Add to Cart | Php " + product);
+            } catch (Exception e) {
 
             }
-        }
-        else {
+        } else {
             add_to_cart_btn.setText("Add to Cart | Php ");
         }
     }
@@ -266,7 +342,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     }
 
-    public void populateListView(View rootView, List<String> categories){
+    public void populateListView(View rootView, List<String> categories) {
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);
         lv_subcategories = (ListView) rootView.findViewById(R.id.subcategories);
         categories.add(0, "Select Category");
@@ -279,11 +355,11 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if(position != 0){
-            String item = ((TextView)view).getText().toString();
+        if (position != 0) {
+            String item = ((TextView) view).getText().toString();
 
             final int categoryId = dbHelper.categoryGetIdByName(item);
-            String []arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
+            String[] arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
 
             final Dialog dialog = new Dialog(getActivity());
             dialog.setTitle("subcategories");
@@ -319,7 +395,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                     dialog.dismiss();
                 }
             });
-        }else{
+        } else {
             ArrayList<HashMap<String, String>> prods = dbHelper.getProductsBySubCategory(0);
             products_list.clear();
             products_list.addAll(prods);

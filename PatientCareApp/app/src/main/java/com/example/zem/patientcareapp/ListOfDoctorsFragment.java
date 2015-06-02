@@ -13,12 +13,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -29,9 +35,11 @@ import java.util.HashMap;
 /**
  * Created by Zem on 4/29/2015.
  */
-public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener {
+
+public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_doctors;
     EditText search_doctor;
+    ImageButton refresh_doctors_list;
 
     ArrayList<String> arrayOfSearchDoctors;
     ArrayList<HashMap<String, String>> temp_doctors;
@@ -56,6 +64,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     Sync sync;
     View root_view;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
@@ -69,27 +78,40 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         temp_doctors = new ArrayList<HashMap<String, String>>();
 
         search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
+        refresh_doctors_list = (ImageButton) rootView.findViewById(R.id.refresh_doctors_list);
+        refresh_doctors_list.setOnClickListener(this);
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
         pDialog.show();
 
         if (helpers.isNetworkAvailable(getActivity())) {
-            sync = new Sync();
-            sync.init(getActivity(), "get_doctors", "doctors", "doc_id");
-            queue = sync.getQueue();
 
+//            queue = sync.getQueue();
 
-            rootView.postDelayed(new Runnable() {
-                public void run() {
-                    // Actions to do after 3 seconds
+            // Request a string response from the provided URL.
+            JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    sync = new Sync();
+                    sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
+
                     doctors_array_list = dbHelper.getAllDoctors();
                     String xml = dbHelper.getDoctorsStringXml();
 
                     populateDoctorListView(rootView, xml);
                     pDialog.hide();
                 }
-            }, 3000);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    System.out.println("GWAPO DAW KO: " + error);
+                }
+            });
+
+            queue.add(stringRequest);
 
         } else {
             doctors_array_list = dbHelper.getAllDoctors();
@@ -167,7 +189,16 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        Log.i("item clicked", parent.getSelectedItem() + "");
-//        startActivity(new Intent(getActivity(), DoctorActivity.class));
+        int ID = Integer.parseInt(doctorsList.get(position).get(KEY_ID));
+        Intent intent = new Intent(getActivity(), DoctorActivity.class);
+        intent.putExtra("doctor_ID", ID);
+        startActivity(intent);
+    }
+
+    public void onClick(View v) {
+        Intent intent = new Intent(getActivity(), MasterTabActivity.class);
+        intent.putExtra("selected", 3);
+        startActivity(intent);
     }
 }
+
