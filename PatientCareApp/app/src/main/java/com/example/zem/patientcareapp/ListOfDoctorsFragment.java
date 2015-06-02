@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -96,7 +97,11 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                 public void onResponse(JSONObject response) {
                     sync = new Sync();
                     sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
-
+                    try {
+                        dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
+                    } catch (Exception e) {
+                        System.out.println("error fetching server timestamp: " + e);
+                    }
                     doctors_array_list = dbHelper.getAllDoctors();
                     String xml = dbHelper.getDoctorsStringXml();
 
@@ -125,6 +130,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     public void populateDoctorListView(View rootView, String xml) {
         doctorsList = new ArrayList<HashMap<String, String>>();
+        search_doctor.addTextChangedListener(this);
 
         XMLParser parser = new XMLParser();
         Document doc = parser.getDomElement(xml); // getting DOM element
@@ -165,6 +171,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     @Override
     public void afterTextChanged(Editable s) {
     }
+
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {

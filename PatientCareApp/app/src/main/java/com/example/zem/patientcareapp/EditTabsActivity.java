@@ -348,7 +348,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("address_region", patient.getAddress_region());
         params.put("address_zip", patient.getAddress_zip());
         params.put("tel_no", patient.getTel_no());
-        params.put("cell_no", patient.getCell_no());
+        params.put("cell_no", patient.getMobile_no());
         params.put("email", patient.getEmail());
         params.put("photo", patient.getPhoto());
 
@@ -516,7 +516,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         if (s_cell_no.equals("")) {
             cell_no.setError("Field Required");
         } else {
-            patient.setCell_no(s_cell_no);
+            patient.setMobile_no(s_cell_no);
             count++;
         }
 

@@ -41,7 +41,6 @@ public class Basket {
 
     // GETTERS
 
-
     public int getId() {
         return id;
     }

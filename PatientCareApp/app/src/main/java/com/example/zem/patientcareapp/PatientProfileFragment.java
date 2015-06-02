@@ -108,9 +108,9 @@ public class PatientProfileFragment extends Fragment {
         }
 
         if (loginUser.getTel_no() == null || loginUser.getTel_no().equals("")) {
-            cp_no.setText(loginUser.getCell_no());
+            cp_no.setText(loginUser.getMobile_no());
         } else {
-            cp_no.setText(loginUser.getTel_no() + " / " + loginUser.getCell_no());
+            cp_no.setText(loginUser.getTel_no() + " / " + loginUser.getMobile_no());
         }
 
         String imgFile = loginUser.getPhoto();

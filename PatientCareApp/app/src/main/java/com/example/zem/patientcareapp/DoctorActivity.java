@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DoctorActivity extends Activity implements View.OnClickListener {
     ImageButton call_doctor;
