@@ -1,12 +1,16 @@
 package com.example.zem.patientcareapp;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,12 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,12 +49,13 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         dbHelper = new DbHelper(getActivity());
 
         hashHistory = dbHelper.getPatientRecord(HomeTileActivity.getUserID());
-        medRecords = new ArrayList<String>();
-        arrayOfRecords = new ArrayList<String>();
+        medRecords = new ArrayList<>();
+        arrayOfRecords = new ArrayList<>();
 
         for (int x = 0; x < hashHistory.size(); x++) {
             medRecords.add(hashHistory.get(x).get("doctor_name") + " - " + hashHistory.get(x).get("record_date"));
         }
+        Log.i("records", hashHistory + "");
 
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
@@ -63,14 +65,16 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             noResults.setVisibility(View.VISIBLE);
         }
 
-        history_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, medRecords);
+        history_adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, medRecords);
         list_of_history.setAdapter(history_adapter);
         list_of_history.setOnItemClickListener(this);
+        list_of_history.setOnCreateContextMenuListener(this);
 
         add_record.setOnClickListener(this);
 
         return rootView;
     }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -127,5 +131,45 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
                 break;
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.cart_menus, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final int pos = menuInfo.position;
+
+        switch (item.getItemId()) {
+            case R.id.update_cart:
+
+                break;
+
+            case R.id.delete_cart:
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                dialog.setTitle("Delete Record");
+
+                dialog.setMessage("Are you sure you want to delete this record?");
+
+                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getActivity(), hashHistory.get(pos).get("doctor_name"), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.create().show();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 }

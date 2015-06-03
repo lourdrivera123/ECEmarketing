@@ -81,7 +81,6 @@ public class ShoppingCartFragment extends Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         if (getUserVisibleHint()) {
             AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
             final int pos = menuInfo.position;
 
             row = items.get(pos);
@@ -203,7 +202,7 @@ public class ShoppingCartFragment extends Fragment {
                     double amount = Double.parseDouble(row.get("price")) * Double.parseDouble(row.get("quantity"));
                     if( dbHelper.deleteBasketItem(Integer.parseInt(row.get("basket_id"))) )   {
                         ServerRequest serverRequest = new ServerRequest();
-                        HashMap<String, String> hashMap = new HashMap<String, String>();
+                        HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put("table", "baskets");
                         hashMap.put("request", "crud");
                         hashMap.put("action", "delete");

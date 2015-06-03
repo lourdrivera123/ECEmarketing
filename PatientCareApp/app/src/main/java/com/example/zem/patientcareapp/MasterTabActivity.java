@@ -5,8 +5,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -16,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
@@ -25,7 +24,8 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     private ViewPager viewPager;
     private ActionBar actionBar;
 
-    LazyAdapter adapter;
+    static final String LAST_ACTIVITY = "";
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +50,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
                     .setTabListener(this));
         }
 
-
-        Intent intent = getIntent();
+        intent = getIntent();
         actionBar.setSelectedNavigationItem(intent.getIntExtra("selected", 0));
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -70,6 +69,18 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             public void onPageScrollStateChanged(int arg0) {
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        String lastOpened = intent.getStringExtra(LAST_ACTIVITY);
+
+        if (lastOpened == null) {
+
+        } else if (lastOpened.equals("Add Record")) {
+            PatientMedicalRecordActivity.medRecord.finish();
+        }
+        super.onBackPressed();
     }
 
     @Override

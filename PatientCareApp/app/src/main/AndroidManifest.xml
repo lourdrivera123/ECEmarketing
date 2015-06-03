@@ -62,7 +62,10 @@
             android:name=".EditTabsActivity"
             android:theme="@android:style/Theme.Holo.Light"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity android:name=".PatientMedicalRecordActivity" />
+        <activity
+            android:name=".PatientMedicalRecordActivity"
+            launchMode="singleInstance"
+            android:theme="@android:style/Theme.Holo.Light" />
 
         <activity android:name=".Patient" />
         <activity android:name=".Medicine" />
@@ -86,7 +89,7 @@
         <activity android:name=".ProductSubCategory" />
         <activity android:name=".Product" />
         <activity android:name=".ProductCategoriesFragment" />
-        <activity android:name=".PreloadNonUserRelatedData"/>
+        <activity android:name=".PreloadNonUserRelatedData" />
         <activity android:name=".ServerRequest" />
         <activity android:name=".Basket" />
     </application>
