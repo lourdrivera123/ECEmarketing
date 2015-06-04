@@ -92,7 +92,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     public boolean onContextItemSelected(MenuItem item) {
         if (getUserVisibleHint()) {
             AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
             final int pos = menuInfo.position;
 
             row = items.get(pos);

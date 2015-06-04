@@ -1,12 +1,13 @@
 package com.example.zem.patientcareapp;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,12 +27,12 @@ import java.util.HashMap;
 /**
  * Created by User PC on 5/18/2015.
  */
-public class PatientMedicalRecordActivity extends ActionBarActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener {
+public class PatientMedicalRecordActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener {
     EditText date, complaint, diagnosis, generic_name, qty, dosage;
     TextView add_treatment;
     ListView list_of_treatments;
     AutoCompleteTextView search_doctor, search_medicine;
-    Button btn_save, btn_cancel, save_treatment, cancel_treatment;
+    Button save_treatment, cancel_treatment;
     String s_date, s_doctor, s_complaint, s_diagnosis, s_generic_name, s_qty, s_dosage, s_medicine;
 
     ArrayList<HashMap<String, String>> arrayOfDoctors;
@@ -53,6 +54,7 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
 
     static int edit_request = -1;
     static int add_request = -1;
+    public static Activity medRecord;
 
     int doctorID = 0;
     long IDs;
@@ -63,11 +65,15 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_new_medical_record);
 
+        ActionBar actionBar = getActionBar();
+        MainActivity.setCustomActionBar(actionBar);
+
         dbhelper = new DbHelper(this);
         product = new Product();
         record = new PatientRecord();
-        items = new ArrayList<HashMap<String, String>>();
-        doctors = new ArrayList<String>();
+        items = new ArrayList<>();
+        doctors = new ArrayList<>();
+        medRecord = this;
 
         date = (EditText) findViewById(R.id.date);
         list_of_treatments = (ListView) findViewById(R.id.list_of_treatments);
@@ -75,8 +81,6 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
         complaint = (EditText) findViewById(R.id.complaint);
         diagnosis = (EditText) findViewById(R.id.diagnosis);
         add_treatment = (TextView) findViewById(R.id.add_treatment);
-        btn_save = (Button) findViewById(R.id.btn_save);
-        btn_cancel = (Button) findViewById(R.id.btn_cancel);
 
         arrayOfDoctors = dbhelper.getDoctorName();
 
@@ -101,70 +105,80 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
         list_of_treatments.setAdapter(treatmentsAdapter);
         list_of_treatments.setOnCreateContextMenuListener(this);
 
-        btn_save.setOnClickListener(this);
-        btn_cancel.setOnClickListener(this);
         date.setOnClickListener(this);
         add_treatment.setOnClickListener(this);
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_save:
-                s_date = date.getText().toString();
-                s_doctor = search_doctor.getText().toString();
-                s_complaint = complaint.getText().toString();
-                s_diagnosis = diagnosis.getText().toString();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.save_and_cancel, menu);
+        return true;
+    }
 
-                if (s_date.equals("") || s_doctor.equals("") || s_complaint.equals("") || s_diagnosis.equals("") || items.size() == 0) {
-                    if (date.getText().toString().equals("")) {
-                        date.setError("Field required");
-                    }
-                    if (search_doctor.getText().toString().equals("")) {
-                        search_doctor.setError("Field required");
-                    }
-                    if (complaint.getText().toString().equals("")) {
-                        complaint.setError("Field required");
-                    }
-                    if (items.size() == 0) {
-                        add_treatment.setError("Field required");
-                    }
-                    if (diagnosis.getText().toString().equals("")) {
-                        diagnosis.setError("Field required");
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.save) {
+            s_date = date.getText().toString();
+            s_doctor = search_doctor.getText().toString();
+            s_complaint = complaint.getText().toString();
+            s_diagnosis = diagnosis.getText().toString();
+
+            if (s_date.equals("") || s_doctor.equals("") || s_complaint.equals("") || s_diagnosis.equals("") || items.size() == 0) {
+                if (date.getText().toString().equals("")) {
+                    date.setError("Field required");
+                }
+                if (search_doctor.getText().toString().equals("")) {
+                    search_doctor.setError("Field required");
+                }
+                if (complaint.getText().toString().equals("")) {
+                    complaint.setError("Field required");
+                }
+                if (items.size() == 0) {
+                    add_treatment.setError("Field required");
+                }
+                if (diagnosis.getText().toString().equals("")) {
+                    diagnosis.setError("Field required");
+                }
+            } else {
+                if (!doctors.contains(s_doctor)) {
+                    doctorID = 0;
+                }
+
+                String uname = HomeTileActivity.getUname();
+                patient = dbhelper.getloginPatient(uname);
+
+                record.setPatientID(patient.getServerID());
+                record.setComplaints(s_complaint);
+                record.setFindings(s_diagnosis);
+                record.setDate(s_date);
+                record.setDoctorID(doctorID);
+                record.setDoctorName(s_doctor);
+
+                IDs = dbhelper.insertPatientRecord(record);
+                if (IDs > 0) {
+                    if (dbhelper.insertTreatment(items, IDs).size() > 0) {
+                        Intent intent = new Intent(this, MasterTabActivity.class);
+                        intent.putExtra("selected", 1);
+                        intent.putExtra(MasterTabActivity.LAST_ACTIVITY, "Add Record");
+                        startActivity(intent);
                     }
                 } else {
-                    if (!doctors.contains(s_doctor)) {
-                        doctorID = 0;
-                    }
-
-                    String uname = HomeTileActivity.getUname();
-                    patient = dbhelper.getloginPatient(uname);
-
-                    record.setPatientID(patient.getServerID());
-                    record.setComplaints(s_complaint);
-                    record.setFindings(s_diagnosis);
-                    record.setDate(s_date);
-                    record.setDoctorID(doctorID);
-                    record.setDoctorName(s_doctor);
-
-                    IDs = dbhelper.insertPatientRecord(record);
-                    if (IDs > 0) {
-                        if (dbhelper.insertTreatment(items, IDs).size() > 0) {
-                            Toast.makeText(this, "successful", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(this, MasterTabActivity.class);
-                            intent.putExtra("selected", 1);
-                            startActivity(intent);
-                        }
-                    } else {
-                        Toast.makeText(this, "error occurred", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(this, "error occurred", Toast.LENGTH_SHORT).show();
                 }
-                break;
+            }
+        } else if (id == R.id.cancel) {
+            this.finish();
+        }
 
-            case R.id.btn_cancel:
-                this.finish();
-                break;
+        return super.onOptionsItemSelected(item);
+    }
 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.date:
                 Calendar cal = Calendar.getInstance();
                 if (date.getText().toString().equals("")) {
@@ -253,7 +267,6 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
     }
 
     public void readDialog(String name, int position) {
-
         dialog = new Dialog(this);
         dialog.setTitle("Add Treatment");
         dialog.setContentView(R.layout.dialog_new_treatment);
@@ -317,9 +330,6 @@ public class PatientMedicalRecordActivity extends ActionBarActivity implements V
                         add_request = -1;
                     }
 
-                    for (int x = 0; x > items.size(); x++) {
-                        Log.i("update array", String.valueOf(items.get(x)));
-                    }
                     treatmentsAdapter.notifyDataSetChanged();
                     dialog.dismiss();
                 }
