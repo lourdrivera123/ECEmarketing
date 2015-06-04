@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,7 +26,7 @@ import java.util.HashMap;
 /**
  * Created by Dexter B. on 5/6/2015.
  */
-public class ShoppingCartFragment extends Fragment {
+public class ShoppingCartFragment extends Fragment implements View.OnClickListener {
     ListView lv_items;
     LazyAdapter adapter;
     public static ArrayList<HashMap<String, String>> items;
@@ -38,17 +40,26 @@ public class ShoppingCartFragment extends Fragment {
 
     HashMap<String, String> row;
     DbHelper dbHelper;
+    Helpers helper;
+    ServerRequest serverRequest;
+    View root_view;
+    Button btnCheckout;
 
     @SuppressLint("NewApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.cart_layout, container, false);
+        root_view = rootView;
+
+        btnCheckout = (Button) root_view.findViewById(R.id.btn_checkout_ready);
+        btnCheckout.setOnClickListener(this);
 
         lv_items = (ListView) rootView.findViewById(R.id.lv_items);
         total_amount = (TextView) rootView.findViewById(R.id.upper_cart_total);
 
         dbHelper = new DbHelper(getActivity());
+        helper = new Helpers();
         items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
 
         for(HashMap<String, String> item : items){
@@ -95,7 +106,7 @@ public class ShoppingCartFragment extends Fragment {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                     LayoutInflater inflater= getActivity().getLayoutInflater();
                     //this is what I did to add the layout to the alert dialog
-                    View layout=inflater.inflate(R.layout._partials_update_cart, null);
+                    @SuppressLint("InflateParams") View layout=inflater.inflate(R.layout._partials_update_cart, null);
                     alert.setView(layout);
                     alert.setTitle("Update quantity");
                     alert.setCancelable(true);
@@ -130,7 +141,7 @@ public class ShoppingCartFragment extends Fragment {
                                 int new_qty = Integer.parseInt(cs);
                                 p_total.setText("Php " + (price * new_qty));
                             } catch (Exception e) {
-
+                                e.printStackTrace();
                             }
                         }
 
@@ -144,54 +155,84 @@ public class ShoppingCartFragment extends Fragment {
                     alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                           try {
-                               int new_qty = Integer.parseInt(et_qty.getText().toString());
-                               newQty = new_qty;
+                          if( helper.isNetworkAvailable(getActivity()) ){
+                              try {
+                                  final int new_qty = Integer.parseInt(et_qty.getText().toString());
+                                  newQty = new_qty;
 
-                               double old_total = price * old_qty;
-                               double new_total = price * new_qty;
-                               oldTotal = old_total;
-                               newTotal = new_total;
+                                  final double old_total = price * old_qty;
+                                  final double new_total = price * new_qty;
+                                  oldTotal = old_total;
+                                  newTotal = new_total;
 
-                               System.out.println("PAKING BASKET ROW: "+row.toString() );
+                                  System.out.println("PAKING BASKET ROW: "+row.toString() );
 
-                               ServerRequest serverRequest = new ServerRequest();
-                               Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
-                               System.out.println("PAKING BASKET: "+basket.getId()+" "+basket.getQuantity() + " "+basket.getProductId());
-                               basket.setQuantity(new_qty);
+                                  serverRequest = new ServerRequest();
+                                  final Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
+                                  System.out.println("PAKING BASKET: "+basket.getId()+" "+basket.getQuantity() + " "+basket.getProductId());
+                                  basket.setQuantity(new_qty);
 
-                               HashMap<String, String> hashMap = new HashMap<String, String>();
-                               hashMap.put("product_id", String.valueOf(basket.getProductId()));
-                               hashMap.put("quantity", String.valueOf(new_qty));
-                               hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
-                               hashMap.put("table", "baskets");
-                               hashMap.put("request", "crud");
-                               hashMap.put("action", "update");
-                               hashMap.put("id", String.valueOf(basket.getBasketId()));
+                                  HashMap<String, String> hashMap = new HashMap<>();
+                                  hashMap.put("product_id", String.valueOf(basket.getProductId()));
+                                  hashMap.put("quantity", String.valueOf(new_qty));
+                                  hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
+                                  hashMap.put("table", "baskets");
+                                  hashMap.put("request", "crud");
+                                  hashMap.put("action", "update");
+                                  hashMap.put("id", String.valueOf(basket.getBasketId()));
 
-                               serverRequest.setSuccessMessage("Your cart has been updated.");
-                               serverRequest.setErrorMessage("Sorry, we can't update your cart this time.");
+                                  /*if( dbHelper.updateBasket(basket) ){*/
+                                  serverRequest.init(getActivity(), hashMap, "insert_basket");
 
-                               if( dbHelper.updateBasket(basket) ){
-                                   serverRequest.init(getActivity(), hashMap, "insert_basket");
-                                   tv_amount.setText(new_total+"");
+                                  root_view.postDelayed(new Runnable() {
+                                      public void run() {
+                                          // Actions to do after 3 seconds
+                                          boolean responseFromServer = serverRequest.getResponse();
+                                          System.out.println("FUCKING RESPONSE FROM SERVER: " + responseFromServer);
+                                          if (responseFromServer) {
+                                              if ( dbHelper.updateBasket(basket) ) {
+                                                  tv_amount.setText(new_total + "");
 
-                                   row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
-                                   items.set(gbl_pos, row);
+                                                  row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
+                                                  items.set(gbl_pos, row);
 
-                                   TotalAmount -= old_total;
-                                   TotalAmount += new_total;
-                                   total_amount.setText("Php " + TotalAmount);
+                                                  TotalAmount -= old_total;
+                                                  TotalAmount += new_total;
+                                                  total_amount.setText("Php " + TotalAmount);
 
-                                   adapter.notifyDataSetChanged();
+                                                  adapter.notifyDataSetChanged();
+                                                  Toast.makeText(getActivity(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
+                                              } else {
+                                                  Toast.makeText(getActivity(), "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                              }
 
-                               }else{
-                                   Toast.makeText(getActivity(), "Sorry, Something went wrong.", Toast.LENGTH_SHORT).show();
-                               }
-                           }catch (Exception e){
-                               System.out.println("PAKING BASKET ERROR: "+e.getMessage());
-                               e.printStackTrace();
-                           }
+                                          }
+                                      }
+                                  }, 3000);
+
+
+                                     /* tv_amount.setText(new_total+"");
+
+                                      row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
+                                      items.set(gbl_pos, row);
+
+                                      TotalAmount -= old_total;
+                                      TotalAmount += new_total;
+                                      total_amount.setText("Php " + TotalAmount);
+
+                                      adapter.notifyDataSetChanged();*/
+
+                                  /*}else{
+                                      Toast.makeText(getActivity(), "Sorry, Something went wrong.", Toast.LENGTH_SHORT).show();
+                                  }*/
+                              }catch (Exception e){
+                                  System.out.println("PAKING BASKET ERROR: "+e.getMessage());
+                                  e.printStackTrace();
+                              }
+                          }else{
+                              Toast.makeText(getActivity(), "Please connect to the internet to continue..", Toast.LENGTH_SHORT).show();
+                          }
+
                         }
                     });
 
@@ -199,26 +240,50 @@ public class ShoppingCartFragment extends Fragment {
 
                     return true;
                 case R.id.delete_cart:
-                    Toast.makeText(getActivity(), "Item with ID:" + row.get("id") + " successfully removed.", Toast.LENGTH_SHORT).show();
-                    double amount = Double.parseDouble(row.get("price")) * Double.parseDouble(row.get("quantity"));
-                    if( dbHelper.deleteBasketItem(Integer.parseInt(row.get("basket_id"))) )   {
-                        ServerRequest serverRequest = new ServerRequest();
-                        HashMap<String, String> hashMap = new HashMap<String, String>();
-                        hashMap.put("table", "baskets");
-                        hashMap.put("request", "crud");
-                        hashMap.put("action", "delete");
-                        hashMap.put("id", String.valueOf(row.get("basket_id")));
-                        serverRequest.setSuccessMessage("Item successfully deleted.");
-                        serverRequest.setSuccessMessage("Sorry, we can't delete your item right now. Please try again later.");
-                        serverRequest.init(getActivity(), hashMap,"insert");
+                    AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(getActivity());
+                    confirmationDialog.setTitle("Are you sure?");
+                    confirmationDialog.setNegativeButton("No", null);
+                    confirmationDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if( helper.isNetworkAvailable(getActivity()) ){
+                                final double amount = Double.parseDouble(row.get("price")) * Double.parseDouble(row.get("quantity"));
+                                serverRequest = new ServerRequest();
+                                HashMap<String, String> hashMap = new HashMap<>();
+                                hashMap.put("table", "baskets");
+                                hashMap.put("request", "crud");
+                                hashMap.put("action", "delete");
+                                hashMap.put("id", String.valueOf(row.get("basket_id")));
+                                serverRequest.init(getActivity(), hashMap, "insert");
 
-                        this.TotalAmount -= amount;
-                        total_amount.setText("Php " + TotalAmount);
-                        items.remove(pos);
-                        this.adapter.notifyDataSetChanged();
-                    }else{
-                        Toast.makeText(getActivity(), "Sorry, Something went wrong.", Toast.LENGTH_SHORT).show();
-                    }
+
+
+                                root_view.postDelayed(new Runnable(){
+                                    public void run(){
+                                        // Actions to do after 3 seconds
+                                        boolean responseFromServer = serverRequest.getResponse();
+                                        System.out.println("FUCKING RESPONSE FROM SERVER: " + responseFromServer);
+                                        if(responseFromServer){
+                                            if( dbHelper.deleteBasketItem(Integer.parseInt(row.get("basket_id"))) ) {
+                                                TotalAmount -= amount;
+                                                total_amount.setText("Php " + TotalAmount);
+                                                items.remove(pos);
+                                                adapter.notifyDataSetChanged();
+                                                Toast.makeText(getActivity(), "An item has been successfully removed.", Toast.LENGTH_SHORT).show();
+                                            }else{
+                                                Toast.makeText(getActivity(),"Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT ).show();
+                                            }
+
+                                        }
+                                    }
+                                }, 3000);
+
+                            }else{
+                                Toast.makeText(getActivity(), "Please connect to the internet to continue..", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    confirmationDialog.show();
 
                     return true;
                 default:
@@ -226,5 +291,21 @@ public class ShoppingCartFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_checkout_ready:
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                Dialog builder = new Dialog(getActivity());
+                builder.setTitle("Checkout");
+                builder.setContentView(R.layout.checkout_layout);
+//                builder.setView(R.layout.checkout_layout);
+                builder.show();
+
+                break;
+        }
     }
 }

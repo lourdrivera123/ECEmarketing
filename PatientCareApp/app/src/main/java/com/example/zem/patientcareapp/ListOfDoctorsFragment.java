@@ -111,7 +111,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                    System.out.println("GWAPO DAW KO: " + error);
                 }
             });
 

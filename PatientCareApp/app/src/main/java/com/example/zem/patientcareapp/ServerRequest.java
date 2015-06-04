@@ -70,7 +70,7 @@ public class ServerRequest {
                                 System.out.println("success is: " + success);
                                 System.out.println("RESPONSE: "+response.toString());
 
-                                    // saving to sqlite database
+                                    // if table requested is "BASKETS"
                                    if( params.get("table").equals("baskets") ){
 
                                        if( params.get("action").equals("insert") ){
@@ -93,26 +93,17 @@ public class ServerRequest {
                                                if( dbHelper.insertBasket(basket) ){
                                                    Toast.makeText(activity, successMessage, Toast.LENGTH_SHORT).show();
                                                    isSuccessful = true;
-                                               }else{
-                                                   Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show();
                                                }
+
                                                if( pDialog != null ) pDialog.hide();
-                                           }else{
-                                               Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show();
                                            }
                                        }else if( params.get("action").equals("update") ){
                                            if( success == 1 ){
                                                isSuccessful = true;
-                                               Toast.makeText(activity, successMessage, Toast.LENGTH_SHORT).show();
-                                           }else if( success == 0 ){
-                                               Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show();
                                            }
                                        }else if( params.get("action").equals("delete") ){
                                            if( success == 1 ){
                                                isSuccessful = true;
-                                               Toast.makeText(activity, successMessage, Toast.LENGTH_SHORT).show();
-                                           }else if( success == 0 ){
-                                               Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show();
                                            }
                                        }
                                    }
@@ -138,9 +129,10 @@ public class ServerRequest {
         return isSuccessful;
     }
 
-    public RequestQueue getQueue(){
-        return this.queue;
+    public boolean getResponse(){
+        return this.isSuccessful;
     }
+
 
     public void setProgressDialog(ProgressDialog progressDialog){
         this.pDialog = progressDialog;

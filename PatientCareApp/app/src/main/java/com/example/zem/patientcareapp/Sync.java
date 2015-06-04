@@ -175,10 +175,10 @@ public class Sync {
 
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-//            String str1 = "12/10/2013";
+            /*String str1 = "12/10/2013";*/
             Date date1 = formatter.parse(str1);
 
-//            String str2 = "13/10/2013";
+            /*String str2 = "13/10/2013";*/
             Date date2 = formatter.parse(str2);
 
             if (date1.compareTo(date2) < 0) {

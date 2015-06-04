@@ -29,8 +29,8 @@
             style="@style/tbl_th"
             android:text="Total"
             android:layout_weight="1.2"
-            android:layout_gravity="right"
-            android:gravity="right" />
+            android:layout_gravity="end"
+            android:gravity="end" />
     </LinearLayout>
 
 
@@ -52,7 +52,6 @@
         <Button
             style="@style/btn_controls"
             android:text="Checkout"
-            android:layout_below="@+id/lv_items"
-            android:layout_alignLeft="@+id/update_cart" />
+            android:id="@+id/btn_checkout_ready"/>
     </LinearLayout>
 </RelativeLayout>

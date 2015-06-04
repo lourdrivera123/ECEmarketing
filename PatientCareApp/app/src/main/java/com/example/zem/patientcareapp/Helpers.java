@@ -51,7 +51,7 @@ public class Helpers {
                         .setContentTitle("It's your Birthday!")
                         .setSound(uri)
                         .setDefaults(Notification.DEFAULT_SOUND)
-                        .setContentText("I hope, it's your last. ;)");
+                        .setContentText("I hope, it will be your last. ;)");
 
         Intent resultIntent = new Intent(context, MainActivity.class);
 

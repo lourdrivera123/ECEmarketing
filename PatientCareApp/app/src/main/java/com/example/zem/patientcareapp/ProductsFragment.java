@@ -265,54 +265,75 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             case R.id.add_to_cart_btn :
                 if(helpers.isNetworkAvailable(getActivity())){
 
-                    int productId;
-                    double new_qty;
-                    productId = Integer.parseInt(add_to_cart_btn.getTag().toString());
+                    try {
+                        int productId;
+                        double new_qty;
+                        String q = add_to_cart_btn.getTag().toString();
+                        productId = Integer.parseInt(q.equals("") ? "1"  : q);
 
-                    new_qty = Double.parseDouble(qty.getText().toString());
+                        new_qty = Double.parseDouble(qty.getText().toString());
 
 
 
                     /* let's check if the product already exists in our basket */
-                    Basket basket = dbHelper.getBasket(productId);
+                        final Basket basket = dbHelper.getBasket(productId);
 
 
-                    System.out.println("MOTHERFUCKING BASKET: productId:"+productId+" product_id: "+basket.getProductId()+"  basket_id="+basket.getBasketId()+" id: "+basket.getId()+" patient_id: "+basket.getPatienId());
-                    if(basket.getBasketId() > 0  ){
-                        HashMap<String, String> hashMap = new HashMap<String, String>();
-                        hashMap.put("product_id", String.valueOf(productId));
+                        System.out.println("MOTHERFUCKING BASKET: productId:"+productId+" product_id: "+basket.getProductId()+"  basket_id="+basket.getBasketId()+" id: "+basket.getId()+" patient_id: "+basket.getPatienId());
+                        if(basket.getBasketId() > 0  ){
+                            HashMap<String, String> hashMap = new HashMap<String, String>();
+                            hashMap.put("product_id", String.valueOf(productId));
 
-                        hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
-                        hashMap.put("table", "baskets");
-                        hashMap.put("request", "crud");
+                            hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
+                            hashMap.put("table", "baskets");
+                            hashMap.put("request", "crud");
 
-                        double old_qty = basket.getQuantity();
-                        basket.setQuantity(new_qty + old_qty);
-                        hashMap.put("quantity", String.valueOf(basket.getQuantity()));
-                        hashMap.put("action", "update");
-                        hashMap.put("id", String.valueOf(basket.getBasketId()));
+                            double old_qty = basket.getQuantity();
+                            basket.setQuantity(new_qty + old_qty);
+                            hashMap.put("quantity", String.valueOf(basket.getQuantity()));
+                            hashMap.put("action", "update");
+                            hashMap.put("id", String.valueOf(basket.getBasketId()));
 
-                        if( dbHelper.updateBasket(basket) ) {
-                            serverRequest.setSuccessMessage("Your cart has been updated.");
-                            serverRequest.setErrorMessage("Sorry, we can't update your cart this time.");
+                            serverRequest.init(getActivity(), hashMap, "insert_basket");
+
+                            root_view.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    boolean responseFromServer = serverRequest.getResponse();
+                                    if( responseFromServer ) {
+                                        if( dbHelper.updateBasket(basket) ){
+                                            Toast.makeText(getActivity(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            Toast.makeText(getActivity(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }else{
+                                        Toast.makeText(getActivity(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }, 3000);
+
+
+
+
+
+                        }else{
+                        /* since, we can't find the product in baskets table, let's insert a new one */
+                            HashMap<String, String> hashMap = new HashMap<String, String>();
+                            hashMap.put("product_id", String.valueOf(productId));
+                            hashMap.put("quantity", String.valueOf(new_qty));
+                            hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
+                            hashMap.put("table", "baskets");
+                            hashMap.put("request", "crud");
+                            hashMap.put("action", "insert");
+
+                            serverRequest.setProgressDialog(pDialog);
+
+                            serverRequest.setSuccessMessage("New item has been added to your cart!");
+                            serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
                             serverRequest.init(getActivity(), hashMap, "insert_basket");
                         }
+                    }catch(Exception e){
 
-                    }else{
-                        /* since, we can't find the product in baskets table, let's insert a new one */
-                        HashMap<String, String> hashMap = new HashMap<String, String>();
-                        hashMap.put("product_id", String.valueOf(productId));
-                        hashMap.put("quantity", String.valueOf(new_qty));
-                        hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
-                        hashMap.put("table", "baskets");
-                        hashMap.put("request", "crud");
-                        hashMap.put("action", "insert");
-
-                        serverRequest.setProgressDialog(pDialog);
-
-                        serverRequest.setSuccessMessage("New item has been added to your cart!");
-                        serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
-                        serverRequest.init(getActivity(), hashMap, "insert_basket");
                     }
 
                 } else {
