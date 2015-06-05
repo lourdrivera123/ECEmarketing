@@ -251,7 +251,31 @@ public class DbHelper extends SQLiteOpenHelper {
             DS_IS_ACTIVE = "is_active";
 
 
+    // PROMO DISCOUNT TABLE
+    public static final String PROMO_D_PRODUCT_ID = "product_id",
+            PROMO_D_NAME = "name",
+            PROMO_D_START_DATE = "start_date",
+            PROMO_D_END_DATE = "end_date",
+            PROMO_D_TYPE = "type",
+            PROMO_D_QUANTITY_REQUIRED = "quantity_required",
+            PROMO_D_LESS = "less",
+            PROMO_D_CREATED_AT = "created_at",
+            PROMO_D_UPDATED_AT = "updated_at",
+            PROMO_D_DELETED_AT = "deleted_at",
+            TBL_PROMO_DISCOUNTS= "promo_discounts",
+            PROMO_DISCOUNTS_ID = "id",
+            SERVER_PROMO_DISCOUNTS_ID = "promo_discounts_id";
 
+    // PROMO FREE PRODUCTS TABLE
+    public static final String PROMO_FP_PRODUCT_ID = "product_id",
+            PROMO_FP_PROMO_ID = "promo_id",
+            PROMO_FP_NO_OF_UNITS_FREE = "no_of_units_free",
+            PROMO_FP_CREATED_AT = "created_at",
+            PROMO_FP_UPDATED_AT = "updated_at",
+            PROMO_FP_DELETED_AT = "deleted_at",
+            TBL_PROMO_FREE_PRODUCTS= "promo_free_products",
+            PROMO_FREE_PRODUCTS_ID = "id",
+            SERVER_PROMO_FREE_PRODUCTS_ID = "promo_free_products_id";
 
 
     //Doctor string xml
@@ -363,9 +387,21 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_CLINIC_SECRETARY, CS_CLINIC_ID, CS_SECRETARY_ID, CS_IS_ACTIVE);
 
 
-        // SQL to create table "do_secretary"
+        // SQL to create table "doctor_secretary"
         String sql_create_doctor_secretary_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
                 TBL_DOCTOR_SECRETARY, DS_DOCTOR_ID, DS_SECRETARY_ID, DS_IS_ACTIVE);
+
+        // SQL to create table "promo_discount"
+        String sql_create_promo_discount_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s  TEXT , %s  TEXT , " +
+                        "%s INTEGER, %s INTEGER, %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PROMO_DISCOUNTS, PROMO_DISCOUNTS_ID, SERVER_PROMO_DISCOUNTS_ID, PROMO_D_PRODUCT_ID, PROMO_D_NAME, PROMO_D_START_DATE, PROMO_D_END_DATE,
+                PROMO_D_TYPE, PROMO_D_QUANTITY_REQUIRED, PROMO_D_LESS, PROMO_D_CREATED_AT, PROMO_D_UPDATED_AT, PROMO_D_DELETED_AT);
+
+
+        // SQL to create table "promo_free_products"
+        String sql_create_promo_free_products_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PROMO_FREE_PRODUCTS, PROMO_FREE_PRODUCTS_ID, SERVER_PROMO_FREE_PRODUCTS_ID, PROMO_FP_PRODUCT_ID, PROMO_FP_PROMO_ID, PROMO_FP_NO_OF_UNITS_FREE, PROMO_FP_CREATED_AT, PROMO_FP_UPDATED_AT, PROMO_FP_DELETED_AT);
+
 
         db.execSQL(sql_create_specialty_table);
         db.execSQL(sql_create_sub_specialty_table);
@@ -384,6 +420,8 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_secretaries_table);
         db.execSQL(sql_create_clinic_secretary_table);
         db.execSQL(sql_create_doctor_secretary_table);
+        db.execSQL(sql_create_promo_discount_table);
+        db.execSQL(sql_create_promo_free_products_table);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
     }
