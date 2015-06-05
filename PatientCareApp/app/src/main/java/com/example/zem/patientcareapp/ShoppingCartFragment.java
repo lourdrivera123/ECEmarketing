@@ -171,7 +171,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                   System.out.println("PAKING BASKET: "+basket.getId()+" "+basket.getQuantity() + " "+basket.getProductId());
                                   basket.setQuantity(new_qty);
 
-                                  HashMap<String, String> hashMap = new HashMap<>();
+                                  HashMap<String, String> hashMap = new HashMap<String, String>();
                                   hashMap.put("product_id", String.valueOf(basket.getProductId()));
                                   hashMap.put("quantity", String.valueOf(new_qty));
                                   hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
@@ -209,21 +209,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                       }
                                   }, 3000);
 
-
-                                     /* tv_amount.setText(new_total+"");
-
-                                      row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
-                                      items.set(gbl_pos, row);
-
-                                      TotalAmount -= old_total;
-                                      TotalAmount += new_total;
-                                      total_amount.setText("Php " + TotalAmount);
-
-                                      adapter.notifyDataSetChanged();*/
-
-                                  /*}else{
-                                      Toast.makeText(getActivity(), "Sorry, Something went wrong.", Toast.LENGTH_SHORT).show();
-                                  }*/
                               }catch (Exception e){
                                   System.out.println("PAKING BASKET ERROR: "+e.getMessage());
                                   e.printStackTrace();
@@ -248,7 +233,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             if( helper.isNetworkAvailable(getActivity()) ){
                                 final double amount = Double.parseDouble(row.get("price")) * Double.parseDouble(row.get("quantity"));
                                 serverRequest = new ServerRequest();
-                                HashMap<String, String> hashMap = new HashMap<>();
+                                HashMap<String, String> hashMap = new HashMap<String, String>();
                                 hashMap.put("table", "baskets");
                                 hashMap.put("request", "crud");
                                 hashMap.put("action", "delete");
@@ -297,12 +282,17 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_checkout_ready:
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 Dialog builder = new Dialog(getActivity());
                 builder.setTitle("Checkout");
                 builder.setContentView(R.layout.checkout_layout);
-//                builder.setView(R.layout.checkout_layout);
                 builder.show();
+
+                ArrayList<HashMap<String, String>> items;
+                items = dbHelper.getAllBasketItems();
+                LazyAdapter checkOutAdapter = new LazyAdapter(getActivity(), items, "ready_for_checkout_items");
+
+                ListView lv_items = (ListView) builder.findViewById(R.id.lv_items);
+                lv_items.setAdapter(checkOutAdapter);
 
                 break;
         }

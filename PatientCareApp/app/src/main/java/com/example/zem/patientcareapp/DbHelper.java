@@ -1296,11 +1296,11 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "select * FROM " + TBL_PATIENT_RECORDS + " WHERE " + RECORDS_PATIENT_ID + " = " + patientID + " ORDER BY " + RECORDS_DATE + " DESC";
         Cursor cur = db.rawQuery(sql, null);
-        ArrayList<HashMap<String, String>> arrayOfRecords = new ArrayList<>();
+        ArrayList<HashMap<String, String>> arrayOfRecords = new ArrayList();
         HashMap<String, String> map;
 
         while (cur.moveToNext()) {
-            map = new HashMap<>();
+            map = new HashMap();
             map.put("recordID", String.valueOf(cur.getInt(cur.getColumnIndex(RECORDS_ID))));
             map.put("complaints", cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
             map.put("findings", cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
@@ -1318,11 +1318,11 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_TREATMENTS + " WHERE " + TREATMENTS_RECORD_ID + " = " + recordID;
         Cursor cursor = db.rawQuery(sql, null);
-        ArrayList<HashMap<String, String>> arrayOfTreatments = new ArrayList<>();
+        ArrayList<HashMap<String, String>> arrayOfTreatments = new ArrayList();
         HashMap<String, String> map;
 
         while (cursor.moveToNext()) {
-            map = new HashMap<>();
+            map = new HashMap();
             map.put("medicine_name", cursor.getString(cursor.getColumnIndex(TREATMENTS_MEDICINE_NAME)));
             map.put("generic_name", cursor.getString(cursor.getColumnIndex(TREATMENTS_GENERIC_NAME)));
             map.put("quantity", cursor.getString(cursor.getColumnIndex(TREATMENTS_QUANITY)));
