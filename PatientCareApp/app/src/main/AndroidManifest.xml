@@ -71,7 +71,6 @@
         <activity android:name=".Medicine" />
         <activity android:name=".Doctor" />
         <activity android:name=".PatientRecord" />
-
         <activity android:name=".FileCache" />
         <activity android:name=".Utils" />
         <activity android:name=".MemoryCache" />

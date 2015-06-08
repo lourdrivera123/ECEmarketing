@@ -137,7 +137,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     patient.setPassword(password);
                     if (helpers.isNetworkAvailable(getBaseContext())) {
 
-                        Map<String, String> params = setParams();
+                        final Map<String, String> params = setParams();
+                        System.out.println("MOTHERFUCKING PARAMS: "+params.toString());
 
                         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
                                 new Response.Listener<JSONObject>() {
@@ -145,6 +146,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                     public void onResponse(JSONObject response) {
 
                                         try {
+                                            System.out.println("FUCKING VOLLEY RESPONSE: "+response.toString());
+
+                                            System.out.println("FUCKING VOLLEY PARAMS: "+params.toString());
                                             int success = response.getInt("success");
                                             if (success == 1) {
                                                 patient_json_array_mysql = response.getJSONArray("patient");
@@ -185,6 +189,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                                         } catch (JSONException e) {
                                             Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                                            System.out.println("FUCKING VOLLEY ERROR: "+response.toString());
                                         }
                                     }
                                 }, new Response.ErrorListener() {
