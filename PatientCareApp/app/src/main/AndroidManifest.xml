@@ -20,11 +20,7 @@
             launchMode="singleInstance"
             android:theme="@android:style/Theme.Holo.Light"
             android:configChanges="keyboardHidden|orientation|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".SignUpFragment"
@@ -96,6 +92,13 @@
         <activity android:name=".PreloadNonUserRelatedData" />
         <activity android:name=".ServerRequest" />
         <activity android:name=".Basket" />
+        <activity android:name=".SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".PromoDiscount" />
         <activity android:name=".PromoFreeProducts" />
     </application>
