@@ -73,9 +73,9 @@ public class LazyAdapter extends BaseAdapter {
             doctor = data.get(position);
 
             // Setting all values in listview
-            title.setText(doctor.get(ListOfDoctorsFragment.KEY_FULL_NAME));
-            artist.setText(doctor.get(ListOfDoctorsFragment.KEY_SPECIALTY));
-            imageLoader.DisplayImage(doctor.get(ListOfDoctorsFragment.KEY_PHOTO), list_image);
+            title.setText(doctor.get(DbHelper.DOC_FULLNAME));
+            artist.setText(doctor.get(DbHelper.DOC_SPECIALTY_NAME));
+            imageLoader.DisplayImage(doctor.get(DbHelper.DOC_PHOTO), list_image);
 
         } else if (list_type == "product_lists") {
             vi = inflater.inflate(R.layout.list_row_products, null);
@@ -89,11 +89,11 @@ public class LazyAdapter extends BaseAdapter {
             map = data.get(position);
 
             // Setting all values in listview
-            vi.setTag(map.get(ProductsFragment.KEY_PRODUCT_ID));
-            product_name.setText(map.get(ProductsFragment.KEY_PRODUCT_NAME));
-            product_description.setText(map.get(ProductsFragment.KEY_PRODUCT_DESCRIPTION));
-            product_price.setText("Php "+map.get(ProductsFragment.KEY_PRODUCT_PRICE));
-            imageLoader.DisplayImage(map.get(ProductsFragment.KEY_PRODUCT_PHOTO), list_image);
+            vi.setTag(map.get(DbHelper.PRODUCTS_ID));
+            product_name.setText(map.get(DbHelper.PRODUCT_NAME));
+            product_description.setText(map.get(DbHelper.PRODUCT_DESCRIPTION));
+            product_price.setText("Php "+map.get(DbHelper.PRODUCT_PRICE));
+            imageLoader.DisplayImage(map.get(DbHelper.PRODUCT_PHOTO), list_image);
 
         } else if (list_type == "consultation_lists") {
             vi = inflater.inflate(R.layout.list_row_consultations, null);

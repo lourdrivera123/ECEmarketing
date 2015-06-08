@@ -1,17 +1,10 @@
 package com.example.zem.patientcareapp;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -20,7 +13,6 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -31,6 +23,7 @@ public class Sync {
     JSONArray json_array_mysql = null;
     JSONArray json_array_sqlite = null;
     JSONArray json_array_final = null;
+    JSONArray json_array_final_update = null;
 
     RequestQueue queue;
     String url, tableName, tableId;
@@ -49,7 +42,7 @@ public class Sync {
         url = "http://vinzry.0fees.us/db/get.php?q="+request;
 
 //        // Request a string response from the provided URL.
-//        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+//        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.MethodGET, url, null, new Response.Listener<JSONObject>() {
 //
 //            @Override
 //            public void onResponse(JSONObject response){
@@ -64,6 +57,9 @@ public class Sync {
 
                         json_array_final = checkWhatToInsert(json_array_mysql, json_array_sqlite, tableId);
 
+                        json_array_final_update = checkWhatToUpdate(json_array_mysql, tableName);
+//
+
                         if (json_array_final != null){
                             for (int i = 0; i < json_array_final.length(); i++) {
                                 JSONObject json_object = json_array_final.getJSONObject(i);
@@ -73,21 +69,33 @@ public class Sync {
 
                                 if(!json_object.equals("null") && !json_object.equals(null)){
                                     if( tableName == "products" ){
-                                         if (dbHelper.insertProduct(setProduct(json_object))) {
+                                         if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
                                              Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
                                          } else {
                                              Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
                                          }
-                                    }else if( tableName == "doctors" ){
-                                       if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+                                    }else if( tableName == "doctors" ) {
+                                        if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
 
 //                                           listOfDoctorsFragment = new ListOfDoctorsFragment();
 ////                            ListOfDoctorsFragment.callresponse();
 //                                        listOfDoctorsFragment.callresponse();
-                                       } else {
-                                            Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
-                                       }
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }else if( tableName == "specialties" ) {
+                                        if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }else if( tableName == "sub_specialties" ) {
+                                        if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
                                     }else if( tableName == "product_categories" ){
                                         try{
                                             if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
@@ -118,6 +126,28 @@ public class Sync {
                         } else {
                             Toast.makeText(context, "the final list is empty", Toast.LENGTH_SHORT).show();
                         }
+
+                        if (json_array_final_update != null) {
+                            for (int i = 0; i < json_array_final_update.length(); i++) {
+                                JSONObject json_object = json_array_final_update.getJSONObject(i);
+                                if (!json_object.equals("null") && !json_object.equals(null)) {
+                                    if (tableName == "doctors") {
+                                        if (dbHelper.saveDoctor(setDoctor(json_object), "update")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else if(tableName == "products") {
+                                        if (dbHelper.saveProduct(setProduct(json_object), "update")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
 
                     }
 
@@ -188,6 +218,37 @@ public class Sync {
         return json_array_final_storage;
     }
 
+    public JSONArray checkWhatToUpdate(JSONArray json_array_mysql, String tblname) {
+        JSONArray doctors_json_array_final_storage = new JSONArray();
+        try {
+
+            for (int i = 0; i < json_array_mysql.length(); i++) {
+
+                JSONObject json_object_mysql = json_array_mysql.getJSONObject(i);
+
+                if(!json_object_mysql.getString("updated_at").equals("null")){
+
+                if (checkDateTime(dbHelper.getLastUpdate(tblname), json_object_mysql.getString("updated_at"))) { //to be repared
+                    //the sqlite last update is lesser than from mysql
+                    //put your json object into final array here.
+
+                    doctors_json_array_final_storage.put(json_object_mysql);
+                    Log.d("Updated at Compare", "the updated_at column in mysql is greater than in sqlite");
+
+                } else {
+                    Log.d("Updated at Compare", "the updated_at column in sqlite is greater than in mysql");
+
+                }
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return doctors_json_array_final_storage;
+    }
+
     public boolean checkDateTime(String str1, String str2) {
         Boolean something = false;
         try {
@@ -202,7 +263,7 @@ public class Sync {
 
             if (date1.compareTo(date2) < 0) {
                 something = true;
-//                System.out.println("date2 is Greater than my date1");
+                System.out.println("date2 is Greater than my date1");
 //            Log.d("date2 is Greater than my date1", "adsasd");
             }
 
@@ -221,31 +282,57 @@ public class Sync {
         try {
 
             doctor.setDoc_id(json.getInt("id"));
-//            doctor.setClinic_id(json.getInt("clinic_id"));
-//            doctor.setSecretary_id(json.getInt("secretary_id"));
             doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
-//            doctor.setFullAddress(json.getString("address_house_no"), json.getString("address_street"),
-//                    json.getString("address_barangay"), json.getString("address_city_municipality"),
-//                    json.getString("address_province"), json.getString("address_region"),
-//                    json.getString("address_country"), json.getString("address_zip"));
             doctor.setPrc_no(json.getInt("prc_no"));
-//            doctor.setSpecialty(json.getString("specialty"));
             doctor.setSub_specialty_id(json.getInt("sub_specialty_id"));
             doctor.setCell_no(json.getString("cell_no"));
             doctor.setTel_no(json.getString("tel_no"));
             doctor.setPhoto(json.getString("photo"));
-//            doctor.setClinic_sched(json.getString("clinic_sched"));
             doctor.setAffiliation(json.getString("affiliation"));
             doctor.setEmail(json.getString("email"));
             doctor.setCreated_at(json.getString("created_at"));
             doctor.setUpdated_at(json.getString("updated_at"));
             doctor.setDeleted_at(json.getString("deleted_at"));
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return doctor;
+    }
+
+    public Specialty setSpecialty(JSONObject json) {
+        Specialty specialty = new Specialty();
+        try {
+
+            specialty.setSpecialty_id(json.getInt("id"));
+            specialty.setName(json.getString("name"));
+            specialty.setCreated_at(json.getString("created_at"));
+            specialty.setUpdated_at(json.getString("updated_at"));
+            specialty.setDeleted_at(json.getString("deleted_at"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return specialty;
+    }
+
+    public SubSpecialty setSubSpecialty(JSONObject json) {
+        SubSpecialty sub_specialty = new SubSpecialty();
+        try {
+
+            sub_specialty.setSub_specialty_id(json.getInt("id"));
+            sub_specialty.setSpecialty_id(json.getInt("specialty_id"));
+            sub_specialty.setName(json.getString("name"));
+            sub_specialty.setCreated_at(json.getString("created_at"));
+            sub_specialty.setUpdated_at(json.getString("updated_at"));
+            sub_specialty.setDeleted_at(json.getString("deleted_at"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return sub_specialty;
     }
 
     public ProductCategory setProductCategory(JSONObject json)throws JSONException{
@@ -317,6 +404,10 @@ public class Sync {
             product.setPrescriptionRequired(Integer.parseInt(json.getString("prescription_required")));
             product.setPrice(json.getDouble("price"));
             product.setUnit(json.getString("unit"));
+            product.setCreatedAt(json.getString("created_at"));
+            product.setUpdatedAt(json.getString("updated_at"));
+            product.setDeletedAt(json.getString("deleted_at"));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

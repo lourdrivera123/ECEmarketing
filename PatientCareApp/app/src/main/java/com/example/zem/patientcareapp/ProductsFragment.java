@@ -67,7 +67,8 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     Dialog loc_dialog;
     ProgressDialog pDialog;
     View root_view;
-    public static ArrayList<HashMap<String, String>> products_list;
+    public static ArrayList<HashMap<String, String>> products_items;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,109 +85,23 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
-        pDialog.show();
+//        pDialog.show();
 
 
         if (helpers.isNetworkAvailable(getActivity())) {
-
-            // Request a string response from the provided URL.
-            JsonObjectRequest prod_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_products", "products", "product_id", response);
-
-                    dbHelper.getAllProducts();
-                    String xml = dbHelper.getProductsStringXml();
-
-                    populateProductsListView(rootView, xml);
-                    category_list = dbHelper.getAllProductCategoriesArray();
-                    populateListView(rootView, category_list);
-                    pDialog.hide();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            // Request a string response from the provided URL.
-            JsonObjectRequest prod_category_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_product_categories"), null, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_product_categories", "product_categories", "product_category_id", response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            // Request a string response from the provided URL.
-            JsonObjectRequest prod_sub_cat_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_product_subcategories&cat=all"), null, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_product_subcategories&cat=all", "product_subcategories", "product_subcategory_id", response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            // Request a string response from the provided URL.
-            JsonObjectRequest dosage_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("dosage_format_and_strength"), null, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_dosages", "dosage_format_and_strength", "dosage_id", response);
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            queue.add(prod_category_request);
-            queue.add(prod_sub_cat_request);
-            queue.add(dosage_request);
-            queue.add(prod_request);
-
-
-//            rootView.postDelayed(new Runnable() {
-//                public void run() {
-//                    // Actions to do after 3 seconds
-//
-//                    dbHelper.getAllProducts();
+            products_items = dbHelper.getAllProducts();
 //                    String xml = dbHelper.getProductsStringXml();
-//
-//                    populateProductsListView(rootView, xml);
-//                    category_list = dbHelper.getAllProductCategoriesArray();
-//                    populateListView(rootView, category_list);
-//                    pDialog.hide();
-//                }
-//
-//            }, 3000);
+
+            populateProductsListView(rootView, products_items);
+            category_list = dbHelper.getAllProductCategoriesArray();
+            populateListView(rootView, category_list);
 
         } else {
             Log.d("Connected to internet", "no");
-            dbHelper.getAllProducts();
-            String xml = dbHelper.getProductsStringXml();
+            products_items = dbHelper.getAllProducts();
+//            String xml = dbHelper.getProductsStringXml();
 
-            populateProductsListView(rootView, xml);
+            populateProductsListView(rootView, products_items);
             pDialog.hide();
         }
 
@@ -194,35 +109,37 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         return rootView;
     }
 
-    public void populateProductsListView(View rootView, String xml) {
-        products_list = new ArrayList<HashMap<String, String>>();
+    public void populateProductsListView(View rootView, ArrayList<HashMap<String, String>> products_items) {
+//        products_list = new ArrayList<HashMap<String, String>>();
 
-        XMLParser parser = new XMLParser();
+//        XMLParser parser = new XMLParser();
 //        String xml = parser.getXmlFromUrl("http://localhost/db/get.php?q=get_products"); // getting XML from URL
 
-        Document doc = parser.getDomElement(xml); // getting DOM element
+//        Document doc = parser.getDomElement(xml); // getting DOM element
+//
+//        NodeList nl = doc.getElementsByTagName(KEY_PRODUCT);
+//        // looping through all song nodes &lt;song&gt;
+//        for (int i = 0; i < nl.getLength(); i++) {
+//            // creating new HashMap
+//            HashMap<String, String> map = new HashMap<String, String>();
+//            Element e = (Element) nl.item(i);
+//            // adding each child node to HashMap key =&gt; value
+//            map.put(KEY_PRODUCT_ID, parser.getValue(e, KEY_PRODUCT_ID));
+//            map.put(KEY_PRODUCT_NAME, parser.getValue(e, KEY_PRODUCT_NAME));
+//            map.put(KEY_PRODUCT_DESCRIPTION, parser.getValue(e, KEY_PRODUCT_DESCRIPTION));
+//            map.put(KEY_PRODUCT_PHOTO, parser.getValue(e, KEY_PRODUCT_PHOTO));
+//            map.put(KEY_PRODUCT_PRICE, parser.getValue(e, KEY_PRODUCT_PRICE));
+//
+//            // adding HashList to ArrayList
+//            products_list.add(map);
+//        }
 
-        NodeList nl = doc.getElementsByTagName(KEY_PRODUCT);
-        // looping through all song nodes &lt;song&gt;
-        for (int i = 0; i < nl.getLength(); i++) {
-            // creating new HashMap
-            HashMap<String, String> map = new HashMap<String, String>();
-            Element e = (Element) nl.item(i);
-            // adding each child node to HashMap key =&gt; value
-            map.put(KEY_PRODUCT_ID, parser.getValue(e, KEY_PRODUCT_ID));
-            map.put(KEY_PRODUCT_NAME, parser.getValue(e, KEY_PRODUCT_NAME));
-            map.put(KEY_PRODUCT_DESCRIPTION, parser.getValue(e, KEY_PRODUCT_DESCRIPTION));
-            map.put(KEY_PRODUCT_PHOTO, parser.getValue(e, KEY_PRODUCT_PHOTO));
-            map.put(KEY_PRODUCT_PRICE, parser.getValue(e, KEY_PRODUCT_PRICE));
-
-            // adding HashList to ArrayList
-            products_list.add(map);
-        }
+//        products_items = dbHelper.getAllProducts();
 
         list_of_products = (ListView) rootView.findViewById(R.id.product_lists);
 
         // Getting adapter by passing xml data ArrayList
-        adapter = new LazyAdapter(getActivity(), products_list, "product_lists");
+        adapter = new LazyAdapter(getActivity(), products_items, "product_lists");
         list_of_products.setAdapter(adapter);
 
         // Click event for single list row
@@ -306,41 +223,84 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                 break;
 
             case R.id.refresh_products_list:
-                Intent intent = new Intent(getActivity(), MasterTabActivity.class);
-                intent.putExtra("selected", 5);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), MasterTabActivity.class);
+//                intent.putExtra("selected", 5);
+//                startActivity(intent);
+                // Request a string response from the provided URL.
+                if (helpers.isNetworkAvailable(getActivity())) {
+                    JsonObjectRequest product_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("response from update", response.toString());
+                            sync = new Sync();
+                            sync.init(getActivity(), "get_products", "products", "product_id", response);
+                            try {
+                                System.out.println("timestamp from server: " + response.getString("server_timestamp"));
+                                dbHelper.updateLastUpdatedTable("products", response.getString("server_timestamp"));
+                                Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
+
+//                                adapter.notifyDataSetChanged();
+                            } catch (Exception e) {
+                                System.out.println("error fetching server timestamp: " + e);
+                            }
+
+                            products_items = dbHelper.getAllProducts();
+
+                            populateProductsListView(root_view, products_items);
+//                            adapter.notifyDataSetChanged();
+
+//                    String xml = dbHelper.getDoctorsStringXml();
+//                    list_of_doctors.deferNotifyDataSetChanged();
+//                        populateDoctorListView(root_view, doctor_items);
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                            System.out.println("GWAPO DAW KO: " + error);
+                        }
+                    });
+                    queue.add(product_request);
+
+                } else {
+                    Toast.makeText(getActivity(), "You must have Internet to be able to use the App properly", Toast.LENGTH_LONG).show();
+
+                }
                 break;
         }
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-    }
+        @Override
+        public void beforeTextChanged (CharSequence s,int start, int count, int after){
 
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        String qty_str = qty.getText().toString();
-        Double price = Double.parseDouble(qty.getTag().toString());
-
-        if (!qty_str.isEmpty()) {
-            try {
-                Double qty_int = Double.parseDouble(qty_str);
-                Double product = qty_int * price;
-
-                add_to_cart_btn.setText("Add to Cart | Php " + product);
-            } catch (Exception e) {
-
-            }
-        } else {
-            add_to_cart_btn.setText("Add to Cart | Php ");
         }
-    }
 
-    @Override
-    public void afterTextChanged(Editable s) {
+        @Override
+        public void onTextChanged (CharSequence s,int start, int before, int count){
+            String qty_str = qty.getText().toString();
+            Double price = Double.parseDouble(qty.getTag().toString());
 
-    }
+            if (!qty_str.isEmpty()) {
+                try {
+                    Double qty_int = Double.parseDouble(qty_str);
+                    Double product = qty_int * price;
+
+                    add_to_cart_btn.setText("Add to Cart | Php " + product);
+                } catch (Exception e) {
+
+                }
+            } else {
+                add_to_cart_btn.setText("Add to Cart | Php ");
+            }
+        }
+
+        @Override
+        public void afterTextChanged (Editable s){
+
+        }
 
     public void populateListView(View rootView, List<String> categories) {
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);
@@ -388,8 +348,8 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 //
 //                // Getting adapter by passing xml data ArrayList
                     if (list.size() > 0) {
-                        products_list.clear();
-                        products_list.addAll(list);
+                        products_items.clear();
+                        products_items.addAll(list);
                         adapter.notifyDataSetChanged();
                     }
                     dialog.dismiss();
@@ -397,8 +357,8 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             });
         } else {
             ArrayList<HashMap<String, String>> prods = dbHelper.getProductsBySubCategory(0);
-            products_list.clear();
-            products_list.addAll(prods);
+            products_items.clear();
+            products_items.addAll(prods);
             adapter.notifyDataSetChanged();
         }
 
