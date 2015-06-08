@@ -3,7 +3,6 @@ package com.example.zem.patientcareapp;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -76,8 +75,6 @@ public class ServerRequest {
                                        if( params.get("action").equals("insert") ){
                                            if(success == 1){
                                                int insertedId = Integer.parseInt(response.getString("last_inserted_id"));
-
-                                               System.out.println("insertedId is :"+insertedId);
 
                                                Basket basket = new Basket();
                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
