@@ -97,6 +97,8 @@
         <activity android:name=".PreloadNonUserRelatedData" />
         <activity android:name=".ServerRequest" />
         <activity android:name=".Basket" />
+        <activity anroid:name=".PromoDiscount" />
+        <activity android:name=".PromoFreeProducts" />
     </application>
 
 </manifest>

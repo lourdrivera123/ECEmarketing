@@ -83,9 +83,8 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-        if (helpers.isNetworkAvailable(getActivity())) {
+        if ( helpers.isNetworkAvailable(getActivity()) ) {
 
-//            queue = sync.getQueue();
 
             // Request a string response from the provided URL.
             JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
@@ -109,7 +108,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                    System.out.println("GWAPO DAW KO: " + error);
                 }
             });
 
@@ -153,12 +151,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         adapter = new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
         list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
         list_of_doctors.setAdapter(adapter);
+
         list_of_doctors.setOnItemClickListener(this);
         search_doctor.addTextChangedListener(this);
-    }
-
-    public void doSomeShit(String xml) {
-        populateDoctorListView(root_view, xml);
     }
 
     @Override

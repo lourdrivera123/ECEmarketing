@@ -65,6 +65,27 @@ public class DbHelper extends SQLiteOpenHelper {
             UPDATE_TIMESTAMP = "timestamp",
             UPDATE_SEEN = "seen";
 
+
+    // SPECIALTY TABLE
+    public static final String TBL_SPECIALTY = "specialty",
+            SPECIALTY_ID = "id",
+            SERVER_SPECIALTY_ID = "specialty_id",
+            SPECIALTY_NAME = "name",
+            SPECIALTY_CREATED_AT = "created_at",
+            SPECIALTY_UPDATED_AT = "updated_at",
+            SPECIALTY_DELETED_AT = "deleted_at";
+
+    // SUBSPECIALTY
+    public static final String TBL_SUBSPECIALTY = "sub_specialty",
+            SERVER_SUBSPECIALTY_ID = "sub_specialty_id",
+            SUBSPECIALTY_ID = "id",
+            SUBSPECIALTY_SPECIALTY_ID = "specialty_id",
+            SUBSPECIALTY_NAME = "name",
+            SUBSPECIALTY_CREATED_AT = "created_at",
+            SUBSPECIALTY_UPDATED_AT = "updated_at",
+            SUBSPECIALTY_DELETED_AT = "deleted_at";
+
+
     //DOCTORS_TABLE
     public static final String TBL_DOCTORS = "doctors",
             DOC_ID = "id",
@@ -73,13 +94,12 @@ public class DbHelper extends SQLiteOpenHelper {
             DOC_MNAME = "mname",
             DOC_FNAME = "fname",
             DOC_PRC_NO = "prc_no",
-            DOC_SUB_SPECIALTY_ID = "sub_specialty",
+            DOC_SUB_SPECIALTY_ID = "sub_specialty_id",
             DOC_CELL_NO = "cellNo",
             DOC_TEL_NO = "telNo",
             DOC_PHOTO = "photo",
             DOC_AFFILIATIONS = "affiliations",
             DOC_EMAIL = "email",
-            DOC_SEC_ID = "secretary_id",
             DOC_CREATED_AT = "created_at",
             DOC_UPDATED_AT = "updated_at",
             DOC_DELETED_AT = "deleted_at";
@@ -139,7 +159,7 @@ public class DbHelper extends SQLiteOpenHelper {
             BASKET_UPDATED_AT = "updated_at",
             BASKET_DELETED_AT = "deleted_at";
 
-    //PATIENT_RECORDS TABLE
+    // PATIENT_RECORDS TABLE
     public static final String TBL_PATIENT_RECORDS = "patient_records",
             RECORDS_ID = "id",
             SERVER_RECORDS_ID = "record_id",
@@ -152,7 +172,7 @@ public class DbHelper extends SQLiteOpenHelper {
             RECORDS_CREATED_AT = "created_at",
             RECORDS_UPDATED_AT = "updated_at";
 
-    //TREATMENTS TABLE
+    // TREATMENTS TABLE
     public static final String TBL_TREATMENTS = "treatments",
             TREATMENTS_ID = "id",
             TREATMENTS_RECORD_ID = "patient_record_id",
@@ -164,8 +184,96 @@ public class DbHelper extends SQLiteOpenHelper {
             TREATMENTS_CREATED_AT = "created_at",
             TREATMENTS_UPDATED_AT = "updated_at";
 
+
+    // CLINICS TABLE
+    public static final String CLINIC_NAME = "name",
+            CLINIC_ADDRESS_HOUSE_NO = "address_house_no",
+            CLINIC_ADDRESS_STREET = "address_street",
+            CLINIC_ADDRESS_BARANGAY = "address_barangay",
+            CLINIC_ADDRESS_CITY_MUNICIPALITY = "address_city_municipality",
+            CLINIC_ADDRESS_PROVINCE = "address_province",
+            CLINIC_ADDRESS_REGION = "address_region",
+            CLINIC_ADDRESS_ZIP = "address_zip",
+            CLINIC_CREATED_AT = "created_at",
+            CLINIC_UPDATED_AT = "updated_at",
+            CLINIC_DELETED_AT = "deleted_at",
+            TBL_CLINICS = "clinics",
+            CLINICS_ID = "id",
+            SERVER_CLINICS_ID = "clinics_id";
+
+
+    // SPECIALTY TABLE
+
+
+    // CLINIC_DOCTOR TABLE
+    public static final String CD_CLINIC_ID = "clinic_id",
+            CD_CLINIC_SCHED = "clinic_sched",
+            CD_IS_ACTIVE = "is_active",
+            TBL_CLINIC_DOCTOR = "clinic_doctor";
+
+    // SECRETARIES TABLE
+    public static final String SEC_FNAME = "fname",
+            SEC_MNAME = "mname",
+            SEC_LNAME = "lname",
+            SEC_ADDRESS_HOUSE_NO = "address_house_no",
+            SEC_ADDRESS_STREET = "address_street",
+            SEC_ADDRESS_BARANGAY = "address_barangay",
+            SEC_ADDRESS_CITY_MUNICIPALITY = "address_city_municipality",
+            SEC_ADDRESS_PROVINCE = "address_province",
+            SEC_ADDRESS_REGION = "address_region",
+            SEC_ADDRESS_ZIP = "address_zip",
+            SEC_CELL_NO = "cell_no",
+            SEC_TEL_NO = "tel_no",
+            SEC_EMAIL = "email",
+            SEC_PHOTO = "photo",
+            SEC_CREATED_AT = "created_at",
+            SEC_UPDATED_AT = "updated_at",
+            SEC_DELETED_AT = "deleted_at",
+            TBL_SECRETARIES = "secretaries",
+            SECRETARIES_ID = "id",
+            SERVER_SECRETARIES_ID = "secretaries_id";
+
+    // CLINIC_SECRETARY TABLE
+    public static final String CS_SECRETARY_ID = "secretary_id",
+            CS_IS_ACTIVE = "is_active",
+            TBL_CLINIC_SECRETARY = "clinic_secretary",
+            CS_CLINIC_ID = "clinic_id";
+
+    // DOCTOR_SECRETARY TABLE
+    public static final String TBL_DOCTOR_SECRETARY = "doctor_secretary",
+            DS_SECRETARY_ID = "secretary_id",
+            DS_DOCTOR_ID = "doctor_id",
+            DS_IS_ACTIVE = "is_active";
+
+
+    // PROMO DISCOUNT TABLE
+    public static final String PROMO_D_PRODUCT_ID = "product_id",
+            PROMO_D_NAME = "name",
+            PROMO_D_START_DATE = "start_date",
+            PROMO_D_END_DATE = "end_date",
+            PROMO_D_TYPE = "type",
+            PROMO_D_QUANTITY_REQUIRED = "quantity_required",
+            PROMO_D_LESS = "less",
+            PROMO_D_CREATED_AT = "created_at",
+            PROMO_D_UPDATED_AT = "updated_at",
+            PROMO_D_DELETED_AT = "deleted_at",
+            TBL_PROMO_DISCOUNTS = "promo_discounts",
+            PROMO_DISCOUNTS_ID = "id",
+            SERVER_PROMO_DISCOUNTS_ID = "promo_discounts_id";
+
+    // PROMO FREE PRODUCTS TABLE
+    public static final String PROMO_FP_PRODUCT_ID = "product_id",
+            PROMO_FP_PROMO_ID = "promo_id",
+            PROMO_FP_NO_OF_UNITS_FREE = "no_of_units_free",
+            PROMO_FP_CREATED_AT = "created_at",
+            PROMO_FP_UPDATED_AT = "updated_at",
+            PROMO_FP_DELETED_AT = "deleted_at",
+            TBL_PROMO_FREE_PRODUCTS = "promo_free_products",
+            PROMO_FREE_PRODUCTS_ID = "id",
+            SERVER_PROMO_FREE_PRODUCTS_ID = "promo_free_products_id";
+
+
     //Doctor string xml
-    //string xml
     String doctor_string_xml = "", product_string_xml = "";
     public static String doctors_string_xml = "", products_string_xml = "";
 
@@ -175,6 +283,18 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        // SQL to create table "specialty"
+        String sql_create_specialty_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE," +
+                        " %s TEXT, %s TEXT, %s TEXT,  %s TEXT)", TBL_SPECIALTY, SPECIALTY_ID, SERVER_SPECIALTY_ID, SPECIALTY_NAME, SPECIALTY_CREATED_AT,
+                SPECIALTY_UPDATED_AT, SPECIALTY_DELETED_AT);
+
+        // SQL to create table "sub_sepecialty"
+        String sql_create_sub_specialty_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE," +
+                        " %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)", TBL_SUBSPECIALTY, SUBSPECIALTY_ID, SERVER_SUBSPECIALTY_ID,
+                SUBSPECIALTY_SPECIALTY_ID, SUBSPECIALTY_NAME, SUBSPECIALTY_CREATED_AT, SUBSPECIALTY_UPDATED_AT, SUBSPECIALTY_DELETED_AT);
+
+        // SQL to create table "doctors"
         String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
@@ -182,10 +302,12 @@ public class DbHelper extends SQLiteOpenHelper {
                 DOC_SUB_SPECIALTY_ID, DOC_CELL_NO, DOC_TEL_NO,
                 DOC_PHOTO, DOC_AFFILIATIONS, DOC_EMAIL, DOC_CREATED_AT, DOC_UPDATED_AT, DOC_DELETED_AT);
 
+        // SQL to create table "tbl_updates"
         String sql_create_tbl_updates = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER)",
                 TBL_UPDATES, UPDATE_ID, UPDATE_TBL_NAME, UPDATE_TIMESTAMP, UPDATE_SEEN);
 
 
+        // SQL to create table "patients"
         String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
@@ -212,9 +334,11 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_PRODUCTS, PRODUCT_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION,
                 PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
 
-        //SQL TO CREATE TABLE "TBL_DOSAGE"
+
+        // SQL TO CREATE TABLE "TBL_DOSAGE"
         String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_DOSAGE, DOSAGE_ID, SERVER_DOSAGE_ID, DOSAGE_PROD_ID, DOSAGE_NAME, DOSAGE_CREATED_AT, DOSAGE_UPDATED_AT);
+
 
         // SQL to create table "baskets"
         String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
@@ -222,16 +346,60 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
                 BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
 
-        //SQL to create PATIENT_RECORDS TABLE
-        //GITANGGAL NKO ANG UNIQUE SA SERVER_ID
+
+        // SQL to create PATIENT_RECORDS TABLE
         String sql_create_patient_records = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_PATIENT_RECORDS, RECORDS_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_DOCTOR_NAME, RECORDS_PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, RECORDS_CREATED_AT, RECORDS_UPDATED_AT);
 
-        //SQL TO create TREATMENTS TABLE
-        //GITANGGAL NAKO ANG UNIQUE SA SERVER_TREATMENT_ID
+
+        // SQL TO create TREATMENTS TABLE
         String sql_create_treatments_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_TREATMENTS, TREATMENTS_ID, TREATMENTS_RECORD_ID, SERVER_TREATMENTS_ID, TREATMENTS_MEDICINE_NAME, TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, TREATMENTS_CREATED_AT, TREATMENTS_UPDATED_AT);
 
+
+        // SQL to create table "clinics"
+        String sql_create_clinics_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT," +
+                        " %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_CLINICS, CLINICS_ID, SERVER_CLINICS_ID, CLINIC_NAME, CLINIC_ADDRESS_HOUSE_NO, CLINIC_ADDRESS_STREET, CLINIC_ADDRESS_BARANGAY, CLINIC_ADDRESS_CITY_MUNICIPALITY,
+                CLINIC_ADDRESS_PROVINCE, CLINIC_ADDRESS_REGION, CLINIC_ADDRESS_ZIP, CLINIC_CREATED_AT, CLINIC_UPDATED_AT, CLINIC_DELETED_AT);
+
+
+        // SQL to create table "clinic_doctor"
+        String sql_create_clinic_doctor_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
+                TBL_CLINIC_DOCTOR, CD_CLINIC_ID, CD_CLINIC_SCHED, CD_IS_ACTIVE);
+
+
+        // SQL to create table "secretaries"
+        String sql_create_secretaries_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
+                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_SECRETARIES, SECRETARIES_ID, SERVER_SECRETARIES_ID, SEC_FNAME, SEC_MNAME, SEC_LNAME, SEC_ADDRESS_HOUSE_NO, SEC_ADDRESS_STREET, SEC_ADDRESS_BARANGAY,
+                SEC_ADDRESS_CITY_MUNICIPALITY, SEC_ADDRESS_PROVINCE, SEC_ADDRESS_REGION, SEC_ADDRESS_ZIP, SEC_CELL_NO, SEC_TEL_NO, SEC_EMAIL, SEC_PHOTO, SEC_CREATED_AT,
+                SEC_UPDATED_AT, SEC_DELETED_AT);
+
+
+        // SQL to create table "clinic_secretary"
+        String sql_create_clinic_secretary_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
+                TBL_CLINIC_SECRETARY, CS_CLINIC_ID, CS_SECRETARY_ID, CS_IS_ACTIVE);
+
+
+        // SQL to create table "doctor_secretary"
+        String sql_create_doctor_secretary_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
+                TBL_DOCTOR_SECRETARY, DS_DOCTOR_ID, DS_SECRETARY_ID, DS_IS_ACTIVE);
+
+        // SQL to create table "promo_discount"
+        String sql_create_promo_discount_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s  TEXT , %s  TEXT , " +
+                        "%s INTEGER, %s INTEGER, %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PROMO_DISCOUNTS, PROMO_DISCOUNTS_ID, SERVER_PROMO_DISCOUNTS_ID, PROMO_D_PRODUCT_ID, PROMO_D_NAME, PROMO_D_START_DATE, PROMO_D_END_DATE,
+                PROMO_D_TYPE, PROMO_D_QUANTITY_REQUIRED, PROMO_D_LESS, PROMO_D_CREATED_AT, PROMO_D_UPDATED_AT, PROMO_D_DELETED_AT);
+
+
+        // SQL to create table "promo_free_products"
+        String sql_create_promo_free_products_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PROMO_FREE_PRODUCTS, PROMO_FREE_PRODUCTS_ID, SERVER_PROMO_FREE_PRODUCTS_ID, PROMO_FP_PRODUCT_ID, PROMO_FP_PROMO_ID, PROMO_FP_NO_OF_UNITS_FREE, PROMO_FP_CREATED_AT, PROMO_FP_UPDATED_AT, PROMO_FP_DELETED_AT);
+
+
+        db.execSQL(sql_create_specialty_table);
+        db.execSQL(sql_create_sub_specialty_table);
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_updates);
         db.execSQL(sql_create_tbl_patients);
@@ -242,6 +410,13 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_dosage_table);
         db.execSQL(sql_create_patient_records);
         db.execSQL(sql_create_treatments_table);
+        db.execSQL(sql_create_clinics_table);
+        db.execSQL(sql_create_clinic_doctor_table);
+        db.execSQL(sql_create_secretaries_table);
+        db.execSQL(sql_create_clinic_secretary_table);
+        db.execSQL(sql_create_doctor_secretary_table);
+        db.execSQL(sql_create_promo_discount_table);
+        db.execSQL(sql_create_promo_free_products_table);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
     }
@@ -299,7 +474,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_CREATED_AT, created_at);
 
         long insert_patient = db.insert(TBL_PATIENTS, null, values);
-
+        db.close();
         return insert_patient > 0;
     }
 
@@ -332,7 +507,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(UPDATE_TIMESTAMP, server_timestamp);
 
         int rowID = db.update(TBL_UPDATES, values, UPDATE_TBL_NAME + "=" + table_name, null);
-
+        db.close();
         return rowID > 0;
     }
 
@@ -348,7 +523,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(RECORDS_DOCTOR_NAME, record.getDoctorName());
 
         long rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
-
+        db.close();
         return rowID;
     }
 
@@ -367,6 +542,7 @@ public class DbHelper extends SQLiteOpenHelper {
             long rowID = db.insert(TBL_TREATMENTS, null, values);
             arrayOfID.add((int) rowID);
         }
+        db.close();
         return arrayOfID;
     }
 
@@ -522,13 +698,12 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DOC_UPDATED_AT, doctor.getUpdated_at());
         values.put(DOC_DELETED_AT, doctor.getDeleted_at());
 
-        switch (request) {
-            case "insert":
-                rowID = db.insert(TBL_DOCTORS, null, values);
-                break;
-            case "update":
-                rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor.getDoc_id(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_DOCTORS, null, values);
+
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor.getDoc_id(), null);
+
         }
 
 
@@ -994,6 +1169,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public ProductSubCategory getSubCategoryByName(String name, int categoryId) {
         ProductSubCategory subCategory = new ProductSubCategory();
         SQLiteDatabase db = getWritableDatabase();
+        name = name.replace("'", "''");
         String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " where name='" + name + "' and category_id='" + categoryId + "'";
         Cursor cur = db.rawQuery(sql, null);
         while (cur.moveToNext()) {
@@ -1140,11 +1316,11 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "select * FROM " + TBL_PATIENT_RECORDS + " WHERE " + RECORDS_PATIENT_ID + " = " + patientID + " ORDER BY " + RECORDS_DATE + " DESC";
         Cursor cur = db.rawQuery(sql, null);
-        ArrayList<HashMap<String, String>> arrayOfRecords = new ArrayList<>();
+        ArrayList<HashMap<String, String>> arrayOfRecords = new ArrayList();
         HashMap<String, String> map;
 
         while (cur.moveToNext()) {
-            map = new HashMap<>();
+            map = new HashMap();
             map.put("recordID", String.valueOf(cur.getInt(cur.getColumnIndex(RECORDS_ID))));
             map.put("complaints", cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
             map.put("findings", cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
@@ -1162,11 +1338,11 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_TREATMENTS + " WHERE " + TREATMENTS_RECORD_ID + " = " + recordID;
         Cursor cursor = db.rawQuery(sql, null);
-        ArrayList<HashMap<String, String>> arrayOfTreatments = new ArrayList<>();
+        ArrayList<HashMap<String, String>> arrayOfTreatments = new ArrayList();
         HashMap<String, String> map;
 
         while (cursor.moveToNext()) {
-            map = new HashMap<>();
+            map = new HashMap();
             map.put("medicine_name", cursor.getString(cursor.getColumnIndex(TREATMENTS_MEDICINE_NAME)));
             map.put("generic_name", cursor.getString(cursor.getColumnIndex(TREATMENTS_GENERIC_NAME)));
             map.put("quantity", cursor.getString(cursor.getColumnIndex(TREATMENTS_QUANITY)));
@@ -1246,6 +1422,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return treatments;
     }
+    /*public ArrayList getDoctorClinics(int doctorId){
+
+    }*/
+
     //END OF GET METHODS
 
     /* INSERT UPDATE DELETE SQLs for BASKET TABLE */
@@ -1371,6 +1551,38 @@ public class DbHelper extends SQLiteOpenHelper {
     public boolean deleteBasketItem(int basketId) {
         SQLiteDatabase db = getWritableDatabase();
         long row = db.delete(TBL_BASKETS, SERVER_BASKET_ID + "=" + basketId, null);
+        db.close();
+        return row > 0;
+
+    }
+
+
+    /* CLINICS TABLE */
+    public boolean saveClinic(Clinic clinic, String type) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(SERVER_CLINICS_ID, clinic.getClinicsId());
+        values.put(CLINIC_NAME, clinic.getName());
+        values.put(CLINIC_ADDRESS_HOUSE_NO, clinic.getAddressHouseNo());
+        values.put(CLINIC_ADDRESS_STREET, clinic.getAddressStreet());
+        values.put(CLINIC_ADDRESS_BARANGAY, clinic.getAddressBarangay());
+        values.put(CLINIC_ADDRESS_CITY_MUNICIPALITY, clinic.getAddressCityMunicipality());
+        values.put(CLINIC_ADDRESS_PROVINCE, clinic.getAddressProvince());
+        values.put(CLINIC_ADDRESS_REGION, clinic.getAddressRegion());
+        values.put(CLINIC_ADDRESS_ZIP, clinic.getAddressZip());
+        values.put(CLINIC_CREATED_AT, clinic.getCreatedAt());
+        values.put(CLINIC_UPDATED_AT, clinic.getUpdatedAt());
+        values.put(CLINIC_DELETED_AT, clinic.getDeletedAt());
+
+        long row = 0;
+
+        if (type.equals("insert")) {
+            row = db.insert(TBL_CLINICS, null, values);
+        } else if (type.equals("update")) {
+            row = db.update(TBL_CLINICS, values, SERVER_CLINICS_ID + " = " + clinic.getClinicsId(), null);
+        }
+
         db.close();
         return row > 0;
     }

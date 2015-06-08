@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class LazyAdapter extends BaseAdapter {
     public static int quantity = 0;
     public static double total_amount, price = 0;
-    public static EditText qty;
+    public static TextView qty;
     public static TextView total;
 
     private Activity activity;
@@ -61,7 +61,7 @@ public class LazyAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
 
-        if (list_type == "list_of_doctors") {
+        if (list_type.equals("list_of_doctors")) {
             vi = inflater.inflate(R.layout.list_row, null);
 
             TextView title = (TextView) vi.findViewById(R.id.title); // title
@@ -76,7 +76,7 @@ public class LazyAdapter extends BaseAdapter {
             artist.setText(doctor.get(ListOfDoctorsFragment.KEY_SPECIALTY));
             imageLoader.DisplayImage(doctor.get(ListOfDoctorsFragment.KEY_PHOTO), list_image);
 
-        } else if (list_type == "product_lists") {
+        } else if (list_type.equals("product_lists")) {
             vi = inflater.inflate(R.layout.list_row_products, null);
             TextView product_name = (TextView) vi.findViewById(R.id.product_name); // product name
             TextView product_description = (TextView) vi.findViewById(R.id.product_description); // product description
@@ -94,7 +94,7 @@ public class LazyAdapter extends BaseAdapter {
             product_price.setText("Php "+map.get(ProductsFragment.KEY_PRODUCT_PRICE));
             imageLoader.DisplayImage(map.get(ProductsFragment.KEY_PRODUCT_PHOTO), list_image);
 
-        } else if (list_type == "consultation_lists") {
+        } else if (list_type.equals("consultation_lists")) {
             vi = inflater.inflate(R.layout.list_row_consultations, null);
 
             TextView doctor = (TextView) vi.findViewById(R.id.doctor_name);
@@ -113,7 +113,7 @@ public class LazyAdapter extends BaseAdapter {
 
             consultation_schedule.setText(sched);
 
-        } else if (list_type == "basket_items") {
+        } else if (list_type.equals("basket_items")) {
             vi = inflater.inflate(R.layout.list_row_basket_items, null);
 
             HashMap<String, String> basket_items;
@@ -121,7 +121,8 @@ public class LazyAdapter extends BaseAdapter {
             basket_items = data.get(position);
 
             TextView product_name = (TextView) vi.findViewById(R.id.product_name);
-            qty = (EditText) vi.findViewById(R.id.product_quantity);
+            TextView productPrice = (TextView) vi.findViewById(R.id.product_price);
+            qty = (TextView) vi.findViewById(R.id.product_quantity);
             total = (TextView) vi.findViewById(R.id.total);
 
             // Do the fucking stuffs here
@@ -129,14 +130,42 @@ public class LazyAdapter extends BaseAdapter {
             quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
 
             // Setting all values in listview
-            product_name.setText(basket_items.get(DbHelper.PRODUCT_NAME) + " @Php " + price);
+            product_name.setText(basket_items.get(DbHelper.PRODUCT_NAME));
             total_amount = price * quantity;
 
             total.setText(total_amount + "");
             qty.setText(quantity + "");
+            productPrice.setText("Price: Php "+price);
 
             qty.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
             total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+        } else if (list_type.equals("ready_for_checkout_items")){
+            vi = inflater.inflate(R.layout.checkout_list_item, null);
+
+            HashMap<String, String> basket_items;
+
+            basket_items = data.get(position);
+
+            TextView itemName = (TextView) vi.findViewById(R.id.item_name);
+            TextView itemDetails = (TextView) vi.findViewById(R.id.item_details);
+            TextView itemAmount = (TextView) vi.findViewById(R.id.item_amount);
+            TextView itemQuantity = (TextView) vi.findViewById(R.id.item_quantity);
+
+            // Do the fucking stuffs here
+            double price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
+            int quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
+
+            // Setting all values in listview
+            itemName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
+            double total_amount = price * quantity;
+            String unit = basket_items.get(DbHelper.PRODUCT_UNIT);
+
+            itemAmount.setText("Php "+total_amount + "");
+            itemDetails.setText("Price: Php "+price+" / "+(!unit.equals("0") ? unit : ""));
+            itemQuantity.setText("Quantity: "+quantity);
+
+            itemName.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+            itemAmount.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
         }
         return vi;
     }

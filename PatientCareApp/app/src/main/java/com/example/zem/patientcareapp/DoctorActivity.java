@@ -7,13 +7,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+/**
+ * Created by Zem on 4/29/2015.
+ */
 
 public class DoctorActivity extends Activity implements View.OnClickListener {
     ImageButton call_doctor;
     TextView doctor_name, specialty, sub_specialty, address_first_line, address_second_line, email, cp_no, clinic_name, clinic_address_first_line, clinic_address_second_line;
-
+    TableLayout tbl_doctors_clinic;
+    Intent intent;
+    int id = 0;
     int doctorID;
 
     DbHelper dbHelper;
@@ -23,6 +29,12 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.doctors_layout);
+//        tbl_doctors_clinic = (TableLayout) findViewById(R.id.tbl_doctors_clinic);
+
+        intent = getIntent();
+        dbHelper = new DbHelper(getBaseContext());
+        id = Integer.parseInt(intent.getStringExtra("id"));
+
 
         ActionBar actionBar = getActionBar();
         MainActivity.setCustomActionBar(actionBar);
