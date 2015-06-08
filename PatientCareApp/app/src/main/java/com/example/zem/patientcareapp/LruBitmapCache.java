@@ -2,8 +2,6 @@ package com.example.zem.patientcareapp;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;
-
-import com.android.volley.toolbox.*;
 import com.android.volley.toolbox.ImageLoader;
 
 /**

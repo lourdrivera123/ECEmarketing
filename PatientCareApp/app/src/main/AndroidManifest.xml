@@ -36,12 +36,19 @@
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
         <activity
             android:name=".DoctorActivity"
+            android:theme="@android:style/Theme.Holo.Light"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".PatientProfileFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".PatientHistoryFragment"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".ShoppingCartFragment"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".ProductsFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".HomeTileActivity"
@@ -57,23 +64,24 @@
             android:name=".EditTabsActivity"
             android:theme="@android:style/Theme.Holo.Light"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity android:name=".PatientMedicalRecordActivity" />
+        <activity
+            android:name=".PatientMedicalRecordActivity"
+            launchMode="singleInstance"
+            android:theme="@android:style/Theme.Holo.Light" />
 
         <activity android:name=".Patient" />
         <activity android:name=".Medicine" />
         <activity android:name=".Doctor" />
         <activity android:name=".PatientRecord" />
-
+        <activity android:name=".RoundImage" />
         <activity android:name=".FileCache" />
         <activity android:name=".Utils" />
         <activity android:name=".MemoryCache" />
         <activity android:name=".LazyAdapter" />
         <activity android:name=".ImageLoader" />
-        <activity android:name=".ProductsFragment" />
         <activity android:name=".DbHelper" />
         <activity android:name=".PatientConsultationActivity" />
         <activity android:name=".PatientConsultationFragment" />
-        <activity android:name=".ShoppingCartFragment" />
         <activity android:name=".AppController" />
         <activity android:name=".LruBitmapCache" />
         <activity android:name=".Sync" />
@@ -81,9 +89,8 @@
         <activity android:name=".ProductSubCategory" />
         <activity android:name=".Product" />
         <activity android:name=".ProductCategoriesFragment" />
-        <activity android:name=".PreloadNonUserRelatedData">
-
-        </activity>
+        <activity android:name=".PreloadNonUserRelatedData" />
+        <activity android:name=".ServerRequest" />
         <activity android:name=".Basket" />
         <activity android:name=".SplashActivity">
             <intent-filter>
@@ -92,6 +99,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PromoDiscount" />
+        <activity android:name=".PromoFreeProducts" />
     </application>
 
 </manifest>

@@ -18,7 +18,6 @@
             android:id="@+id/product_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Biogesic Biogesic BiogesicBiogesicBiogesicBiogesicBiogesicBiogesic  @Php 7.23"
             android:singleLine="false"
             android:textColor="#040404"
             android:textSize="15sp"
@@ -29,7 +28,7 @@
             android:minWidth="48dp" />
 
         <!-- Product Quantity -->
-        <EditText
+        <TextView
             android:id="@+id/product_quantity"
             android:layout_width="60dp"
             android:layout_height="match_parent"
@@ -39,9 +38,7 @@
             android:layout_gravity="bottom"
             android:singleLine="false"
             android:padding="10dp"
-            android:text="40"
-            android:layout_weight="0.5"
-            android:inputType="number" />
+            android:layout_weight="0.5"/>
 
         <!-- Amount -->
         <TextView
@@ -49,11 +46,17 @@
             android:descendantFocusability="blocksDescendants"
             android:layout_height="match_parent"
             android:minWidth="40dp"
-            android:text="450.75"
             android:padding="10dp"
             android:textSize="18sp"
             android:id="@+id/total"
             android:gravity="bottom" />
+        <!-- Price -->
     </LinearLayout>
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/product_price"
+        android:textSize="10sp"
+        android:layout_alignParentBottom="true"/>
 </RelativeLayout>

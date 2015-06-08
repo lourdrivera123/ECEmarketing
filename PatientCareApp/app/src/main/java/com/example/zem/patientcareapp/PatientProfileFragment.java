@@ -121,7 +121,6 @@ public class PatientProfileFragment extends Fragment {
             Drawable d = new BitmapDrawable(yourSelectedImage);
             image_holder.setImageDrawable(d);
         }
-
         return rootView;
     }
 }

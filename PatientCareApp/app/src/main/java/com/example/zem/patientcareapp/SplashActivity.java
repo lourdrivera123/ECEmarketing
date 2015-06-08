@@ -90,7 +90,7 @@ public class SplashActivity extends Activity {
 
                         try {
                             System.out.println("timestamp from server: "+response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("specialties", response.getString("server_timestamp"));
                         } catch (Exception e) {
                             System.out.println("error fetching server timestamp: "+ e);
                         }
@@ -115,7 +115,7 @@ public class SplashActivity extends Activity {
                         System.out.println("response in sub specialty: " + response.toString());
                         try {
                             System.out.println("timestamp from server: "+response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("sub_specialties", response.getString("server_timestamp"));
                         } catch (Exception e) {
                             System.out.println("error fetching server timestamp: "+ e);
                         }

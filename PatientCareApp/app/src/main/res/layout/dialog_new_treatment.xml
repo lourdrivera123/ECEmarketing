@@ -60,21 +60,28 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/d20">
 
         <Button
+            android:id="@+id/save_treatment"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Save"
-            android:id="@+id/save_treatment" />
+            android:background="@drawable/button_bg"
+            android:layout_marginRight="5dp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:text="Save" />
 
         <Button
+            android:id="@+id/cancel_treatment"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:id="@+id/cancel_treatment" />
+            android:background="@drawable/button_bg"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:text="Cancel" />
+
     </LinearLayout>
 </LinearLayout>

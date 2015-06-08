@@ -16,12 +16,6 @@ public class Doctor implements Serializable {
 
     }
 
-
-    /**
-     * SETTERS ------------------------------------------------------------------ *
-     */
-
-
     public void setFullname(String first_name, String middle_name, String last_name) {
         this.setFname(first_name);
         this.setMname(middle_name);

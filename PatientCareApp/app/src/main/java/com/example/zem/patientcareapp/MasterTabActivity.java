@@ -5,14 +5,9 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -25,13 +20,15 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     private ViewPager viewPager;
     private ActionBar actionBar;
 
-    LazyAdapter adapter;
+    static final String LAST_ACTIVITY = "";
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
+
 
         ActionBar actionbar = getActionBar();
         MainActivity.setCustomActionBar(actionbar);
@@ -50,8 +47,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
                     .setTabListener(this));
         }
 
-
-        Intent intent = getIntent();
+        intent = getIntent();
         actionBar.setSelectedNavigationItem(intent.getIntExtra("selected", 0));
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -70,6 +66,18 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             public void onPageScrollStateChanged(int arg0) {
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        String lastOpened = intent.getStringExtra(LAST_ACTIVITY);
+
+        if (lastOpened == null) {
+
+        } else if (lastOpened.equals("Add Record")) {
+            PatientMedicalRecordActivity.medRecord.finish();
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -104,6 +112,11 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+        System.out.println("FUCKING TAB POSITION: "+tab.getPosition());
+        if( tab.getPosition() == 6 ){
+            new ShoppingCartFragment();
+        }
         viewPager.setCurrentItem(tab.getPosition());
     }
 
@@ -114,14 +127,9 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        if( tab.getPosition() == 6 ){
+            new ShoppingCartFragment();
+        }
     }
 
 }

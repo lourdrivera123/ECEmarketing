@@ -1,28 +1,45 @@
 package com.example.zem.patientcareapp;
 
+import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
@@ -33,14 +50,18 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     TextView date, doctor_name;
     EditText complaints, findings, treatments;
 
-    ArrayAdapter<String> history_adapter;
     ArrayList<HashMap<String, String>> hashHistory;
     ArrayList<HashMap<String, String>> hashTreatments;
     ArrayList<String> medRecords;
+    ArrayList<Integer> selectedList;
     ArrayList<String> arrayOfRecords;
     public static final int new_treatment_request = 10;
+    private int nr = 0;
+
+    private SelectionAdapter mAdapter;
 
     DbHelper dbHelper;
+    RoundImage roundedImage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,11 +69,12 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         dbHelper = new DbHelper(getActivity());
 
         hashHistory = dbHelper.getPatientRecord(HomeTileActivity.getUserID());
-        medRecords = new ArrayList<String>();
-        arrayOfRecords = new ArrayList<String>();
+        medRecords = new ArrayList();
+        arrayOfRecords = new ArrayList();
+        selectedList = new ArrayList();
 
         for (int x = 0; x < hashHistory.size(); x++) {
-            medRecords.add(hashHistory.get(x).get("doctor_name") + " - " + hashHistory.get(x).get("record_date"));
+            medRecords.add(hashHistory.get(x).get("doctor_name"));
         }
 
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
@@ -63,12 +85,89 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             noResults.setVisibility(View.VISIBLE);
         }
 
-        history_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, medRecords);
-        list_of_history.setAdapter(history_adapter);
         list_of_history.setOnItemClickListener(this);
-
         add_record.setOnClickListener(this);
 
+        mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, R.id.doctor_name, medRecords);
+        list_of_history.setAdapter(mAdapter);
+        list_of_history.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        list_of_history.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                mAdapter.clearSelection();
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                nr = 0;
+                MenuInflater inflater = getActivity().getMenuInflater();
+                inflater.inflate(R.menu.delete_menu, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.item_delete:
+                        selectedList.addAll(mAdapter.getCurrentCheckedPosition());
+                        final int no_of_records = selectedList.size();
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                        dialog.setTitle("Delete?");
+
+                        if (no_of_records == 1) {
+                            dialog.setMessage(no_of_records + " record will be deleted");
+                        } else if (no_of_records > 1) {
+                            dialog.setMessage(no_of_records + " records will be deleted");
+                        }
+
+                        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mAdapter.removeSelection(selectedList, medRecords);
+                            }
+                        });
+
+                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.create().show();
+
+                        nr = 0;
+                        mAdapter.clearSelection();
+                        mode.finish();
+                        return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if (checked) {
+                    nr++;
+                    mAdapter.setNewSelection(position, checked);
+                } else {
+                    nr--;
+//                    mAdapter.removeSelection(position);
+                }
+                mode.setTitle(nr + " selected");
+            }
+        });
+
+        list_of_history.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                list_of_history.setItemChecked(position, !mAdapter.isPositionChecked(position));
+                return false;
+            }
+        });
         return rootView;
     }
 
@@ -126,6 +225,62 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 startActivity(returnIt);
 
                 break;
+        }
+    }
+
+    private class SelectionAdapter extends ArrayAdapter<String> {
+        private HashMap<Integer, Boolean> mSelection = new HashMap();
+        private ArrayList<String> delete_selected;
+
+        public SelectionAdapter(Context context, int resource, int textViewResourceId, ArrayList<String> objects) {
+            super(context, resource, textViewResourceId, objects);
+            delete_selected = objects;
+        }
+
+        public void setNewSelection(int position, boolean value) {
+            mSelection.put(position, value);
+            notifyDataSetChanged();
+        }
+
+        public boolean isPositionChecked(int position) {
+            Boolean result = mSelection.get(position);
+            return result == null ? false : result;
+        }
+
+        public Set<Integer> getCurrentCheckedPosition() {
+            return mSelection.keySet();
+        }
+
+        public void removeSelection(ArrayList<Integer> selectedList, ArrayList<String> objects) {
+            for (int x = 0; x < selectedList.size(); x++) {
+                Log.i("delete array", delete_selected + "");
+                int delete = Integer.parseInt(selectedList.get(x).toString());
+                objects.remove(delete);
+                Log.i("deleted", objects + "");
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+
+        public void clearSelection() {
+            mSelection = new HashMap();
+            mAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
+            Drawable d = getResources().getDrawable(R.drawable.list_selector);
+            v.setBackgroundDrawable(d);
+
+            ImageView img = (ImageView) v.findViewById(R.id.list_image);
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_app);
+            roundedImage = new RoundImage(bm);
+            img.setImageDrawable(roundedImage);
+
+            if (mSelection.get(position) != null) {
+                v.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));// this is a selected position so make it red
+            }
+            return v;
         }
     }
 }

@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Dexter on 5/11/2015.
+ * Created by Dexter B. on 5/11/2015.
  */
 public class Sync {
 
@@ -37,15 +37,8 @@ public class Sync {
 
         dbHelper = new DbHelper(context);
         queue = Volley.newRequestQueue(context);
-//        url = "http://192.168.1.15/db/get.php?q="+request;
-
         url = "http://vinzry.0fees.us/db/get.php?q="+request;
 
-//        // Request a string response from the provided URL.
-//        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.MethodGET, url, null, new Response.Listener<JSONObject>() {
-//
-//            @Override
-//            public void onResponse(JSONObject response){
                 try {
                     int success = response.getInt("success");
                     if (success == 1) {
@@ -67,57 +60,63 @@ public class Sync {
                                 System.out.print("GWAPO LAGI KO: ");
                                 System.out.println(json_object);
 
-                                if(!json_object.equals("null") && !json_object.equals(null)){
-                                    if( tableName == "products" ){
-                                         if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
-                                             Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
-                                         } else {
-                                             Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
-                                         }
-                                    }else if( tableName == "doctors" ) {
-                                        if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
 
-//                                           listOfDoctorsFragment = new ListOfDoctorsFragment();
-////                            ListOfDoctorsFragment.callresponse();
-//                                        listOfDoctorsFragment.callresponse();
-                                        } else {
-                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }else if( tableName == "specialties" ) {
-                                        if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }else if( tableName == "sub_specialties" ) {
-                                        if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }else if( tableName == "product_categories" ){
-                                        try{
-                                            if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
-                                                Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
+                                if(json_object != null){
+                                    switch (tableName) {
+                                        case "products":
+                                            if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
+                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                             } else {
-                                                Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                             }
-                                        }catch (Exception e){
-                                            Toast.makeText(context, "Something went wrong! "+e.getMessage() , Toast.LENGTH_SHORT).show();
-                                        }
-                                    }else if( tableName == "product_subcategories" ){
-                                        if( dbHelper.insertProductSubCategory(setProductSubCategory(json_object)) ){
-                                            Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
-                                        }else{
-                                            Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
-                                        }
-                                    } else if( tableName == "dosage_format_and_strength") {
-                                        if (dbHelper.insertDosage(setDosage(json_object))) {
-                                            Toast.makeText(context, "successfully saved " , Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(context, "failed to save " , Toast.LENGTH_SHORT).show();
-                                        }
+                                            break;
+                                        case "doctors":
+                                            if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
+                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                            }
+                                            break;
+
+                                        case "specialties":
+                                            if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
+                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                            }
+                                            break;
+                                        case "sub_specialties":
+                                            if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
+                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                            }
+                                            break;
+                                        case "product_categories":
+                                            try {
+                                                if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
+                                                    Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                                }
+                                            } catch (Exception e) {
+                                                Toast.makeText(context, "Something went wrong! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                            break;
+                                        case "product_subcategories":
+                                            if (dbHelper.insertProductSubCategory(setProductSubCategory(json_object))) {
+                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                            }
+                                            break;
+                                        case "dosage_format_and_strength":
+                                            if (dbHelper.insertDosage(setDosage(json_object))) {
+                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                            }
+                                            break;
                                     }
                                 }
                             }
@@ -157,20 +156,6 @@ public class Sync {
                 }
 
             }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Toast.makeText(context, "Error on request", Toast.LENGTH_SHORT).show();
-//                System.out.println("GWAPO DAW KO: " + error);
-//            }
-//        });
-//
-//        queue.add(stringRequest);
-//    }
-
-//    public RequestQueue getQueue(){
-//        return this.queue;
-//    }
 
     public Dosage setDosage(JSONObject json_object){
         Dosage dosage = new Dosage();
@@ -255,10 +240,10 @@ public class Sync {
 
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-//            String str1 = "12/10/2013";
+            /*String str1 = "12/10/2013";*/
             Date date1 = formatter.parse(str1);
 
-//            String str2 = "13/10/2013";
+            /*String str2 = "13/10/2013";*/
             Date date2 = formatter.parse(str2);
 
             if (date1.compareTo(date2) < 0) {
