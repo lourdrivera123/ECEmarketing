@@ -2,17 +2,14 @@ package com.example.zem.patientcareapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -75,8 +72,8 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         dbHelper = new DbHelper(getActivity());
         queue = Volley.newRequestQueue(getActivity());
 
-        arrayOfSearchDoctors = new ArrayList<String>();
-        temp_doctors = new ArrayList<HashMap<String, String>>();
+        arrayOfSearchDoctors = new ArrayList<>();
+        temp_doctors = new ArrayList<>();
 
         search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
         refresh_doctors_list = (ImageButton) rootView.findViewById(R.id.refresh_doctors_list);
@@ -129,7 +126,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     }
 
     public void populateDoctorListView(View rootView, String xml) {
-        doctorsList = new ArrayList<HashMap<String, String>>();
+        doctorsList = new ArrayList<>();
         search_doctor.addTextChangedListener(this);
 
         XMLParser parser = new XMLParser();

@@ -68,10 +68,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_login);
 
-        if (savedInstanceState == null) {
-
-        }
-
         ActionBar actionbar = getActionBar();
         setCustomActionBar(actionbar);
 
@@ -222,6 +218,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         params.put("password", patient.getPassword());
         return params;
     }
+
 
     public static void setCustomActionBar(ActionBar actionbar) {
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));

@@ -36,7 +36,7 @@ public class ContactsFragment extends Fragment {
         cell_no = (EditText) rootView.findViewById(R.id.cell_no);
         address_region = (Spinner) rootView.findViewById(R.id.address_region);
 
-        ArrayAdapter<String> regions_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.regions));
+        ArrayAdapter<String> regions_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.regions));
         address_region.setAdapter(regions_adapter);
 
         int edit = EditTabsActivity.edit_int;

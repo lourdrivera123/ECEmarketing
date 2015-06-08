@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,10 +20,6 @@ import java.util.HashMap;
 
 import java.util.List;
 
-
-/**
- * Created by Esel A. on 5/5/2015.
- */
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "PatientCare";
     public static final int DB_VERSION = 1;
@@ -97,18 +94,18 @@ public class DbHelper extends SQLiteOpenHelper {
             SERVER_PRODUCT_CATEGORY_ID = "product_category_id";
 
     // PRODUCT_SUBCATEGORIES TABLE
-    public static final String PROD_SUBCAT_NAME = "name",
+    public static final String TBL_PRODUCT_SUBCATEGORIES = "product_subcategories",
+            PROD_SUBCAT_NAME = "name",
             PROD_SUBCAT_CATEGORY_ID = "category_id",
             PROD_SUBCAT_CREATED_AT = "created_at",
             PROD_SUBCAT_UPDATED_AT = "updated_at",
             PROD_SUBCAT_DELETED_AT = "deleted_at",
-            TBL_PRODUCT_SUBCATEGORIES = "product_subcategories",
             PRODUCT_SUBCATEGORIES_ID = "id",
             SERVER_PRODUCT_SUBCATEGORY_ID = "product_subcategory_id";
 
     // PRODUCTS TABLE
     public static final String TBL_PRODUCTS = "products",
-            PRODUCTS_ID = "id",
+            PRODUCT_ID = "id",
             PRODUCT_SUBCATEGORY_ID = "subcategory_id",
             SERVER_PRODUCT_ID = "product_id",
             PRODUCT_NAME = "name",
@@ -212,7 +209,7 @@ public class DbHelper extends SQLiteOpenHelper {
         // SQL to create table "products"
         String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
                         "%s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCTS, PRODUCTS_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION,
+                TBL_PRODUCTS, PRODUCT_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION,
                 PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
 
         //SQL TO CREATE TABLE "TBL_DOSAGE"
@@ -328,11 +325,8 @@ public class DbHelper extends SQLiteOpenHelper {
     //to be worked out
     public boolean updateLastUpdatedTable(String table_name, String server_timestamp) {
         SQLiteDatabase db = getWritableDatabase();
-
-
 //        Date now = new Date();
 //        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
 
         ContentValues values = new ContentValues();
         values.put(UPDATE_TIMESTAMP, server_timestamp);
@@ -361,7 +355,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public ArrayList<Integer> insertTreatment(ArrayList<HashMap<String, String>> items, long recordID) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        ArrayList<Integer> arrayOfID = new ArrayList<Integer>();
+        ArrayList<Integer> arrayOfID = new ArrayList();
 
         for (int x = 0; x < items.size(); x++) {
             values.put(TREATMENTS_RECORD_ID, recordID);
@@ -469,34 +463,34 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.moveToFirst();
 
         if (cur.getCount() > 0) {
-            patient.setId(cur.getInt(0));
-            patient.setServerID(cur.getInt(1));
-            patient.setFname(cur.getString(2));
-            patient.setLname(cur.getString(4));
-            patient.setUsername(cur.getString(5));
-            patient.setPassword(cur.getString(6));
-            patient.setOccupation(cur.getString(7));
-            patient.setBirthdate(cur.getString(8));
-            patient.setSex(cur.getString(9));
-            patient.setCivil_status(cur.getString(10));
-            patient.setHeight(cur.getString(11));
-            patient.setWeight(cur.getString(12));
-            patient.setUnit_floor_room_no(cur.getInt(13));
-            patient.setBuilding(cur.getString(14));
-            patient.setLot_no(cur.getInt(15));
-            patient.setBlock_no(cur.getInt(16));
-            patient.setPhase_no(cur.getInt(17));
-            patient.setAddress_house_no(cur.getInt(18));
-            patient.setAddress_street(cur.getString(19));
-            patient.setAddress_barangay(cur.getString(20));
-            patient.setAddress_city_municipality(cur.getString(21));
-            patient.setAddress_province(cur.getString(22));
-            patient.setAddress_region(cur.getString(23));
-            patient.setAddress_zip(cur.getString(24));
-            patient.setTel_no(cur.getString(25));
-            patient.setMobile_no(cur.getString(26));
-            patient.setEmail(cur.getString(27));
-            patient.setPhoto(cur.getString(28));
+            patient.setId(cur.getInt(cur.getColumnIndex(PTNT_ID)));
+            patient.setServerID(cur.getInt(cur.getColumnIndex(PTNT_PATIENT_ID)));
+            patient.setFname(cur.getString(cur.getColumnIndex(PTNT_FNAME)));
+            patient.setLname(cur.getString(cur.getColumnIndex(PTNT_LNAME)));
+            patient.setUsername(cur.getString(cur.getColumnIndex(PTNT_USERNAME)));
+            patient.setPassword(cur.getString(cur.getColumnIndex(PTNT_PASSWORD)));
+            patient.setOccupation(cur.getString(cur.getColumnIndex(PTNT_OCCUPATION)));
+            patient.setBirthdate(cur.getString(cur.getColumnIndex(PTNT_BIRTHDATE)));
+            patient.setSex(cur.getString(cur.getColumnIndex(PTNT_SEX)));
+            patient.setCivil_status(cur.getString(cur.getColumnIndex(PTNT_CIVIL_STATUS)));
+            patient.setHeight(cur.getString(cur.getColumnIndex(PTNT_HEIGHT)));
+            patient.setWeight(cur.getString(cur.getColumnIndex(PTNT_WEIGHT)));
+            patient.setUnit_floor_room_no(cur.getInt(cur.getColumnIndex(PTNT_UNIT_NO)));
+            patient.setBuilding(cur.getString(cur.getColumnIndex(PTNT_BUILDING)));
+            patient.setLot_no(cur.getInt(cur.getColumnIndex(PTNT_LOT_NO)));
+            patient.setBlock_no(cur.getInt(cur.getColumnIndex(PTNT_BLOCK_NO)));
+            patient.setPhase_no(cur.getInt(cur.getColumnIndex(PTNT_PHASE_NO)));
+            patient.setAddress_house_no(cur.getInt(cur.getColumnIndex(PTNT_HOUSE_NO)));
+            patient.setAddress_street(cur.getString(cur.getColumnIndex(PTNT_STREET)));
+            patient.setAddress_barangay(cur.getString(cur.getColumnIndex(PTNT_BARANGAY)));
+            patient.setAddress_city_municipality(cur.getString(cur.getColumnIndex(PTNT_CITY)));
+            patient.setAddress_province(cur.getString(cur.getColumnIndex(PTNT_PROVINCE)));
+            patient.setAddress_region(cur.getString(cur.getColumnIndex(PTNT_REGION)));
+            patient.setAddress_zip(cur.getString(cur.getColumnIndex(PTNT_ZIP)));
+            patient.setTel_no(cur.getString(cur.getColumnIndex(PTNT_TEL_NO)));
+            patient.setMobile_no(cur.getString(cur.getColumnIndex(PTNT_MOBILE_NO)));
+            patient.setEmail(cur.getString(cur.getColumnIndex(PTNT_EMAIL)));
+            patient.setPhoto(cur.getString(cur.getColumnIndex(PTNT_PHOTO)));
         }
 
         cur.close();
@@ -712,14 +706,14 @@ public class DbHelper extends SQLiteOpenHelper {
         Cursor cur = db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
-            medicine.setId(cur.getInt(0));
-            medicine.setServerID(cur.getInt(1));
-            medicine.setMedicine_name(cur.getString(2));
-            medicine.setGeneric_name(cur.getString(3));
-            medicine.setDescription(cur.getString(4));
-            medicine.setPrice(cur.getDouble(5));
-            medicine.setUnit(cur.getString(6));
-            medicine.setPhoto(cur.getString(7));
+            medicine.setId(cur.getInt(cur.getColumnIndex(PRODUCT_ID)));
+            medicine.setServerID(cur.getInt(cur.getColumnIndex(SERVER_PRODUCT_ID)));
+            medicine.setMedicine_name(cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
+            medicine.setGeneric_name(cur.getString(cur.getColumnIndex(PRODUCT_GENERIC_NAME)));
+            medicine.setDescription(cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
+            medicine.setPrice(cur.getDouble(cur.getColumnIndex(PRODUCT_PRICE)));
+            medicine.setUnit(cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
+            medicine.setPhoto(cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
         }
 
         cur.close();
@@ -849,11 +843,11 @@ public class DbHelper extends SQLiteOpenHelper {
         Cursor cur = db.rawQuery(sql, null);
         while (cur.moveToNext()) {
             ProductCategory c = new ProductCategory();
-            c.setCategoryId(cur.getInt(1));
-            c.setName(cur.getString(2));
-            c.setCreatedAt(cur.getString(3));
-            c.setUpdatedAt(cur.getString(4));
-            c.setDeletedAt(cur.getString(5));
+            c.setCategoryId(cur.getInt(cur.getColumnIndex(PRODUCT_CATEGORIES_ID)));
+            c.setName(cur.getString(cur.getColumnIndex(PROD_CAT_NAME)));
+            c.setCreatedAt(cur.getString(cur.getColumnIndex(PROD_CAT_CREATED_AT)));
+            c.setUpdatedAt(cur.getString(cur.getColumnIndex(PROD_CAT_UPDATED_AT)));
+            c.setDeletedAt(cur.getString(cur.getColumnIndex(PROD_CAT_DELETED_AT)));
             categories.add(c);
         }
         cur.close();
@@ -885,8 +879,6 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         long rowID = 0;
         try {
-
-
             values.put(PROD_CAT_NAME, category.getName());
             values.put(SERVER_PRODUCT_CATEGORY_ID, category.getCategoryId());
             values.put(PROD_CAT_CREATED_AT, category.getCreatedAt());
@@ -894,8 +886,6 @@ public class DbHelper extends SQLiteOpenHelper {
             values.put(PROD_CAT_DELETED_AT, category.getDeletedAt());
 
             rowID = db.insert(TBL_PRODUCT_CATEGORIES, null, values);
-
-
         } catch (SQLiteConstraintException e) {
             e.printStackTrace();
         }
@@ -908,7 +898,6 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT id FROM " + TBL_PRODUCT_CATEGORIES + " WHERE name='" + name + "'";
         Cursor cur = db.rawQuery(sql, null);
-        int x = 0;
 
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
@@ -920,7 +909,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public String[] getAllProductSubCategoriesArray(int categoryId) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " WHERE category_id='" + categoryId + "' ORDER BY name";
         Cursor cur = db.rawQuery(sql, null);
@@ -936,7 +925,6 @@ public class DbHelper extends SQLiteOpenHelper {
         String[] arr = new String[list.size()];
         return list.toArray(arr);
     }
-
 
     /* Updates product category */
     public boolean updateProductCategory(ProductCategory category) {
@@ -954,7 +942,6 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     /* INSERT and UPDATE and other SQL for PRODUCT_SUBCATEGORIES TABLE */
-
     // Returns all product subcategories for a specific category
     public ArrayList<ProductSubCategory> getAllProductSubCategories(int productCategoryId) {
         SQLiteDatabase db = getWritableDatabase();
@@ -967,7 +954,6 @@ public class DbHelper extends SQLiteOpenHelper {
             s.setName(cur.getString(1));
             subCategories.add(s);
         }
-
         return subCategories;
     }
 
@@ -1011,17 +997,15 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " where name='" + name + "' and category_id='" + categoryId + "'";
         Cursor cur = db.rawQuery(sql, null);
         while (cur.moveToNext()) {
-            subCategory.setId(cur.getInt(0));
-            subCategory.setName(cur.getString(2));
-            subCategory.setCategoryId(Integer.parseInt(cur.getString(3)));
-            subCategory.setCreatedAt(cur.getString(4));
-            subCategory.setUpdatedAt(cur.getString(5));
-            subCategory.setDeletedAt(cur.getString(6));
+            subCategory.setId(cur.getInt(cur.getColumnIndex(PRODUCT_SUBCATEGORIES_ID)));
+            subCategory.setName(cur.getString(cur.getColumnIndex(PROD_SUBCAT_NAME)));
+            subCategory.setCategoryId(Integer.parseInt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_CATEGORY_ID))));
+            subCategory.setCreatedAt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_CREATED_AT)));
+            subCategory.setUpdatedAt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_UPDATED_AT)));
+            subCategory.setDeletedAt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_DELETED_AT)));
         }
-
         return subCategory;
     }
-
 
     /* INSERT and UPDATE and other SQL's & functions for PRODUCTS TABLE */
 
@@ -1031,9 +1015,10 @@ public class DbHelper extends SQLiteOpenHelper {
      * @param subCategoryId = 0 // to return all products
      */
     public ArrayList<HashMap<String, String>> getProductsBySubCategory(int subCategoryId) {
-        ArrayList<HashMap<String, String>> products = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> products = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
         String sql;
+
         if (subCategoryId == 0) {
             sql = "SELECT * FROM " + TBL_PRODUCTS;
         } else {
@@ -1041,23 +1026,22 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
         Cursor cur = db.rawQuery(sql, null);
-        System.out.println("\nPANGITKA: SQL_getProductsBySubCategory: " + sql);
-
         cur.moveToFirst();
+
         while (!cur.isAfterLast()) {
-            HashMap<String, String> map = new HashMap<String, String>();
-            map.put(PRODUCTS_ID, cur.getString(1));
-            map.put(PRODUCT_SUBCATEGORY_ID, cur.getString(2));
-            map.put(PRODUCT_NAME, cur.getString(3));
-            map.put(PRODUCT_GENERIC_NAME, cur.getString(4));
-            map.put(PRODUCT_DESCRIPTION, cur.getString(5));
-            map.put(PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(6));
-            map.put(PRODUCT_PRICE, cur.getString(7));
-            map.put(PRODUCT_UNIT, cur.getString(8));
-            map.put(PRODUCT_PHOTO, cur.getString(9));
-            map.put(PRODUCT_CREATED_AT, cur.getString(10));
-            map.put(PRODUCT_UPDATED_AT, cur.getString(11));
-            map.put(PRODUCT_DELETED_AT, cur.getString(12));
+            HashMap<String, String> map = new HashMap();
+            map.put(PRODUCT_ID, cur.getString(cur.getColumnIndex(PRODUCT_ID)));
+            map.put(PRODUCT_SUBCATEGORY_ID, cur.getString(cur.getColumnIndex(PRODUCT_SUBCATEGORY_ID)));
+            map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
+            map.put(PRODUCT_GENERIC_NAME, cur.getString(cur.getColumnIndex(PRODUCT_GENERIC_NAME)));
+            map.put(PRODUCT_DESCRIPTION, cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
+            map.put(PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(PRODUCT_PRESCRIPTION_REQUIRED)));
+            map.put(PRODUCT_PRICE, cur.getString(cur.getColumnIndex(PRODUCT_PRICE)));
+            map.put(PRODUCT_UNIT, cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
+            map.put(PRODUCT_PHOTO, cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
+            map.put(PRODUCT_CREATED_AT, cur.getString(cur.getColumnIndex(PRODUCT_CREATED_AT)));
+            map.put(PRODUCT_UPDATED_AT, cur.getString(cur.getColumnIndex(PRODUCT_UPDATED_AT)));
+            map.put(PRODUCT_DELETED_AT, cur.getString(cur.getColumnIndex(PRODUCT_DELETED_AT)));
 
             products.add(map);
             cur.moveToNext();
@@ -1078,7 +1062,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Cursor cur = db.rawQuery(sql, null);
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
-            prod.setId(cur.getInt(cur.getColumnIndex(PRODUCTS_ID)));
+            prod.setId(cur.getInt(cur.getColumnIndex(PRODUCT_ID)));
             prod.setProductId(cur.getInt(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             prod.setSubCategoryId(cur.getInt(cur.getColumnIndex(PRODUCT_SUBCATEGORIES_ID)));
             prod.setName(cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
@@ -1146,7 +1130,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PRODUCT_CREATED_AT, product.getCreatedAt());
         values.put(PRODUCT_UPDATED_AT, product.getUpdatedAt());
 
-        long rowID = db.update(TBL_PRODUCTS, values, PRODUCTS_ID + "=" + product.getId(), null);
+        long rowID = db.update(TBL_PRODUCTS, values, PRODUCT_ID + "=" + product.getId(), null);
         db.close();
         return rowID > 0;
     }
@@ -1224,6 +1208,44 @@ public class DbHelper extends SQLiteOpenHelper {
         return doctor;
     }
 
+    public PatientRecord getPatientRecordByRecordID(int recordID, int userID) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_PATIENT_RECORDS + " WHERE " + RECORDS_PATIENT_ID + " = " + userID + " AND " + RECORDS_ID + " = " + recordID;
+        Cursor cur = db.rawQuery(sql, null);
+        cur.moveToFirst();
+        PatientRecord record = new PatientRecord();
+
+        if (cur.getCount() > 0) {
+            record.setDoctorID(cur.getInt(cur.getColumnIndex(RECORDS_DOCTOR_ID)));
+            record.setDoctorName(cur.getString(cur.getColumnIndex(RECORDS_DOCTOR_NAME)));
+            record.setPatientID(cur.getInt(cur.getColumnIndex(RECORDS_PATIENT_ID)));
+            record.setComplaints(cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
+            record.setFindings(cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
+            record.setDate(cur.getString(cur.getColumnIndex(RECORDS_DATE)));
+        }
+
+        return record;
+    }
+
+    public ArrayList<HashMap<String, String>> getTreatmentByRecordID(int recordID) {
+        SQLiteDatabase db = getWritableDatabase();
+        ArrayList<HashMap<String, String>> treatments = new ArrayList<>();
+        String sql = "SELECT * FROM " + TBL_TREATMENTS + " WHERE " + TREATMENTS_RECORD_ID + " = " + recordID;
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("medicine_name", cur.getString(cur.getColumnIndex(TREATMENTS_MEDICINE_NAME)));
+            map.put("generic_name", cur.getString(cur.getColumnIndex(TREATMENTS_GENERIC_NAME)));
+            map.put("quantity", cur.getString(cur.getColumnIndex(TREATMENTS_QUANITY)));
+            map.put("prescription", cur.getString(cur.getColumnIndex(TREATMENTS_PRESCRIPTION)));
+            treatments.add(map);
+        }
+        cur.close();
+        db.close();
+
+        return treatments;
+    }
     //END OF GET METHODS
 
     /* INSERT UPDATE DELETE SQLs for BASKET TABLE */
@@ -1307,7 +1329,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     /* Returns all basket items */
     public ArrayList<HashMap<String, String>> getAllBasketItems() {
-        ArrayList<HashMap<String, String>> items = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> items = new ArrayList<>();
 
         String sql = "Select b.id, b.basket_id, p.product_id, p.name, p.price, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
                 "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where b.patient_id=" + this.getCurrentLoggedInPatient().getServerID() + "";
@@ -1317,7 +1339,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap<>();
             map.put(BASKET_ID, cur.getString(cur.getColumnIndex(BASKET_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(SERVER_BASKET_ID, cur.getString(cur.getColumnIndex(SERVER_BASKET_ID)));
@@ -1353,7 +1375,19 @@ public class DbHelper extends SQLiteOpenHelper {
         return row > 0;
     }
 
-//    public boolean deletePatientRecord() {
-//
-//    }
+    public long deletePatientRecord(int recordID) {
+        SQLiteDatabase db = getWritableDatabase();
+        long deleted_record_ID = db.delete(TBL_PATIENT_RECORDS, RECORDS_ID + " = " + recordID, null);
+        db.close();
+
+        return deleted_record_ID;
+    }
+
+    public long deleteTreatmentByRecordID(long recordID) {
+        SQLiteDatabase db = getWritableDatabase();
+        long deleted_treatment_ID = db.delete(TBL_TREATMENTS, TREATMENTS_RECORD_ID + " = " + recordID, null);
+        db.close();
+
+        return deleted_treatment_ID;
+    }
 }

@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,9 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-/**
- * Created by User PC on 5/18/2015.
- */
 public class PatientMedicalRecordActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener {
     EditText date, complaint, diagnosis, generic_name, qty, dosage;
     TextView add_treatment;
@@ -43,6 +41,7 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
     ArrayAdapter medicineAdapter;
 
     ArrayList<HashMap<String, String>> items;
+    ArrayList<HashMap<String, String>> update_treatments;
     HashMap<String, String> map;
 
     DbHelper dbhelper;
@@ -51,13 +50,16 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
     Product product;
     Medicine med;
     PatientRecord record;
+    Intent intent;
 
     static int edit_request = -1;
     static int add_request = -1;
     public static Activity medRecord;
+    public static String UPDATE_RECORD_ID = "recordID";
 
     int doctorID = 0;
     long IDs;
+    static int recordID = 0;
 
 
     @Override
@@ -70,10 +72,13 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
 
         dbhelper = new DbHelper(this);
         product = new Product();
-        record = new PatientRecord();
-        items = new ArrayList<>();
-        doctors = new ArrayList<>();
+        items = new ArrayList();
+        doctors = new ArrayList();
+        update_treatments = new ArrayList();
         medRecord = this;
+
+        intent = getIntent();
+        recordID = intent.getIntExtra(UPDATE_RECORD_ID, 0);
 
         date = (EditText) findViewById(R.id.date);
         list_of_treatments = (ListView) findViewById(R.id.list_of_treatments);
@@ -99,8 +104,21 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                 doctorID = Integer.parseInt(arrayOfDoctors.get(itemID).get("ID"));
             }
         });
+        treatments = new ArrayList();
 
-        treatments = new ArrayList<String>();
+        if (recordID > 0) {
+            record = dbhelper.getPatientRecordByRecordID(recordID, HomeTileActivity.getUserID());
+            update_treatments = dbhelper.getTreatmentByRecordID(recordID);
+
+            for (int x = 0; x < update_treatments.size(); x++) {
+                treatments.add(update_treatments.get(x).get("medicine_name") + " - " + update_treatments.get(x).get("prescription"));
+            }
+            date.setText(record.getDate());
+            complaint.setText(record.getComplaints());
+            diagnosis.setText(record.getFindings());
+            search_doctor.setText(record.getDoctorName());
+        }
+
         treatmentsAdapter = new ArrayAdapter(this, R.layout.treatments_list_layout, treatments);
         list_of_treatments.setAdapter(treatmentsAdapter);
         list_of_treatments.setOnCreateContextMenuListener(this);
@@ -149,6 +167,7 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                 String uname = HomeTileActivity.getUname();
                 patient = dbhelper.getloginPatient(uname);
 
+                record = new PatientRecord();
                 record.setPatientID(patient.getServerID());
                 record.setComplaints(s_complaint);
                 record.setFindings(s_diagnosis);
@@ -169,7 +188,10 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                 }
             }
         } else if (id == R.id.cancel) {
-            this.finish();
+            Intent intent = new Intent(this, MasterTabActivity.class);
+            intent.putExtra("selected", 1);
+            intent.putExtra(MasterTabActivity.LAST_ACTIVITY, "");
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -314,7 +336,7 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                         dosage.setError("Field required");
                     }
                 } else {
-                    map = new HashMap<String, String>();
+                    map = new HashMap();
                     map.put("treatment_name", s_medicine);
                     map.put("generic_name", s_generic_name);
                     map.put("qty", s_qty);
