@@ -134,7 +134,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if (helpers.isNetworkAvailable(getBaseContext())) {
 
                         final Map<String, String> params = setParams();
-                        System.out.println("MOTHERFUCKING PARAMS: "+params.toString());
 
                         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
                                 new Response.Listener<JSONObject>() {
@@ -142,14 +141,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                     public void onResponse(JSONObject response) {
 
                                         try {
-                                            System.out.println("FUCKING VOLLEY RESPONSE: "+response.toString());
 
-                                            System.out.println("FUCKING VOLLEY PARAMS: "+params.toString());
                                             int success = response.getInt("success");
                                             if (success == 1) {
                                                 patient_json_array_mysql = response.getJSONArray("patient");
-
-                                                Log.d("activity", "over here");
 
 
                                                 JSONArray checked_json_array = sync.checkWhatToInsert(patient_json_array_mysql, dbHelper.getAllJSONArrayFrom("patients"), "patient_id");
@@ -185,7 +180,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                                         } catch (JSONException e) {
                                             Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
-                                            System.out.println("FUCKING VOLLEY ERROR: "+response.toString());
                                         }
                                     }
                                 }, new Response.ErrorListener() {

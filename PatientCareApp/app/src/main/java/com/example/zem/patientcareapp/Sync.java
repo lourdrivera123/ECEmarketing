@@ -105,6 +105,13 @@ public class Sync {
                                                 Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                             }
                                             break;
+                                        case "baskets":
+                                            if( dbHelper.insertBasket(setBasket(json_object)) ){
+                                                System.out.println("FUCKING BASKET SUCCESSFULLY SAVED. <source: Sync.java>");
+                                            } else {
+                                                System.out.println("FUCKING BASKET FAILED TO SAVE. <source: Sync.java>");
+                                            }
+                                            break;
                                     }
                                 }
                             }
@@ -293,5 +300,13 @@ public class Sync {
         }
 
         return product;
+    }
+
+    public Basket setBasket(JSONObject json) throws JSONException {
+        Basket basket = new Basket();
+        basket.setBasketId(json.getInt(DbHelper.SERVER_BASKET_ID));
+        basket.setQuantity(Double.parseDouble(json.getString(DbHelper.BASKET_QUANTITY)));
+        basket.setUpdatedAt(json.getString(DbHelper.BASKET_UPDATED_AT));
+        return basket;
     }
 }
