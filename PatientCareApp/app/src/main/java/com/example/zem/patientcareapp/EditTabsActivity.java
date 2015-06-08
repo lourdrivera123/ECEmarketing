@@ -12,8 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,10 +28,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -240,7 +236,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                     int success = response.getInt("success");
                                                                     System.out.println("success is: " + success);
 //                                                                    success = response.getInt("success");
-//                                                                    Toast.makeText(EditTabsActivity.this, "response is: "+response, Toast.LENGTH_SHORT).show();
                                                                     if (success == 2) {
                                                                         pDialog.hide();
                                                                         Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
@@ -280,9 +275,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                         System.out.println("error is: " + error);
                                                     }
                                                 });
-
                                                 queue.add(jsObjRequest);
-
                                             } else {
                                                 Toast.makeText(EditTabsActivity.this, "Cannot save because there is no internet connection", Toast.LENGTH_SHORT).show();
                                             }
@@ -503,7 +496,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         } else {
             patient.setAddress_province(s_province);
             count++;
-            count++;
         }
 
         if (s_zip.equals("")) {
@@ -512,6 +504,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             patient.setAddress_zip(s_zip);
             count++;
         }
+
 
         if (s_cell_no.equals("")) {
             cell_no.setError("Field Required");

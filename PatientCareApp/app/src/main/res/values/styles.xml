@@ -3,6 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Base.Theme.AppCompat.Light">
         <item name="android:displayOptions">useLogo|showHome</item>
+        <item name="android:actionModeStyle">@style/ContextualActionBar</item>
     </style>
 
     <!-- Cart Layout Styles -->
@@ -126,5 +127,11 @@
         <item name="android:paddingLeft">65dp</item>
         <item name="android:paddingRight">65dp</item>
         <item name="android:layout_weight">1</item>
+    </style>
+
+    <!--Change color for Contextual Action Mode-->
+    <style name="ContextualActionBar" parent="Theme.AppCompat.Light">
+        <item name="actionModeBackground">@color/ColorPrimary</item>
+        <item name="android:actionModeBackground">@color/ColorPrimary</item>
     </style>
 </resources>

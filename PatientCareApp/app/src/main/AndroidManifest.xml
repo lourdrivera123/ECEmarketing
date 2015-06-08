@@ -49,6 +49,12 @@
             android:name=".PatientHistoryFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
+            android:name=".ShoppingCartFragment"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".ProductsFragment"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
             android:name=".HomeTileActivity"
             android:theme="@android:style/Theme.Holo.Light"
             launchMode="singleInstance"
@@ -71,16 +77,15 @@
         <activity android:name=".Medicine" />
         <activity android:name=".Doctor" />
         <activity android:name=".PatientRecord" />
+        <activity android:name=".RoundImage" />
         <activity android:name=".FileCache" />
         <activity android:name=".Utils" />
         <activity android:name=".MemoryCache" />
         <activity android:name=".LazyAdapter" />
         <activity android:name=".ImageLoader" />
-        <activity android:name=".ProductsFragment" />
         <activity android:name=".DbHelper" />
         <activity android:name=".PatientConsultationActivity" />
         <activity android:name=".PatientConsultationFragment" />
-        <activity android:name=".ShoppingCartFragment" />
         <activity android:name=".AppController" />
         <activity android:name=".LruBitmapCache" />
         <activity android:name=".Sync" />
