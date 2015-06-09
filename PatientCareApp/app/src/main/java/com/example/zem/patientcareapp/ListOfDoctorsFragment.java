@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     ArrayList<HashMap<String, String>> temp_doctors;
     ArrayList<HashMap<String, String>> doctorsList;
     public ArrayList<Doctor> doctors_array_list;
+    public static ArrayList<HashMap<String, String>> doctor_items;
 
     String s_doctor;
 
@@ -85,7 +87,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
         if ( helpers.isNetworkAvailable(getActivity()) ) {
 
-
             // Request a string response from the provided URL.
             JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
 
@@ -98,10 +99,12 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                     } catch (Exception e) {
                         System.out.println("error fetching server timestamp: " + e);
                     }
-                    doctors_array_list = dbHelper.getAllDoctors();
+//                    doctors_array_list = dbHelper.getAllDoctors();
+                    doctor_items = dbHelper.getAllDoctors();
+
                     String xml = dbHelper.getDoctorsStringXml();
 
-                    populateDoctorListView(rootView, xml);
+                    populateDoctorListView(rootView, doctor_items);
                     pDialog.hide();
                 }
             }, new Response.ErrorListener() {
@@ -114,47 +117,83 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
             queue.add(stringRequest);
 
         } else {
-            doctors_array_list = dbHelper.getAllDoctors();
+                doctor_items = dbHelper.getAllDoctors();
             String xml = dbHelper.getDoctorsStringXml();
 
-            populateDoctorListView(rootView, xml);
-            pDialog.hide();
+            populateDoctorListView(rootView, doctor_items);
         }
         return rootView;
     }
 
-    public void populateDoctorListView(View rootView, String xml) {
+    public void populateDoctorListView(View rootView, ArrayList<HashMap<String, String>> doctor_items) {
+//        doctorsList = new ArrayList<HashMap<String, String>>();
+//=======
+//    public void populateDoctorListView(View rootView, String xml) {
         doctorsList = new ArrayList<>();
         search_doctor.addTextChangedListener(this);
 
-        XMLParser parser = new XMLParser();
-        Document doc = parser.getDomElement(xml); // getting DOM element
+//        XMLParser parser = new XMLParser();
+//        Document doc = parser.getDomElement(xml); // getting DOM element
 
-        NodeList nl = doc.getElementsByTagName(KEY_DOCTOR);
+//        NodeList nl = doc.getElementsByTagName(KEY_DOCTOR);
         // looping through all song nodes &lt;song&gt;
-        for (int i = 0; i < nl.getLength(); i++) {
+//        for (int i = 0; i < nl.getLength(); i++) {
             // creating new HashMap
-            HashMap<String, String> map = new HashMap<String, String>();
-            Element e = (Element) nl.item(i);
-            // adding each child node to HashMap key =&gt; value
-            map.put(KEY_ID, parser.getValue(e, KEY_ID));
-            map.put(KEY_FULL_NAME, parser.getValue(e, KEY_FULL_NAME));
-            map.put(KEY_SPECIALTY, parser.getValue(e, KEY_SPECIALTY));
-            map.put(KEY_PHOTO, parser.getValue(e, KEY_PHOTO));
-
+//            HashMap<String, String> map = new HashMap<String, String>();
+//            Element e = (Element) nl.item(i);
+//            // adding each child node to HashMap key =&gt; value
+//            map.put(KEY_ID, parser.getValue(e, KEY_ID));
+//            map.put(KEY_FULL_NAME, parser.getValue(e, KEY_FULL_NAME));
+//            map.put(KEY_SPECIALTY, parser.getValue(e, KEY_SPECIALTY));
+//            map.put(KEY_PHOTO, parser.getValue(e, KEY_PHOTO));
+//
             // adding HashList to ArrayList
-            doctorsList.add(map);
-            temp_doctors.add(map);
-            arrayOfSearchDoctors.add(doctorsList.get(i).get(KEY_FULL_NAME).trim());
-        }
+//<<<<<<< HEAD
+//            doctorsList.add(map);
+//            arrayOfSearchDoctors.add(doctorsList.get(i).get(KEY_FULL_NAME));
+//        }
 
-        adapter = new LazyAdapter(getActivity(), doctorsList, "list_of_doctors");
-        list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
-        list_of_doctors.setAdapter(adapter);
+
+
+
+                adapter = new LazyAdapter(getActivity(), doctor_items, "list_of_doctors");
+                list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
+                list_of_doctors.setAdapter(adapter);
+
+
+
+//=======
+//            doctorsList.add(map);
+//            temp_doctors.add(map);
+//            arrayOfSearchDoctors.add(doctorsList.get(i).get(KEY_FULL_NAME).trim());
+//        }
+//>>>>>>> c43afcda9f329406f059e587f8a2189eb648d397
+
 
         list_of_doctors.setOnItemClickListener(this);
         search_doctor.addTextChangedListener(this);
     }
+
+
+//    public void doSomeShit(String xml) {
+//        populateDoctorListView(root_view, xml);
+//    }
+
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        String item_clicked = parent.getItemAtPosition(position).toString();
+//        int doctorindex = arrayOfSearchDoctors.indexOf(item_clicked);
+//        HashMap<String, String> map = new HashMap<String, String>();
+//
+//        map.put(KEY_ID, doctorsList.get(doctorindex).get(KEY_ID));
+//        map.put(KEY_FULL_NAME, doctorsList.get(doctorindex).get(KEY_FULL_NAME));
+//        map.put(KEY_SPECIALTY, doctorsList.get(doctorindex).get(KEY_SPECIALTY));
+//        map.put(KEY_PHOTO, doctorsList.get(doctorindex).get(KEY_PHOTO));
+//
+//        doctorsList.clear();
+//        doctorsList.add(map);
+//        adapter.notifyDataSetChanged();
+//    }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -195,9 +234,57 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     }
 
     public void onClick(View v) {
-        Intent intent = new Intent(getActivity(), MasterTabActivity.class);
-        intent.putExtra("selected", 3);
-        startActivity(intent);
+//        Intent intent =  new Intent(getActivity(), MasterTabActivity.class);
+//        intent.putExtra("selected", 3);
+//        startActivity(intent);
+
+//        sync = new Sync();
+//        boolean asd = sync.checkDateTime("2015-04-29 06:50:50", "2015-04-29 06:50:51");
+//        System.out.println("result for check date time = "+ asd);
+
+
+        if (helpers.isNetworkAvailable(getActivity())) {
+
+            // Request a string response from the provided URL.
+            JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("response from update", response.toString());
+                    sync = new Sync();
+                    sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
+                    try {
+                        System.out.println("timestamp from server: " + response.getString("server_timestamp"));
+                        dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
+                        Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
+
+                        adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        System.out.println("error fetching server timestamp: " + e);
+                    }
+
+                    doctor_items = dbHelper.getAllDoctors();
+
+//                    String xml = dbHelper.getDoctorsStringXml();
+//                    list_of_doctors.deferNotifyDataSetChanged();
+                    populateDoctorListView(root_view, doctor_items);
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    System.out.println("GWAPO DAW KO: " + error);
+                }
+            });
+            queue.add(doctor_request);
+
+        } else {
+            Toast.makeText(getActivity(), "You must have Internet to be able to use the App properly", Toast.LENGTH_LONG).show();
+
+        }
+
+
     }
 }
 

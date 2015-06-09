@@ -5,16 +5,12 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
@@ -116,6 +112,11 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+        System.out.println("FUCKING TAB POSITION: "+tab.getPosition());
+        if( tab.getPosition() == 6 ){
+            new ShoppingCartFragment();
+        }
         viewPager.setCurrentItem(tab.getPosition());
     }
 
@@ -126,7 +127,9 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
+        if( tab.getPosition() == 6 ){
+            new ShoppingCartFragment();
+        }
     }
 
 }

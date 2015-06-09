@@ -24,6 +24,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 return new ContactsFragment();
             case 2:
                 return new AccountFragment();
+
         }
 
         return null;
