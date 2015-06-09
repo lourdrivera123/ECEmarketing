@@ -49,10 +49,10 @@
 
     <!-- Date -->
     <TextView
+        android:id="@+id/record_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="02/23/1995"
-        android:id="@+id/product_price"
         android:textStyle="bold"
         android:textSize="10dp"
         android:layout_alignBottom="@+id/product_description"

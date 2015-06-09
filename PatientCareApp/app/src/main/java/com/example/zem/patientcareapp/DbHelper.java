@@ -1377,7 +1377,6 @@ public class DbHelper extends SQLiteOpenHelper {
             doctor.setUpdated_at(cur.getString(cur.getColumnIndex(DOC_UPDATED_AT)));
             doctor.setDeleted_at(cur.getString(cur.getColumnIndex(DOC_DELETED_AT)));
         }
-
         cur.close();
         db.close();
 
@@ -1429,7 +1428,6 @@ public class DbHelper extends SQLiteOpenHelper {
     //END OF GET METHODS
 
     /* INSERT UPDATE DELETE SQLs for BASKET TABLE */
-
     /**
      * @param basket Create new record for "basket" table
      */

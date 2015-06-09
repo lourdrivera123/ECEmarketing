@@ -27,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.JsonObjectRequest;
+
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -181,14 +182,12 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 //            }, 3000);
 
         } else {
-            Log.d("Connected to internet", "no");
             dbHelper.getAllProducts();
             String xml = dbHelper.getProductsStringXml();
 
             populateProductsListView(rootView, xml);
             pDialog.hide();
         }
-
 
         return rootView;
     }
@@ -261,26 +260,24 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.add_to_cart_btn :
-                if(helpers.isNetworkAvailable(getActivity())){
+        switch (v.getId()) {
+            case R.id.add_to_cart_btn:
+                if (helpers.isNetworkAvailable(getActivity())) {
 
                     try {
                         int productId;
                         double new_qty;
                         String q = add_to_cart_btn.getTag().toString();
-                        productId = Integer.parseInt(q.equals("") ? "1"  : q);
+                        productId = Integer.parseInt(q.equals("") ? "1" : q);
 
                         new_qty = Double.parseDouble(qty.getText().toString());
-
-
 
                     /* let's check if the product already exists in our basket */
                         final Basket basket = dbHelper.getBasket(productId);
 
 
-                        System.out.println("MOTHERFUCKING BASKET: productId:"+productId+" product_id: "+basket.getProductId()+"  basket_id="+basket.getBasketId()+" id: "+basket.getId()+" patient_id: "+basket.getPatienId());
-                        if(basket.getBasketId() > 0  ){
+                        System.out.println("MOTHERFUCKING BASKET: productId:" + productId + " product_id: " + basket.getProductId() + "  basket_id=" + basket.getBasketId() + " id: " + basket.getId() + " patient_id: " + basket.getPatienId());
+                        if (basket.getBasketId() > 0) {
                             HashMap<String, String> hashMap = new HashMap<String, String>();
                             hashMap.put("product_id", String.valueOf(productId));
 
@@ -300,23 +297,18 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                                 @Override
                                 public void run() {
                                     boolean responseFromServer = serverRequest.getResponse();
-                                    if( responseFromServer ) {
-                                        if( dbHelper.updateBasket(basket) ){
+                                    if (responseFromServer) {
+                                        if (dbHelper.updateBasket(basket)) {
                                             Toast.makeText(getActivity(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
-                                        }else{
+                                        } else {
                                             Toast.makeText(getActivity(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
                                         }
-                                    }else{
+                                    } else {
                                         Toast.makeText(getActivity(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }, 3000);
-
-
-
-
-
-                        }else{
+                        } else {
                         /* since, we can't find the product in baskets table, let's insert a new one */
                             HashMap<String, String> hashMap = new HashMap<String, String>();
                             hashMap.put("product_id", String.valueOf(productId));
@@ -332,7 +324,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                             serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
                             serverRequest.init(getActivity(), hashMap, "insert_basket");
                         }
-                    }catch(Exception e){
+                    } catch (Exception e) {
 
                     }
 
@@ -421,7 +413,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
                     Toast.makeText(getActivity(), subCategoryName + " : " + subCategory.getName() + " : " + list.size()
                             , Toast.LENGTH_SHORT).show();
-//
 //                // Getting adapter by passing xml data ArrayList
                     if (list.size() > 0) {
                         products_list.clear();
@@ -437,8 +428,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             products_list.addAll(prods);
             adapter.notifyDataSetChanged();
         }
-
-
     }
 
     @Override
