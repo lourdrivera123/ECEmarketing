@@ -765,13 +765,12 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(SPECIALTY_UPDATED_AT, specialty.getUpdated_at());
         values.put(SPECIALTY_DELETED_AT, specialty.getDeleted_at());
 
-        switch (request) {
-            case "insert":
-                rowID = db.insert(TBL_SPECIALTIES, null, values);
-                break;
-            case "update":
-                rowID = db.update(TBL_SPECIALTIES, values, SPECIALTY_ID + "=" + specialty.getSpecialty_id(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_SPECIALTIES, null, values);
+
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_SPECIALTIES, values, SPECIALTY_ID + "=" + specialty.getSpecialty_id(), null);
+
         }
         return rowID > 0;
     }
@@ -789,13 +788,12 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(SUB_SPECIALTY_UPDATED_AT, sub_specialty.getUpdated_at());
         values.put(SUB_SPECIALTY_DELETED_AT, sub_specialty.getDeleted_at());
 
-        switch(request) {
-            case "insert":
-                rowID = db.insert(TBL_SUB_SPECIALTIES, null, values);
-                break;
-            case "update":
-                rowID = db.update(TBL_SUB_SPECIALTIES, values, SUB_SPECIALTY_ID + "=" + sub_specialty.getSpecialty_id(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_SUB_SPECIALTIES, null, values);
+
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_SUB_SPECIALTIES, values, SUB_SPECIALTY_ID + "=" + sub_specialty.getSpecialty_id(), null);
+
         }
 
 
@@ -1335,13 +1333,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
         long rowID = 0;
 
-        switch(request) {
-            case "insert":
-                rowID = db.insert(TBL_PRODUCTS, null, values);
-                break;
-            case "update":
-                rowID = db.update(TBL_PRODUCTS, values, PRODUCT_ID + "=" + product.getProductId(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_PRODUCTS, null, values);
+
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_PRODUCTS, values, PRODUCT_ID + "=" + product.getProductId(), null);
+
         }
 //        long rowID = db.insert(TBL_PRODUCTS, null, values);
 
@@ -1469,12 +1466,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public ArrayList<HashMap<String, String>> getTreatmentByRecordID(int recordID) {
         SQLiteDatabase db = getWritableDatabase();
-        ArrayList<HashMap<String, String>> treatments = new ArrayList<>();
+        ArrayList<HashMap<String, String>> treatments = new ArrayList();
         String sql = "SELECT * FROM " + TBL_TREATMENTS + " WHERE " + TREATMENTS_RECORD_ID + " = " + recordID;
         Cursor cur = db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
-            HashMap<String, String> map = new HashMap<>();
+            HashMap<String, String> map = new HashMap();
             map.put("medicine_name", cur.getString(cur.getColumnIndex(TREATMENTS_MEDICINE_NAME)));
             map.put("generic_name", cur.getString(cur.getColumnIndex(TREATMENTS_GENERIC_NAME)));
             map.put("quantity", cur.getString(cur.getColumnIndex(TREATMENTS_QUANITY)));
@@ -1693,7 +1690,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     /* Returns all basket items */
     public ArrayList<HashMap<String, String>> getAllBasketItems() {
-        ArrayList<HashMap<String, String>> items = new ArrayList<>();
+        ArrayList<HashMap<String, String>> items = new ArrayList();
 
         String sql = "Select b.id, b.basket_id, p.product_id, p.name, p.price, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
                 "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where b.patient_id=" + this.getCurrentLoggedInPatient().getServerID() + "";
@@ -1703,7 +1700,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
-            HashMap<String, String> map = new HashMap<>();
+            HashMap<String, String> map = new HashMap();
             map.put(BASKET_ID, cur.getString(cur.getColumnIndex(BASKET_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(SERVER_BASKET_ID, cur.getString(cur.getColumnIndex(SERVER_BASKET_ID)));
@@ -1728,10 +1725,9 @@ public class DbHelper extends SQLiteOpenHelper {
     //DELETE METHODS
 
     /**
-     * Deletes an item from table "baskets"
-     *
-     * @param basketId
-     */
+    * Deletes an item from table "baskets"
+    * @param basketId
+    */
     public boolean deleteBasketItem(int basketId) {
         SQLiteDatabase db = getWritableDatabase();
         long row = db.delete(TBL_BASKETS, SERVER_BASKET_ID + "=" + basketId, null);

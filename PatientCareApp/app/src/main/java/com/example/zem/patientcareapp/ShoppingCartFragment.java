@@ -21,9 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
@@ -52,6 +54,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     View root_view;
     Button btnCheckout;
     Sync sync;
+    RequestQueue queue;
 
     @SuppressLint("NewApi")
     @Override
@@ -59,6 +62,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
         View rootView = inflater.inflate(R.layout.cart_layout, container, false);
         sync = new Sync();
+        queue = Volley.newRequestQueue(getActivity());
         root_view = rootView;
         dbHelper = new DbHelper(getActivity());
         helper = new Helpers();
@@ -69,9 +73,10 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
         btnCheckout.setOnClickListener(this);
 
-
         if( helper.isNetworkAvailable(getActivity()) ){
-            JsonObjectRequest prod_request = new JsonObjectRequest(Request.Method.GET, helper.get_url("get_products"), null, new Response.Listener<JSONObject>() {
+            String url = helper.get_url("get_basket_items")+"&patient_id="+dbHelper.getCurrentLoggedInPatient().getServerID()+"&table=baskets";
+            System.out.println("GWAPOKO: FUCKING URL: "+url);
+            JsonObjectRequest basket_items_request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(JSONObject response) {
@@ -79,9 +84,29 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     sync = new Sync();
                     sync.init(getActivity(), "get_basket_items", "baskets", "basket_id", response);
 
-                    dbHelper.getAllProducts();
+                    try {
+                        System.out.println("timestamp from server: " + response.getString("server_timestamp"));
+                        dbHelper.updateLastUpdatedTable("baskets", response.getString("server_timestamp"));
 
-                    /*populateProductsListView(rootView, xml);*/
+                        items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
+
+                        for(HashMap<String, String> item : items){
+                            double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
+                            double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
+                            double total = price*quantity;
+                            TotalAmount+= total;
+                        }
+
+                            total_amount.setText("Php " + TotalAmount);
+
+                            adapter = new LazyAdapter(getActivity(), items, "basket_items");
+
+                            lv_items.setAdapter(adapter);
+
+
+                    } catch (Exception e) {
+                        System.out.println("error fetching server timestamp: "+ e);
+                    }
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -89,25 +114,9 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
                 }
             });
+            queue.add(basket_items_request);
         }
-
-        items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
-
-        for(HashMap<String, String> item : items){
-            double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
-            double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
-            double total = price*quantity;
-            TotalAmount+= total;
-        }
-
-        total_amount.setText("Php " + TotalAmount);
-
-        adapter = new LazyAdapter(getActivity(), items, "basket_items");
-
-        lv_items.setAdapter(adapter);
-
         lv_items.setOnCreateContextMenuListener(this);
-
         return rootView;
     }
 

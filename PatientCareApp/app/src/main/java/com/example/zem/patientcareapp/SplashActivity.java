@@ -86,7 +86,7 @@ public class SplashActivity extends Activity {
                         sync = new Sync();
                         sync.init(getBaseContext(), "get_doctor_specialties", "specialties", "specialty_id", response);
 
-                        System.out.println("response in specialty: "+response.toString());
+                        System.out.println("response in specialty: " + response.toString());
 
                         try {
                             System.out.println("timestamp from server: "+response.getString("server_timestamp"));

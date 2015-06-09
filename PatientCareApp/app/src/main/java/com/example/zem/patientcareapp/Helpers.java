@@ -83,7 +83,7 @@ public class Helpers {
         return "http://vinzry.0fees.us/db/get.php?q="+request;
     }
 
-    public static final String md5(final String s) {
+    public String md5(final String s) {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash
