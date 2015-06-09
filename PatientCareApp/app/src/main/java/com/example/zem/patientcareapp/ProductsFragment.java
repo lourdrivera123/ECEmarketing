@@ -97,46 +97,16 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             populateListView(rootView, category_list);
 
         } else {
-            Log.d("Connected to internet", "no");
             products_items = dbHelper.getAllProducts();
-//            String xml = dbHelper.getProductsStringXml();
 
             populateProductsListView(rootView, products_items);
             pDialog.hide();
         }
 
-
         return rootView;
     }
 
     public void populateProductsListView(View rootView, ArrayList<HashMap<String, String>> products_items) {
-//        products_list = new ArrayList<HashMap<String, String>>();
-
-//        XMLParser parser = new XMLParser();
-//        String xml = parser.getXmlFromUrl("http://localhost/db/get.php?q=get_products"); // getting XML from URL
-
-
-//        Document doc = parser.getDomElement(xml); // getting DOM element
-//
-//        NodeList nl = doc.getElementsByTagName(KEY_PRODUCT);
-//        // looping through all song nodes &lt;song&gt;
-//        for (int i = 0; i < nl.getLength(); i++) {
-//            // creating new HashMap
-//            HashMap<String, String> map = new HashMap<String, String>();
-//            Element e = (Element) nl.item(i);
-//            // adding each child node to HashMap key =&gt; value
-//            map.put(KEY_PRODUCT_ID, parser.getValue(e, KEY_PRODUCT_ID));
-//            map.put(KEY_PRODUCT_NAME, parser.getValue(e, KEY_PRODUCT_NAME));
-//            map.put(KEY_PRODUCT_DESCRIPTION, parser.getValue(e, KEY_PRODUCT_DESCRIPTION));
-//            map.put(KEY_PRODUCT_PHOTO, parser.getValue(e, KEY_PRODUCT_PHOTO));
-//            map.put(KEY_PRODUCT_PRICE, parser.getValue(e, KEY_PRODUCT_PRICE));
-//
-//            // adding HashList to ArrayList
-//            products_list.add(map);
-//        }
-
-//        products_items = dbHelper.getAllProducts();
-
         list_of_products = (ListView) rootView.findViewById(R.id.product_lists);
 
         // Getting adapter by passing xml data ArrayList
@@ -181,26 +151,24 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.add_to_cart_btn :
-                if(helpers.isNetworkAvailable(getActivity())){
+        switch (v.getId()) {
+            case R.id.add_to_cart_btn:
+                if (helpers.isNetworkAvailable(getActivity())) {
 
                     try {
                         int productId;
                         double new_qty;
                         String q = add_to_cart_btn.getTag().toString();
-                        productId = Integer.parseInt(q.equals("") ? "1"  : q);
+                        productId = Integer.parseInt(q.equals("") ? "1" : q);
 
                         new_qty = Double.parseDouble(qty.getText().toString());
-
-
 
                     /* let's check if the product already exists in our basket */
                         final Basket basket = dbHelper.getBasket(productId);
 
 
-                        System.out.println("MOTHERFUCKING BASKET: productId:"+productId+" product_id: "+basket.getProductId()+"  basket_id="+basket.getBasketId()+" id: "+basket.getId()+" patient_id: "+basket.getPatienId());
-                        if(basket.getBasketId() > 0  ){
+                        System.out.println("MOTHERFUCKING BASKET: productId:" + productId + " product_id: " + basket.getProductId() + "  basket_id=" + basket.getBasketId() + " id: " + basket.getId() + " patient_id: " + basket.getPatienId());
+                        if (basket.getBasketId() > 0) {
                             HashMap<String, String> hashMap = new HashMap<String, String>();
                             hashMap.put("product_id", String.valueOf(productId));
 
@@ -220,23 +188,18 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                                 @Override
                                 public void run() {
                                     boolean responseFromServer = serverRequest.getResponse();
-                                    if( responseFromServer ) {
-                                        if( dbHelper.updateBasket(basket) ){
+                                    if (responseFromServer) {
+                                        if (dbHelper.updateBasket(basket)) {
                                             Toast.makeText(getActivity(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
-                                        }else{
+                                        } else {
                                             Toast.makeText(getActivity(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
                                         }
-                                    }else{
+                                    } else {
                                         Toast.makeText(getActivity(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }, 3000);
-
-
-
-
-
-                        }else{
+                        } else {
                         /* since, we can't find the product in baskets table, let's insert a new one */
                             HashMap<String, String> hashMap = new HashMap<String, String>();
                             hashMap.put("product_id", String.valueOf(productId));
@@ -252,7 +215,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                             serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
                             serverRequest.init(getActivity(), hashMap, "insert_basket");
                         }
-                    }catch(Exception e){
+                    } catch (Exception e) {
 
                     }
 
@@ -384,7 +347,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
                     Toast.makeText(getActivity(), subCategoryName + " : " + subCategory.getName() + " : " + list.size()
                             , Toast.LENGTH_SHORT).show();
-//
 //                // Getting adapter by passing xml data ArrayList
                     if (list.size() > 0) {
                         products_items.clear();
@@ -400,8 +362,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             products_items.addAll(prods);
             adapter.notifyDataSetChanged();
         }
-
-
     }
 
     @Override

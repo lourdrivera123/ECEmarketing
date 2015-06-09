@@ -8,7 +8,8 @@ import java.io.Serializable;
 public class Doctor implements Serializable {
     private String fname = "", mname = "", lname = "",
             cell_no = "", tel_no = "", photo = "",
-            email = "", affiliation = "", created_at = "", updated_at = "", deleted_at = "";
+            email = "", affiliation = "", specialty = "", sub_specialty = "",
+            created_at = "", updated_at = "", deleted_at = "";
 
     private int id = 0, prc_no = 0, doc_id = 0, sub_specialty_id = 0;
 
@@ -46,6 +47,14 @@ public class Doctor implements Serializable {
 
     public void setPrc_no(int prc_no) {
         this.prc_no = prc_no;
+    }
+
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
+    }
+
+    public void setSub_specialty(String sub_specialty) {
+        this.sub_specialty = sub_specialty;
     }
 
     public void setSub_specialty_id(int sub_specialty_id) {
@@ -93,14 +102,18 @@ public class Doctor implements Serializable {
      * GETTERS ------------------------------------------------------------------- *
      */
 
-
     public String getFullname(boolean middlename_is_full) {
         if (middlename_is_full == true) {
             return fname + " " + mname + " " + lname;
         }
         return fname + " " + mname.indexOf(0) + ". " + lname;
-
     }
+
+//    public String getFirstLineAddress() {
+//        if(get) {
+//
+//        }
+//    }
 
     public int getDoc_id() {
         return doc_id;
@@ -120,6 +133,14 @@ public class Doctor implements Serializable {
 
     public int getPrc_no() {
         return prc_no;
+    }
+
+    public String getSpecialty() {
+        return specialty;
+    }
+
+    public String getSub_specialty() {
+        return sub_specialty;
     }
 
     public int getSub_specialty_id() {
