@@ -20,179 +20,99 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.4">
+
+                    <ImageView
+                        android:id="@+id/image_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/img_holder" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6">
+
+                    <TextView
+                        android:id="@+id/doctor_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:text="Lastname, Firstname, MI. PhD" />
+
+                    <TextView
+                        android:id="@+id/specialty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Cardiologist" />
+
+
+                    <TextView
+                        android:id="@+id/sub_specialty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="CardioSublogist" />
+
+                    <ImageButton
+                        android:id="@+id/call_doctor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_contact" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <TableLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TableRow>
-
-                        <LinearLayout
-                            android:layout_weight="0.7"
-                            android:minHeight="100dp"
-                            android:minWidth="100dp">
-
-                            <ImageView
-                                android:id="@+id/image_holder"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/img_holder" />
-                        </LinearLayout>
-
-                        <TableLayout>
-
-                            <TableRow>
-
-                                <TextView
-                                    android:id="@+id/doctor_name"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="0.7"
-                                    android:gravity="right"
-                                    android:text="Lastname, Firstname, MI. PhD" />
-                            </TableRow>
-
-                            <TableRow>
-
-                                <TextView
-                                    android:id="@+id/specialty"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Cardiologist" />
-                            </TableRow>
-
-                            <TableRow>
-
-                                <TextView
-                                    android:id="@+id/sub_specialty"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="CardioSublogist" />
-                            </TableRow>
-
-                            <TableRow android:layout_marginTop="8dp">
-
-                                <ImageButton
-                                    android:id="@+id/call_doctor"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/ic_contact" />
-                            </TableRow>
-                        </TableLayout>
-                    </TableRow>
-                </TableLayout>
-            </LinearLayout>
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TableRow>
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:text="CONTACT INFORMATION"
-                        android:textStyle="bold" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
-
-                    <TextView
-                        android:id="@+id/address_first_line"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="#86 Acacia St., Cabantian" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
-
-                    <TextView
-                        android:id="@+id/address_second_line"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Dexter City, Davao del Sur, Philippines, 8000" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
-
-                    <TextView
-                        android:id="@+id/email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="doctor@email.com" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-
-                        <TextView
-                            android:id="@+id/cp_no"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="0956752434 / 8719876" />
-                    </LinearLayout>
-                </TableRow>
-            </TableLayout>
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp">
-
-                <TableRow>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="@dimen/d10"
+                        android:layout_marginBottom="@dimen/d10"
                         android:text="CLINIC INFORMATION"
                         android:textStyle="bold" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
 
                     <TextView
                         android:id="@+id/clinic_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
                         android:text="Doctor's Clinic"
                         android:textStyle="bold" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
 
                     <TextView
                         android:id="@+id/clinic_address_first_line"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
                         android:text="#86 Acacia St., Cabantian" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
 
                     <TextView
                         android:id="@+id/clinic_address_second_line"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
                         android:text="Dexter City, Davao del Sur, Philippines, 8000" />
-                </TableRow>
-            </TableLayout>
+
+                </TableLayout>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

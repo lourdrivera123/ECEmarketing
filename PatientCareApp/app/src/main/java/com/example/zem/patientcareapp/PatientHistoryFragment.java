@@ -29,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -198,6 +200,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             }
             treatments.setText("" + arrayOfRecords);
         }
+        arrayOfRecords.clear();
 
         call_doctor_btn.setOnClickListener(this);
         view_doctor_btn.setOnClickListener(this);
@@ -273,6 +276,13 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
             ImageView img = (ImageView) v.findViewById(R.id.list_image);
             TextView record_date = (TextView) v.findViewById(R.id.record_date);
+            TextView findings = (TextView) v.findViewById(R.id.findings);
+
+            record_date.setText(hashHistory.get(position).get("record_date"));
+            record_date.setTag(position);
+            findings.setText(hashHistory.get(position).get("findings"));
+            findings.setTag(position);
+
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_app);
             roundedImage = new RoundImage(bm);
             img.setImageDrawable(roundedImage);
