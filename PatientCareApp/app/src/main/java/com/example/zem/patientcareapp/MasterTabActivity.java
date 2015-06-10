@@ -8,17 +8,22 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.ImageButton;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
-public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
+public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener, View.OnClickListener {
     private MasterTabsAdapter mAdapter;
     private String[] tabs = {"Profile", "My Records", "Test Results", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
     private ViewPager viewPager;
     private ActionBar actionBar;
+
+    ImageButton back_btn, more;
 
     static final String LAST_ACTIVITY = "";
     Intent intent;
@@ -29,9 +34,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
 
-
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBar(actionbar);
+        showActionBar();
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getActionBar();
@@ -80,41 +83,41 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         super.onBackPressed();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mastertabs_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.logout_menu) {
-            SharedPreferences sharedpreferences = getSharedPreferences
-                    (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.clear();
-            editor.commit();
-            MasterTabActivity.this.finish();
-            startActivity(new Intent(this, MainActivity.class));
-
-        } else if (id == R.id.edit_profile) {
-            int edit = 7;
-
-            Intent intent = new Intent(this, EditTabsActivity.class);
-            intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
-            startActivity(intent);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.mastertabs_menu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//
+//        if (id == R.id.logout_menu) {
+//            SharedPreferences sharedpreferences = getSharedPreferences
+//                    (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sharedpreferences.edit();
+//            editor.clear();
+//            editor.commit();
+//            MasterTabActivity.this.finish();
+//            startActivity(new Intent(this, MainActivity.class));
+//
+//        } else if (id == R.id.edit_profile) {
+//            int edit = 7;
+//
+//            Intent intent = new Intent(this, EditTabsActivity.class);
+//            intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
+//            startActivity(intent);
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 
-        System.out.println("FUCKING TAB POSITION: "+tab.getPosition());
-        if( tab.getPosition() == 6 ){
+        System.out.println("FUCKING TAB POSITION: " + tab.getPosition());
+        if (tab.getPosition() == 6) {
             new ShoppingCartFragment();
         }
         viewPager.setCurrentItem(tab.getPosition());
@@ -127,9 +130,35 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        if( tab.getPosition() == 6 ){
+        if (tab.getPosition() == 6) {
             new ShoppingCartFragment();
         }
     }
 
+    private void showActionBar() {
+        LayoutInflater inflator = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflator.inflate(R.layout.mastertabs_custom_actionbar_layout, null);
+        ActionBar actionBar = getActionBar();
+        MainActivity.setCustomActionBar(actionBar);
+
+        back_btn = (ImageButton) v.findViewById(R.id.back_btn);
+        more = (ImageButton) v.findViewById(R.id.more);
+
+        back_btn.setOnClickListener(this);
+        more.setOnClickListener(this);
+
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setCustomView(v);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.back_btn:
+                this.finish();
+                break;
+        }
+    }
 }

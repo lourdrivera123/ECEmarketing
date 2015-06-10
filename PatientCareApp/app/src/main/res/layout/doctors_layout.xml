@@ -26,10 +26,12 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.4">
+                    android:layout_weight="0.4"
+                    android:paddingRight="@dimen/d20">
 
                     <ImageView
                         android:id="@+id/image_holder"
+                        android:background="@drawable/image_bg"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:src="@drawable/img_holder" />
@@ -38,56 +40,47 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:layout_weight="0.6">
 
                     <TextView
                         android:id="@+id/doctor_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="left"
+                        android:textSize="15sp"
                         android:textStyle="bold"
-                        android:text="Lastname, Firstname, MI. PhD" />
+                        android:text="Villareal, Mary Joy, MI. PhD" />
 
                     <TextView
                         android:id="@+id/specialty"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Cardiologist" />
-
-
-                    <TextView
-                        android:id="@+id/sub_specialty"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="CardioSublogist" />
-
-                    <ImageButton
-                        android:id="@+id/call_doctor"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_contact" />
+                        android:gravity="left"
+                        android:textSize="10sp"
+                        android:text="(Cardiologist, cardiosublogist)" />
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/d20"
                 android:orientation="vertical">
 
-                <TableLayout
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/d10"
+                    android:text="CLINIC INFORMATION"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/d10"
-                        android:layout_marginBottom="@dimen/d10"
-                        android:text="CLINIC INFORMATION"
-                        android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/d10">
 
                     <TextView
                         android:id="@+id/clinic_name"
@@ -110,8 +103,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="Dexter City, Davao del Sur, Philippines, 8000" />
-
-                </TableLayout>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

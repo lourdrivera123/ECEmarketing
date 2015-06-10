@@ -66,27 +66,6 @@ public class DbHelper extends SQLiteOpenHelper {
             UPDATE_TIMESTAMP = "timestamp",
             UPDATE_SEEN = "seen";
 
-//
-//    // SPECIALTY TABLE
-//    public static final String TBL_SPECIALTY = "specialty",
-//            SPECIALTY_ID = "id",
-//            SERVER_SPECIALTY_ID = "specialty_id",
-//            SPECIALTY_NAME = "name",
-//            SPECIALTY_CREATED_AT = "created_at",
-//            SPECIALTY_UPDATED_AT = "updated_at",
-//            SPECIALTY_DELETED_AT = "deleted_at";
-
-//    // SUBSPECIALTY
-//    public static final String TBL_SUBSPECIALTY = "sub_specialty",
-//            SERVER_SUBSPECIALTY_ID = "sub_specialty_id",
-//            SUBSPECIALTY_ID = "id",
-//            SUBSPECIALTY_SPECIALTY_ID = "specialty_id",
-//            SUBSPECIALTY_NAME = "name",
-//            SUBSPECIALTY_CREATED_AT = "created_at",
-//            SUBSPECIALTY_UPDATED_AT = "updated_at",
-//            SUBSPECIALTY_DELETED_AT = "deleted_at";
-
-
     //DOCTORS_TABLE
     public static final String TBL_DOCTORS = "doctors",
             DOC_ID = "id",
@@ -98,11 +77,8 @@ public class DbHelper extends SQLiteOpenHelper {
             DOC_SPECIALTY_NAME = "name",
             DOC_PRC_NO = "prc_no",
             DOC_SUB_SPECIALTY_ID = "sub_specialty_id",
-            DOC_CELL_NO = "cellNo",
-            DOC_TEL_NO = "telNo",
             DOC_PHOTO = "photo",
             DOC_AFFILIATIONS = "affiliations",
-            DOC_EMAIL = "email",
             DOC_CREATED_AT = "created_at",
             DOC_UPDATED_AT = "updated_at",
             DOC_DELETED_AT = "deleted_at";
@@ -318,11 +294,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table "doctors"
         String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, " +
-                        "%s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                        "%s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_DOCTORS, DOC_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO,
-                DOC_SUB_SPECIALTY_ID, DOC_CELL_NO, DOC_TEL_NO,
-                DOC_PHOTO, DOC_AFFILIATIONS, DOC_EMAIL, DOC_CREATED_AT, DOC_UPDATED_AT, DOC_DELETED_AT);
+                DOC_SUB_SPECIALTY_ID, DOC_PHOTO, DOC_AFFILIATIONS, DOC_CREATED_AT, DOC_UPDATED_AT, DOC_DELETED_AT);
 
         String sql_create_tbl_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT)",
@@ -732,11 +706,8 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DOC_FNAME, doctor.getFname());
         values.put(DOC_PRC_NO, doctor.getPrc_no());
         values.put(DOC_SUB_SPECIALTY_ID, doctor.getSub_specialty_id());
-        values.put(DOC_CELL_NO, doctor.getCell_no());
-        values.put(DOC_TEL_NO, doctor.getTel_no());
         values.put(DOC_PHOTO, doctor.getPhoto());
         values.put(DOC_AFFILIATIONS, doctor.getAffiliation());
-        values.put(DOC_EMAIL, doctor.getEmail());
         values.put(DOC_CREATED_AT, doctor.getCreated_at());
         values.put(DOC_UPDATED_AT, doctor.getUpdated_at());
         values.put(DOC_DELETED_AT, doctor.getDeleted_at());
@@ -1434,11 +1405,8 @@ public class DbHelper extends SQLiteOpenHelper {
             doctor.setSpecialty(cur.getString(cur.getColumnIndex(SPECIALTY_NAME)));
             doctor.setSub_specialty(cur.getString(cur.getColumnIndex("sub_name")));
             doctor.setSub_specialty_id(cur.getInt(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
-            doctor.setCell_no(cur.getString(cur.getColumnIndex(DOC_CELL_NO)));
-            doctor.setTel_no(cur.getString(cur.getColumnIndex(DOC_TEL_NO)));
             doctor.setPhoto(cur.getString(cur.getColumnIndex(DOC_PHOTO)));
             doctor.setAffiliation(cur.getString(cur.getColumnIndex(DOC_AFFILIATIONS)));
-            doctor.setEmail(cur.getString(cur.getColumnIndex(DOC_EMAIL)));
             doctor.setCreated_at(cur.getString(cur.getColumnIndex(DOC_CREATED_AT)));
             doctor.setUpdated_at(cur.getString(cur.getColumnIndex(DOC_UPDATED_AT)));
             doctor.setDeleted_at(cur.getString(cur.getColumnIndex(DOC_DELETED_AT)));
