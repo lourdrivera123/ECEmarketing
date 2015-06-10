@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +20,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 public class HomeTileActivity extends Activity implements View.OnClickListener {
-    ImageButton profile_btn, news_btn, promos_btn, cart_btn, history_btn, products_btn, test_results_btn, doctors_btn, consultation_btn;
+    ImageButton profile_btn, news_btn, promos_btn, cart_btn, history_btn, products_btn, test_results_btn, doctors_btn,
+            consultation_btn;
     FragmentTransaction fragmentTransaction;
 
     public static SharedPreferences sharedpreferences;
@@ -134,6 +136,7 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         MainActivity.main.finish();
+        this.finish();
         super.onBackPressed();
     }
 

@@ -200,7 +200,7 @@ public class SplashActivity extends Activity {
                 });
 
                 // Request a string response from the provided URL.
-                JsonObjectRequest dosage_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("dosage_format_and_strength"), null, new Response.Listener<JSONObject>() {
+                JsonObjectRequest dosage_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_dosages"), null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -223,11 +223,13 @@ public class SplashActivity extends Activity {
                 });
 
                 // Request a string response from the provided URL.
-                JsonObjectRequest patient_record_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("patient_records"), null, new Response.Listener<JSONObject>() {
+                JsonObjectRequest patient_record_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_patient_records"), null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
 
+                        System.out.print("patient records: I am in splash activity");
+                        Log.d("splash patient record response: ", ""+response.toString());
                         sync = new Sync();
                         sync.init(getBaseContext(), "get_patient_records", "patient_records", "record_id", response);
 
@@ -245,12 +247,14 @@ public class SplashActivity extends Activity {
                     }
                 });
 
-
                 // Request a string response from the provided URL.
-                JsonObjectRequest treatments_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("treatments"), null, new Response.Listener<JSONObject>() {
+                JsonObjectRequest treatments_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_treatments"), null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d("splash treatment response: ", ""+response.toString());
+
+                        System.out.print("treatments: I am in splash activity");
 
                         sync = new Sync();
                         sync.init(getBaseContext(), "get_treatments", "treatments", "treatments_id", response);
@@ -274,6 +278,8 @@ public class SplashActivity extends Activity {
                 queue.add(doctor_sub_specialty_request);
                 queue.add(prod_category_request);
                 queue.add(prod_sub_cat_request);
+                queue.add(patient_record_request);
+                queue.add(treatments_request);
                 queue.add(dosage_request);
                 queue.add(prod_request);
 

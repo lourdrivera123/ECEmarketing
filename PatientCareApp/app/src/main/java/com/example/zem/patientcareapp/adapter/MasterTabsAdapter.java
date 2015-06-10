@@ -3,6 +3,7 @@ package com.example.zem.patientcareapp.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.zem.patientcareapp.PatientConsultationFragment;
 import com.example.zem.patientcareapp.PatientHistoryFragment;
@@ -14,7 +15,8 @@ import com.example.zem.patientcareapp.ShoppingCartFragment;
 /**
  * Created by Esel on 5/5/2015.
  */
-public class MasterTabsAdapter extends FragmentPagerAdapter {
+//public class MasterTabsAdapter extends FragmentPagerAdapter {
+public class MasterTabsAdapter extends FragmentStatePagerAdapter{
 
     public MasterTabsAdapter(FragmentManager fm) {
         super(fm);

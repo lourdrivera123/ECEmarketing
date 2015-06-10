@@ -1,6 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,12 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Path;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,7 +28,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,9 +47,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     ArrayList<HashMap<String, String>> hashHistory;
     ArrayList<HashMap<String, String>> hashTreatments;
     ArrayList<String> medRecords;
+    ArrayList<Integer> temp_deleted;
     ArrayList<Integer> selectedList;
     ArrayList<String> arrayOfRecords;
-    public static final int new_treatment_request = 10;
     private int nr = 0;
 
     private SelectionAdapter mAdapter;
@@ -72,6 +66,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         medRecords = new ArrayList();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
+        temp_deleted = new ArrayList();
+
+        Log.i("hash history", hashHistory + "");
 
         for (int x = 0; x < hashHistory.size(); x++) {
             medRecords.add(hashHistory.get(x).get("doctor_name"));
@@ -116,6 +113,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 switch (item.getItemId()) {
                     case R.id.item_delete:
                         selectedList.addAll(mAdapter.getCurrentCheckedPosition());
+                        temp_deleted.addAll(selectedList);
                         final int no_of_records = selectedList.size();
                         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                         dialog.setTitle("Delete?");
@@ -129,7 +127,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mAdapter.removeSelection(selectedList, medRecords);
+                                for (int x = (selectedList.size() - 1); x >= 0; x--) {
+                                    int pos = selectedList.get(x);
+                                    mAdapter.remove(pos);
+                                }
+                                selectedList.clear();
                             }
                         });
 
@@ -155,9 +157,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                     mAdapter.setNewSelection(position, checked);
                 } else {
                     nr--;
-//                    mAdapter.removeSelection(position);
+                    mAdapter.removeSelection(position);
                 }
-                mode.setTitle(nr + " selected");
+                mode.setTitle(nr + "selected");
             }
         });
 
@@ -198,6 +200,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             }
             treatments.setText("" + arrayOfRecords);
         }
+        arrayOfRecords.clear();
 
         call_doctor_btn.setOnClickListener(this);
         view_doctor_btn.setOnClickListener(this);
@@ -230,11 +233,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     private class SelectionAdapter extends ArrayAdapter<String> {
         private HashMap<Integer, Boolean> mSelection = new HashMap();
-        private ArrayList<String> delete_selected;
 
         public SelectionAdapter(Context context, int resource, int textViewResourceId, ArrayList<String> objects) {
             super(context, resource, textViewResourceId, objects);
-            delete_selected = objects;
         }
 
         public void setNewSelection(int position, boolean value) {
@@ -251,15 +252,16 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             return mSelection.keySet();
         }
 
-        public void removeSelection(ArrayList<Integer> selectedList, ArrayList<String> objects) {
-            for (int x = 0; x < selectedList.size(); x++) {
-                Log.i("delete array", delete_selected + "");
-                int delete = Integer.parseInt(selectedList.get(x).toString());
-                objects.remove(delete);
-                Log.i("deleted", objects + "");
-                mAdapter.notifyDataSetChanged();
-            }
+        public void remove(int position) {
+            medRecords.remove(position);
+            mAdapter.notifyDataSetChanged();
         }
+
+        public void removeSelection(int position) {
+            mSelection.remove(position);
+            notifyDataSetChanged();
+        }
+
 
         public void clearSelection() {
             mSelection = new HashMap();
@@ -273,6 +275,14 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             v.setBackgroundDrawable(d);
 
             ImageView img = (ImageView) v.findViewById(R.id.list_image);
+            TextView record_date = (TextView) v.findViewById(R.id.record_date);
+            TextView findings = (TextView) v.findViewById(R.id.findings);
+
+            record_date.setText(hashHistory.get(position).get("record_date"));
+            record_date.setTag(position);
+            findings.setText(hashHistory.get(position).get("findings"));
+            findings.setTag(position);
+
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_app);
             roundedImage = new RoundImage(bm);
             img.setImageDrawable(roundedImage);

@@ -53,7 +53,6 @@ public class Sync {
                         json_array_final = checkWhatToInsert(json_array_mysql, json_array_sqlite, tableId);
 
                         json_array_final_update = checkWhatToUpdate(json_array_mysql, tableName);
-//
 
                         if (json_array_final != null){
                             for (int i = 0; i < json_array_final.length(); i++) {
@@ -64,72 +63,83 @@ public class Sync {
 
 
                                 if(json_object != null){
-                                    switch (tableName) {
-                                        case "products":
-                                            if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
-                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "doctors":
-                                            if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
-                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
+                                    if (tableName.equals("products")) {
+                                        if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
 
-                                        case "specialties":
-                                            if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
+                                    } else if (tableName.equals("doctors")) {
+                                        if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("specialties")) {
+                                        if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("sub_specialties")) {
+                                        if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("product_categories")) {
+                                        try {
+                                            if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
                                                 Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                             }
-                                            break;
-                                        case "sub_specialties":
-                                            if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
-                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "product_categories":
-                                            try {
-                                                if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
-                                                    Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                                }
-                                            } catch (Exception e) {
-                                                Toast.makeText(context, "Something went wrong! " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "product_subcategories":
-                                            if (dbHelper.insertProductSubCategory(setProductSubCategory(json_object))) {
-                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "dosage_format_and_strength":
-                                            if (dbHelper.insertDosage(setDosage(json_object))) {
-                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "patient_records":
-                                            dbHelper.insertPatientRecord(setPatientRecord(json_object));
-                                            break;
-                                        case "treatments":
-//                                            if (dbHelper.insert(setDosage(json_object))) {
-//                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
-//                                            } else {
-//                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-//                                            }
-                                            dbHelper.saveTreatments(setTreatments(json_object), "insert");
-                                            break;
+                                        } catch (Exception e) {
+                                            Toast.makeText(context, "Something went wrong! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("product_subcategories")) {
+                                        if (dbHelper.insertProductSubCategory(setProductSubCategory(json_object))) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("dosage_format_and_strength")) {
+                                        if (dbHelper.insertDosage(setDosage(json_object))) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("baskets")) {
+                                        if (dbHelper.insertBasket(setBasket(json_object))) {
+                                            System.out.println("FUCKING BASKET SUCCESSFULLY SAVED. <source: Sync.java>");
+                                        } else {
+                                            System.out.println("FUCKING BASKET FAILED TO SAVE. <source: Sync.java>");
+                                        }
+
+                                    } else if (tableName.equals("patient_records")) {
+                                        System.out.print("patient records: I am in sync.java");
+
+                                        if (dbHelper.savePatientRecord(setPatientRecord(json_object), "insert")) {
+                                            System.out.println("patient record saved. <source: Sync.java>");
+                                        } else {
+                                            System.out.println("patient record failed to save. <source: Sync.java>");
+                                        }
+
+                                    } else if (tableName.equals("treatments")) {
+                                        System.out.print("treatments: I am in sync.java");
+
+                                        if (dbHelper.saveTreatments(setTreatments(json_object), "insert")) {
+                                            System.out.println("Treatments SUCCESSFULLY SAVED. <source: Sync.java>");
+                                        } else {
+                                            System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
+                                        }
                                     }
                                 }
                             }
@@ -143,15 +153,15 @@ public class Sync {
                             for (int i = 0; i < json_array_final_update.length(); i++) {
                                 JSONObject json_object = json_array_final_update.getJSONObject(i);
                                 if (!json_object.equals("null") && !json_object.equals(null)) {
-                                    if (tableName == "doctors") {
+                                    if (tableName.equals("doctors")) {
                                         if (dbHelper.saveDoctor(setDoctor(json_object), "update")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
-                                    } else if(tableName == "products") {
+                                    } else if(tableName.equals("products")) {
                                         if (dbHelper.saveProduct(setProduct(json_object), "update")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
@@ -193,6 +203,9 @@ public class Sync {
             patient_record.setDoctorID(json_object.getInt("doctor_id"));
             patient_record.setDoctorName(json_object.getString("doctor_name"));
             patient_record.setNote(json_object.getString("note"));
+            patient_record.setCreated_at(json_object.getString("created_at"));
+            patient_record.setUpdated_at(json_object.getString("updated_at"));
+            patient_record.setDeleted_at(json_object.getString("deleted_at"));
         } catch (Exception e) {
 
         }
@@ -317,11 +330,8 @@ public class Sync {
             doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
             doctor.setPrc_no(json.getInt("prc_no"));
             doctor.setSub_specialty_id(json.getInt("sub_specialty_id"));
-            doctor.setCell_no(json.getString("cell_no"));
-            doctor.setTel_no(json.getString("tel_no"));
             doctor.setPhoto(json.getString("photo"));
             doctor.setAffiliation(json.getString("affiliation"));
-            doctor.setEmail(json.getString("email"));
             doctor.setCreated_at(json.getString("created_at"));
             doctor.setUpdated_at(json.getString("updated_at"));
             doctor.setDeleted_at(json.getString("deleted_at"));
@@ -445,5 +455,15 @@ public class Sync {
         }
 
         return product;
+    }
+
+    public Basket setBasket(JSONObject json) throws JSONException {
+        Basket basket = new Basket();
+        basket.setBasketId(json.getInt(DbHelper.BASKET_ID));
+        basket.setQuantity(Double.parseDouble(json.getString(DbHelper.BASKET_QUANTITY)));
+        basket.setUpdatedAt(json.getString(DbHelper.BASKET_UPDATED_AT));
+        basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
+        basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
+        return basket;
     }
 }

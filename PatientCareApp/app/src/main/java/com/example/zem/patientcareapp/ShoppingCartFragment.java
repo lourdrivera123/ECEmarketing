@@ -20,6 +20,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,7 +38,7 @@ import java.util.HashMap;
 public class ShoppingCartFragment extends Fragment implements View.OnClickListener {
     ListView lv_items;
     LazyAdapter adapter;
-    public static ArrayList<HashMap<String, String>> items;
+    public  ArrayList<HashMap<String, String>> items;
     HashMap<String, String> map;
     public static TextView total_amount;
     public Double TotalAmount = 0.00, oldTotal = 0.00, newTotal = 0.00;
@@ -44,39 +53,70 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     ServerRequest serverRequest;
     View root_view;
     Button btnCheckout;
+    Sync sync;
+    RequestQueue queue;
 
     @SuppressLint("NewApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.cart_layout, container, false);
+        sync = new Sync();
+        queue = Volley.newRequestQueue(getActivity());
         root_view = rootView;
+        dbHelper = new DbHelper(getActivity());
+        helper = new Helpers();
 
         btnCheckout = (Button) root_view.findViewById(R.id.btn_checkout_ready);
-        btnCheckout.setOnClickListener(this);
-
         lv_items = (ListView) rootView.findViewById(R.id.lv_items);
         total_amount = (TextView) rootView.findViewById(R.id.upper_cart_total);
 
-        dbHelper = new DbHelper(getActivity());
-        helper = new Helpers();
-        items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
+        btnCheckout.setOnClickListener(this);
 
-        for(HashMap<String, String> item : items){
-            double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
-            double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
-            double total = price*quantity;
-            TotalAmount+= total;
+        if( helper.isNetworkAvailable(getActivity()) ){
+            String url = helper.get_url("get_basket_items")+"&patient_id="+dbHelper.getCurrentLoggedInPatient().getServerID()+"&table=baskets";
+            System.out.println("GWAPOKO: FUCKING URL: "+url);
+            JsonObjectRequest basket_items_request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    sync = new Sync();
+                    sync.init(getActivity(), "get_basket_items", "baskets", "basket_id", response);
+
+                    try {
+                        System.out.println("timestamp from server: " + response.getString("server_timestamp"));
+                        dbHelper.updateLastUpdatedTable("baskets", response.getString("server_timestamp"));
+
+                        items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
+
+                        for(HashMap<String, String> item : items){
+                            double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
+                            double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
+                            double total = price*quantity;
+                            TotalAmount+= total;
+                        }
+
+                            total_amount.setText("Php " + TotalAmount);
+
+                            adapter = new LazyAdapter(getActivity(), items, "basket_items");
+
+                            lv_items.setAdapter(adapter);
+
+
+                    } catch (Exception e) {
+                        System.out.println("error fetching server timestamp: "+ e);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                }
+            });
+            queue.add(basket_items_request);
         }
-
-        total_amount.setText("Php " + TotalAmount);
-
-        adapter = new LazyAdapter(getActivity(), items, "basket_items");
-
-        lv_items.setAdapter(adapter);
-
         lv_items.setOnCreateContextMenuListener(this);
-
         return rootView;
     }
 
@@ -180,7 +220,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                   hashMap.put("action", "update");
                                   hashMap.put("id", String.valueOf(basket.getBasketId()));
 
-                                  /*if( dbHelper.updateBasket(basket) ){*/
+                                  /* We already have that item in our basket, let's update it */
                                   serverRequest.init(getActivity(), hashMap, "insert_basket");
 
                                   root_view.postDelayed(new Runnable() {
