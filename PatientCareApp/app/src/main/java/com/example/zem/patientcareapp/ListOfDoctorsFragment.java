@@ -283,8 +283,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
             Toast.makeText(getActivity(), "You must have Internet to be able to use the App properly", Toast.LENGTH_LONG).show();
 
         }
-
-
     }
 }
 

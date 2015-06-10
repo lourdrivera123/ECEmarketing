@@ -11,9 +11,13 @@ public class PatientRecord implements Serializable {
 
     }
 
-    int patientID = 0, treatmentID = 0, doctorID = 0;
+    int patientID = 0, treatmentID = 0, doctorID = 0, patient, record_id = 0;
 
-    String complaints = "", findings = "", date = "", doctorName = "";
+    String complaints = "", findings = "", date = "", doctorName = "", note = "";
+
+    public void setRecordID(int patientID) {
+        this.record_id = record_id;
+    }
 
     public void setPatientID(int patientID) {
         this.patientID = patientID;
@@ -43,12 +47,18 @@ public class PatientRecord implements Serializable {
         this.doctorName = doctorName;
     }
 
+    public void setNote(String note) { this.note = note; }
+
     public int getPatientID() {
         return patientID;
     }
 
     public int getTreatmentID() {
         return treatmentID;
+    }
+
+    public int getRecordID() {
+        return record_id;
     }
 
     public String getComplaints() {
@@ -69,5 +79,9 @@ public class PatientRecord implements Serializable {
 
     public String getDoctorName() {
         return doctorName;
+    }
+
+    public String getNote(){
+        return note;
     }
 }
