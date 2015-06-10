@@ -101,6 +101,24 @@
         </activity>
         <activity android:name=".PromoDiscount" />
         <activity android:name=".PromoFreeProducts" />
+
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".SearchableActivity" />
+        <activity
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:name=".SearchableActivity" >
+            <intent-filter >
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
     </application>
 
 </manifest>
