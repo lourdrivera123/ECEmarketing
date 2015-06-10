@@ -1,6 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -45,7 +44,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     DbHelper dbHelper;
     RequestQueue queue;
-    ProgressDialog pDialog;
 
     // XML node keys
     static final String KEY_FULL_NAME = "fullname"; // parent node

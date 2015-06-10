@@ -7,8 +7,7 @@ import java.io.Serializable;
  */
 public class Doctor implements Serializable {
     private String fname = "", mname = "", lname = "",
-            cell_no = "", tel_no = "", photo = "",
-            email = "", affiliation = "", specialty = "", sub_specialty = "",
+            photo = "", affiliation = "", specialty = "", sub_specialty = "",
             created_at = "", updated_at = "", deleted_at = "";
 
     private int id = 0, prc_no = 0, doc_id = 0, sub_specialty_id = 0;
@@ -21,12 +20,6 @@ public class Doctor implements Serializable {
         this.setFname(first_name);
         this.setMname(middle_name);
         this.setLname(last_name);
-    }
-
-    public void setContactInfo(String email, String cell_no, String tel_no) {
-        this.setEmail(email);
-        this.setCell_no(cell_no);
-        this.setTel_no(tel_no);
     }
 
     public void setDoc_id(int doc_id) {
@@ -61,20 +54,8 @@ public class Doctor implements Serializable {
         this.sub_specialty_id = sub_specialty_id;
     }
 
-    public void setCell_no(String cell_no) {
-        this.cell_no = cell_no;
-    }
-
-    public void setTel_no(String tel_no) {
-        this.tel_no = tel_no;
-    }
-
     public void setPhoto(String photo) {
         this.photo = photo;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void setID(int id) {
@@ -109,12 +90,6 @@ public class Doctor implements Serializable {
         return fname + " " + mname.indexOf(0) + ". " + lname;
     }
 
-//    public String getFirstLineAddress() {
-//        if(get) {
-//
-//        }
-//    }
-
     public int getDoc_id() {
         return doc_id;
     }
@@ -147,20 +122,8 @@ public class Doctor implements Serializable {
         return sub_specialty_id;
     }
 
-    public String getCell_no() {
-        return cell_no;
-    }
-
-    public String getTel_no() {
-        return tel_no;
-    }
-
     public String getPhoto() {
         return photo;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public int getID() {

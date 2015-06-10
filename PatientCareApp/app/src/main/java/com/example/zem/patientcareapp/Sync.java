@@ -136,13 +136,13 @@ public class Sync {
                                 if (!json_object.equals("null") && !json_object.equals(null)) {
                                     if (tableName.equals("doctors")) {
                                         if (dbHelper.saveDoctor(setDoctor(json_object), "update")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
                                     } else if(tableName.equals("products")) {
                                         if (dbHelper.saveProduct(setProduct(json_object), "update")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
@@ -274,11 +274,8 @@ public class Sync {
             doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
             doctor.setPrc_no(json.getInt("prc_no"));
             doctor.setSub_specialty_id(json.getInt("sub_specialty_id"));
-            doctor.setCell_no(json.getString("cell_no"));
-            doctor.setTel_no(json.getString("tel_no"));
             doctor.setPhoto(json.getString("photo"));
             doctor.setAffiliation(json.getString("affiliation"));
-            doctor.setEmail(json.getString("email"));
             doctor.setCreated_at(json.getString("created_at"));
             doctor.setUpdated_at(json.getString("updated_at"));
             doctor.setDeleted_at(json.getString("deleted_at"));
