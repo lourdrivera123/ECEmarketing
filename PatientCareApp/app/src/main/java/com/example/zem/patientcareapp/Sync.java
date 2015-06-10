@@ -51,7 +51,6 @@ public class Sync {
                         json_array_final = checkWhatToInsert(json_array_mysql, json_array_sqlite, tableId);
 
                         json_array_final_update = checkWhatToUpdate(json_array_mysql, tableName);
-//
 
                         if (json_array_final != null){
                             for (int i = 0; i < json_array_final.length(); i++) {
@@ -62,61 +61,66 @@ public class Sync {
 
 
                                 if(json_object != null){
-                                    switch (tableName) {
-                                        case "products":
-                                            if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
+                                    if (tableName.equals("products")) {
+                                        if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
 
+                                    } else if (tableName.equals("doctors")) {
+                                        if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("specialties")) {
+                                        if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("sub_specialties")) {
+                                        if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else if (tableName.equals("product_categories")) {
+                                        try {
+                                            if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
+                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                             }
-                                            break;
-                                        case "doctors":
-                                            if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
+                                        } catch (Exception e) {
+                                            Toast.makeText(context, "Something went wrong! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
 
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
+                                    } else if (tableName.equals("product_subcategories")) {
+                                        if (dbHelper.insertProductSubCategory(setProductSubCategory(json_object))) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
 
-                                        case "specialties":
-                                            if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
+                                    } else if (tableName.equals("dosage_format_and_strength")) {
+                                        if (dbHelper.insertDosage(setDosage(json_object))) {
+                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                        }
 
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "sub_specialties":
-                                            if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
+                                    } else if (tableName.equals("baskets")) {
+                                        if (dbHelper.insertBasket(setBasket(json_object))) {
+                                            System.out.println("FUCKING BASKET SUCCESSFULLY SAVED. <source: Sync.java>");
+                                        } else {
+                                            System.out.println("FUCKING BASKET FAILED TO SAVE. <source: Sync.java>");
+                                        }
 
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "product_categories":
-                                            try {
-                                                if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
-
-                                                } else {
-                                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                                }
-                                            } catch (Exception e) {
-                                                Toast.makeText(context, "Something went wrong! " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "product_subcategories":
-                                            if (dbHelper.insertProductSubCategory(setProductSubCategory(json_object))) {
-
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                        case "dosage_format_and_strength":
-                                            if (dbHelper.insertDosage(setDosage(json_object))) {
-
-                                            } else {
-                                                Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
                                     }
                                 }
                             }
@@ -130,13 +134,13 @@ public class Sync {
                             for (int i = 0; i < json_array_final_update.length(); i++) {
                                 JSONObject json_object = json_array_final_update.getJSONObject(i);
                                 if (!json_object.equals("null") && !json_object.equals(null)) {
-                                    if (tableName == "doctors") {
+                                    if (tableName.equals("doctors")) {
                                         if (dbHelper.saveDoctor(setDoctor(json_object), "update")) {
 
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
-                                    } else if(tableName == "products") {
+                                    } else if(tableName.equals("products")) {
                                         if (dbHelper.saveProduct(setProduct(json_object), "update")) {
 
                                         } else {
@@ -395,5 +399,15 @@ public class Sync {
         }
 
         return product;
+    }
+
+    public Basket setBasket(JSONObject json) throws JSONException {
+        Basket basket = new Basket();
+        basket.setBasketId(json.getInt(DbHelper.BASKET_ID));
+        basket.setQuantity(Double.parseDouble(json.getString(DbHelper.BASKET_QUANTITY)));
+        basket.setUpdatedAt(json.getString(DbHelper.BASKET_UPDATED_AT));
+        basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
+        basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
+        return basket;
     }
 }

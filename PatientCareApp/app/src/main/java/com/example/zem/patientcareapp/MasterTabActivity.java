@@ -22,17 +22,20 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     private String[] tabs = {"Profile", "My Records", "Test Results", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
     private ViewPager viewPager;
     private ActionBar actionBar;
+    DbHelper dbHelper;
 
     ImageButton back_btn, more;
 
     static final String LAST_ACTIVITY = "";
     Intent intent;
+    int unselected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
+        dbHelper = new DbHelper(this);
 
         showActionBar();
 
@@ -58,7 +61,11 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             public void onPageSelected(int position) {
                 // on changing the page
                 // make respected tab selected
+                if( position == 6 ){
+                    new ShoppingCartFragment();
+                }
                 actionBar.setSelectedNavigationItem(position);
+
             }
 
             @Override
@@ -120,12 +127,15 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         if (tab.getPosition() == 6) {
             new ShoppingCartFragment();
         }
+        mAdapter.notifyDataSetChanged();
         viewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
+        unselected = tab.getPosition();
+        System.out.println("FUCKING UNSELECTED TAB POSITION: "+unselected);
+        new ShoppingCartFragment();
     }
 
     @Override
