@@ -13,7 +13,9 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Dexter B. on 5/11/2015.
@@ -111,6 +113,23 @@ public class Sync {
                                             System.out.println("FUCKING BASKET FAILED TO SAVE. <source: Sync.java>");
                                         }
 
+                                    } else if (tableName.equals("patient_records")) {
+                                        System.out.print("patient records: I am in sync.java");
+
+                                        if (dbHelper.savePatientRecord(setPatientRecord(json_object), "insert")) {
+                                            System.out.println("patient record saved. <source: Sync.java>");
+                                        } else {
+                                            System.out.println("patient record failed to save. <source: Sync.java>");
+                                        }
+
+                                    } else if (tableName.equals("treatments")) {
+                                        System.out.print("treatments: I am in sync.java");
+
+                                        if (dbHelper.saveTreatments(setTreatments(json_object), "insert")) {
+                                            System.out.println("Treatments SUCCESSFULLY SAVED. <source: Sync.java>");
+                                        } else {
+                                            System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
+                                        }
                                     }
                                 }
                             }
@@ -161,6 +180,43 @@ public class Sync {
             e.printStackTrace();
         }
         return dosage;
+    }
+
+    public PatientRecord setPatientRecord(JSONObject json_object) {
+        PatientRecord patient_record = new PatientRecord();
+        try {
+            patient_record.setRecordID(json_object.getInt("id"));
+            patient_record.setPatientID(json_object.getInt("patient_id"));
+            patient_record.setComplaints(json_object.getString("complaints"));
+            patient_record.setFindings(json_object.getString("findings"));
+            patient_record.setDate(json_object.getString("record_date"));
+            patient_record.setDoctorID(json_object.getInt("doctor_id"));
+            patient_record.setDoctorName(json_object.getString("doctor_name"));
+            patient_record.setNote(json_object.getString("note"));
+            patient_record.setCreated_at(json_object.getString("created_at"));
+            patient_record.setUpdated_at(json_object.getString("updated_at"));
+            patient_record.setDeleted_at(json_object.getString("deleted_at"));
+        } catch (Exception e) {
+
+        }
+        return patient_record;
+    }
+
+    public Treatments setTreatments(JSONObject json_object) {
+        Treatments treatments = new Treatments();
+        try{
+            treatments.setTreatments_id(json_object.getInt("id"));
+            treatments.setPatient_record_id(json_object.getInt("patient_record_id"));
+            treatments.setMedicine_name(json_object.getString("medicine_name"));
+            treatments.setGeneric_name(json_object.getString("generic_name"));
+            treatments.setQuantity(json_object.getString("quantity"));
+            treatments.setPrescription(json_object.getString("prescription"));
+            treatments.setCreated_at(json_object.getString("created_at"));
+            treatments.setUpdated_at(json_object.getString("updated_at"));
+            treatments.setDeleted_at(json_object.getString("deleted_at"));
+        } catch (Exception e) {}
+
+        return treatments;
     }
 
     public JSONArray checkWhatToInsert(JSONArray json_array_mysql, JSONArray json_array_sqlite, String server_id) throws JSONException {

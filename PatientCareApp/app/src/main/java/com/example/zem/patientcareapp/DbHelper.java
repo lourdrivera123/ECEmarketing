@@ -167,8 +167,10 @@ public class DbHelper extends SQLiteOpenHelper {
             RECORDS_COMPLAINT = "complaints",
             RECORDS_FINDINGS = "findings",
             RECORDS_DATE = "record_date",
+            RECORDS_NOTE = "note",
             RECORDS_CREATED_AT = "created_at",
-            RECORDS_UPDATED_AT = "updated_at";
+            RECORDS_UPDATED_AT = "updated_at",
+            RECORDS_DELETED_AT = "deleted_at";
 
     // TREATMENTS TABLE
     public static final String TBL_TREATMENTS = "treatments",
@@ -180,7 +182,8 @@ public class DbHelper extends SQLiteOpenHelper {
             TREATMENTS_QUANITY = "quantity",
             TREATMENTS_PRESCRIPTION = "prescription",
             TREATMENTS_CREATED_AT = "created_at",
-            TREATMENTS_UPDATED_AT = "updated_at";
+            TREATMENTS_UPDATED_AT = "updated_at",
+            TREATMENTS_DELETED_AT = "deleted_at";
 
 
     // CLINICS TABLE
@@ -353,13 +356,13 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
         // SQL to create PATIENT_RECORDS TABLE
-        String sql_create_patient_records = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_PATIENT_RECORDS, RECORDS_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_DOCTOR_NAME, RECORDS_PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, RECORDS_CREATED_AT, RECORDS_UPDATED_AT);
+        String sql_create_patient_records = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
+                TBL_PATIENT_RECORDS, RECORDS_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_DOCTOR_NAME, RECORDS_PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, RECORDS_NOTE, RECORDS_CREATED_AT, RECORDS_UPDATED_AT, RECORDS_DELETED_AT);
 
 
         // SQL TO create TREATMENTS TABLE
-        String sql_create_treatments_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_TREATMENTS, TREATMENTS_ID, TREATMENTS_RECORD_ID, SERVER_TREATMENTS_ID, TREATMENTS_MEDICINE_NAME, TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, TREATMENTS_CREATED_AT, TREATMENTS_UPDATED_AT);
+        String sql_create_treatments_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
+                TBL_TREATMENTS, TREATMENTS_ID, TREATMENTS_RECORD_ID, SERVER_TREATMENTS_ID, TREATMENTS_MEDICINE_NAME, TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, TREATMENTS_CREATED_AT, TREATMENTS_UPDATED_AT, TREATMENTS_DELETED_AT);
 
 
         // SQL to create table "clinics"
@@ -433,7 +436,8 @@ public class DbHelper extends SQLiteOpenHelper {
         insertTableNamesToUpdates(TBL_PRODUCT_SUBCATEGORIES, db);
         insertTableNamesToUpdates(TBL_BASKETS, db);
         insertTableNamesToUpdates(TBL_DOSAGE, db);
-
+        insertTableNamesToUpdates(TBL_PATIENT_RECORDS, db);
+        insertTableNamesToUpdates(TBL_TREATMENTS, db);
 
     }
 
@@ -531,6 +535,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public long insertPatientRecord(PatientRecord record) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
+        long rowID = 0;
 
         values.put(RECORDS_PATIENT_ID, record.getPatientID());
         values.put(RECORDS_COMPLAINT, record.getComplaints());
@@ -538,10 +543,44 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(RECORDS_DATE, record.getDate());
         values.put(RECORDS_DOCTOR_ID, record.getDoctorID());
         values.put(RECORDS_DOCTOR_NAME, record.getDoctorName());
+        values.put(RECORDS_NOTE, record.getNote());
 
-        long rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
+                rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
+
+
         db.close();
         return rowID;
+    }
+
+    public boolean savePatientRecord(PatientRecord record, String request) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        long rowID = 0;
+        values.put(SERVER_RECORDS_ID, record.getRecordID());
+        values.put(RECORDS_PATIENT_ID, record.getPatientID());
+        values.put(RECORDS_COMPLAINT, record.getComplaints());
+        values.put(RECORDS_FINDINGS, record.getFindings());
+        values.put(RECORDS_DATE, record.getDate());
+        values.put(RECORDS_DOCTOR_ID, record.getDoctorID());
+        values.put(RECORDS_DOCTOR_NAME, record.getDoctorName());
+        values.put(RECORDS_NOTE, record.getNote());
+        values.put(RECORDS_CREATED_AT, record.getCreated_at());
+        values.put(RECORDS_UPDATED_AT, record.getUpdated_at());
+        values.put(RECORDS_DELETED_AT, record.getDeleted_at());
+
+        switch(request){
+            case "insert":
+                rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
+                break;
+            case "update":
+//                rowID = db.update(TBL_PATIENT_RECORDS, null, values, null);
+                rowID = db.update(TBL_PATIENT_RECORDS, values, RECORDS_ID + "=" + record.getRecordID(), null);
+                break;
+        }
+
+
+        db.close();
+        return rowID > 0;
     }
 
     public ArrayList<Integer> insertTreatment(ArrayList<HashMap<String, String>> items, long recordID) {
@@ -561,6 +600,33 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         db.close();
         return arrayOfID;
+    }
+
+    public boolean saveTreatments(Treatments treatments, String request) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        long rowID = 0;
+
+        values.put(SERVER_TREATMENTS_ID, treatments.getTreatments_id());
+        values.put(TREATMENTS_RECORD_ID, treatments.getPatient_record_id());
+        values.put(TREATMENTS_MEDICINE_NAME, treatments.getMedicine_name());
+        values.put(TREATMENTS_GENERIC_NAME, treatments.getGeneric_name());
+        values.put(TREATMENTS_QUANITY, treatments.getQuantity());
+        values.put(TREATMENTS_PRESCRIPTION, treatments.getPrescription());
+        values.put(TREATMENTS_CREATED_AT, treatments.getCreated_at());
+        values.put(TREATMENTS_UPDATED_AT, treatments.getUpdated_at());
+        values.put(TREATMENTS_DELETED_AT, treatments.getDeleted_at());
+
+        switch(request){
+            case "insert":
+                rowID = db.insert(TBL_TREATMENTS, null, values);
+                break;
+            case "update":
+                rowID = db.update(TBL_TREATMENTS, values, SERVER_TREATMENTS_ID + "=" + treatments.getTreatments_id(), null);
+                break;
+        }
+
+        return rowID > 0;
     }
 
     public String getLastUpdate(String table_name) {
