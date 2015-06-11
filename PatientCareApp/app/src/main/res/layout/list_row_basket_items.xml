@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:minHeight="102dp"
     android:background="@drawable/list_selector"
     android:orientation="horizontal"
     android:padding="5dip">
@@ -30,6 +29,20 @@
             android:minWidth="48dp"
             android:text="Biogesic"/>
 
+        <!-- Product Quantity -->
+        <TextView
+            android:id="@+id/product_quantity"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:textColor="#343434"
+            android:textSize="0sp"
+            android:gravity="bottom"
+            android:layout_gravity="bottom"
+            android:singleLine="false"
+            android:padding="10dp"
+            android:visibility="invisible"
+            android:text="67"/>
+
 
 
         <!-- Amount -->
@@ -46,17 +59,6 @@
             android:text="Php 1008273.98"/>
 
     </LinearLayout>
-    <!-- Product Quantity -->
-    <TextView
-        android:id="@+id/product_quantity"
-        android:layout_above="@+id/product_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#343434"
-        android:textSize="13sp"
-        android:singleLine="false"
-        android:padding="10dp"
-        android:text="Quantity: 89"/>
 
     <!-- Price -->
     <TextView
@@ -64,7 +66,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:id="@+id/product_price"
-        android:textSize="13sp"
+        android:textSize="12sp"
+        android:layout_below="@+id/item_details"
         android:layout_alignParentBottom="true"
         android:text="Price: 10.00 / pc" />
+
 </RelativeLayout>

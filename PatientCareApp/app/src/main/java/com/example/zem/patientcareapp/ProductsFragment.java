@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -105,9 +106,16 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             populateProductsListView(rootView, products_items);
             pDialog.hide();
         }
+//        setHasOptionsMenu(true);
 
         return rootView;
     }
+
+//     @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//
+//        getActivity().getMenuInflater().inflate(R.menu.actions_menu, menu);
+//    }
 
     public void populateProductsListView(View rootView, ArrayList<HashMap<String, String>> products_items) {
         list_of_products = (ListView) rootView.findViewById(R.id.product_lists);

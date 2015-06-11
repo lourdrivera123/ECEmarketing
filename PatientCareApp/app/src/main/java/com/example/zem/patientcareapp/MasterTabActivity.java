@@ -91,13 +91,19 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         super.onBackPressed();
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.mastertabs_menu, menu);
+        MenuItem item = menu.findItem(R.id.search);
+        if( selected == 5 ){
+            item.setVisible(true);
+        }else{
+            item.setVisible(false);
+        }
 
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

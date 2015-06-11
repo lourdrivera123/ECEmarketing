@@ -132,8 +132,8 @@ public class LazyAdapter extends BaseAdapter {
             total_amount = price * quantity;
 
             total.setText(total_amount + "");
-            qty.setText("Quantity: "+quantity);
-            productPrice.setText("Price: Php "+price);
+            qty.setText(quantity + "");
+            productPrice.setText("Quantity: "+quantity+"\nPrice: Php " + price);
 
             qty.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
             total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
