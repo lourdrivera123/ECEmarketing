@@ -650,6 +650,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     s_filepath = filePath;
                     cursor.close();
 
+                    Toast.makeText(this, "" + filePath, Toast.LENGTH_SHORT).show();
                     patient.setPhoto(filePath);
 
                     Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);

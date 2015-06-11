@@ -1352,11 +1352,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             map = new HashMap();
-            map.put("recordID", String.valueOf(cur.getInt(cur.getColumnIndex(RECORDS_ID))));
-            map.put("complaints", cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
-            map.put("findings", cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
-            map.put("record_date", cur.getString(cur.getColumnIndex(RECORDS_DATE)));
-            map.put("doctor_name", cur.getString(cur.getColumnIndex(RECORDS_DOCTOR_NAME)));
+            map.put(RECORDS_ID, String.valueOf(cur.getInt(cur.getColumnIndex(RECORDS_ID))));
+            map.put(RECORDS_COMPLAINT, cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
+            map.put(RECORDS_FINDINGS, cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
+            map.put(RECORDS_DATE, cur.getString(cur.getColumnIndex(RECORDS_DATE)));
+            map.put(RECORDS_DOCTOR_NAME, cur.getString(cur.getColumnIndex(RECORDS_DOCTOR_NAME)));
+            map.put(RECORDS_DOCTOR_ID, String.valueOf(cur.getInt(cur.getColumnIndex(RECORDS_DOCTOR_ID))));
             arrayOfRecords.add(map);
         }
         cur.close();
@@ -1603,9 +1604,10 @@ public class DbHelper extends SQLiteOpenHelper {
     //DELETE METHODS
 
     /**
-    * Deletes an item from table "baskets"
-    * @param basketId
-    */
+     * Deletes an item from table "baskets"
+     *
+     * @param basketId
+     */
     public boolean deleteBasketItem(int basketId) {
         SQLiteDatabase db = getWritableDatabase();
         long row = db.delete(TBL_BASKETS, SERVER_BASKET_ID + "=" + basketId, null);
