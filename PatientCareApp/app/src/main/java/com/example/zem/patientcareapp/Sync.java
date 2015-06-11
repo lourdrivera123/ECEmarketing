@@ -57,36 +57,29 @@ public class Sync {
                         if (json_array_final != null){
                             for (int i = 0; i < json_array_final.length(); i++) {
                                 JSONObject json_object = json_array_final.getJSONObject(i);
-
-                                System.out.print("GWAPO LAGI KO: ");
                                 System.out.println(json_object);
-
 
                                 if(json_object != null){
                                     if (tableName.equals("products")) {
                                         if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (tableName.equals("doctors")) {
                                         if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (tableName.equals("specialties")) {
                                         if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (tableName.equals("sub_specialties")) {
                                         if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
@@ -94,7 +87,6 @@ public class Sync {
                                     } else if (tableName.equals("product_categories")) {
                                         try {
                                             if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
-                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                             }
@@ -104,14 +96,12 @@ public class Sync {
 
                                     } else if (tableName.equals("product_subcategories")) {
                                         if (dbHelper.insertProductSubCategory(setProductSubCategory(json_object))) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (tableName.equals("dosage_format_and_strength")) {
                                         if (dbHelper.insertDosage(setDosage(json_object))) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
