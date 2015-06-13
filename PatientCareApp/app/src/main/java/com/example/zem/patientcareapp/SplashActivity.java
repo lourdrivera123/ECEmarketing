@@ -272,6 +272,32 @@ public class SplashActivity extends Activity {
                         Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+                // Request a string response from the provided URL.
+                JsonObjectRequest promo_discounts_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_promo_discounts"), null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("splash promo discounts response: ", ""+response.toString());
+
+                        System.out.print("promo discounts: I am in splash activity");
+
+                        sync = new Sync();
+                        sync.init(getBaseContext(), "get_promo_discounts", "promo_discounts", "promo_discounts_id", response);
+
+                        try {
+                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("treatments", response.getString("server_timestamp"));
+                        } catch (Exception e) {
+                            System.out.println("error fetching server timestamp: "+ e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 
                 queue.add(doctor_request);
                 queue.add(doctor_specialty_request);
@@ -282,6 +308,7 @@ public class SplashActivity extends Activity {
                 queue.add(treatments_request);
                 queue.add(dosage_request);
                 queue.add(prod_request);
+                queue.add(promo_discounts_request);
 
                 settings.edit().putBoolean("my_first_time", false).commit();
 

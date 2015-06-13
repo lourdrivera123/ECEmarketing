@@ -126,14 +126,14 @@ public class LazyAdapter extends BaseAdapter {
             // Do the fucking stuffs here
             price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
             quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
-
+            String unit = basket_items.get(DbHelper.PRODUCT_UNIT);
             // Setting all values in listview
             product_name.setText(basket_items.get(DbHelper.PRODUCT_NAME));
             total_amount = price * quantity;
 
             total.setText(total_amount + "");
             qty.setText(quantity + "");
-            productPrice.setText("Quantity: "+quantity+"\nPrice: Php " + price);
+            productPrice.setText("Quantity: "+quantity+"\nPrice: Php " + price+" / "+(!unit.equals("0") ? unit : ""));
 
             qty.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
             total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
@@ -157,6 +157,8 @@ public class LazyAdapter extends BaseAdapter {
             itemName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
             double total_amount = price * quantity;
             String unit = basket_items.get(DbHelper.PRODUCT_UNIT);
+
+
 
             itemAmount.setText("Php "+total_amount + "");
             itemDetails.setText("Price: Php "+price+" / "+(!unit.equals("0") ? unit : ""));

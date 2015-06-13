@@ -130,6 +130,18 @@ public class Sync {
                                         } else {
                                             System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
                                         }
+                                    }else if (tableName.equals("promo_discounts")) {
+                                        if( dbHelper.savePromoDiscount(setPromoDiscount(json_object), "insert") ){
+
+                                        }else{
+                                            System.out.print("PromoDiscounts failed to save. <source: Sync.java>");
+                                        }
+                                    }else if( tableName.equals("promo_free_products") ){
+                                        if( dbHelper.savePromoFreeProducts(setPromoFreeProducts(json_object), "insert") ){
+
+                                        }else{
+                                            System.out.print("PromoFreeProducts failed to save. <source: Sync.java>");
+                                        }
                                     }
                                 }
                             }
@@ -455,5 +467,36 @@ public class Sync {
         basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
         basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
         return basket;
+    }
+
+    public PromoDiscount setPromoDiscount(JSONObject json) throws JSONException {
+        PromoDiscount promoDiscount = new PromoDiscount();
+
+        promoDiscount.setPromoDiscountId(json.getInt(DbHelper.PROMO_DISCOUNTS_ID));
+        promoDiscount.setProductId(json.getInt(DbHelper.PROMO_D_PRODUCT_ID));
+        promoDiscount.setName(json.getString(DbHelper.PROMO_D_NAME));
+        promoDiscount.setLess(json.getDouble(DbHelper.PROMO_D_LESS));
+        promoDiscount.setQuantityRequired(json.getInt(DbHelper.PROMO_D_QUANTITY_REQUIRED));
+        promoDiscount.setStartDate(json.getString(DbHelper.PROMO_D_START_DATE));
+        promoDiscount.setEndDate(json.getString(DbHelper.PROMO_D_END_DATE));
+        promoDiscount.setType(json.getInt(DbHelper.PROMO_D_TYPE));
+        promoDiscount.setCreatedAt(json.getString(DbHelper.PROMO_D_CREATED_AT));
+        promoDiscount.setUpdatedAt(json.getString(DbHelper.PROMO_D_UPDATED_AT));
+        promoDiscount.setDeletedAt(json.getString(DbHelper.PROMO_D_DELETED_AT));
+
+        return promoDiscount;
+    }
+
+    public PromoFreeProducts setPromoFreeProducts(JSONObject json) throws JSONException{
+        PromoFreeProducts promoFreeProducts = new PromoFreeProducts();
+
+        promoFreeProducts.setPromoFreeProductsId(json.getInt(DbHelper.PROMO_FREE_PRODUCTS_ID));
+        promoFreeProducts.setPromoId(json.getInt(DbHelper.PROMO_FP_PROMO_ID));
+        promoFreeProducts.setNumberOfUnitsFree(json.getInt(DbHelper.PROMO_FP_NO_OF_UNITS_FREE));
+        promoFreeProducts.setCreatedAt(json.getString(DbHelper.PROMO_FP_CREATED_AT));
+        promoFreeProducts.setUpdatedAt(json.getString(DbHelper.PROMO_FP_UPDATED_AT));
+        promoFreeProducts.setDeletedAt(json.getString(DbHelper.PROMO_FP_DELETED_AT));
+
+        return promoFreeProducts;
     }
 }

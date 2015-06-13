@@ -568,14 +568,12 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(RECORDS_UPDATED_AT, record.getUpdated_at());
         values.put(RECORDS_DELETED_AT, record.getDeleted_at());
 
-        switch(request){
-            case "insert":
-                rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
-                break;
-            case "update":
-//                rowID = db.update(TBL_PATIENT_RECORDS, null, values, null);
-                rowID = db.update(TBL_PATIENT_RECORDS, values, RECORDS_ID + "=" + record.getRecordID(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
+
+        } else if (request.equals("update")) {//                rowID = db.update(TBL_PATIENT_RECORDS, null, values, null);
+            rowID = db.update(TBL_PATIENT_RECORDS, values, RECORDS_ID + "=" + record.getRecordID(), null);
+
         }
 
 
@@ -617,13 +615,12 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(TREATMENTS_UPDATED_AT, treatments.getUpdated_at());
         values.put(TREATMENTS_DELETED_AT, treatments.getDeleted_at());
 
-        switch(request){
-            case "insert":
-                rowID = db.insert(TBL_TREATMENTS, null, values);
-                break;
-            case "update":
-                rowID = db.update(TBL_TREATMENTS, values, SERVER_TREATMENTS_ID + "=" + treatments.getTreatments_id(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_TREATMENTS, null, values);
+
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_TREATMENTS, values, SERVER_TREATMENTS_ID + "=" + treatments.getTreatments_id(), null);
+
         }
 
         return rowID > 0;
@@ -1650,12 +1647,13 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(SERVER_BASKET_ID, cur.getString(cur.getColumnIndex(SERVER_BASKET_ID)));
             map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
-            map.put(PRODUCT_PRICE, String.valueOf(cur.getInt(cur.getColumnIndex(PRODUCT_PRICE))));
+            map.put(PRODUCT_PRICE, String.valueOf(cur.getDouble(cur.getColumnIndex(PRODUCT_PRICE))));
             map.put(BASKET_QUANTITY, String.valueOf(cur.getInt(cur.getColumnIndex(BASKET_QUANTITY))));
-            map.put(PRODUCT_UNIT, String.valueOf(cur.getInt(cur.getColumnIndex(PRODUCT_UNIT))));
+            map.put(PRODUCT_UNIT, cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
             items.add(map);
             cur.moveToNext();
         }
+
         cur.close();
         db.close();
         return items;
@@ -1728,4 +1726,56 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return deleted_treatment_ID;
     }
+
+
+    /* PROMODISCOUNTS TABLE */
+    public boolean savePromoDiscount(PromoDiscount promoDiscount, String type){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(SERVER_PROMO_DISCOUNTS_ID, promoDiscount.getPromoDiscountId());
+        values.put(PROMO_D_NAME, promoDiscount.getName());
+        values.put(PROMO_D_LESS, promoDiscount.getLess());
+        values.put(PROMO_D_PRODUCT_ID, promoDiscount.getProductId());
+        values.put(PROMO_D_QUANTITY_REQUIRED, promoDiscount.getQuantityRequired());
+        values.put(PROMO_D_START_DATE, promoDiscount.getStartDate());
+        values.put(PROMO_D_END_DATE, promoDiscount.getEndDate());
+        values.put(PROMO_D_TYPE, promoDiscount.getType());
+        values.put(PROMO_D_CREATED_AT, promoDiscount.getCreatedAt());
+        values.put(PROMO_D_UPDATED_AT, promoDiscount.getUpdatedAt());
+        values.put(PROMO_D_DELETED_AT, promoDiscount.getDeletedAt());
+
+        long row;
+
+        if( type.equals("insert") ){
+            row = db.insert(TBL_PROMO_DISCOUNTS, null, values);
+        }else{
+            row = db.update(TBL_PROMO_DISCOUNTS, values, PROMO_DISCOUNTS_ID+"="+promoDiscount.getPromoDiscountId(), null);
+        }
+        db.close();
+        return row > 0;
+    }
+
+
+    /* PROMO_FREE_PRODUCTS */
+    public boolean savePromoFreeProducts(PromoFreeProducts promoFreeProducts, String type){
+        long row;
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(SERVER_PROMO_FREE_PRODUCTS_ID, promoFreeProducts.getPromoFreeProductsId());
+        values.put(PROMO_FP_PROMO_ID, promoFreeProducts.getPromoId());
+        values.put(PROMO_FP_PRODUCT_ID, promoFreeProducts.getPromoFreeProductsId());
+        values.put(PROMO_FP_NO_OF_UNITS_FREE, promoFreeProducts.getNumberOfUnitsFree());
+        values.put(PROMO_FP_CREATED_AT, promoFreeProducts.getCreatedAt());
+        values.put(PROMO_FP_UPDATED_AT, promoFreeProducts.getUpdatedAt());
+        values.put(PROMO_FP_DELETED_AT, promoFreeProducts.getDeletedAt());
+
+        if( type.equals("insert") ){
+            row = db.insert(TBL_PROMO_FREE_PRODUCTS, null, values);
+        }else{
+            row = db.update(TBL_PROMO_FREE_PRODUCTS, values, SERVER_PROMO_FREE_PRODUCTS_ID+"="+promoFreeProducts.getPromoFreeProductsId(), null);
+        }
+        return row > 0;
+    }
+
 }
