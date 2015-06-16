@@ -320,6 +320,71 @@ public class Sync {
         return something;
     }
 
+    public JSONArray checkWhatToInsertInMysql(JSONArray json_array_sqlite, JSONArray json_array_mysql, String server_id) throws JSONException {
+        JSONArray json_array_final_storage = new JSONArray();
+        try {
+            for (int i = 0; i < json_array_sqlite.length(); i++) {
+                JSONObject product_json_object_mysql = json_array_mysql.getJSONObject(i);
+                Boolean flag = false;
+
+                if(json_array_sqlite == null){
+                    json_array_final_storage.put(product_json_object_mysql);
+                } else {
+
+                    for (int x = 0; x < json_array_mysql.length(); x++) {
+                        JSONObject json_object_sqlite = json_array_sqlite.getJSONObject(x);
+
+                        if (product_json_object_mysql.getInt("id") == json_object_sqlite.getInt(server_id)) {
+                            flag = true;
+                        }
+                    }
+
+                    if (!flag) {
+                        json_array_final_storage.put(product_json_object_mysql);
+                    }
+
+                }
+            }
+
+        } catch (JSONException e) {
+            Toast.makeText(context, "error in check what to insert" + e, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+        return json_array_final_storage;
+    }
+
+    public JSONArray checkWhatToUpdateInMysql(JSONArray json_array_mysql, String tblname) {
+        JSONArray doctors_json_array_final_storage = new JSONArray();
+        try {
+
+            for (int i = 0; i < json_array_mysql.length(); i++) {
+
+                JSONObject json_object_mysql = json_array_mysql.getJSONObject(i);
+
+                if(!json_object_mysql.getString("updated_at").equals("null")){
+
+                    if (checkDateTime(json_object_mysql.getString("updated_at"), dbHelper.getLastUpdate(tblname))) { //to be repared
+                        //the sqlite last update is lesser than from mysql
+                        //put your json object into final array here.
+
+                        doctors_json_array_final_storage.put(json_object_mysql);
+                        Log.d("Updated at Compare", "the updated_at column in mysql is greater than in sqlite");
+
+                    } else {
+                        Log.d("Updated at Compare", "the updated_at column in sqlite is greater than in mysql");
+
+                    }
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return doctors_json_array_final_storage;
+    }
+
     // SETTERS
 
     public Doctor setDoctor(JSONObject json) {
