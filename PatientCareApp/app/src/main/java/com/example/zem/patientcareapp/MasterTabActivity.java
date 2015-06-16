@@ -8,36 +8,39 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
-public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener, View.OnClickListener {
+public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
     private MasterTabsAdapter mAdapter;
     private String[] tabs = {"Profile", "My Records", "Test Results", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
     private ViewPager viewPager;
     private ActionBar actionBar;
     DbHelper dbHelper;
 
-    ImageButton back_btn, more;
 
     static final String LAST_ACTIVITY = "";
     Intent intent;
-    int unselected = 0;
+    int unselected = 0, selected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.master_tab_layout);
         dbHelper = new DbHelper(this);
 
-        showActionBar();
+        actionBar = getActionBar();
+        MainActivity.setCustomActionBar(actionBar);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getActionBar();
@@ -59,13 +62,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                // on changing the page
-                // make respected tab selected
-                if( position == 6 ){
-                    new ShoppingCartFragment();
-                }
                 actionBar.setSelectedNavigationItem(position);
-
             }
 
             @Override
@@ -90,40 +87,33 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         super.onBackPressed();
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.mastertabs_menu, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//
-//        if (id == R.id.logout_menu) {
-//            SharedPreferences sharedpreferences = getSharedPreferences
-//                    (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-//            SharedPreferences.Editor editor = sharedpreferences.edit();
-//            editor.clear();
-//            editor.commit();
-//            MasterTabActivity.this.finish();
-//            startActivity(new Intent(this, MainActivity.class));
-//
-//        } else if (id == R.id.edit_profile) {
-//            int edit = 7;
-//
-//            Intent intent = new Intent(this, EditTabsActivity.class);
-//            intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
-//            startActivity(intent);
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.logout_menu:
+                SharedPreferences sharedpreferences = getSharedPreferences
+                        (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.clear();
+                editor.commit();
+                MasterTabActivity.this.finish();
+                startActivity(new Intent(this, MainActivity.class));
+                break;
+
+            case R.id.edit_profile:
+                int edit = 7;
+
+                Intent intent = new Intent(this, EditTabsActivity.class);
+                intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-        System.out.println("FUCKING TAB POSITION: " + tab.getPosition());
         if (tab.getPosition() == 6) {
             new ShoppingCartFragment();
         }
@@ -134,7 +124,6 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
         unselected = tab.getPosition();
-        System.out.println("FUCKING UNSELECTED TAB POSITION: "+unselected);
         new ShoppingCartFragment();
     }
 
@@ -142,33 +131,6 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
         if (tab.getPosition() == 6) {
             new ShoppingCartFragment();
-        }
-    }
-
-    private void showActionBar() {
-        LayoutInflater inflator = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflator.inflate(R.layout.mastertabs_custom_actionbar_layout, null);
-        ActionBar actionBar = getActionBar();
-        MainActivity.setCustomActionBar(actionBar);
-
-        back_btn = (ImageButton) v.findViewById(R.id.back_btn);
-        more = (ImageButton) v.findViewById(R.id.more);
-
-        back_btn.setOnClickListener(this);
-        more.setOnClickListener(this);
-
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setCustomView(v);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.back_btn:
-                this.finish();
-                break;
         }
     }
 }

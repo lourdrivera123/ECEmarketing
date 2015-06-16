@@ -97,8 +97,10 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         int ID = Integer.parseInt(doctor_items.get(position).get(KEY_ID));
         Intent intent = new Intent(getActivity(), DoctorActivity.class);
-        intent.putExtra("doctor_ID", ID);
+        intent.putExtra(dbHelper.RECORDS_DOCTOR_ID, ID);
+        intent.putExtra(DoctorActivity.PARENT_ACTIVITY, "ListOfDoctorsFragment");
         startActivity(intent);
+        getActivity().finish();
     }
 
     @Override
@@ -118,7 +120,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
             if (doctor.toLowerCase().contains(s_doctor.toLowerCase())) {
                 int doctorindex = arrayOfSearchDoctors.indexOf(doctor);
 
-                HashMap<String, String> map = new HashMap<String, String>();
+                HashMap<String, String> map = new HashMap();
 
                 map.put(KEY_ID, temp_doctors.get(doctorindex).get(KEY_ID));
                 map.put(KEY_FULL_NAME, temp_doctors.get(doctorindex).get(KEY_FULL_NAME));

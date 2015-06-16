@@ -59,9 +59,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     ArrayList<Integer> temp_deleted;
     ArrayList<Integer> selectedList;
     ArrayList<String> arrayOfRecords;
-    private int nr = 0;
 
+    private int nr = 0;
     private SelectionAdapter mAdapter;
+
+    public int DOCTOR_ID = 0;
 
     DbHelper dbHelper;
     RoundImage roundedImage;
@@ -81,10 +83,8 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         selectedList = new ArrayList();
         temp_deleted = new ArrayList();
 
-        Log.i("hash history", hashHistory + "");
-
         for (int x = 0; x < hashHistory.size(); x++) {
-            medRecords.add(hashHistory.get(x).get("doctor_name"));
+            medRecords.add(hashHistory.get(x).get(DbHelper.RECORDS_DOCTOR_NAME));
         }
 
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
@@ -169,7 +169,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 if (checked) {
                     nr++;
-                    mAdapter.setNewSelection(position, checked);
+                    mAdapter.setNewSelection(position, true);
                 } else {
                     nr--;
                     mAdapter.removeSelection(position);
@@ -203,12 +203,13 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         findings = (EditText) dialog.findViewById(R.id.findings);
         treatments = (EditText) dialog.findViewById(R.id.treatments);
 
-        date.setText(hashHistory.get(position).get("record_date"));
-        complaints.setText(hashHistory.get(position).get("complaints"));
-        findings.setText(hashHistory.get(position).get("findings"));
-        doctor_name.setText(hashHistory.get(position).get("doctor_name"));
+        date.setText(hashHistory.get(position).get(DbHelper.RECORDS_DATE));
+        complaints.setText(hashHistory.get(position).get(DbHelper.RECORDS_COMPLAINT));
+        findings.setText(hashHistory.get(position).get(DbHelper.RECORDS_FINDINGS));
+        doctor_name.setText(hashHistory.get(position).get(DbHelper.RECORDS_DOCTOR_NAME));
+        DOCTOR_ID = Integer.parseInt(hashHistory.get(position).get(DbHelper.RECORDS_DOCTOR_ID));
 
-        hashTreatments = dbHelper.getTreatmentRecord(Integer.parseInt(hashHistory.get(position).get("recordID")));
+        hashTreatments = dbHelper.getTreatmentRecord(Integer.parseInt(hashHistory.get(position).get(DbHelper.RECORDS_ID)));
         if (hashTreatments.size() > 0) {
             for (int x = 0; x < hashTreatments.size(); x++) {
                 arrayOfRecords.add(hashTreatments.get(x).get("medicine_name") + " - " + hashTreatments.get(x).get("prescription"));
@@ -230,7 +231,10 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
                 break;
             case R.id.view_doctor_btn:
-                startActivity(new Intent(getActivity(), DoctorActivity.class));
+                Intent intent_doctoractivity = new Intent(getActivity(), DoctorActivity.class);
+                intent_doctoractivity.putExtra(DbHelper.RECORDS_DOCTOR_ID, DOCTOR_ID);
+                intent_doctoractivity.putExtra(DoctorActivity.PARENT_ACTIVITY, "PatientHistoryFragment");
+                startActivity(intent_doctoractivity);
                 break;
 
             case R.id.call_doctor_btn:
@@ -335,9 +339,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             TextView record_date = (TextView) v.findViewById(R.id.record_date);
             TextView findings = (TextView) v.findViewById(R.id.findings);
 
-            record_date.setText(hashHistory.get(position).get("record_date"));
+            record_date.setText(hashHistory.get(position).get(DbHelper.RECORDS_DATE));
             record_date.setTag(position);
-            findings.setText(hashHistory.get(position).get("findings"));
+            findings.setText(hashHistory.get(position).get(DbHelper.RECORDS_FINDINGS));
             findings.setTag(position);
 
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_app);

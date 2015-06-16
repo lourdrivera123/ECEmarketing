@@ -10,7 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:longClickable="true">
+        android:longClickable="true"
+        android:id="@+id/item_details">
 
         <!-- Product Name-->
         <TextView
@@ -19,13 +20,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="false"
-            android:textColor="#040404"
+            android:textColor="#ff040404"
             android:textSize="15sp"
             android:layout_weight="3.5"
             android:layout_gravity="bottom"
             android:padding="10dp"
             android:maxWidth="60dp"
-            android:minWidth="48dp" />
+            android:minWidth="48dp"
+            android:text="Biogesic"/>
 
         <!-- Product Quantity -->
         <TextView
@@ -33,12 +35,15 @@
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:textColor="#343434"
-            android:textSize="18sp"
+            android:textSize="0sp"
             android:gravity="bottom"
             android:layout_gravity="bottom"
             android:singleLine="false"
             android:padding="10dp"
-            android:layout_weight="0.5"/>
+            android:visibility="invisible"
+            android:text="67"/>
+
+
 
         <!-- Amount -->
         <TextView
@@ -49,14 +54,21 @@
             android:padding="10dp"
             android:textSize="18sp"
             android:id="@+id/total"
-            android:gravity="bottom" />
-        <!-- Price -->
+            android:gravity="bottom"
+            android:singleLine="false"
+            android:text="Php 1008273.98"/>
+
     </LinearLayout>
+
+    <!-- Price -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:id="@+id/product_price"
-        android:textSize="10sp"
-        android:layout_alignParentBottom="true"/>
+        android:textSize="12sp"
+        android:layout_below="@+id/item_details"
+        android:layout_alignParentBottom="true"
+        android:text="Price: 10.00 / pc" />
+
 </RelativeLayout>

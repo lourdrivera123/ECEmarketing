@@ -57,36 +57,29 @@ public class Sync {
                         if (json_array_final != null){
                             for (int i = 0; i < json_array_final.length(); i++) {
                                 JSONObject json_object = json_array_final.getJSONObject(i);
-
-                                System.out.print("GWAPO LAGI KO: ");
                                 System.out.println(json_object);
-
 
                                 if(json_object != null){
                                     if (tableName.equals("products")) {
                                         if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (tableName.equals("doctors")) {
                                         if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (tableName.equals("specialties")) {
                                         if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (tableName.equals("sub_specialties")) {
                                         if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
@@ -94,7 +87,6 @@ public class Sync {
                                     } else if (tableName.equals("product_categories")) {
                                         try {
                                             if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
-                                                Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                             }
@@ -104,14 +96,12 @@ public class Sync {
 
                                     } else if (tableName.equals("product_subcategories")) {
                                         if (dbHelper.insertProductSubCategory(setProductSubCategory(json_object))) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } else if (tableName.equals("dosage_format_and_strength")) {
                                         if (dbHelper.insertDosage(setDosage(json_object))) {
-                                            Toast.makeText(context, "successfully saved ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                         }
@@ -139,6 +129,18 @@ public class Sync {
                                             System.out.println("Treatments SUCCESSFULLY SAVED. <source: Sync.java>");
                                         } else {
                                             System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
+                                        }
+                                    }else if (tableName.equals("promo_discounts")) {
+                                        if( dbHelper.savePromoDiscount(setPromoDiscount(json_object), "insert") ){
+
+                                        }else{
+                                            System.out.print("PromoDiscounts failed to save. <source: Sync.java>");
+                                        }
+                                    }else if( tableName.equals("promo_free_products") ){
+                                        if( dbHelper.savePromoFreeProducts(setPromoFreeProducts(json_object), "insert") ){
+
+                                        }else{
+                                            System.out.print("PromoFreeProducts failed to save. <source: Sync.java>");
                                         }
                                     }
                                 }
@@ -530,5 +532,36 @@ public class Sync {
         basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
         basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
         return basket;
+    }
+
+    public PromoDiscount setPromoDiscount(JSONObject json) throws JSONException {
+        PromoDiscount promoDiscount = new PromoDiscount();
+
+        promoDiscount.setPromoDiscountId(json.getInt(DbHelper.PROMO_DISCOUNTS_ID));
+        promoDiscount.setProductId(json.getInt(DbHelper.PROMO_D_PRODUCT_ID));
+        promoDiscount.setName(json.getString(DbHelper.PROMO_D_NAME));
+        promoDiscount.setLess(json.getDouble(DbHelper.PROMO_D_LESS));
+        promoDiscount.setQuantityRequired(json.getInt(DbHelper.PROMO_D_QUANTITY_REQUIRED));
+        promoDiscount.setStartDate(json.getString(DbHelper.PROMO_D_START_DATE));
+        promoDiscount.setEndDate(json.getString(DbHelper.PROMO_D_END_DATE));
+        promoDiscount.setType(json.getInt(DbHelper.PROMO_D_TYPE));
+        promoDiscount.setCreatedAt(json.getString(DbHelper.PROMO_D_CREATED_AT));
+        promoDiscount.setUpdatedAt(json.getString(DbHelper.PROMO_D_UPDATED_AT));
+        promoDiscount.setDeletedAt(json.getString(DbHelper.PROMO_D_DELETED_AT));
+
+        return promoDiscount;
+    }
+
+    public PromoFreeProducts setPromoFreeProducts(JSONObject json) throws JSONException{
+        PromoFreeProducts promoFreeProducts = new PromoFreeProducts();
+
+        promoFreeProducts.setPromoFreeProductsId(json.getInt(DbHelper.PROMO_FREE_PRODUCTS_ID));
+        promoFreeProducts.setPromoId(json.getInt(DbHelper.PROMO_FP_PROMO_ID));
+        promoFreeProducts.setNumberOfUnitsFree(json.getInt(DbHelper.PROMO_FP_NO_OF_UNITS_FREE));
+        promoFreeProducts.setCreatedAt(json.getString(DbHelper.PROMO_FP_CREATED_AT));
+        promoFreeProducts.setUpdatedAt(json.getString(DbHelper.PROMO_FP_UPDATED_AT));
+        promoFreeProducts.setDeletedAt(json.getString(DbHelper.PROMO_FP_DELETED_AT));
+
+        return promoFreeProducts;
     }
 }

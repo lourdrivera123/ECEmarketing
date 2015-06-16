@@ -1,22 +1,19 @@
 package com.example.zem.patientcareapp;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 public class PatientProfileFragment extends Fragment {
     ImageView image_holder;
@@ -54,7 +51,7 @@ public class PatientProfileFragment extends Fragment {
         civil_status.setText("Civil Status: " + loginUser.getCivil_status());
         height_weight.setText("Height: " + loginUser.getHeight() + " ft. / Weight: " + loginUser.getWeight() + " kg.");
 
-        if (loginUser.getOccupation() == null) {
+        if (loginUser.getOccupation() == null || loginUser.getOccupation().equals("")) {
             occupation.setVisibility(View.GONE);
         } else {
             occupation.setText("Occupation: " + loginUser.getOccupation());
@@ -66,7 +63,7 @@ public class PatientProfileFragment extends Fragment {
             unit_no = "# " + loginUser.getUnit_floor_room_no();
         }
 
-        if (loginUser.getBuilding() == null) {
+        if (loginUser.getBuilding() == null || loginUser.getBuilding().equals("")) {
             building = "";
         } else {
             building = loginUser.getBuilding();
@@ -114,13 +111,22 @@ public class PatientProfileFragment extends Fragment {
         }
 
         String imgFile = loginUser.getPhoto();
+        Toast.makeText(getActivity(), "" + imgFile, Toast.LENGTH_SHORT).show();
 
-        if (imgFile != null) {
-
+        if (imgFile != null || !imgFile.equals("")) {
             Bitmap yourSelectedImage = BitmapFactory.decodeFile(imgFile);
-            Drawable d = new BitmapDrawable(yourSelectedImage);
+            Drawable d = new BitmapDrawable(getResources(), yourSelectedImage);
             image_holder.setImageDrawable(d);
+//            setRes(image_holder, d);
         }
         return rootView;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setRes(ImageView iv, Drawable drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            iv.setBackground(drawable);
+        else
+            iv.setBackgroundDrawable(drawable);
     }
 }
