@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,7 +29,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -39,7 +48,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     ListView list_of_history;
     TextView noResults;
     Button view_doctor_btn, call_doctor_btn;
-    ImageButton add_record;
+    ImageButton add_record, medical_history_refresher;
 
     TextView date, doctor_name;
     EditText complaints, findings, treatments;
@@ -58,6 +67,10 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     DbHelper dbHelper;
     RoundImage roundedImage;
+    Helpers helpers;
+    JSONArray patient_record_json_array;
+
+    Sync sync;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,6 +90,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
         list_of_history = (ListView) rootView.findViewById(R.id.list_of_history);
+        medical_history_refresher = (ImageButton) rootView.findViewById(R.id.medical_history_refresher);
 
         if (hashHistory.size() == 0) {
             noResults.setVisibility(View.VISIBLE);
@@ -84,6 +98,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
         list_of_history.setOnItemClickListener(this);
         add_record.setOnClickListener(this);
+        medical_history_refresher.setOnClickListener(this);
 
         mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, R.id.doctor_name, medRecords);
         list_of_history.setAdapter(mAdapter);
@@ -230,6 +245,48 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 Uri telUri = Uri.parse(uriTel);
                 Intent returnIt = new Intent(Intent.ACTION_DIAL, telUri);
                 startActivity(returnIt);
+
+                break;
+            case R.id.medical_history_refresher:
+                Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
+                // Request a string response from the provided URL.
+
+                JsonObjectRequest patient_record_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_patient_records"), null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try{
+                            patient_record_json_array = response.getJSONArray("patient_records");
+                            sync = new Sync();
+
+                            sync.checkWhatToInsertInMysql(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
+                            sync.checkWhatToInsert(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
+                            sync.checkWhatToUpdate(patient_record_json_array, "patient_records");
+                            sync.checkWhatToUpdateInMysql(patient_record_json_array, "patient_records");
+
+                            sync.init(getActivity(), "get_patient_records", "patient_records", "record_id", response);
+                        } catch (Exception e ) {
+
+                        }
+
+//              System.out.print("patient records: I am in splash activity");
+//                        Log.d("splash patient record response: ", ""+response.toString());
+
+
+                        try {
+                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("patient_records", response.getString("server_timestamp"));
+                        } catch (Exception e) {
+                            System.out.println("error fetching server timestamp: "+ e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
                 break;
         }
