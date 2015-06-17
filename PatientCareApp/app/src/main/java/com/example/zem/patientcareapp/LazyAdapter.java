@@ -1,7 +1,10 @@
 package com.example.zem.patientcareapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +13,8 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +84,17 @@ public class LazyAdapter extends BaseAdapter {
             TextView product_name = (TextView) vi.findViewById(R.id.product_name); // product name
             TextView product_description = (TextView) vi.findViewById(R.id.product_description); // product description
             TextView product_price = (TextView) vi.findViewById(R.id.product_price); // product price
-            ImageView list_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
+            final TextView btnAddQty = (TextView) vi.findViewById(R.id.add_qty);
+            TextView btnMinusQty = (TextView) vi.findViewById(R.id.minus_qty);
+
+            btnAddQty.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("NewApi")
+                @Override
+                public void onClick(View v) {
+                    btnAddQty.setBackground(activity.getResources().getDrawable( R.mipmap.ic_plus_dead ));
+                    btnAddQty.setBackground(activity.getResources().getDrawable(R.mipmap.ic_plus));
+                }
+            });
 
 
             HashMap<String, String> map;
@@ -89,8 +104,7 @@ public class LazyAdapter extends BaseAdapter {
             vi.setTag(map.get(DbHelper.PRODUCT_ID));
             product_name.setText(map.get(DbHelper.PRODUCT_NAME));
             product_description.setText(map.get(DbHelper.PRODUCT_DESCRIPTION));
-            product_price.setText("Php "+map.get(DbHelper.PRODUCT_PRICE));
-            imageLoader.DisplayImage(map.get(DbHelper.PRODUCT_PHOTO), list_image);
+            product_price.setText("\u20B1 "+map.get(DbHelper.PRODUCT_PRICE));
 
         } else if (list_type.equals("consultation_lists")) {
             vi = inflater.inflate(R.layout.list_row_consultations, null);
@@ -133,7 +147,7 @@ public class LazyAdapter extends BaseAdapter {
 
             total.setText(total_amount + "");
             qty.setText(quantity + "");
-            productPrice.setText("Quantity: "+quantity+"\nPrice: Php " + price+" / "+(!unit.equals("0") ? unit : ""));
+            productPrice.setText("Quantity: "+quantity+"\nPrice: \u20B1 " + price+" / "+(!unit.equals("0") ? unit : ""));
 
             qty.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
             total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
@@ -160,8 +174,8 @@ public class LazyAdapter extends BaseAdapter {
 
 
 
-            itemAmount.setText("Php "+total_amount + "");
-            itemDetails.setText("Price: Php "+price+" / "+(!unit.equals("0") ? unit : ""));
+            itemAmount.setText("\u20B1 "+total_amount + "");
+            itemDetails.setText("Price: \u20B1 "+price+" / "+(!unit.equals("0") ? unit : ""));
             itemQuantity.setText("Quantity: "+quantity);
 
             itemName.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));

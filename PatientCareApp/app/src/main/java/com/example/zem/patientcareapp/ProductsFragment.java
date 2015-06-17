@@ -146,10 +146,10 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         add_to_cart_btn = (Button) dialog.findViewById(R.id.add_to_cart_btn);
 
         name.setText("(" + prod.getGenericName() + ")\n" + prod.getName());
-        price.setText("Php " + prod.getPrice() + " / " + prod.getUnit());
+        price.setText("\u20B1 " + prod.getPrice() + " / " + prod.getUnit());
 
         description.setText(prod.getDescription());
-        add_to_cart_btn.setText("Add to Cart | Php " + prod.getPrice());
+        add_to_cart_btn.setText("Add to Cart | \u20B1 " + prod.getPrice());
         qty = (EditText) dialog.findViewById(R.id.qty);
 
         add_to_cart_btn.setTag(prod.getProductId());
@@ -301,12 +301,12 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                     Double qty_int = Double.parseDouble(qty_str);
                     Double product = qty_int * price;
 
-                    add_to_cart_btn.setText("Add to Cart | Php " + product);
+                    add_to_cart_btn.setText("Add to Cart | \u20B1 " + product);
                 } catch (Exception e) {
 
                 }
             } else {
-                add_to_cart_btn.setText("Add to Cart | Php ");
+                add_to_cart_btn.setText("Add to Cart | \u20B1 ");
             }
         }
 

@@ -97,7 +97,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             TotalAmount+= total;
                         }
 
-                            total_amount.setText("Php " + TotalAmount);
+                            total_amount.setText("\u20B1 " + TotalAmount);
 
                             adapter = new LazyAdapter(getActivity(), items, "basket_items");
 
@@ -161,8 +161,8 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     final double price = Double.parseDouble(row.get(DbHelper.PRODUCT_PRICE));
 
                     p_name.setText(row.get(DbHelper.PRODUCT_NAME));
-                    p_total.setText("Php "+ (old_qty* price));
-                    p_price.setText("Php "+price+"/"+row.get(DbHelper.PRODUCT_UNIT));
+                    p_total.setText("\u20B1 "+ (old_qty* price));
+                    p_price.setText("\u20B1 "+price+"/"+row.get(DbHelper.PRODUCT_UNIT));
 
                     et_qty.addTextChangedListener(new TextWatcher() {
                         @Override
@@ -178,7 +178,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     cs = "1";
                                 }
                                 int new_qty = Integer.parseInt(cs);
-                                p_total.setText("Php " + (price * new_qty));
+                                p_total.setText("\u20B1 " + (price * new_qty));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -237,7 +237,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
                                                   TotalAmount -= old_total;
                                                   TotalAmount += new_total;
-                                                  total_amount.setText("Php " + TotalAmount);
+                                                  total_amount.setText("\u20B1 " + TotalAmount);
 
                                                   adapter.notifyDataSetChanged();
                                                   Toast.makeText(getActivity(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
@@ -290,7 +290,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                         if(responseFromServer){
                                             if( dbHelper.deleteBasketItem(Integer.parseInt(row.get("basket_id"))) ) {
                                                 TotalAmount -= amount;
-                                                total_amount.setText("Php " + TotalAmount);
+                                                total_amount.setText("\u20B1 " + TotalAmount);
                                                 items.remove(pos);
                                                 adapter.notifyDataSetChanged();
                                                 Toast.makeText(getActivity(), "An item has been successfully removed.", Toast.LENGTH_SHORT).show();

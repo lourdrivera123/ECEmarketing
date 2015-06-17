@@ -920,7 +920,7 @@ public class DbHelper extends SQLiteOpenHelper {
 //                    "<id>" + cur.getString(0) + "</id>\n" +
 //                    "<name>" + cur.getString(i_name) + "</name>\n" +
 //                    "<description>" + cur.getString(i_description) + "</description>\n" +
-//                    "<price> Php " + cur.getDouble(i_price) + "</price>\n" +
+//                    "<price> \u20B1 " + cur.getDouble(i_price) + "</price>\n" +
 //                    "<photo>" + "http://api.androidhive.info/music/images/rihanna.png" + "</photo>\n" +
 //                    "</entry>";
 //
