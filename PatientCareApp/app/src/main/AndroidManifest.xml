@@ -104,5 +104,4 @@
         <activity android:name=".PromoDiscount" />
         <activity android:name=".PromoFreeProducts" />
     </application>
-
 </manifest>

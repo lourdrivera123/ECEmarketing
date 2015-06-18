@@ -9,6 +9,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,6 +23,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.ActionBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -84,9 +88,16 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             populateProductsListView(rootView, products_items);
             pDialog.hide();
         }
+//        setHasOptionsMenu(true);
 
         return rootView;
     }
+
+//     @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//
+//        getActivity().getMenuInflater().inflate(R.menu.actions_menu, menu);
+//    }
 
     public void populateProductsListView(View rootView, ArrayList<HashMap<String, String>> products_items) {
         list_of_products = (ListView) rootView.findViewById(R.id.product_lists);
@@ -336,4 +347,5 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
 }

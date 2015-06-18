@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,6 +28,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +43,9 @@ import java.util.Set;
 public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
     TextView noResults;
+    ImageButton  update_record;
     Button view_doctor_btn;
-    ImageButton add_record, update_record;
+    ImageButton add_record, medical_history_refresher;
 
     TextView date, doctor_name;
     EditText complaints, findings, treatments;
@@ -59,6 +65,10 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     DbHelper dbHelper;
     RoundImage roundedImage;
+    Helpers helpers;
+    JSONArray patient_record_json_array;
+
+    Sync sync;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,12 +82,13 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         temp_deleted = new ArrayList();
 
         for (int x = 0; x < hashHistory.size(); x++) {
-            medRecords.add(hashHistory.get(x).get(dbHelper.RECORDS_DOCTOR_NAME));
+            medRecords.add(hashHistory.get(x).get(DbHelper.RECORDS_DOCTOR_NAME));
         }
 
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
         list_of_history = (ListView) rootView.findViewById(R.id.list_of_history);
+        medical_history_refresher = (ImageButton) rootView.findViewById(R.id.medical_history_refresher);
 
         if (hashHistory.size() == 0) {
             noResults.setVisibility(View.VISIBLE);
@@ -85,6 +96,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
         list_of_history.setOnItemClickListener(this);
         add_record.setOnClickListener(this);
+        medical_history_refresher.setOnClickListener(this);
 
         mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, R.id.doctor_name, medRecords);
         list_of_history.setAdapter(mAdapter);
@@ -158,7 +170,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 if (checked) {
                     nr++;
-                    mAdapter.setNewSelection(position, checked);
+                    mAdapter.setNewSelection(position, true);
                 } else {
                     nr--;
                     mAdapter.removeSelection(position);
@@ -205,6 +217,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         }
 
         hashTreatments = dbHelper.getTreatmentRecord(Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_ID)));
+
         if (hashTreatments.size() > 0) {
             for (int x = 0; x < hashTreatments.size(); x++) {
                 arrayOfRecords.add(hashTreatments.get(x).get("medicine_name") + " - " + hashTreatments.get(x).get("prescription"));
@@ -228,7 +241,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 break;
             case R.id.view_doctor_btn:
                 Intent intent_doctoractivity = new Intent(getActivity(), DoctorActivity.class);
-                intent_doctoractivity.putExtra(dbHelper.RECORDS_DOCTOR_ID, DOCTOR_ID);
+                intent_doctoractivity.putExtra(DbHelper.RECORDS_DOCTOR_ID, DOCTOR_ID);
                 intent_doctoractivity.putExtra(DoctorActivity.PARENT_ACTIVITY, "PatientHistoryFragment");
                 startActivity(intent_doctoractivity);
                 break;
@@ -238,6 +251,48 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 update_record_intent.putExtra(PatientMedicalRecordActivity.UPDATE_RECORD_ID, update_recordID);
                 startActivity(update_record_intent);
                 getActivity().finish();
+                break;
+            case R.id.medical_history_refresher:
+                Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
+                // Request a string response from the provided URL.
+
+                JsonObjectRequest patient_record_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_patient_records"), null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try{
+                            patient_record_json_array = response.getJSONArray("patient_records");
+                            sync = new Sync();
+
+                            sync.checkWhatToInsertInMysql(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
+                            sync.checkWhatToInsert(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
+                            sync.checkWhatToUpdate(patient_record_json_array, "patient_records");
+                            sync.checkWhatToUpdateInMysql(patient_record_json_array, "patient_records");
+
+                            sync.init(getActivity(), "get_patient_records", "patient_records", "record_id", response);
+                        } catch (Exception e ) {
+
+                        }
+
+//              System.out.print("patient records: I am in splash activity");
+//                        Log.d("splash patient record response: ", ""+response.toString());
+
+
+                        try {
+                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("patient_records", response.getString("server_timestamp"));
+                        } catch (Exception e) {
+                            System.out.println("error fetching server timestamp: "+ e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 break;
         }
     }
@@ -299,9 +354,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             TextView record_date = (TextView) v.findViewById(R.id.record_date);
             TextView findings = (TextView) v.findViewById(R.id.findings);
 
-            record_date.setText(hashHistory.get(position).get(dbHelper.RECORDS_DATE));
+            record_date.setText(hashHistory.get(position).get(DbHelper.RECORDS_DATE));
             record_date.setTag(position);
-            findings.setText(hashHistory.get(position).get(dbHelper.RECORDS_FINDINGS));
+            findings.setText(hashHistory.get(position).get(DbHelper.RECORDS_FINDINGS));
             findings.setTag(position);
 
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_app);

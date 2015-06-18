@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
@@ -21,7 +22,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     DbHelper dbHelper;
     Intent intent;
-    int unselected = 0;
+    int unselected = 0, selected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +53,6 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                // on changing the page make respected tab selected
-                if (position == 6) {
-                    new ShoppingCartFragment();
-                }
                 actionBar.setSelectedNavigationItem(position);
             }
 

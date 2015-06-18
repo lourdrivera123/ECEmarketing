@@ -42,6 +42,13 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:background="@drawable/circle"
+            android:src="@mipmap/ic_refresher"
+            android:id="@+id/medical_history_refresher" />
+
+        <ImageButton
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/circle"
             android:src="@drawable/ic_action"
             android:id="@+id/add_record" />
     </LinearLayout>
