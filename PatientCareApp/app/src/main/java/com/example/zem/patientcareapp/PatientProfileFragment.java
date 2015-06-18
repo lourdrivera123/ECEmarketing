@@ -111,13 +111,11 @@ public class PatientProfileFragment extends Fragment {
         }
 
         String imgFile = loginUser.getPhoto();
-        Toast.makeText(getActivity(), "" + imgFile, Toast.LENGTH_SHORT).show();
 
         if (imgFile != null || !imgFile.equals("")) {
             Bitmap yourSelectedImage = BitmapFactory.decodeFile(imgFile);
             Drawable d = new BitmapDrawable(getResources(), yourSelectedImage);
             image_holder.setImageDrawable(d);
-//            setRes(image_holder, d);
         }
         return rootView;
     }

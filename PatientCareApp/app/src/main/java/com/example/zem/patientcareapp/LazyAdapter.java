@@ -91,8 +91,8 @@ public class LazyAdapter extends BaseAdapter {
                 @SuppressLint("NewApi")
                 @Override
                 public void onClick(View v) {
-                    btnAddQty.setBackground(activity.getResources().getDrawable( R.mipmap.ic_plus_dead ));
-                    btnAddQty.setBackground(activity.getResources().getDrawable(R.mipmap.ic_plus));
+                   /* btnAddQty.setBackground(activity.getResources().getDrawable( R.mipmap.ic_plus_dead ));
+                    btnAddQty.setBackground(activity.getResources().getDrawable(R.mipmap.ic_plus));*/
                 }
             });
 

@@ -1,5 +1,0 @@
-C:\Users\User PC\AndroidStudioProjects\ECEmarketing\SampleDrawer\app\build\intermediates\classes\debug
-C:\Users\User PC\AndroidStudioProjects\ECEmarketing\SampleDrawer\app\build\intermediates\pre-dexed\debug\support-annotations-22.1.1-6bb2d8862b197c91f4fa61e1f5092e23ab410e4c.jar
-C:\Users\User PC\AndroidStudioProjects\ECEmarketing\SampleDrawer\app\build\intermediates\pre-dexed\debug\internal_impl-22.1.1-754b021d6355a7c87214f773e14d7a867570a763.jar
-C:\Users\User PC\AndroidStudioProjects\ECEmarketing\SampleDrawer\app\build\intermediates\pre-dexed\debug\classes-838da1d38d59bd8db1a8f629020f456ebad3c0e0.jar
-C:\Users\User PC\AndroidStudioProjects\ECEmarketing\SampleDrawer\app\build\intermediates\pre-dexed\debug\classes-89b150cef361229a957d2acd9308e290da171ae2.jar

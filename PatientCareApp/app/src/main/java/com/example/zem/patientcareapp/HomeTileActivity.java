@@ -4,25 +4,32 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HomeTileActivity extends Activity implements View.OnClickListener {
     ImageButton profile_btn, news_btn, promos_btn, cart_btn, history_btn, products_btn, test_results_btn, doctors_btn,
             consultation_btn;
     FragmentTransaction fragmentTransaction;
+    AutoCompleteTextView search_product;
 
     public static SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
@@ -33,6 +40,12 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
     static Patient patient;
     static DbHelper dbHelper;
 
+    ArrayAdapter search_adapter;
+    ArrayList<HashMap<String, String>> hash_allProducts;
+    ArrayList<String> products;
+
+    int productID = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,11 +55,17 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         ActionBar actionbar = getActionBar();
         MainActivity.setCustomActionBar(actionbar);
 
-        sharedpreferences = getSharedPreferences
-                (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+        sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
 
         dbHelper = new DbHelper(this);
+        hash_allProducts = dbHelper.getAllProducts();
+        products = new ArrayList();
+
+        for (int x = 0; x < hash_allProducts.size(); x++) {
+            products.add(hash_allProducts.get(x).get(dbHelper.PRODUCT_NAME));
+        }
+        createCustomSearchBar(actionbar);
 
         FragmentManager fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -142,11 +161,10 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.logout_menu, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.logout_menu, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -155,8 +173,8 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         if (id == R.id.logout) {
             editor.clear();
             editor.commit();
-            HomeTileActivity.this.finish();
             startActivity(new Intent(this, MainActivity.class));
+            this.finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -171,5 +189,46 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         userID = patient.getServerID();
 
         return userID;
+    }
+
+    public void createCustomSearchBar(ActionBar actionbar) {
+        actionbar.setDisplayShowHomeEnabled(true);
+        actionbar.setDisplayShowTitleEnabled(false);
+        LayoutInflater mInflater = LayoutInflater.from(this);
+
+        View mCustomView = mInflater.inflate(R.layout.searchview_layout, null);
+
+        search_product = (AutoCompleteTextView) mCustomView.findViewById(R.id.search_product);
+        search_adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, products);
+        search_product.setAdapter(search_adapter);
+
+        search_product.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (search_product.isFocused()) {
+                    search_product.setCursorVisible(true);
+                    search_product.setFocusableInTouchMode(true);
+                    search_product.setFocusable(true);
+                }
+                return false;
+            }
+        });
+        search_product.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item_clicked = parent.getItemAtPosition(position).toString();
+                int itemID = products.indexOf(item_clicked);
+                productID = Integer.parseInt(hash_allProducts.get(itemID).get(dbHelper.SERVER_PRODUCT_ID));
+
+                Intent intent = new Intent(getBaseContext(), SelectedProductActivity.class);
+                intent.putExtra(SelectedProductActivity.PRODUCT_ID, productID);
+                intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "HomeTile");
+                startActivity(intent);
+                HomeTileActivity.this.finish();
+            }
+        });
+
+        actionbar.setCustomView(mCustomView);
+        actionbar.setDisplayShowCustomEnabled(true);
     }
 }
