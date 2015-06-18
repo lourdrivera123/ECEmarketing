@@ -202,10 +202,6 @@ public class DbHelper extends SQLiteOpenHelper {
             CLINICS_ID = "id",
             SERVER_CLINICS_ID = "clinics_id";
 
-
-    // SPECIALTY TABLE
-
-
     // CLINIC_DOCTOR TABLE
     public static final String CD_CLINIC_ID = "clinic_id",
             CD_CLINIC_SCHED = "clinic_sched",
@@ -246,7 +242,6 @@ public class DbHelper extends SQLiteOpenHelper {
             DS_DOCTOR_ID = "doctor_id",
             DS_IS_ACTIVE = "is_active";
 
-
     // PROMO DISCOUNT TABLE
     public static final String PROMO_D_PRODUCT_ID = "product_id",
             PROMO_D_NAME = "name",
@@ -273,9 +268,6 @@ public class DbHelper extends SQLiteOpenHelper {
             PROMO_FREE_PRODUCTS_ID = "id",
             SERVER_PROMO_FREE_PRODUCTS_ID = "promo_free_products_id";
 
-
-    //Doctor string xml
-    String doctor_string_xml = "", product_string_xml = "";
     public static String doctors_string_xml = "", products_string_xml = "";
 
     public DbHelper(Context context) {
@@ -284,17 +276,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-//        // SQL to create table "specialty"
-//        String sql_create_specialty_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE," +
-//                        " %s TEXT, %s TEXT, %s TEXT,  %s TEXT)", TBL_SPECIALTY, SPECIALTY_ID, SERVER_SPECIALTY_ID, SPECIALTY_NAME, SPECIALTY_CREATED_AT,
-//                SPECIALTY_UPDATED_AT, SPECIALTY_DELETED_AT);
-//
-//        // SQL to create table "sub_sepecialty"
-//        String sql_create_sub_specialty_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE," +
-//                        " %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)", TBL_SUBSPECIALTY, SUBSPECIALTY_ID, SERVER_SUBSPECIALTY_ID,
-//                SUBSPECIALTY_SPECIALTY_ID, SUBSPECIALTY_NAME, SUBSPECIALTY_CREATED_AT, SUBSPECIALTY_UPDATED_AT, SUBSPECIALTY_DELETED_AT);
-
         // SQL to create table "doctors"
         String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
@@ -309,11 +290,9 @@ public class DbHelper extends SQLiteOpenHelper {
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_SUB_SPECIALTIES, SUB_SPECIALTY_ID, SERVER_SUB_SPECIALTY_ID, SUB_SPECIALTY_FOREIGN_ID, SUB_SPECIALTY_NAME, SUB_SPECIALTY_CREATED_AT, SUB_SPECIALTY_UPDATED_AT, SUB_SPECIALTY_DELETED_AT);
 
-
         // SQL to create table "tbl_updates"
         String sql_create_tbl_updates = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER)",
                 TBL_UPDATES, UPDATE_ID, UPDATE_TBL_NAME, UPDATE_TIMESTAMP, UPDATE_SEEN);
-
 
         // SQL to create table "patients"
         String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
@@ -342,11 +321,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_PRODUCTS, PRODUCT_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION,
                 PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
 
-
         // SQL TO CREATE TABLE "TBL_DOSAGE"
         String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_DOSAGE, DOSAGE_ID, SERVER_DOSAGE_ID, DOSAGE_PROD_ID, DOSAGE_NAME, DOSAGE_CREATED_AT, DOSAGE_UPDATED_AT);
-
 
         // SQL to create table "baskets"
         String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
@@ -354,11 +331,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
                 BASKET_CREATED_AT, BASKET_UPDATED_AT, BASKET_DELETED_AT);
 
-
         // SQL to create PATIENT_RECORDS TABLE
         String sql_create_patient_records = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
                 TBL_PATIENT_RECORDS, RECORDS_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_DOCTOR_NAME, RECORDS_PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, RECORDS_NOTE, RECORDS_CREATED_AT, RECORDS_UPDATED_AT, RECORDS_DELETED_AT);
-
 
         // SQL TO create TREATMENTS TABLE
         String sql_create_treatments_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
@@ -371,11 +346,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_CLINICS, CLINICS_ID, SERVER_CLINICS_ID, CLINIC_NAME, CLINIC_ADDRESS_HOUSE_NO, CLINIC_ADDRESS_STREET, CLINIC_ADDRESS_BARANGAY, CLINIC_ADDRESS_CITY_MUNICIPALITY,
                 CLINIC_ADDRESS_PROVINCE, CLINIC_ADDRESS_REGION, CLINIC_ADDRESS_ZIP, CLINIC_CREATED_AT, CLINIC_UPDATED_AT, CLINIC_DELETED_AT);
 
-
         // SQL to create table "clinic_doctor"
         String sql_create_clinic_doctor_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
                 TBL_CLINIC_DOCTOR, CD_CLINIC_ID, CD_CLINIC_SCHED, CD_IS_ACTIVE);
-
 
         // SQL to create table "secretaries"
         String sql_create_secretaries_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
@@ -384,11 +357,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 SEC_ADDRESS_CITY_MUNICIPALITY, SEC_ADDRESS_PROVINCE, SEC_ADDRESS_REGION, SEC_ADDRESS_ZIP, SEC_CELL_NO, SEC_TEL_NO, SEC_EMAIL, SEC_PHOTO, SEC_CREATED_AT,
                 SEC_UPDATED_AT, SEC_DELETED_AT);
 
-
         // SQL to create table "clinic_secretary"
         String sql_create_clinic_secretary_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
                 TBL_CLINIC_SECRETARY, CS_CLINIC_ID, CS_SECRETARY_ID, CS_IS_ACTIVE);
-
 
         // SQL to create table "doctor_secretary"
         String sql_create_doctor_secretary_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
@@ -400,14 +371,10 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_PROMO_DISCOUNTS, PROMO_DISCOUNTS_ID, SERVER_PROMO_DISCOUNTS_ID, PROMO_D_PRODUCT_ID, PROMO_D_NAME, PROMO_D_START_DATE, PROMO_D_END_DATE,
                 PROMO_D_TYPE, PROMO_D_QUANTITY_REQUIRED, PROMO_D_LESS, PROMO_D_CREATED_AT, PROMO_D_UPDATED_AT, PROMO_D_DELETED_AT);
 
-
         // SQL to create table "promo_free_products"
         String sql_create_promo_free_products_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
                 TBL_PROMO_FREE_PRODUCTS, PROMO_FREE_PRODUCTS_ID, SERVER_PROMO_FREE_PRODUCTS_ID, PROMO_FP_PRODUCT_ID, PROMO_FP_PROMO_ID, PROMO_FP_NO_OF_UNITS_FREE, PROMO_FP_CREATED_AT, PROMO_FP_UPDATED_AT, PROMO_FP_DELETED_AT);
 
-
-//        db.execSQL(sql_create_specialty_table);
-//        db.execSQL(sql_create_sub_specialty_table);
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_specialties);
         db.execSQL(sql_create_tbl_sub_specialties);
@@ -438,7 +405,6 @@ public class DbHelper extends SQLiteOpenHelper {
         insertTableNamesToUpdates(TBL_DOSAGE, db);
         insertTableNamesToUpdates(TBL_PATIENT_RECORDS, db);
         insertTableNamesToUpdates(TBL_TREATMENTS, db);
-
     }
 
     @Override
@@ -500,12 +466,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
     /* SYNC CHECKER and etc. */
     public boolean insertTableNamesToUpdates(String table_name, SQLiteDatabase db) {
-        //        SQLiteDatabase db = getWritableDatabase();
-
-
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
 
         ContentValues values = new ContentValues();
         values.put(UPDATE_TBL_NAME, table_name);
@@ -526,33 +488,12 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(UPDATE_TIMESTAMP, server_timestamp);
 
-
         int rowID = db.update(TBL_UPDATES, values, UPDATE_TBL_NAME + "= '" + table_name + "'", null);
         db.close();
         return rowID > 0;
     }
 
-    public long insertPatientRecord(PatientRecord record) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        long rowID = 0;
-
-        values.put(RECORDS_PATIENT_ID, record.getPatientID());
-        values.put(RECORDS_COMPLAINT, record.getComplaints());
-        values.put(RECORDS_FINDINGS, record.getFindings());
-        values.put(RECORDS_DATE, record.getDate());
-        values.put(RECORDS_DOCTOR_ID, record.getDoctorID());
-        values.put(RECORDS_DOCTOR_NAME, record.getDoctorName());
-        values.put(RECORDS_NOTE, record.getNote());
-
-                rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
-
-
-        db.close();
-        return rowID;
-    }
-
-    public boolean savePatientRecord(PatientRecord record, String request) {
+    public long savePatientRecord(PatientRecord record, String request) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         long rowID = 0;
@@ -568,19 +509,13 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(RECORDS_UPDATED_AT, record.getUpdated_at());
         values.put(RECORDS_DELETED_AT, record.getDeleted_at());
 
-        switch(request){
-            case "insert":
-                rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
-                break;
-            case "update":
-//                rowID = db.update(TBL_PATIENT_RECORDS, null, values, null);
-                rowID = db.update(TBL_PATIENT_RECORDS, values, RECORDS_ID + "=" + record.getRecordID(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_PATIENT_RECORDS, values, RECORDS_ID + "=" + record.getRecordID(), null);
         }
-
-
         db.close();
-        return rowID > 0;
+        return rowID;
     }
 
     public ArrayList<Integer> insertTreatment(ArrayList<HashMap<String, String>> items, long recordID) {
@@ -588,12 +523,13 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         ArrayList<Integer> arrayOfID = new ArrayList();
 
+        db.delete(TBL_TREATMENTS, TREATMENTS_RECORD_ID + "=" + recordID, null);
         for (int x = 0; x < items.size(); x++) {
             values.put(TREATMENTS_RECORD_ID, recordID);
-            values.put(TREATMENTS_MEDICINE_NAME, items.get(x).get("treatment_name"));
+            values.put(TREATMENTS_MEDICINE_NAME, items.get(x).get("medicine_name"));
             values.put(TREATMENTS_GENERIC_NAME, items.get(x).get("generic_name"));
-            values.put(TREATMENTS_QUANITY, items.get(x).get("qty"));
-            values.put(TREATMENTS_PRESCRIPTION, items.get(x).get("dosage"));
+            values.put(TREATMENTS_QUANITY, items.get(x).get("quantity"));
+            values.put(TREATMENTS_PRESCRIPTION, items.get(x).get("prescription"));
 
             long rowID = db.insert(TBL_TREATMENTS, null, values);
             arrayOfID.add((int) rowID);
@@ -617,21 +553,16 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(TREATMENTS_UPDATED_AT, treatments.getUpdated_at());
         values.put(TREATMENTS_DELETED_AT, treatments.getDeleted_at());
 
-        switch(request){
-            case "insert":
-                rowID = db.insert(TBL_TREATMENTS, null, values);
-                break;
-            case "update":
-                rowID = db.update(TBL_TREATMENTS, values, SERVER_TREATMENTS_ID + "=" + treatments.getTreatments_id(), null);
-                break;
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_TREATMENTS, null, values);
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_TREATMENTS, values, SERVER_TREATMENTS_ID + "=" + treatments.getTreatments_id(), null);
         }
-
         return rowID > 0;
     }
 
     public String getLastUpdate(String table_name) {
         SQLiteDatabase db = getWritableDatabase();
-
         String sql = "SELECT * FROM " + TBL_UPDATES + " WHERE " + UPDATE_TBL_NAME + "= '" + table_name + "'";
         String last_update_date = "";
         Cursor cur = db.rawQuery(sql, null);
@@ -639,17 +570,14 @@ public class DbHelper extends SQLiteOpenHelper {
         while (cur.moveToNext()) {
             last_update_date = cur.getString(2);
         }
-
         cur.close();
         db.close();
-
         return last_update_date;
     }
 
     /*  USERS TABLE */
     public boolean LoginUser(String uname, String password) {
         int login = 0;
-
         SQLiteDatabase db = getWritableDatabase();
         String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + password + "'";
         Cursor cur = db.rawQuery(sql1, null);
@@ -713,7 +641,6 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public Patient getloginPatient(String username) {
-
         SQLiteDatabase db = getWritableDatabase();
         Patient patient = new Patient();
 
@@ -751,14 +678,11 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setEmail(cur.getString(cur.getColumnIndex(PTNT_EMAIL)));
             patient.setPhoto(cur.getString(cur.getColumnIndex(PTNT_PHOTO)));
         }
-
         cur.close();
         db.close();
 
         return patient;
     }
-
-    //DOCTORS..DOCTORS..DOCTORS..DOCTORS..DOCTORS
 
     /* INSERT and UPDATE and other SQL's & functions for DOCTORS TABLE */
     public boolean saveDoctor(Doctor doctor, String request) {
@@ -783,10 +707,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         } else if (request.equals("update")) {
             rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor.getDoc_id(), null);
-
         }
-
-
         return rowID > 0;
     }
 
@@ -804,10 +725,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
         if (request.equals("insert")) {
             rowID = db.insert(TBL_SPECIALTIES, null, values);
-
         } else if (request.equals("update")) {
             rowID = db.update(TBL_SPECIALTIES, values, SPECIALTY_ID + "=" + specialty.getSpecialty_id(), null);
-
         }
         return rowID > 0;
     }
@@ -827,10 +746,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
         if (request.equals("insert")) {
             rowID = db.insert(TBL_SUB_SPECIALTIES, null, values);
-
         } else if (request.equals("update")) {
             rowID = db.update(TBL_SUB_SPECIALTIES, values, SUB_SPECIALTY_ID + "=" + sub_specialty.getSpecialty_id(), null);
-
         }
 
         return rowID > 0;
@@ -883,15 +800,10 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<HashMap<String, String>> getAllProducts() {
-
-        ArrayList<HashMap<String, String>> products = new ArrayList<HashMap<String, String>>();
-
+        ArrayList<HashMap<String, String>> products = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
-
         String sql = "SELECT * FROM " + TBL_PRODUCTS;
-
         Cursor cur = db.rawQuery(sql, null);
-
         int i_name, i_description, i_price;
 
         while (cur.moveToNext()) {
@@ -908,7 +820,7 @@ public class DbHelper extends SQLiteOpenHelper {
             product.setDescription(cur.getString(i_description));
             product.setPrice(cur.getDouble(i_price));
 
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap();
             map.put(PRODUCT_ID, cur.getString(cur.getColumnIndex(PRODUCT_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
@@ -916,25 +828,9 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_PRICE, cur.getString(cur.getColumnIndex(PRODUCT_PRICE)));
             map.put(PRODUCT_PHOTO, cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
             products.add(map);
-
-//            products.add(product);
-//
-//            String product_temporary_string_xml = "<entry>\n" +
-//                    "<id>" + cur.getString(0) + "</id>\n" +
-//                    "<name>" + cur.getString(i_name) + "</name>\n" +
-//                    "<description>" + cur.getString(i_description) + "</description>\n" +
-//                    "<price> Php " + cur.getDouble(i_price) + "</price>\n" +
-//                    "<photo>" + "http://api.androidhive.info/music/images/rihanna.png" + "</photo>\n" +
-//                    "</entry>";
-//
-//            product_string_xml += product_temporary_string_xml;
         }
-
         cur.close();
         db.close();
-
-//        products_string_xml = "<list>" + product_string_xml + "</list>";
-
         return products;
     }
 
@@ -957,7 +853,6 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         cur.close();
         db.close();
-
         return medicine;
     }
 
@@ -976,7 +871,6 @@ public class DbHelper extends SQLiteOpenHelper {
             medicine.setUnit(cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
             medicine.setPhoto(cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
         }
-
         cur.close();
         db.close();
 
@@ -984,13 +878,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<HashMap<String, String>> getDoctorName() {
-
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_DOCTORS;
         Cursor cur = db.rawQuery(sql, null);
         HashMap<String, String> map;
         ArrayList<HashMap<String, String>> doctors = new ArrayList<HashMap<String, String>>();
-
 
         String fullname, fname, lname;
         while (cur.moveToNext()) {
@@ -998,12 +890,11 @@ public class DbHelper extends SQLiteOpenHelper {
             fname = Helpers.curGetStr(cur, DOC_FNAME);
             fullname = fname + " " + lname;
 
-            map = new HashMap<String, String>();
+            map = new HashMap();
             map.put("ID", String.valueOf(cur.getInt(0)));
             map.put("fullname", fullname);
             doctors.add(map);
         }
-
         cur.close();
         db.close();
 
@@ -1018,20 +909,14 @@ public class DbHelper extends SQLiteOpenHelper {
         return products_string_xml;
     }
 
-
     public JSONArray getAllJSONArrayFrom(String tbl_name) {
-
         SQLiteDatabase db = getWritableDatabase();
-
         String sql = "SELECT * FROM " + tbl_name;
-
         Cursor cursor = db.rawQuery(sql, null);
-
         JSONArray resultSet = new JSONArray();
-
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
 
+        while (!cursor.isAfterLast()) {
             int totalColumn = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
 
@@ -1053,8 +938,6 @@ public class DbHelper extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-
-        System.out.print("json array of all doctors: " + resultSet.toString());
         return resultSet;
     }
 
@@ -1062,10 +945,9 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PRODUCTS;
         Cursor cursor = db.rawQuery(sql, null);
-
         JSONArray resultSet = new JSONArray();
-
         cursor.moveToFirst();
+
         while (!cursor.isAfterLast()) {
 
             int totalColumn = cursor.getColumnCount();
@@ -1117,7 +999,6 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public List<String> getAllProductCategoriesArray() {
-
         List<String> list = new ArrayList<String>();
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PRODUCT_CATEGORIES;
@@ -1374,10 +1255,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         } else if (request.equals("update")) {
             rowID = db.update(TBL_PRODUCTS, values, PRODUCT_ID + "=" + product.getProductId(), null);
-
         }
-//        long rowID = db.insert(TBL_PRODUCTS, null, values);
-
         db.close();
         return rowID > 0;
     }
@@ -1507,10 +1385,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
-            map.put("medicine_name", cur.getString(cur.getColumnIndex(TREATMENTS_MEDICINE_NAME)));
-            map.put("generic_name", cur.getString(cur.getColumnIndex(TREATMENTS_GENERIC_NAME)));
-            map.put("quantity", cur.getString(cur.getColumnIndex(TREATMENTS_QUANITY)));
-            map.put("prescription", cur.getString(cur.getColumnIndex(TREATMENTS_PRESCRIPTION)));
+            map.put(TREATMENTS_ID, String.valueOf(cur.getInt(cur.getColumnIndex(TREATMENTS_ID))));
+            map.put(TREATMENTS_MEDICINE_NAME, cur.getString(cur.getColumnIndex(TREATMENTS_MEDICINE_NAME)));
+            map.put(TREATMENTS_GENERIC_NAME, cur.getString(cur.getColumnIndex(TREATMENTS_GENERIC_NAME)));
+            map.put(TREATMENTS_QUANITY, cur.getString(cur.getColumnIndex(TREATMENTS_QUANITY)));
+            map.put(TREATMENTS_PRESCRIPTION, cur.getString(cur.getColumnIndex(TREATMENTS_PRESCRIPTION)));
             treatments.add(map);
         }
         cur.close();
@@ -1518,10 +1397,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return treatments;
     }
-    /*public ArrayList getDoctorClinics(int doctorId){
-
-    }*/
-
     //END OF GET METHODS
 
     /* INSERT UPDATE DELETE SQLs for BASKET TABLE */
@@ -1530,7 +1405,6 @@ public class DbHelper extends SQLiteOpenHelper {
      * @param basket Create new record for "basket" table
      */
     public boolean insertBasket(Basket basket) {
-
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         String datenow = dateFormat.format(date);

@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,8 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +38,8 @@ import java.util.Set;
 public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
     TextView noResults;
-    Button view_doctor_btn, call_doctor_btn;
-    ImageButton add_record;
+    Button view_doctor_btn;
+    ImageButton add_record, update_record;
 
     TextView date, doctor_name;
     EditText complaints, findings, treatments;
@@ -55,6 +55,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     private SelectionAdapter mAdapter;
 
     public int DOCTOR_ID = 0;
+    public int update_recordID = 0;
 
     DbHelper dbHelper;
     RoundImage roundedImage;
@@ -132,6 +133,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                     mAdapter.remove(pos);
                                 }
                                 selectedList.clear();
+                                if (hashHistory.size() == 0) {
+                                    noResults.setVisibility(View.VISIBLE);
+                                }
                             }
                         });
 
@@ -181,18 +185,24 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         dialog.show();
 
         view_doctor_btn = (Button) dialog.findViewById(R.id.view_doctor_btn);
-        call_doctor_btn = (Button) dialog.findViewById(R.id.call_doctor_btn);
         date = (TextView) dialog.findViewById(R.id.date);
         doctor_name = (TextView) dialog.findViewById(R.id.doctor_name);
         complaints = (EditText) dialog.findViewById(R.id.complaints);
         findings = (EditText) dialog.findViewById(R.id.findings);
         treatments = (EditText) dialog.findViewById(R.id.treatments);
+        update_record = (ImageButton) dialog.findViewById(R.id.update_record);
 
+        update_recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_ID));
         date.setText(hashHistory.get(position).get(dbHelper.RECORDS_DATE));
         complaints.setText(hashHistory.get(position).get(dbHelper.RECORDS_COMPLAINT));
         findings.setText(hashHistory.get(position).get(dbHelper.RECORDS_FINDINGS));
         doctor_name.setText(hashHistory.get(position).get(dbHelper.RECORDS_DOCTOR_NAME));
         DOCTOR_ID = Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_DOCTOR_ID));
+
+        if (DOCTOR_ID == 0) {
+            view_doctor_btn.setEnabled(false);
+            view_doctor_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_button_bg));
+        }
 
         hashTreatments = dbHelper.getTreatmentRecord(Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_ID)));
         if (hashTreatments.size() > 0) {
@@ -203,8 +213,8 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         }
         arrayOfRecords.clear();
 
-        call_doctor_btn.setOnClickListener(this);
         view_doctor_btn.setOnClickListener(this);
+        update_record.setOnClickListener(this);
     }
 
     @Override
@@ -213,6 +223,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             case R.id.add_record:
                 Intent intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
                 startActivity(intent);
+                getActivity().finish();
 
                 break;
             case R.id.view_doctor_btn:
@@ -222,15 +233,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 startActivity(intent_doctoractivity);
                 break;
 
-            case R.id.call_doctor_btn:
-                String phoneNumber = "09095331440";
-                String uriTel = "tel:" + phoneNumber;
-
-                //Present you with the dialler
-                Uri telUri = Uri.parse(uriTel);
-                Intent returnIt = new Intent(Intent.ACTION_DIAL, telUri);
-                startActivity(returnIt);
-
+            case R.id.update_record:
+                Intent update_record_intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
+                update_record_intent.putExtra(PatientMedicalRecordActivity.UPDATE_RECORD_ID, update_recordID);
+                startActivity(update_record_intent);
+                getActivity().finish();
                 break;
         }
     }
@@ -257,8 +264,18 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         }
 
         public void remove(int position) {
-            medRecords.remove(position);
-            mAdapter.notifyDataSetChanged();
+            int recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_ID));
+            if (dbHelper.deletePatientRecord(recordID) > 0) {
+                if (dbHelper.deleteTreatmentByRecordID(recordID) > 0) {
+                    medRecords.remove(position);
+                    hashHistory.remove(position);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+            }
         }
 
         public void removeSelection(int position) {

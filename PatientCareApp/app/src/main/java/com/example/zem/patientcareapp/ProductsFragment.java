@@ -29,26 +29,12 @@ import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by User PC on 5/5/2015. Updated 5/5/15
- */
 public class ProductsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher, AdapterView.OnItemSelectedListener {
-    // XML node keys
-    static final String KEY_PRODUCT_NAME = "name"; // parent node
-    static final String KEY_PRODUCT_DESCRIPTION = "description";
-    static final String KEY_PRODUCT_PHOTO = "photo";
-    static final String KEY_PRODUCT_ID = "id";
-    static final String KEY_PRODUCT_PRICE = "price";
-    static final String KEY_PRODUCT = "entry";
-
     Button add_to_cart_btn;
     EditText qty;
     ListView list_of_products, lv_subcategories;
@@ -85,13 +71,9 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
-//        pDialog.show();
-
 
         if (helpers.isNetworkAvailable(getActivity())) {
             products_items = dbHelper.getAllProducts();
-//                    String xml = dbHelper.getProductsStringXml();
-
             populateProductsListView(rootView, products_items);
             category_list = dbHelper.getAllProductCategoriesArray();
             populateListView(rootView, category_list);
@@ -122,31 +104,35 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         Product prod;
         prod = dbHelper.getProductById(Integer.parseInt(view.getTag().toString()));
 
-        Dialog dialog = new Dialog(getActivity());
-        loc_dialog = dialog;
-        dialog.setTitle(prod.getName());
-        dialog.setContentView(R.layout.dialog_products_layout);
-        dialog.show();
-
-        TextView name, price, description;
-        name = (TextView) dialog.findViewById(R.id.product_name);
-        price = (TextView) dialog.findViewById(R.id.product_price);
-        description = (TextView) dialog.findViewById(R.id.product_description);
-        add_to_cart_btn = (Button) dialog.findViewById(R.id.add_to_cart_btn);
-
-        name.setText("(" + prod.getGenericName() + ")\n" + prod.getName());
-        price.setText("Php " + prod.getPrice() + " / " + prod.getUnit());
-
-        description.setText(prod.getDescription());
-        add_to_cart_btn.setText("Add to Cart | Php " + prod.getPrice());
-        qty = (EditText) dialog.findViewById(R.id.qty);
-
-        add_to_cart_btn.setTag(prod.getProductId());
-        qty.setTag(prod.getPrice());
-
-
-        add_to_cart_btn.setOnClickListener(this);
-        qty.addTextChangedListener(this);
+        Intent intent = new Intent(getActivity(), SelectedProductActivity.class);
+        intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getId());
+        intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "ProductsFragment");
+        startActivity(intent);
+//
+//        Dialog dialog = new Dialog(getActivity());
+//        loc_dialog = dialog;
+//        dialog.setTitle(prod.getName());
+//        dialog.setContentView(R.layout.dialog_products_layout);
+//        dialog.show();
+//
+//        TextView name, price, description;
+//        name = (TextView) dialog.findViewById(R.id.product_name);
+//        price = (TextView) dialog.findViewById(R.id.product_price);
+//        description = (TextView) dialog.findViewById(R.id.product_description);
+//        add_to_cart_btn = (Button) dialog.findViewById(R.id.add_to_cart_btn);
+//
+//        name.setText("(" + prod.getGenericName() + ")\n" + prod.getName());
+//        price.setText("Php " + prod.getPrice() + " / " + prod.getUnit());
+//
+//        description.setText(prod.getDescription());
+//        add_to_cart_btn.setText("Add to Cart | Php " + prod.getPrice());
+//        qty = (EditText) dialog.findViewById(R.id.qty);
+//
+//        add_to_cart_btn.setTag(prod.getProductId());
+//        qty.setTag(prod.getPrice());
+//
+//        add_to_cart_btn.setOnClickListener(this);
+//        qty.addTextChangedListener(this);
     }
 
     @Override
@@ -154,7 +140,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         switch (v.getId()) {
             case R.id.add_to_cart_btn:
                 if (helpers.isNetworkAvailable(getActivity())) {
-
                     try {
                         int productId;
                         double new_qty;
@@ -165,7 +150,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
                     /* let's check if the product already exists in our basket */
                         final Basket basket = dbHelper.getBasket(productId);
-
 
                         System.out.println("MOTHERFUCKING BASKET: productId:" + productId + " product_id: " + basket.getProductId() + "  basket_id=" + basket.getBasketId() + " id: " + basket.getId() + " patient_id: " + basket.getPatienId());
                         if (basket.getBasketId() > 0) {
@@ -225,9 +209,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                 break;
 
             case R.id.refresh_products_list:
-//                Intent intent = new Intent(getActivity(), MasterTabActivity.class);
-//                intent.putExtra("selected", 5);
-//                startActivity(intent);
                 // Request a string response from the provided URL.
                 if (helpers.isNetworkAvailable(getActivity())) {
                     JsonObjectRequest product_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
@@ -241,68 +222,55 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                                 System.out.println("timestamp from server: " + response.getString("server_timestamp"));
                                 dbHelper.updateLastUpdatedTable("products", response.getString("server_timestamp"));
                                 Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
-
-//                                adapter.notifyDataSetChanged();
                             } catch (Exception e) {
                                 System.out.println("error fetching server timestamp: " + e);
                             }
 
                             products_items = dbHelper.getAllProducts();
-
                             populateProductsListView(root_view, products_items);
-//                            adapter.notifyDataSetChanged();
-
-//                    String xml = dbHelper.getDoctorsStringXml();
-//                    list_of_doctors.deferNotifyDataSetChanged();
-//                        populateDoctorListView(root_view, doctor_items);
-
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                            System.out.println("GWAPO DAW KO: " + error);
                         }
                     });
                     queue.add(product_request);
-
                 } else {
                     Toast.makeText(getActivity(), "You must have Internet to be able to use the App properly", Toast.LENGTH_LONG).show();
-
                 }
                 break;
         }
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        @Override
-        public void beforeTextChanged (CharSequence s,int start, int count, int after){
+    }
 
-        }
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        String qty_str = qty.getText().toString();
+        Double price = Double.parseDouble(qty.getTag().toString());
 
-        @Override
-        public void onTextChanged (CharSequence s,int start, int before, int count){
-            String qty_str = qty.getText().toString();
-            Double price = Double.parseDouble(qty.getTag().toString());
+        if (!qty_str.isEmpty()) {
+            try {
+                Double qty_int = Double.parseDouble(qty_str);
+                Double product = qty_int * price;
 
-            if (!qty_str.isEmpty()) {
-                try {
-                    Double qty_int = Double.parseDouble(qty_str);
-                    Double product = qty_int * price;
+                add_to_cart_btn.setText("Add to Cart | Php " + product);
+            } catch (Exception e) {
 
-                    add_to_cart_btn.setText("Add to Cart | Php " + product);
-                } catch (Exception e) {
-
-                }
-            } else {
-                add_to_cart_btn.setText("Add to Cart | Php ");
             }
+        } else {
+            add_to_cart_btn.setText("Add to Cart | Php ");
         }
+    }
 
-        @Override
-        public void afterTextChanged (Editable s){
+    @Override
+    public void afterTextChanged(Editable s) {
 
-        }
+    }
 
     public void populateListView(View rootView, List<String> categories) {
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);
@@ -347,7 +315,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
                     Toast.makeText(getActivity(), subCategoryName + " : " + subCategory.getName() + " : " + list.size()
                             , Toast.LENGTH_SHORT).show();
-//                // Getting adapter by passing xml data ArrayList
+                    // Getting adapter by passing xml data ArrayList
                     if (list.size() > 0) {
                         products_items.clear();
                         products_items.addAll(list);

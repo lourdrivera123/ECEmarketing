@@ -8,15 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
@@ -25,10 +18,8 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     private String[] tabs = {"Profile", "My Records", "Test Results", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
     private ViewPager viewPager;
     private ActionBar actionBar;
+
     DbHelper dbHelper;
-
-
-    static final String LAST_ACTIVITY = "";
     Intent intent;
     int unselected = 0;
 
@@ -76,18 +67,6 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             public void onPageScrollStateChanged(int arg0) {
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        String lastOpened = intent.getStringExtra(LAST_ACTIVITY);
-
-        if (lastOpened == null) {
-
-        } else if (lastOpened.equals("Add Record")) {
-            PatientMedicalRecordActivity.medRecord.finish();
-        }
-        super.onBackPressed();
     }
 
     @Override

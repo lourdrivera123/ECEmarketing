@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DoctorActivity extends Activity implements View.OnClickListener {
     TextView doctor_name, specialty, clinic_name, clinic_address_first_line, clinic_address_second_line;

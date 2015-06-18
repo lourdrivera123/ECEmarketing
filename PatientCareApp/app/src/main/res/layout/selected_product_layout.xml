@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".7"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/prod_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Foracort Neo Haler"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/prod_generic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Generic name" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight=".3"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/prod_unit_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:src="@drawable/unit_pill" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d10">
+
+        <TextView
+            android:id="@+id/prod_unit"
+            android:layout_width="0dp"
+            android:layout_weight=".7"
+            android:layout_height="wrap_content"
+            android:text="20 capsules (1 strip)" />
+
+        <TextView
+            android:id="@+id/prod_price"
+            android:layout_width="0dp"
+            android:layout_weight=".3"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/ColorPrimary"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="\u20B1 17.50" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="@dimen/d20">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight=".6"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/minus_qty"
+                android:layout_width="0dp"
+                android:layout_weight=".25"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_minus" />
+
+            <TextView
+                android:id="@+id/qty_cart"
+                android:layout_width="0dp"
+                android:layout_weight=".5"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="100" />
+
+            <ImageButton
+                android:id="@+id/add_qty"
+                android:layout_width="0dp"
+                android:layout_weight=".25"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_plus" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight=".3"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/add_cart_btn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Add to Cart"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                style="?android:attr/buttonStyleSmall"
+                android:background="@drawable/button_bg" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/d20">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Information"
+                android:background="@color/ColorPrimary"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

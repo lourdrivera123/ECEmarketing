@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,14 +34,16 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
     String s_date, s_doctor, s_complaint, s_diagnosis, s_generic_name, s_qty, s_dosage, s_medicine;
 
     ArrayList<HashMap<String, String>> arrayOfDoctors;
+    ArrayList<HashMap<String, String>> items;
+    ArrayList<HashMap<String, String>> update_treatments;
+
     ArrayList<String> doctors;
-    ArrayList<String> treatments;
     ArrayList<String> medicine;
+    ArrayList<String> treatments;
+
     ArrayAdapter treatmentsAdapter;
     ArrayAdapter medicineAdapter;
 
-    ArrayList<HashMap<String, String>> items;
-    ArrayList<HashMap<String, String>> update_treatments;
     HashMap<String, String> map;
 
     DbHelper dbhelper;
@@ -51,14 +54,16 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
     PatientRecord record;
     Intent intent;
 
-    static int edit_request = -1;
-    static int add_request = -1;
     public static Activity medRecord;
     public static String UPDATE_RECORD_ID = "recordID";
 
-    int doctorID = 0;
+    public static final String TREATMENTS_ID = "id", MEDICINE_NAME = "medicine_name", GENERIC_NAME = "generic_name",
+            QUANITY = "quantity", PRESCRIPTION = "prescription";
+
+    private int doctorID = 0;
+    private String request = "";
     long IDs;
-    static int recordID = 0;
+    static int update_recordID = 0;
 
 
     @Override
@@ -73,11 +78,12 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
         product = new Product();
         items = new ArrayList();
         doctors = new ArrayList();
+        treatments = new ArrayList();
         update_treatments = new ArrayList();
         medRecord = this;
 
         intent = getIntent();
-        recordID = intent.getIntExtra(UPDATE_RECORD_ID, 0);
+        update_recordID = intent.getIntExtra(UPDATE_RECORD_ID, 0);
 
         date = (EditText) findViewById(R.id.date);
         list_of_treatments = (ListView) findViewById(R.id.list_of_treatments);
@@ -103,19 +109,26 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                 doctorID = Integer.parseInt(arrayOfDoctors.get(itemID).get("ID"));
             }
         });
-        treatments = new ArrayList();
 
-        if (recordID > 0) {
-            record = dbhelper.getPatientRecordByRecordID(recordID, HomeTileActivity.getUserID());
-            update_treatments = dbhelper.getTreatmentByRecordID(recordID);
+        if (update_recordID > 0) {
+            record = dbhelper.getPatientRecordByRecordID(update_recordID, HomeTileActivity.getUserID());
+            update_treatments = dbhelper.getTreatmentByRecordID(update_recordID);
 
             for (int x = 0; x < update_treatments.size(); x++) {
-                treatments.add(update_treatments.get(x).get("medicine_name") + " - " + update_treatments.get(x).get("prescription"));
+                map = new HashMap();
+                map.put(TREATMENTS_ID, update_treatments.get(x).get(dbhelper.TREATMENTS_ID));
+                map.put(MEDICINE_NAME, update_treatments.get(x).get(dbhelper.TREATMENTS_MEDICINE_NAME));
+                map.put(GENERIC_NAME, update_treatments.get(x).get(dbhelper.TREATMENTS_GENERIC_NAME));
+                map.put(QUANITY, update_treatments.get(x).get(dbhelper.TREATMENTS_QUANITY));
+                map.put(PRESCRIPTION, update_treatments.get(x).get(dbhelper.TREATMENTS_PRESCRIPTION));
+                items.add(map);
+                treatments.add(items.get(x).get(MEDICINE_NAME) + " - " + items.get(x).get(PRESCRIPTION));
             }
             date.setText(record.getDate());
             complaint.setText(record.getComplaints());
             diagnosis.setText(record.getFindings());
             search_doctor.setText(record.getDoctorName());
+            doctorID = record.getDoctorID();
         }
 
         treatmentsAdapter = new ArrayAdapter(this, R.layout.treatments_list_layout, treatments);
@@ -159,10 +172,6 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                     diagnosis.setError("Field required");
                 }
             } else {
-                if (!doctors.contains(s_doctor)) {
-                    doctorID = 0;
-                }
-
                 String uname = HomeTileActivity.getUname();
                 patient = dbhelper.getloginPatient(uname);
 
@@ -174,14 +183,24 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                 record.setDoctorID(doctorID);
                 record.setDoctorName(s_doctor);
 
-                IDs = dbhelper.insertPatientRecord(record);
+                if (update_recordID > 0) { //FOR UPDATING RECORD
+                    request = "update";
+                    record.setRecordID(update_recordID);
+                } else { //FOR ADDING NEW RECORD
+                    request = "insert";
+                }
+
+                IDs = dbhelper.savePatientRecord(record, request);
                 if (IDs > 0) {
-                    if (dbhelper.insertTreatment(items, IDs).size() > 0) {
-                        Intent intent = new Intent(this, MasterTabActivity.class);
-                        intent.putExtra("selected", 1);
-                        intent.putExtra(MasterTabActivity.LAST_ACTIVITY, "Add Record");
-                        startActivity(intent);
+                    if (update_recordID > 0) {
+                        IDs = update_recordID;
                     }
+                    dbhelper.insertTreatment(items, IDs);
+                    Intent intent = new Intent(this, MasterTabActivity.class);
+                    intent.putExtra("selected", 1);
+                    startActivity(intent);
+                    this.finish();
+
                 } else {
                     Toast.makeText(this, "error occurred", Toast.LENGTH_SHORT).show();
                 }
@@ -189,13 +208,11 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
         } else if (id == R.id.cancel) {
             Intent intent = new Intent(this, MasterTabActivity.class);
             intent.putExtra("selected", 1);
-            intent.putExtra(MasterTabActivity.LAST_ACTIVITY, "");
             startActivity(intent);
+            this.finish();
         }
-
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -219,8 +236,7 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                 break;
 
             case R.id.add_treatment:
-                add_request = 20;
-                readDialog("", -1);
+                readDialog();
                 break;
 
             case R.id.cancel_treatment:
@@ -228,7 +244,6 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                 break;
         }
     }
-
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -262,32 +277,24 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getMenuInflater().inflate(R.menu.cart_menus, menu);
+        getMenuInflater().inflate(R.menu.delete_menu, menu);
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuinfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        String treatment_name = (String) list_of_treatments.getItemAtPosition(menuinfo.position);
 
         switch (item.getItemId()) {
-            case R.id.update_cart:
-                int indexOfUnit = treatment_name.indexOf("-");
-                treatment_name = treatment_name.substring(0, indexOfUnit).trim();
-                edit_request = menuinfo.position;
-
-                readDialog(treatment_name, menuinfo.position);
-                break;
-            case R.id.delete_cart:
-                treatmentsAdapter.remove(treatment_name);
-                treatmentsAdapter.notifyDataSetChanged();
+            case R.id.item_delete:
+                treatments.remove(menuinfo.position);
                 items.remove(menuinfo.position);
+                treatmentsAdapter.notifyDataSetChanged();
                 break;
         }
         return super.onContextItemSelected(item);
     }
 
-    public void readDialog(String name, int position) {
+    public void readDialog() {
         dialog = new Dialog(this);
         dialog.setTitle("Add Treatment");
         dialog.setContentView(R.layout.dialog_new_treatment);
@@ -307,13 +314,6 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
         search_medicine.setOnItemClickListener(this);
 
         add_treatment.setError(null);
-
-        if (!name.equals("")) {
-            search_medicine.setText(name);
-            generic_name.setText(String.valueOf(items.get(position).get("generic_name")));
-            qty.setText(String.valueOf(items.get(position).get("qty")));
-            dosage.setText(String.valueOf(items.get(position).get("dosage")));
-        }
 
         cancel_treatment.setOnClickListener(this);
         save_treatment.setOnClickListener(new View.OnClickListener() {
@@ -336,20 +336,12 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                     }
                 } else {
                     map = new HashMap();
-                    map.put("treatment_name", s_medicine);
-                    map.put("generic_name", s_generic_name);
-                    map.put("qty", s_qty);
-                    map.put("dosage", s_dosage);
-
-                    if (edit_request > -1) {
-                        items.set(edit_request, map);
-                        treatments.set(edit_request, s_medicine + " - " + s_dosage);
-                        edit_request = -1;
-                    } else if (add_request > -1) {
-                        items.add(map);
-                        treatments.add(s_medicine + " - " + s_dosage);
-                        add_request = -1;
-                    }
+                    map.put(MEDICINE_NAME, s_medicine);
+                    map.put(GENERIC_NAME, s_generic_name);
+                    map.put(QUANITY, s_qty);
+                    map.put(PRESCRIPTION, s_dosage);
+                    items.add(map);
+                    treatments.add(s_medicine + " - " + s_dosage);
 
                     treatmentsAdapter.notifyDataSetChanged();
                     dialog.dismiss();
