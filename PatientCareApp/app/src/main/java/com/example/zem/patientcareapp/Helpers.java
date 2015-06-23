@@ -50,7 +50,7 @@ public class Helpers {
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_app)
                         .setContentTitle("It's your Birthday!")
                         .setSound(uri)
                         .setDefaults(Notification.DEFAULT_SOUND)

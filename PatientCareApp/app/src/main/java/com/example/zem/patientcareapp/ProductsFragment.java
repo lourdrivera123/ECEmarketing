@@ -5,25 +5,18 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.ActionBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,9 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ProductsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher, AdapterView.OnItemSelectedListener {
-    Button add_to_cart_btn;
-    EditText qty;
+public class ProductsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
     ListView list_of_products, lv_subcategories;
     Spinner lv_categories;
     LazyAdapter adapter;
@@ -53,11 +44,9 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     ImageButton refresh_products_list;
 
     RequestQueue queue;
-    Dialog loc_dialog;
     ProgressDialog pDialog;
     View root_view;
     public static ArrayList<HashMap<String, String>> products_items;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,7 +77,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             populateProductsListView(rootView, products_items);
             pDialog.hide();
         }
-
         return rootView;
     }
 
@@ -109,114 +97,15 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         prod = dbHelper.getProductById(Integer.parseInt(view.getTag().toString()));
 
         Intent intent = new Intent(getActivity(), SelectedProductActivity.class);
-        intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getId());
+        intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getProductId());
         intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "ProductsFragment");
         startActivity(intent);
-//
-//        Dialog dialog = new Dialog(getActivity());
-//        loc_dialog = dialog;
-//        dialog.setTitle(prod.getName());
-//        dialog.setContentView(R.layout.dialog_products_layout);
-//        dialog.show();
-//
-//        View itemView = (View) list_of_products.getItemAtPosition(position);
-//
-//        TextView name, price, description;
-//        name = (TextView) itemView.findViewById(R.id.product_name);
-//        price = (TextView) itemView.findViewById(R.id.product_price);
-//        description = (TextView) itemView.findViewById(R.id.product_description);
-//        add_to_cart_btn = (Button) itemView.findViewById(R.id.add_to_cart_btn);
-//        qty = (EditText) itemView.findViewById(R.id.qty);
-//
-//        System.out.println("FUCKING PRODUCT ID FROM ADD TO CART TAG: "+add_to_cart_btn.getTag());
-//        System.out.println("FUCKING QTY FROM ADD TO CART TAG: "+qty.getText().toString());
-//        name.setText("(" + prod.getGenericName() + ")\n" + prod.getName());
-//        price.setText("Php " + prod.getPrice() + " / " + prod.getUnit());
-//
-//        description.setText(prod.getDescription());
-//        add_to_cart_btn.setText("Add to Cart | Php " + prod.getPrice());
-//
-//
-//        add_to_cart_btn.setTag(prod.getProductId());
-//        qty.setTag(prod.getPrice());
-//
-//        add_to_cart_btn.setOnClickListener(this);
-//        qty.addTextChangedListener(this);
+        getActivity().finish();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.add_to_cart_btn:
-                if (helpers.isNetworkAvailable(getActivity())) {
-                    try {
-                        int productId;
-                        double new_qty;
-                        String q = add_to_cart_btn.getTag().toString();
-                        productId = Integer.parseInt(q.equals("") ? "1" : q);
-
-                        new_qty = Double.parseDouble(qty.getText().toString());
-
-                    /* let's check if the product already exists in our basket */
-                        final Basket basket = dbHelper.getBasket(productId);
-
-                        System.out.println("MOTHERFUCKING BASKET: productId:" + productId + " product_id: " + basket.getProductId() + "  basket_id=" + basket.getBasketId() + " id: " + basket.getId() + " patient_id: " + basket.getPatienId());
-                        if (basket.getBasketId() > 0) {
-                            HashMap<String, String> hashMap = new HashMap<String, String>();
-                            hashMap.put("product_id", String.valueOf(productId));
-
-                            hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
-                            hashMap.put("table", "baskets");
-                            hashMap.put("request", "crud");
-
-                            double old_qty = basket.getQuantity();
-                            basket.setQuantity(new_qty + old_qty);
-                            hashMap.put("quantity", String.valueOf(basket.getQuantity()));
-                            hashMap.put("action", "update");
-                            hashMap.put("id", String.valueOf(basket.getBasketId()));
-
-                            serverRequest.init(getActivity(), hashMap, "insert_basket");
-
-                            root_view.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    boolean responseFromServer = serverRequest.getResponse();
-                                    if (responseFromServer) {
-                                        if (dbHelper.updateBasket(basket)) {
-                                            Toast.makeText(getActivity(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(getActivity(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
-                                        }
-                                    } else {
-                                        Toast.makeText(getActivity(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }, 3000);
-                        } else {
-                        /* since, we can't find the product in baskets table, let's insert a new one */
-                            HashMap<String, String> hashMap = new HashMap<String, String>();
-                            hashMap.put("product_id", String.valueOf(productId));
-                            hashMap.put("quantity", String.valueOf(new_qty));
-                            hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
-                            hashMap.put("table", "baskets");
-                            hashMap.put("request", "crud");
-                            hashMap.put("action", "insert");
-
-                            serverRequest.setProgressDialog(pDialog);
-
-                            serverRequest.setSuccessMessage("New item has been added to your cart!");
-                            serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
-                            serverRequest.init(getActivity(), hashMap, "insert_basket");
-                        }
-                    } catch (Exception e) {
-
-                    }
-
-                } else {
-                    Toast.makeText(getActivity(), "Sorry, please connect to the internet.", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
             case R.id.refresh_products_list:
                 // Request a string response from the provided URL.
                 if (helpers.isNetworkAvailable(getActivity())) {
@@ -252,35 +141,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        String qty_str = qty.getText().toString();
-        Double price = Double.parseDouble(qty.getTag().toString());
-
-        if (!qty_str.isEmpty()) {
-            try {
-                Double qty_int = Double.parseDouble(qty_str);
-                Double product = qty_int * price;
-
-                add_to_cart_btn.setText("Add to Cart | \u20B1 " + product);
-            } catch (Exception e) {
-
-            }
-        } else {
-            add_to_cart_btn.setText("Add to Cart | \u20B1 ");
-
-        }
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-
-    }
 
     public void populateListView(View rootView, List<String> categories) {
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);
@@ -346,5 +206,4 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
 }

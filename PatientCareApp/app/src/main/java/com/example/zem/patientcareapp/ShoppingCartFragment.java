@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -75,7 +76,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
         if( helper.isNetworkAvailable(getActivity()) ){
             String url = helper.get_url("get_basket_items")+"&patient_id="+dbHelper.getCurrentLoggedInPatient().getServerID()+"&table=baskets";
-            System.out.println("GWAPOKO: FUCKING URL: "+url);
             JsonObjectRequest basket_items_request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
                 @Override
@@ -100,10 +100,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             total_amount.setText("\u20B1 " + TotalAmount);
 
                             adapter = new LazyAdapter(getActivity(), items, "basket_items");
-
                             lv_items.setAdapter(adapter);
-
-
                     } catch (Exception e) {
                         System.out.println("error fetching server timestamp: "+ e);
                     }
@@ -120,13 +117,11 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
         return rootView;
     }
 
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.cart_menus, menu);
     }
-
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -167,7 +162,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     et_qty.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                         }
 
                         @Override
@@ -186,7 +180,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
                         @Override
                         public void afterTextChanged(Editable s) {
-
                         }
                     });
 
@@ -333,6 +326,15 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
                 ListView lv_items = (ListView) builder.findViewById(R.id.lv_items);
                 lv_items.setAdapter(checkOutAdapter);
+
+                Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
+                checkout_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent samplepaypal = new Intent(getActivity(), samplepaypal.class);
+                        startActivity(samplepaypal);
+                    }
+                });
 
                 break;
         }
