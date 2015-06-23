@@ -5,12 +5,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -84,15 +87,29 @@ public class LazyAdapter extends BaseAdapter {
             TextView product_name = (TextView) vi.findViewById(R.id.product_name); // product name
             TextView product_description = (TextView) vi.findViewById(R.id.product_description); // product description
             TextView product_price = (TextView) vi.findViewById(R.id.product_price); // product price
-            final TextView btnAddQty = (TextView) vi.findViewById(R.id.add_qty);
-            TextView btnMinusQty = (TextView) vi.findViewById(R.id.minus_qty);
+            final TextView pQty = (TextView) vi.findViewById(R.id.product_quantity);
+            final ImageButton btnAddQty = (ImageButton) vi.findViewById(R.id.add_qty);
+            ImageButton btnMinusQty = (ImageButton) vi.findViewById(R.id.minus_qty);
+            Button addToCart = (Button) vi.findViewById(R.id.add_to_cart_btn);
+
 
             btnAddQty.setOnClickListener(new View.OnClickListener() {
                 @SuppressLint("NewApi")
                 @Override
                 public void onClick(View v) {
-                   /* btnAddQty.setBackground(activity.getResources().getDrawable( R.mipmap.ic_plus_dead ));
-                    btnAddQty.setBackground(activity.getResources().getDrawable(R.mipmap.ic_plus));*/
+                    int qty = Integer.parseInt(pQty.getText().toString());
+                    qty++;
+                    pQty.setText(qty+"");
+                }
+            });
+
+            btnMinusQty.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("NewApi")
+                @Override
+                public void onClick(View v) {
+                    int qty = Integer.parseInt(pQty.getText().toString());
+                    qty--;
+                    pQty.setText(qty+"");
                 }
             });
 
@@ -126,31 +143,39 @@ public class LazyAdapter extends BaseAdapter {
             consultation_schedule.setText(sched);
 
         } else if (list_type.equals("basket_items")) {
-            vi = inflater.inflate(R.layout.list_row_basket_items, null);
+            try{
+                vi = inflater.inflate(R.layout.list_row_basket_items, null);
 
-            HashMap<String, String> basket_items;
+                HashMap<String, String> basket_items;
 
-            basket_items = data.get(position);
+                basket_items = data.get(position);
 
-            TextView product_name = (TextView) vi.findViewById(R.id.product_name);
-            TextView productPrice = (TextView) vi.findViewById(R.id.product_price);
-            qty = (TextView) vi.findViewById(R.id.product_quantity);
-            total = (TextView) vi.findViewById(R.id.total);
+                TextView productName = (TextView) vi.findViewById(R.id.product_name);
+                TextView productPrice = (TextView) vi.findViewById(R.id.product_price);
+                qty = (TextView) vi.findViewById(R.id.product_quantity);
+                total = (TextView) vi.findViewById(R.id.total);
 
-            // Do the fucking stuffs here
-            price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
-            quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
-            String unit = basket_items.get(DbHelper.PRODUCT_UNIT);
-            // Setting all values in listview
-            product_name.setText(basket_items.get(DbHelper.PRODUCT_NAME));
-            total_amount = price * quantity;
+                // Do the fucking stuffs here
+                price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
+                quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
+                String unit = basket_items.get(DbHelper.PRODUCT_UNIT);
 
-            total.setText(total_amount + "");
-            qty.setText(quantity + "");
-            productPrice.setText("Quantity: "+quantity+"\nPrice: \u20B1 " + price+" / "+(!unit.equals("0") ? unit : ""));
+                // Setting all values in listview
+                productName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
+                total_amount = price * quantity;
 
-            qty.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
-            total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+                total.setText(total_amount + "");
+                qty.setText(quantity + "");
+                productPrice.setText("Quantity: "+quantity+"\nPrice: \u20B1 " + price+" / "+(!unit.equals("0") ? unit : ""));
+
+                qty.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+                total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+            }catch(Exception e){
+                System.out.println("FUCKING ERROR on LazyAdapter@basket_items"+e.getMessage());
+                e.printStackTrace();
+            }
+
+
         } else if (list_type.equals("ready_for_checkout_items")){
             vi = inflater.inflate(R.layout.checkout_list_item, null);
 

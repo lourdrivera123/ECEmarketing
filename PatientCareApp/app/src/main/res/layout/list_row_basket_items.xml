@@ -40,7 +40,6 @@
             android:layout_gravity="bottom"
             android:singleLine="false"
             android:padding="10dp"
-            android:visibility="invisible"
             android:text="67"/>
 
 

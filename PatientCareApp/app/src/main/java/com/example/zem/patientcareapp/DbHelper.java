@@ -132,6 +132,8 @@ public class DbHelper extends SQLiteOpenHelper {
             PRODUCT_PRESCRIPTION_REQUIRED = "presciption_required",
             PRODUCT_PRICE = "price",
             PRODUCT_UNIT = "unit",
+            PRODUCT_PACKING = "packing",
+            PRODUCT_QTY_PER_PACKING = "qty_per_packing",
             PRODUCT_PHOTO = "photo",
             PRODUCT_CREATED_AT = "created_at",
             PRODUCT_UPDATED_AT = "updated_at",
@@ -317,9 +319,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table "products"
         String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
+                        "%s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
                 TBL_PRODUCTS, PRODUCT_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION,
-                PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
+                PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PACKING, PRODUCT_QTY_PER_PACKING, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
 
         // SQL TO CREATE TABLE "TBL_DOSAGE"
         String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
@@ -475,7 +477,6 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(UPDATE_SEEN, 0);
 
         long rowID = db.insert(TBL_UPDATES, null, values);
-
         return rowID > 0;
     }
 
@@ -806,21 +807,8 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PRODUCTS;
         Cursor cur = db.rawQuery(sql, null);
-        int i_name, i_description, i_price;
 
         while (cur.moveToNext()) {
-            i_name = cur.getColumnIndex("name");
-            i_description = cur.getColumnIndex("description");
-            i_price = cur.getColumnIndex("price");
-
-            //for the id
-            int id = cur.getInt(0);
-
-            Product product = new Product();
-            product.setId(id);
-            product.setName(cur.getString(i_name));
-            product.setDescription(cur.getString(i_description));
-            product.setPrice(cur.getDouble(i_price));
 
             HashMap<String, String> map = new HashMap();
             map.put(PRODUCT_ID, cur.getString(cur.getColumnIndex(PRODUCT_ID)));
@@ -829,6 +817,8 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_DESCRIPTION, cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
             map.put(PRODUCT_PRICE, cur.getString(cur.getColumnIndex(PRODUCT_PRICE)));
             map.put(PRODUCT_PHOTO, cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
+            map.put(PRODUCT_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
+            map.put(PRODUCT_QTY_PER_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_QTY_PER_PACKING)));
             products.add(map);
         }
         cur.close();
@@ -1216,6 +1206,8 @@ public class DbHelper extends SQLiteOpenHelper {
             prod.setPrescriptionRequired(cur.getInt(cur.getColumnIndex(PRODUCT_PRESCRIPTION_REQUIRED)));
             prod.setPrice(cur.getDouble(cur.getColumnIndex(PRODUCT_PRICE)));
             prod.setUnit(cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
+            prod.setPacking(cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
+            prod.setQtyPerPacking(cur.getInt(cur.getColumnIndex(PRODUCT_QTY_PER_PACKING)));
             prod.setPhoto(cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
             prod.setCreatedAt(cur.getString(cur.getColumnIndex(PRODUCT_CREATED_AT)));
             prod.setUpdatedAt(cur.getString(cur.getColumnIndex(PRODUCT_UPDATED_AT)));
@@ -1245,7 +1237,8 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PRODUCT_PHOTO, product.getPhoto());
         values.put(PRODUCT_PRICE, product.getPrice());
         values.put(PRODUCT_UNIT, product.getUnit());
-
+        values.put(PRODUCT_PACKING, product.getPacking());
+        values.put(PRODUCT_QTY_PER_PACKING, product.getQtyPerPacking());
         values.put(PRODUCT_CREATED_AT, product.getCreatedAt());
         values.put(PRODUCT_UPDATED_AT, product.getUpdatedAt());
         values.put(PRODUCT_DELETED_AT, product.getDeletedAt());

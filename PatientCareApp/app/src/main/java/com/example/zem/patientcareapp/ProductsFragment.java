@@ -88,16 +88,9 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
             populateProductsListView(rootView, products_items);
             pDialog.hide();
         }
-//        setHasOptionsMenu(true);
 
         return rootView;
     }
-
-//     @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//
-//        getActivity().getMenuInflater().inflate(R.menu.actions_menu, menu);
-//    }
 
     public void populateProductsListView(View rootView, ArrayList<HashMap<String, String>> products_items) {
         list_of_products = (ListView) rootView.findViewById(R.id.product_lists);
@@ -115,33 +108,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         Product prod;
         prod = dbHelper.getProductById(Integer.parseInt(view.getTag().toString()));
 
-<<<<<<< HEAD
-        Dialog dialog = new Dialog(getActivity());
-        loc_dialog = dialog;
-        dialog.setTitle(prod.getName());
-        dialog.setContentView(R.layout.dialog_products_layout);
-        dialog.show();
-
-        TextView name, price, description;
-        name = (TextView) dialog.findViewById(R.id.product_name);
-        price = (TextView) dialog.findViewById(R.id.product_price);
-        description = (TextView) dialog.findViewById(R.id.product_description);
-        add_to_cart_btn = (Button) dialog.findViewById(R.id.add_to_cart_btn);
-
-        name.setText("(" + prod.getGenericName() + ")\n" + prod.getName());
-        price.setText("\u20B1 " + prod.getPrice() + " / " + prod.getUnit());
-
-        description.setText(prod.getDescription());
-        add_to_cart_btn.setText("Add to Cart | \u20B1 " + prod.getPrice());
-        qty = (EditText) dialog.findViewById(R.id.qty);
-
-        add_to_cart_btn.setTag(prod.getProductId());
-        qty.setTag(prod.getPrice());
-
-
-        add_to_cart_btn.setOnClickListener(this);
-        qty.addTextChangedListener(this);
-=======
         Intent intent = new Intent(getActivity(), SelectedProductActivity.class);
         intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getId());
         intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "ProductsFragment");
@@ -153,25 +119,29 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 //        dialog.setContentView(R.layout.dialog_products_layout);
 //        dialog.show();
 //
-//        TextView name, price, description;
-//        name = (TextView) dialog.findViewById(R.id.product_name);
-//        price = (TextView) dialog.findViewById(R.id.product_price);
-//        description = (TextView) dialog.findViewById(R.id.product_description);
-//        add_to_cart_btn = (Button) dialog.findViewById(R.id.add_to_cart_btn);
+//        View itemView = (View) list_of_products.getItemAtPosition(position);
 //
+//        TextView name, price, description;
+//        name = (TextView) itemView.findViewById(R.id.product_name);
+//        price = (TextView) itemView.findViewById(R.id.product_price);
+//        description = (TextView) itemView.findViewById(R.id.product_description);
+//        add_to_cart_btn = (Button) itemView.findViewById(R.id.add_to_cart_btn);
+//        qty = (EditText) itemView.findViewById(R.id.qty);
+//
+//        System.out.println("FUCKING PRODUCT ID FROM ADD TO CART TAG: "+add_to_cart_btn.getTag());
+//        System.out.println("FUCKING QTY FROM ADD TO CART TAG: "+qty.getText().toString());
 //        name.setText("(" + prod.getGenericName() + ")\n" + prod.getName());
 //        price.setText("Php " + prod.getPrice() + " / " + prod.getUnit());
 //
 //        description.setText(prod.getDescription());
 //        add_to_cart_btn.setText("Add to Cart | Php " + prod.getPrice());
-//        qty = (EditText) dialog.findViewById(R.id.qty);
+//
 //
 //        add_to_cart_btn.setTag(prod.getProductId());
 //        qty.setTag(prod.getPrice());
 //
 //        add_to_cart_btn.setOnClickListener(this);
 //        qty.addTextChangedListener(this);
->>>>>>> 7c53319c97f8de5f37af270130e41fcc6874bcc6
     }
 
     @Override
