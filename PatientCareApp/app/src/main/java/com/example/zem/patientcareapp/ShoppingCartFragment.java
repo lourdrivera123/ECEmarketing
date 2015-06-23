@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -324,6 +325,15 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
                 ListView lv_items = (ListView) builder.findViewById(R.id.lv_items);
                 lv_items.setAdapter(checkOutAdapter);
+
+                Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
+                checkout_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent samplepaypal = new Intent(getActivity(), samplepaypal.class);
+                        startActivity(samplepaypal);
+                    }
+                });
 
                 break;
         }

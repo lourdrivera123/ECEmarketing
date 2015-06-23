@@ -4,7 +4,7 @@ package com.example.zem.patientcareapp;
  * Created by Dexter B. on 5/14/2015.
  */
 public class Product {
-    String name, dosageFormatAndStrength, genericName, description, unit, photo, createdAt, updatedAt, deletedAt;
+    String name, dosageFormatAndStrength, genericName, description, unit, photo, sku, createdAt, updatedAt, deletedAt;
     int id, prescriptionRequired, productId,subCategoryId;
     double price;
     public Product(){
@@ -48,6 +48,10 @@ public class Product {
 
     public double getPrice(){
         return price;
+    }
+
+    public String getSku(){
+        return sku;
     }
 
     public String getPhoto(){
@@ -101,6 +105,8 @@ public class Product {
     public void setPrice(double price) {
         this.price = price;
     }
+
+    public void setSku(String sku) { this.sku = sku; }
 
     public void setPhoto(String photo){
         this.photo = photo;
