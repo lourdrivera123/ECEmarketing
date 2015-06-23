@@ -275,10 +275,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
                         }
 
-//              System.out.print("patient records: I am in splash activity");
-//                        Log.d("splash patient record response: ", ""+response.toString());
-
-
                         try {
                             System.out.println("timestamp from server: "+response.getString("server_timestamp"));
                             dbHelper.updateLastUpdatedTable("patient_records", response.getString("server_timestamp"));
@@ -292,7 +288,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                         Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
                     }
                 });
-
                 break;
         }
     }

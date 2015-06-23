@@ -22,7 +22,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     DbHelper dbHelper;
     Intent intent;
-    int unselected = 0, selected = 0;
+    int unselected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

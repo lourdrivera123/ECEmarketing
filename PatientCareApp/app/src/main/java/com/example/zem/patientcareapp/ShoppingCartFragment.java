@@ -75,7 +75,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
         if( helper.isNetworkAvailable(getActivity()) ){
             String url = helper.get_url("get_basket_items")+"&patient_id="+dbHelper.getCurrentLoggedInPatient().getServerID()+"&table=baskets";
-            System.out.println("GWAPOKO: FUCKING URL: "+url);
             JsonObjectRequest basket_items_request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
                 @Override
@@ -98,12 +97,8 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                         }
 
                             total_amount.setText("Php " + TotalAmount);
-
                             adapter = new LazyAdapter(getActivity(), items, "basket_items");
-
                             lv_items.setAdapter(adapter);
-
-
                     } catch (Exception e) {
                         System.out.println("error fetching server timestamp: "+ e);
                     }
@@ -120,13 +115,11 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
         return rootView;
     }
 
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.cart_menus, menu);
     }
-
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -167,7 +160,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     et_qty.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                         }
 
                         @Override
@@ -186,7 +178,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
                         @Override
                         public void afterTextChanged(Editable s) {
-
                         }
                     });
 
