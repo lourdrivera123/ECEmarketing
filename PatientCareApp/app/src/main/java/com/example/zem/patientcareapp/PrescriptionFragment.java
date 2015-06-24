@@ -88,13 +88,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
             case R.id.pick_camera_layout:
                 Intent intent_camera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                ContentValues values = new ContentValues();
-//                values.put(MediaStore.Images.Media.TITLE, "New Picture");
-//                values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
-//                imageUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
                 intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(getActivity())));
-//                intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 startActivityForResult(intent_camera, 1337);
                 dialog1.dismiss();
                 break;
@@ -153,8 +147,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                 Uri tempUri = getImageUri(getActivity(), captureBmp);
 
                 // CALL THIS METHOD TO GET THE ACTUAL PATH
-//                File finalFile = new File(getRealPathFromURI(tempUri));
-                String path = String.valueOf(file);
+                File finalFile = new File(getRealPathFromURI(tempUri));
+                String path = String.valueOf(finalFile);
                 uriItems.add(path);
 
             } catch (IOException e) {
