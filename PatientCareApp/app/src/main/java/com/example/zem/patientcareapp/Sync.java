@@ -503,6 +503,7 @@ public class Sync {
             product.setPrescriptionRequired(Integer.parseInt(json.getString("prescription_required")));
             product.setPrice(json.getDouble("price"));
             product.setUnit(json.getString("unit"));
+            product.setSku(json.getString("sku"));
             product.setCreatedAt(json.getString("created_at"));
             product.setUpdatedAt(json.getString("updated_at"));
             product.setDeletedAt(json.getString("deleted_at"));

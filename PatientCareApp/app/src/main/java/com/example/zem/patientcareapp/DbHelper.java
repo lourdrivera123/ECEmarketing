@@ -132,6 +132,7 @@ public class DbHelper extends SQLiteOpenHelper {
             PRODUCT_PRESCRIPTION_REQUIRED = "presciption_required",
             PRODUCT_PRICE = "price",
             PRODUCT_UNIT = "unit",
+            PRODUCT_SKU = "sku",
             PRODUCT_PHOTO = "photo",
             PRODUCT_CREATED_AT = "created_at",
             PRODUCT_UPDATED_AT = "updated_at",
@@ -317,9 +318,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table "products"
         String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
+                        "%s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s  TEXT , %s  TEXT, %s TEXT, %s  TEXT , %s  TEXT  )",
                 TBL_PRODUCTS, PRODUCT_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION,
-                PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
+                PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_SKU,  PRODUCT_PHOTO, PRODUCT_CREATED_AT, PRODUCT_UPDATED_AT, PRODUCT_DELETED_AT);
 
         // SQL TO CREATE TABLE "TBL_DOSAGE"
         String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
@@ -1244,6 +1245,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PRODUCT_PRESCRIPTION_REQUIRED, product.getPrescriptionRequired());
         values.put(PRODUCT_PHOTO, product.getPhoto());
         values.put(PRODUCT_PRICE, product.getPrice());
+        values.put(PRODUCT_SKU, product.getSku());
         values.put(PRODUCT_UNIT, product.getUnit());
 
         values.put(PRODUCT_CREATED_AT, product.getCreatedAt());
@@ -1513,7 +1515,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public ArrayList<HashMap<String, String>> getAllBasketItems() {
         ArrayList<HashMap<String, String>> items = new ArrayList();
 
-        String sql = "Select b.id, b.basket_id, p.product_id, p.name, p.price, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
+        String sql = "Select b.id, b.basket_id, p.product_id, p.name, p.price, p.sku, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
                 "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where b.patient_id=" + this.getCurrentLoggedInPatient().getServerID() + "";
 
         SQLiteDatabase db = getWritableDatabase();
@@ -1529,6 +1531,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_PRICE, String.valueOf(cur.getDouble(cur.getColumnIndex(PRODUCT_PRICE))));
             map.put(BASKET_QUANTITY, String.valueOf(cur.getInt(cur.getColumnIndex(BASKET_QUANTITY))));
             map.put(PRODUCT_UNIT, cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
+            map.put(PRODUCT_SKU, cur.getString(cur.getColumnIndex(PRODUCT_SKU)));
             items.add(map);
             cur.moveToNext();
         }
