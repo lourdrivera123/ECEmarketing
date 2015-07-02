@@ -1,15 +1,19 @@
 package com.example.zem.patientcareapp;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +25,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.GetterSetter.ImageItem;
+import com.example.zem.patientcareapp.ImageGallery.AppConstant;
+import com.example.zem.patientcareapp.ImageGallery.ImageUtils;
 import com.example.zem.patientcareapp.adapter.GridViewAdapter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -32,14 +41,15 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     ImageButton add_pres;
     LinearLayout pick_camera_layout, pick_gallery_layout;
     ArrayList<ImageItem> imageItems;
+    public static ArrayList<String> uriItems;
 
     private GridView gridView;
-    private GridViewAdapter gridAdapter;
     private ImageItem item;
 
     Dialog dialog1;
-    private Uri fileUri;
-    public static final int MEDIA_TYPE_IMAGE = 1;
+    private GridViewAdapter gridAdapter;
+    String imageFileUri;
+    Uri imageUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,8 +59,9 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         gridView = (GridView) rootView.findViewById(R.id.gridView);
 
         imageItems = new ArrayList();
-        gridAdapter = new GridViewAdapter(getActivity(), R.layout.grid_item_layout, imageItems);
+        uriItems = new ArrayList();
 
+        gridAdapter = new GridViewAdapter(getActivity(), R.layout.grid_item_layout, imageItems);
         gridView.setAdapter(gridAdapter);
         gridView.setOnItemClickListener(this);
         add_pres.setOnClickListener(this);
@@ -77,16 +88,26 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
             case R.id.pick_camera_layout:
                 Intent intent_camera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(getActivity())));
                 startActivityForResult(intent_camera, 1337);
                 dialog1.dismiss();
                 break;
 
             case R.id.pick_gallery_layout:
                 Intent intent_gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent_gallery.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageFileUri);
                 startActivityForResult(intent_gallery, 111);
                 dialog1.dismiss();
                 break;
         }
+    }
+
+    private File getTempFile(Context context) {
+        final File path = new File(Environment.getExternalStorageDirectory(), context.getPackageName());
+        if (!path.exists()) {
+            path.mkdir();
+        }
+        return new File(path, "image.tmp");
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -101,6 +122,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
                 int columnIndex = cursor.getColumnIndex(projection[0]);
                 String filePath = cursor.getString(columnIndex);
+                uriItems.add(filePath);
                 cursor.close();
 
                 Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
@@ -112,22 +134,56 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
             }
         } else if (requestCode == 1337 && resultCode == getActivity().RESULT_OK) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            item = new ImageItem(photo, "selected");
-            item.setImage(photo);
+            final File file = getTempFile(getActivity());
+            try {
+                Bitmap captureBmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.fromFile(file));
+                item = new ImageItem(captureBmp, "selected");
+                item.setImage(captureBmp);
 
-            imageItems.add(new ImageItem(photo, "selected"));
-            gridAdapter.notifyDataSetChanged();
+                imageItems.add(new ImageItem(captureBmp, "selected"));
+                gridAdapter.notifyDataSetChanged();
+
+                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+                Uri tempUri = getImageUri(getActivity(), captureBmp);
+
+                // CALL THIS METHOD TO GET THE ACTUAL PATH
+                File finalFile = new File(getRealPathFromURI(tempUri));
+                String path = String.valueOf(finalFile);
+                uriItems.add(path);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+//    public String getRealPathFromURI(Uri uri) {
+//        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+//        cursor.moveToFirst();
+//        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+//        return cursor.getString(idx);
+//    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getActivity().managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        ImageItem item = (ImageItem) parent.getItemAtPosition(position);
-//        String bitmapImage = String.valueOf(item.getImage());
-//
-//        Intent intent = new Intent(getActivity(), DetailsActivity.class);
-//        intent.putExtra("image", bitmapImage);
-//        startActivity(intent);
+        Intent i = new Intent(getActivity(), FullScreenViewActivity.class);
+        i.putExtra("position", position);
+        startActivity(i);
     }
 }

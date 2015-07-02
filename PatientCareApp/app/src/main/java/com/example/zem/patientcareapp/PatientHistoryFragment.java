@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -43,7 +44,7 @@ import java.util.Set;
 public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
     TextView noResults;
-    ImageButton  update_record;
+    ImageButton update_record;
     Button view_doctor_btn;
     ImageButton add_record, medical_history_refresher;
 
@@ -74,6 +75,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.patient_records_layout, container, false);
         dbHelper = new DbHelper(getActivity());
+        helpers = new Helpers();
 
         hashHistory = dbHelper.getPatientRecord(HomeTileActivity.getUserID());
         medRecords = new ArrayList();
@@ -253,41 +255,92 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 getActivity().finish();
                 break;
             case R.id.medical_history_refresher:
-                Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(getActivity())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Updating Records")
+                        .setMessage("Would you like to save your local changes to server?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
+                                JsonObjectRequest patient_record_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_patient_records"), null, new Response.Listener<JSONObject>() {
+
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+
+                                        try {
+                                            patient_record_json_array = response.getJSONArray("patient_records");
+                                            sync = new Sync();
+
+//                            sync.checkWhatToInsertInMysql(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
+//                            sync.checkWhatToInsert(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
+//                            sync.checkWhatToUpdate(patient_record_json_array, "patient_records");
+//                            sync.checkWhatToUpdateInMysql(patient_record_json_array, "patient_records");
+
+                                            sync.init(getActivity(), "get_patient_records", "patient_records", "record_id", response);
+                                        } catch (Exception e) {
+
+                                        }
+
+                                        try {
+                                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
+                                            dbHelper.updateLastUpdatedTable("patient_records", response.getString("server_timestamp"));
+                                        } catch (Exception e) {
+                                            System.out.println("error fetching server timestamp: " + e);
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                        })
+                        .show();
                 // Request a string response from the provided URL.
-
-                JsonObjectRequest patient_record_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_patient_records"), null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try{
-                            patient_record_json_array = response.getJSONArray("patient_records");
-                            sync = new Sync();
-
-                            sync.checkWhatToInsertInMysql(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
-                            sync.checkWhatToInsert(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
-                            sync.checkWhatToUpdate(patient_record_json_array, "patient_records");
-                            sync.checkWhatToUpdateInMysql(patient_record_json_array, "patient_records");
-
-                            sync.init(getActivity(), "get_patient_records", "patient_records", "record_id", response);
-                        } catch (Exception e ) {
-
-                        }
-
-                        try {
-                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("patient_records", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: "+ e);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//
+//                JsonObjectRequest patient_record_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_patient_records"), null, new Response.Listener<JSONObject>() {
+//
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//
+//                        try{
+//                            patient_record_json_array = response.getJSONArray("patient_records");
+//                            sync = new Sync();
+//
+//                            sync.checkWhatToInsertInMysql(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
+//                            sync.checkWhatToInsert(dbHelper.getAllJSONArrayFrom("patient_records"), patient_record_json_array, "record_id");
+//                            sync.checkWhatToUpdate(patient_record_json_array, "patient_records");
+//                            sync.checkWhatToUpdateInMysql(patient_record_json_array, "patient_records");
+//
+//                            sync.init(getActivity(), "get_patient_records", "patient_records", "record_id", response);
+//                        } catch (Exception e ) {
+//
+//                        }
+//
+//                        try {
+//                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
+//                            dbHelper.updateLastUpdatedTable("patient_records", response.getString("server_timestamp"));
+//                        } catch (Exception e) {
+//                            System.out.println("error fetching server timestamp: "+ e);
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
                 break;
         }
     }
