@@ -1,6 +1,7 @@
 package com.example.zem.patientcareapp.adapter;
 
 import com.example.zem.patientcareapp.ImageGallery.TouchImageView;
+import com.example.zem.patientcareapp.PrescriptionFragment;
 import com.example.zem.patientcareapp.R;
 
 import java.util.ArrayList;
@@ -10,12 +11,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class FullScreenImageAdapter extends PagerAdapter {
@@ -49,13 +47,10 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.imgDisplay);
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        Bitmap bitmap = BitmapFactory.decodeFile(_imagePaths.get(position), options);
+        Bitmap bitmap = PrescriptionFragment.rotateIMG(_imagePaths.get(position));
         imgDisplay.setImageBitmap(bitmap);
 
         container.addView(viewLayout);
-
         return viewLayout;
     }
 
@@ -63,5 +58,4 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((RelativeLayout) object);
     }
-
 }

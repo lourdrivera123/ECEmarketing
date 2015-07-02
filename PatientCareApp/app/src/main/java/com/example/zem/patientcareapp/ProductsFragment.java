@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -86,8 +85,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         // Getting adapter by passing xml data ArrayList
         adapter = new LazyAdapter(getActivity(), products_items, "product_lists");
         list_of_products.setAdapter(adapter);
-
-        // Click event for single list row
         list_of_products.setOnItemClickListener(this);
     }
 

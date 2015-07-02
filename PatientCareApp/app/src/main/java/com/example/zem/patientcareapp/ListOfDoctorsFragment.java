@@ -3,6 +3,7 @@ package com.example.zem.patientcareapp;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,10 +32,10 @@ import java.util.HashMap;
  * Created by Zem on 4/29/2015.
  */
 
-public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener, View.OnClickListener {
+public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     ListView list_of_doctors;
     EditText search_doctor;
-    ImageButton refresh_doctors_list;
+    SwipeRefreshLayout refresh_doctor;
 
     ArrayList<String> arrayOfSearchDoctors;
     ArrayList<HashMap<String, String>> temp_doctors;
@@ -70,8 +71,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         temp_doctors = new ArrayList();
 
         search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
-        refresh_doctors_list = (ImageButton) rootView.findViewById(R.id.refresh_doctors_list);
-        refresh_doctors_list.setOnClickListener(this);
+        refresh_doctor = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_doctor);
 
         doctor_items = dbHelper.getAllDoctors();
         populateDoctorListView(rootView, doctor_items);
@@ -88,6 +88,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         adapter = new LazyAdapter(getActivity(), doctor_items, "list_of_doctors");
         list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
         list_of_doctors.setAdapter(adapter);
+        refresh_doctor.setOnRefreshListener(this);
 
         list_of_doctors.setOnItemClickListener(this);
         search_doctor.addTextChangedListener(this);
@@ -132,7 +133,8 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         }
     }
 
-    public void onClick(View v) {
+    @Override
+    public void onRefresh() {
         if (helpers.isNetworkAvailable(getActivity())) {
             // Request a string response from the provided URL.
             JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
@@ -145,11 +147,10 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                         dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
                         adapter.notifyDataSetChanged();
                     } catch (Exception e) {
-                    }
 
+                    }
                     doctor_items = dbHelper.getAllDoctors();
                     populateDoctorListView(root_view, doctor_items);
-
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -159,8 +160,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
             });
             queue.add(doctor_request);
         } else {
-            Toast.makeText(getActivity(), "You must have Internet to be able to use the App properly", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Couldn't refresh feed", Toast.LENGTH_LONG).show();
         }
+        refresh_doctor.setRefreshing(false);
     }
 }
 

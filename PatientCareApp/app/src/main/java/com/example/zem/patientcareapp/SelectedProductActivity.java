@@ -112,7 +112,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         }
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
