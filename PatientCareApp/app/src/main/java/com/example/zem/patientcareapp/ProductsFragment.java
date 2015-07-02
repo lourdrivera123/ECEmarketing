@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
     ListView list_of_products, lv_subcategories;
@@ -45,6 +46,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
     RequestQueue queue;
     ProgressDialog pDialog;
     View root_view;
+    public static Map<String, HashMap<String, String>> productQuantity;
     public static ArrayList<HashMap<String, String>> products_items;
 
     @Override
@@ -55,32 +57,55 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         refresh_products_list = (ImageButton) rootView.findViewById(R.id.refresh_products_list);
 
         refresh_products_list.setOnClickListener(this);
+        productQuantity = new HashMap<String, HashMap<String, String>>();
 
         dbHelper = new DbHelper(getActivity());
         serverRequest = new ServerRequest();
         queue = Volley.newRequestQueue(getActivity());
         helpers = new Helpers();
 
+        System.out.println("FUCKING TRY PID: "+dbHelper.getProductServerIdById(2));
+
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
 
         if (helpers.isNetworkAvailable(getActivity())) {
             products_items = dbHelper.getAllProducts();
+            System.out.println("FUCKING PRODUCT ITEMS: "+products_items.toString());
+            for(HashMap<String, String> map : products_items){
+
+                System.out.println("FUCKING PRODUCT ITEMS MAP: qty_per_packing: " + map.get("qty_per_packing") + " product_id: " + map.get("product_id"));
+
+                HashMap<String, String> tempMap = new HashMap<String, String>();
+                tempMap.put("id", map.get("id"));
+                tempMap.put("product_id", map.get("product_id"));
+                tempMap.put("qty_per_packing", map.get("qty_per_packing"));
+                tempMap.put("packing", map.get("packing"));
+                tempMap.put("temp_basket_qty", "0");
+
+                System.out.println("FUCKING PRODUCT tempMap: " + tempMap.toString());
+
+                // let's save these items to ProductsFragment
+                productQuantity.put(map.get("product_id"), tempMap);
+            }
+
+            System.out.println("FUCKING productQuantity: " + productQuantity.toString());
+
             populateProductsListView(rootView, products_items);
             category_list = dbHelper.getAllProductCategoriesArray();
             populateListView(rootView, category_list);
-
-        } else {
-            products_items = dbHelper.getAllProducts();
-
-            populateProductsListView(rootView, products_items);
             pDialog.hide();
+
         }
+
+
         return rootView;
     }
 
     public void populateProductsListView(View rootView, ArrayList<HashMap<String, String>> products_items) {
         list_of_products = (ListView) rootView.findViewById(R.id.product_lists);
+
+        System.out.println("FUCKING PRODUCTS_ITEMS: "+products_items.toString());
 
         // Getting adapter by passing xml data ArrayList
         adapter = new LazyAdapter(getActivity(), products_items, "product_lists");
@@ -137,6 +162,7 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                 break;
         }
     }
+
 
     public void populateListView(View rootView, List<String> categories) {
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);

@@ -4,61 +4,137 @@
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector"
     android:orientation="horizontal"
+    android:descendantFocusability="blocksDescendants"
     android:padding="5dip" >
 
-    <!--  ListRow Left sied Thumbnail image -->
-    <LinearLayout android:id="@+id/thumbnail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="3dip"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/image_bg"
-        android:layout_marginRight="5dip">
+    <!-- Promo Div -->
+    <TextView
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:textColor="#ffffff"
+        android:text="-100%"
+        android:id="@+id/promo"
+        android:background="@mipmap/ic_promo"
+        android:layout_marginLeft="45dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="5dp"/>
 
-        <ImageView
-            android:id="@+id/list_image"
-            android:layout_width="50dip"
-            android:layout_height="50dip"/>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/product_head"
+        android:orientation="horizontal">
+        <!-- Product Name-->
+        <TextView
+            android:id="@+id/product_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Biogesic 100 mg/ml Suspension (Oral Drops)sadsad"
+            android:textColor="#040404"
+            android:typeface="sans"
+            android:textSize="15dip"
+            android:textStyle="bold"
+            android:layout_weight=".6"/>
+
+        <!-- Product Price -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Php 5.35"
+            android:id="@+id/product_price"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:textColor="#10bcc9"
+            android:selectAllOnFocus="@mipmap/ic_minus_dead" />
 
     </LinearLayout>
-
-    <!-- Product Name-->
-    <TextView
-        android:id="@+id/product_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/thumbnail"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:text="Biogesic"
-        android:textColor="#040404"
-        android:typeface="sans"
-        android:textSize="15dip"
-        android:textStyle="bold"/>
 
     <!-- Product Description-->
     <TextView
         android:id="@+id/product_description"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/product_name"
         android:textColor="#343434"
         android:textSize="10dip"
-        android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/thumbnail"
+        android:layout_marginTop="10dip"
+        android:layout_below="@+id/product_head"
         android:text="5mg Biogesic description ni diri" />
 
-    <!-- Product Price -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Php 5.35"
-        android:id="@+id/product_price"
-        android:textStyle="bold"
-        android:textSize="14dp"
-        android:layout_alignBottom="@+id/product_description"
-        android:layout_alignTop="@+id/product_name"
-        android:textColor="#10bcc9"
-        android:layout_alignParentRight="true" />
+
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/product_description"
+        android:id="@+id/div"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp"
+        android:background="#ff13451d"/>
+
+    <!-- Add & Minus buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/div">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_marginRight="15dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/minus_qty"
+                android:layout_width="0dp"
+                android:layout_weight=".25"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_minus" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight=".5"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="false"
+                android:maxWidth="170dp"
+                android:id="@+id/basket_quantity"
+                android:text="100"/>
+            <ImageButton
+                android:id="@+id/add_qty"
+                android:layout_width="0dp"
+                android:layout_weight=".25"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_plus" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight=".3"
+            android:layout_height="match_parent">
+            <!--  Add to cart button -->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginTop="3dp"
+                android:textColor="#fff"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:textSize="12sp"
+                android:background="#5B9A68"
+                android:id="@+id/add_to_cart_btn"
+                android:text="ADD TO CART"/>
+        </LinearLayout>
+    </LinearLayout>
+
 
 
 </RelativeLayout>

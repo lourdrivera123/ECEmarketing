@@ -107,4 +107,27 @@ public class Helpers {
         }
         return "";
     }
+
+    public String getPluralForm(String noun){
+        String lastChar = "";
+
+        lastChar = noun.substring(noun.length() -2);
+        if( lastChar.equals("um") ) return noun.replace("um", "a");
+        if( lastChar.equals("fe") ) return noun.replace("fe", "ves");
+
+
+        lastChar = noun.substring(noun.length() - 1);
+
+        if( lastChar.equals("f") ) return noun.replace("f", "ves");
+
+        if( lastChar.equals("y") ){
+            return noun.replace("y", "ies");
+        }else if( lastChar.equals("s") || lastChar.equals("x") || lastChar.equals("ch") ){
+            return noun+"es";
+        }else{
+            return noun+"s";
+        }
+    }
+
+    
 }

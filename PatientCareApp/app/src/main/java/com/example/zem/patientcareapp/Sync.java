@@ -61,6 +61,7 @@ public class Sync {
 
                         if (json_object != null) {
                             if (tableName.equals("products")) {
+                                System.out.println("FUCKING JSON for PRODUCTS: "+json_object.toString());
                                 if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
                                 } else {
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
@@ -262,7 +263,7 @@ public class Sync {
 
                 JSONObject json_object_mysql = json_array_mysql.getJSONObject(i);
 
-                if (!json_object_mysql.getString("updated_at").equals("null")) {
+                if (!json_object_mysql.getString("updated_at").equals("null") && json_object_mysql.getString("updated_at") != null) {
 
                     if (checkDateTime(dbHelper.getLastUpdate(tblname), json_object_mysql.getString("updated_at"))) { //to be repared
                         //the sqlite last update is lesser than from mysql
@@ -466,25 +467,25 @@ public class Sync {
         Patient patient = new Patient();
         try {
             patient.setServerID(json.getInt("id"));
-            patient.setUsername(json.getString("username"));
-            patient.setPassword(json.getString("password"));
-            patient.setOccupation(json.getString("occupation"));
-            patient.setBirthdate(json.getString("birthdate"));
-            patient.setSex(json.getString("sex"));
-            patient.setCivil_status(json.getString("civil_status"));
-            patient.setHeight(json.getString("height"));
-            patient.setWeight(json.getString("weight"));
-            patient.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
-            patient.setFullAddress(json.getInt("unit_floor_room_no"), json.getString("building"),
-                    json.getInt("lot_no"), json.getInt("block_no"), json.getInt("phase_no"),
-                    json.getInt("address_house_no"), json.getString("address_street"),
-                    json.getString("address_barangay"), json.getString("address_city_municipality"),
-                    json.getString("address_province"), json.getString("address_region"),
-                    json.getString("address_zip"));
-            patient.setTel_no(json.getString("tel_no"));
-            patient.setMobile_no(json.getString("mobile_no"));
-            patient.setEmail(json.getString("email_address"));
-            patient.setPhoto(json.getString("photo"));
+            patient.setUsername(json.getString(DbHelper.PTNT_USERNAME));
+            patient.setPassword(json.getString(DbHelper.PTNT_PASSWORD));
+            patient.setOccupation(json.getString(DbHelper.PTNT_OCCUPATION));
+            patient.setBirthdate(json.getString(DbHelper.PTNT_BIRTHDATE));
+            patient.setSex(json.getString(DbHelper.PTNT_SEX));
+            patient.setCivil_status(json.getString(DbHelper.PTNT_CIVIL_STATUS));
+            patient.setHeight(json.getString(DbHelper.PTNT_HEIGHT));
+            patient.setWeight(json.getString(DbHelper.PTNT_WEIGHT));
+            patient.setFullname(json.getString(DbHelper.PTNT_FNAME), json.getString(DbHelper.PTNT_MNAME), json.getString(DbHelper.PTNT_LNAME));
+            patient.setFullAddress(json.getInt(DbHelper.PTNT_UNIT_NO), json.getString(DbHelper.PTNT_BUILDING),
+                    json.getInt(DbHelper.PTNT_LOT_NO), json.getInt(DbHelper.PTNT_BLOCK_NO), json.getInt(DbHelper.PTNT_PHASE_NO),
+                    json.getInt(DbHelper.PTNT_HOUSE_NO), json.getString(DbHelper.PTNT_STREET),
+                    json.getString(DbHelper.PTNT_BARANGAY), json.getString(DbHelper.PTNT_CITY),
+                    json.getString(DbHelper.PTNT_PROVINCE), json.getString(DbHelper.PTNT_REGION),
+                    json.getString(DbHelper.PTNT_ZIP));
+            patient.setTel_no(json.getString(DbHelper.PTNT_TEL_NO));
+            patient.setMobile_no(json.getString(DbHelper.PTNT_MOBILE_NO));
+            patient.setEmail(json.getString(DbHelper.PTNT_EMAIL));
+            patient.setPhoto(json.getString(DbHelper.PTNT_PHOTO));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -495,15 +496,17 @@ public class Sync {
         Product product = new Product();
 
         try {
-            product.setProductId(json.getInt("id"));
-            product.setName(json.getString("name"));
-            product.setSubCategoryId(Integer.parseInt(json.getString("subcategory_id")));
-            product.setGenericName(json.getString("generic_name"));
-            product.setDescription(json.getString("description"));
+            product.setProductId(json.getInt(DbHelper.PRODUCT_ID));
+            product.setName(json.getString(DbHelper.PRODUCT_NAME));
+            product.setSubCategoryId(Integer.parseInt(json.getString(DbHelper.PRODUCT_SUBCATEGORY_ID)));
+            product.setGenericName(json.getString(DbHelper.PRODUCT_GENERIC_NAME));
+            product.setDescription(json.getString(DbHelper.PRODUCT_DESCRIPTION));
             product.setPrescriptionRequired(Integer.parseInt(json.getString("prescription_required")));
-            product.setPrice(json.getDouble("price"));
+            product.setPrice(Double.parseDouble(json.getString("price")));
             product.setUnit(json.getString("unit"));
             product.setSku(json.getString("sku"));
+            product.setPacking(json.getString("packing"));
+            product.setQtyPerPacking(Integer.parseInt(json.getString("qty_per_packing")));
             product.setCreatedAt(json.getString("created_at"));
             product.setUpdatedAt(json.getString("updated_at"));
             product.setDeletedAt(json.getString("deleted_at"));

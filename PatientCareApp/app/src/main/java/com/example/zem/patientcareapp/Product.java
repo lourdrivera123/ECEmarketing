@@ -4,8 +4,8 @@ package com.example.zem.patientcareapp;
  * Created by Dexter B. on 5/14/2015.
  */
 public class Product {
-    String name, dosageFormatAndStrength, genericName, description, unit, photo, sku, createdAt, updatedAt, deletedAt;
-    int id, prescriptionRequired, productId,subCategoryId;
+    String name, dosageFormatAndStrength, genericName, description, unit,packing, photo, sku, createdAt, updatedAt, deletedAt;
+    int id, prescriptionRequired, productId,subCategoryId, qtyPerPacking;
     double price;
     public Product(){
 
@@ -44,6 +44,14 @@ public class Product {
 
     public String getUnit(){
         return unit;
+    }
+
+    public String getPacking() {
+        return packing;
+    }
+
+    public int getQtyPerPacking() {
+        return qtyPerPacking;
     }
 
     public double getPrice(){
@@ -100,6 +108,14 @@ public class Product {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public void setPacking(String packing) {
+        this.packing = packing;
+    }
+
+    public void setQtyPerPacking(int qtyPerPacking) {
+        this.qtyPerPacking = qtyPerPacking;
     }
 
     public void setPrice(double price) {
