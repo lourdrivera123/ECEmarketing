@@ -819,6 +819,8 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_DESCRIPTION, cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
             map.put(PRODUCT_PRICE, cur.getString(cur.getColumnIndex(PRODUCT_PRICE)));
             map.put(PRODUCT_PHOTO, cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
+            map.put(PRODUCT_SKU, cur.getString(cur.getColumnIndex(PRODUCT_SKU)));
+            map.put(PRODUCT_UNIT, cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
             map.put(PRODUCT_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
             map.put(PRODUCT_QTY_PER_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_QTY_PER_PACKING)));
             products.add(map);
@@ -1219,6 +1221,23 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.close();
         db.close();
         return prod;
+    }
+
+    public int getProductServerIdById(int id){
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "Select * from " + TBL_PRODUCTS + " where id='" + id + "'";
+
+        Cursor cur = db.rawQuery(sql, null);
+        cur.moveToFirst();
+        int pID = 0;
+        while (!cur.isAfterLast()) {
+            pID = cur.getInt(cur.getColumnIndex(PRODUCT_ID));
+            cur.moveToNext();
+        }
+        cur.close();
+        db.close();
+        return pID;
+
     }
 
     /* Create a record for "products" table here */

@@ -263,7 +263,7 @@ public class Sync {
 
                 JSONObject json_object_mysql = json_array_mysql.getJSONObject(i);
 
-                if (!json_object_mysql.getString("updated_at").equals("null")) {
+                if (!json_object_mysql.getString("updated_at").equals("null") && json_object_mysql.getString("updated_at") != null) {
 
                     if (checkDateTime(dbHelper.getLastUpdate(tblname), json_object_mysql.getString("updated_at"))) { //to be repared
                         //the sqlite last update is lesser than from mysql
@@ -501,14 +501,15 @@ public class Sync {
             product.setSubCategoryId(Integer.parseInt(json.getString(DbHelper.PRODUCT_SUBCATEGORY_ID)));
             product.setGenericName(json.getString(DbHelper.PRODUCT_GENERIC_NAME));
             product.setDescription(json.getString(DbHelper.PRODUCT_DESCRIPTION));
-            product.setPrescriptionRequired(Integer.parseInt(json.getString(DbHelper.PRODUCT_PRESCRIPTION_REQUIRED)));
-            product.setPrice(Double.parseDouble(json.getString(DbHelper.PRODUCT_PRICE)));
-            product.setUnit(json.getString(DbHelper.PRODUCT_UNIT));
-            product.setPacking(json.getString(DbHelper.PRODUCT_PACKING));
-            product.setQtyPerPacking(Integer.parseInt(json.getString(DbHelper.PRODUCT_QTY_PER_PACKING)));
-            product.setCreatedAt(json.getString(DbHelper.PRODUCT_CREATED_AT));
-            product.setUpdatedAt(json.getString(DbHelper.PRODUCT_UPDATED_AT));
-            product.setDeletedAt(json.getString(DbHelper.PRODUCT_DELETED_AT));
+            product.setPrescriptionRequired(Integer.parseInt(json.getString("prescription_required")));
+            product.setPrice(Double.parseDouble(json.getString("price")));
+            product.setUnit(json.getString("unit"));
+            product.setSku(json.getString("sku"));
+            product.setPacking(json.getString("packing"));
+            product.setQtyPerPacking(Integer.parseInt(json.getString("qty_per_packing")));
+            product.setCreatedAt(json.getString("created_at"));
+            product.setUpdatedAt(json.getString("updated_at"));
+            product.setDeletedAt(json.getString("deleted_at"));
 
         } catch (JSONException e) {
             e.printStackTrace();
