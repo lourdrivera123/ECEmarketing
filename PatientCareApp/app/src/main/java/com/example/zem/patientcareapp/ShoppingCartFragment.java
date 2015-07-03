@@ -324,10 +324,17 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 items = dbHelper.getAllBasketItems();
                 LazyAdapter checkOutAdapter = new LazyAdapter(getActivity(), items, "ready_for_checkout_items");
 
+                double basketTotalAmount = 0;
+
+                for(HashMap<String, String> map : items){
+                    basketTotalAmount += ( Double.parseDouble(map.get("quantity")) * Double.parseDouble(map.get("price")) );
+                }
+
                 ListView lv_items = (ListView) builder.findViewById(R.id.lv_items);
                 lv_items.setAdapter(checkOutAdapter);
 
                 Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
+                checkout_btn.setText(basketTotalAmount+"");
                 checkout_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
