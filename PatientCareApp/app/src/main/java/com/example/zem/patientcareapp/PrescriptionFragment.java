@@ -2,14 +2,16 @@ package com.example.zem.patientcareapp;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentValues;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,7 +19,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.TypedValue;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.GetterSetter.ImageItem;
-import com.example.zem.patientcareapp.ImageGallery.AppConstant;
-import com.example.zem.patientcareapp.ImageGallery.ImageUtils;
 import com.example.zem.patientcareapp.adapter.GridViewAdapter;
 
 import org.apache.http.HttpEntity;
@@ -57,9 +57,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Zemie, Esel, Dexie
- */
 public class PrescriptionFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
     ImageButton add_pres;
     LinearLayout pick_camera_layout, pick_gallery_layout;
@@ -73,7 +70,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     Dialog upload_dialog;
     private GridViewAdapter gridAdapter;
     String imageFileUri;
-    Uri imageUri;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -100,7 +96,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         imageItems = new ArrayList();
         uriItems = new ArrayList();
 
-        gridAdapter = new GridViewAdapter(getActivity(), R.layout.grid_item_layout, imageItems);
+        gridAdapter = new GridViewAdapter(getActivity(), imageItems);
         gridView.setAdapter(gridAdapter);
         gridView.setOnItemClickListener(this);
         add_pres.setOnClickListener(this);
@@ -124,11 +120,10 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
                 pick_camera_layout.setOnClickListener(this);
                 pick_gallery_layout.setOnClickListener(this);
-
                 break;
 
             case R.id.pick_camera_layout:
-                Intent intent_camera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(getActivity())));
                 startActivityForResult(intent_camera, 1337);
                 dialog1.dismiss();
@@ -153,7 +148,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 111 && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == 111 && resultCode == getActivity().RESULT_OK) { //GALLERY
             if (data.getData() != null && !data.getData().equals(Uri.EMPTY)) {
                 Uri uri = data.getData();
                 String[] projection = {MediaStore.Images.Media.DATA};
@@ -167,61 +162,53 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
                 filePath = path;
                 showProgressbar();
-
                 new UploadFileToServer().execute();
 
                 cursor.close();
-
-//                Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-//                item = new ImageItem(yourSelectedImage, "selected");
-//                item.setImage(yourSelectedImage);
-//
-//                imageItems.add(new ImageItem(yourSelectedImage, "selected"));
-//                gridAdapter.notifyDataSetChanged();
-
-
             }
-        } else if (requestCode == 1337 && resultCode == getActivity().RESULT_OK) {
+        } else if (requestCode == 1337 && resultCode == getActivity().RESULT_OK) { //CAMERA
             final File file = getTempFile(getActivity());
             try {
                 Bitmap captureBmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.fromFile(file));
-//                item = new ImageItem(captureBmp, "selected");
-//                item.setImage(captureBmp);
-//
-//                imageItems.add(new ImageItem(captureBmp, "selected"));
-//                gridAdapter.notifyDataSetChanged();
 
-                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
                 Uri tempUri = getImageUri(getActivity(), captureBmp);
-
-                // CALL THIS METHOD TO GET THE ACTUAL PATH
                 File finalFile = new File(getRealPathFromURI(tempUri));
                 String path = String.valueOf(finalFile);
                 uriItems.add(path);
 
-                // Receiving the data from previous activity
-//                Intent i = getIntent();
-//
-//                // image or video path that is captured in previous activity
-
-                //                if (path != null) {
-//                } else {
-//                    Toast.makeText(getActivity(),
-//                            "Sorry, file path is missing!", Toast.LENGTH_LONG).show();
-//                }
                 filePath = path;
                 showProgressbar();
 
                 new UploadFileToServer().execute();
-
-//                Intent i = new Intent(getActivity(), UploadActivity.class);
-//                i.putExtra("filePath", path);
-//                startActivity(i);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static Bitmap rotateIMG(String file) {
+        Bitmap rotatedBitmap = null;
+        try {
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inPreferredConfig = Bitmap.Config.RGB_565;
+            Bitmap bm = BitmapFactory.decodeFile(file, opts);
+
+            ExifInterface exif = new ExifInterface(file);
+            String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+            int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+
+            int rotationAngle = 0;
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+
+            Matrix matrix = new Matrix();
+            matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+            rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, opts.outWidth, opts.outHeight, matrix, true);
+        } catch (Exception e) {
+
+        }
+        return rotatedBitmap;
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -231,18 +218,10 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         return Uri.parse(path);
     }
 
-//    public String getRealPathFromURI(Uri uri) {
-//        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
-//        cursor.moveToFirst();
-//        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-//        return cursor.getString(idx);
-//    }
-
     public String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = getActivity().managedQuery(contentUri, proj, null, null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
@@ -256,7 +235,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
     /**
      * Uploading the file to server
-     * */
+     */
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         @Override
         protected void onPreExecute() {
@@ -348,17 +327,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-//
-//            JSONObject file_path_json = null;
-//
-//
-
-
-            //      // showing the server response in an alert dialog
-//            showAlert(result);
 
             ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
-//
             imageLoader.init(ImageLoaderConfiguration.createDefault(getActivity()));
 // Load image, decode it to Bitmap and display Bitmap in ImageView (or any other view
 //  which implements ImageAware interface)
@@ -367,28 +337,22 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             imageLoader.loadImage(image_url, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    // Do whatever you want with Bitmap
-//                    Bitmap captureBmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.fromFile(file));
-                    item = new ImageItem(loadedImage, "selected");
-                    item.setImage(loadedImage);
+                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(loadedImage, 960, 960);
+                    item = new ImageItem(ThumbImage);
+                    item.setImage(ThumbImage);
 
-                    imageItems.add(new ImageItem(loadedImage, "selected"));
+                    imageItems.add(new ImageItem(ThumbImage));
                     gridAdapter.notifyDataSetChanged();
                 }
             });
-
             upload_dialog.dismiss();
-
-
-
             super.onPostExecute(result);
         }
-
     }
 
     /**
      * Method to show alert dialog
-     * */
+     */
     private void showAlert(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(message).setTitle("Response from Servers")
@@ -403,9 +367,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     }
 
     public void showProgressbar() {
-//        upload_dialog = new Dialog(getActivity());
-//        upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        upload_dialog.setContentView(R.layout.activity_upload);
         upload_dialog.show();
     }
 }

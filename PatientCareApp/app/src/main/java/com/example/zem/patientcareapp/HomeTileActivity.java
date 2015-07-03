@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -202,17 +201,15 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         search_adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, products);
         search_product.setAdapter(search_adapter);
 
-        search_product.setOnTouchListener(new View.OnTouchListener() {
+        search_product.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (search_product.isFocused()) {
-                    search_product.setCursorVisible(true);
-                    search_product.setFocusableInTouchMode(true);
-                    search_product.setFocusable(true);
-                }
-                return false;
+            public void onClick(View v) {
+                search_product.setCursorVisible(true);
+                search_product.setFocusableInTouchMode(true);
+                search_product.setFocusable(true);
             }
         });
+
         search_product.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

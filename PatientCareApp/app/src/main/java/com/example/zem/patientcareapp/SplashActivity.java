@@ -134,7 +134,7 @@ public class SplashActivity extends Activity {
 
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        System.out.println("fucking response on SplashActivity@get_products: " + response);
                         sync = new Sync();
                         sync.init(getBaseContext(), "get_products", "products", "product_id", response);
 
@@ -142,7 +142,7 @@ public class SplashActivity extends Activity {
                             System.out.println("timestamp from server: "+response.getString("server_timestamp"));
                             dbHelper.updateLastUpdatedTable("products", response.getString("server_timestamp"));
                         } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: "+ e);
+                            System.out.println("error on SplashActivity@get_products: "+ e);
                         }
 
                         Intent mainactivity = new Intent(getBaseContext(), MainActivity.class);
@@ -153,6 +153,7 @@ public class SplashActivity extends Activity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                        System.out.println("error on SplashActivity@get_products: " + error);
                     }
                 });
 

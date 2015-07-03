@@ -25,11 +25,11 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
     public static final String PRODUCT_ID = "productID";
     public static final String UP_ACTIVITY = "parent_activity";
 
-    String get_parent = "";
+    String get_parent = "", productPacking = "";
     int get_productID = 0;
-    int temp_qty = 1;
+    int temp_qty = 1, qtyPerPacking = 1;
 
-    TextView prod_name, prod_generic, prod_unit, prod_price, qty_cart;
+    TextView prod_name, prod_generic, prod_unit, prod_price, qty_cart, prod_description;
     ImageButton minus_qty, add_qty;
     Button add_cart_btn;
     ImageView prod_unit_type;
@@ -72,6 +72,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         add_qty = (ImageButton) findViewById(R.id.add_qty);
         add_cart_btn = (Button) findViewById(R.id.add_cart_btn);
         prod_unit_type = (ImageView) findViewById(R.id.prod_unit_type);
+        prod_description = (TextView) findViewById(R.id.prod_description);
 
         minus_qty.setOnClickListener(this);
         add_qty.setOnClickListener(this);
@@ -81,7 +82,14 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         prod_name.setText(prod.getName());
         prod_generic.setText(prod.getGenericName());
         prod_unit.setText(prod.getUnit());
+        prod_description.setText(prod.getDescription());
+
         prod_price.setText("\u20B1" + prod.getPrice());
+        qtyPerPacking = prod.getQtyPerPacking();
+        productPacking = prod.getPacking();
+        temp_qty = qtyPerPacking;
+        prod_unit.setText("1 " + prod.getUnit() + " x " + qtyPerPacking + "(1 " + productPacking + ")");
+
     }
 
     @Override
@@ -112,7 +120,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         }
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -124,15 +131,18 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.minus_qty:
-                temp_qty -= 1;
+                temp_qty -= qtyPerPacking;
                 minus_qty.setImageResource(R.drawable.ic_minus_dead);
 
-                if (temp_qty <= 0) {
-                    qty_cart.setText("" + 0);
-                    temp_qty = 0;
+                if (temp_qty < 1) {
+                    qty_cart.setText("" + qtyPerPacking);
+                    temp_qty = qtyPerPacking;
+
                 } else {
                     qty_cart.setText("" + temp_qty);
                 }
+
+                prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "("+(temp_qty/qtyPerPacking)+" " + productPacking + ")");
 
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -143,9 +153,12 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                 break;
 
             case R.id.add_qty:
-                temp_qty += 1;
+                temp_qty += qtyPerPacking;
                 add_qty.setImageResource(R.drawable.ic_plus_dead);
                 qty_cart.setText("" + temp_qty);
+
+                prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "("+(temp_qty/qtyPerPacking)+" " + productPacking + ")");
+
 
                 handler.postDelayed(new Runnable() {
                     @Override
