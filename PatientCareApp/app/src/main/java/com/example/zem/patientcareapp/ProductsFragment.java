@@ -89,8 +89,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
                 productQuantity.put(map.get("product_id"), tempMap);
             }
 
-            System.out.println("FUCKING productQuantity: " + productQuantity.toString());
-
             populateProductsListView(rootView, products_items);
             category_list = dbHelper.getAllProductCategoriesArray();
             populateListView(rootView, category_list);
@@ -104,8 +102,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
 
     public void populateProductsListView(View rootView, ArrayList<HashMap<String, String>> products_items) {
         list_of_products = (ListView) rootView.findViewById(R.id.product_lists);
-
-        System.out.println("FUCKING PRODUCTS_ITEMS: "+products_items.toString());
 
         // Getting adapter by passing xml data ArrayList
         adapter = new LazyAdapter(getActivity(), products_items, "product_lists");

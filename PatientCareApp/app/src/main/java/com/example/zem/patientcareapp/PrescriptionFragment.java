@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp;
 
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;

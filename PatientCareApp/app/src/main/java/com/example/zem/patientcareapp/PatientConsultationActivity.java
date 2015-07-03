@@ -84,7 +84,7 @@ public class PatientConsultationActivity extends Activity {
 
         for (int x = 0; x < nl.getLength(); x++){
             // creating new HashMaps
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap();
 
             Element e = (Element) nl.item(x);
 
@@ -97,11 +97,9 @@ public class PatientConsultationActivity extends Activity {
             // let's add the map to the arraylist
             consultationScheds.add(map);
         }
-
         consultation_schedules = (ListView) findViewById(R.id.consultation_schedules);
         adapter = new LazyAdapter(this, consultationScheds, "consultation_lists");
 
         consultation_schedules.setAdapter(adapter);
-
     }
 }
