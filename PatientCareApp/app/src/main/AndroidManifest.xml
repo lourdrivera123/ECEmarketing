@@ -143,6 +143,8 @@
 
         <activity android:name=".samplepaypal" />
 
+        <activity android:name=".UploadActivity" />
+
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"
             android:exported="false" />

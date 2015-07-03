@@ -262,7 +262,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getActivity(), "dapat mag refresh nako", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "dapat mag upload na ko", Toast.LENGTH_SHORT).show();
 
                             }
 
@@ -296,6 +296,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                         } catch (Exception e) {
                                             System.out.println("error fetching server timestamp: " + e);
                                         }
+
+                                        mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, R.id.doctor_name, medRecords);
+                                        list_of_history.setAdapter(mAdapter);
                                     }
                                 }, new Response.ErrorListener() {
                                     @Override
