@@ -6,7 +6,8 @@
     android:paddingLeft="5dp">
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/image_row"
         android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        android:layout_marginBottom="5dp"/>
 </LinearLayout>

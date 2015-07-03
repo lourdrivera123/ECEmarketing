@@ -110,8 +110,6 @@ public class ProductsFragment extends Fragment implements View.OnClickListener, 
         // Getting adapter by passing xml data ArrayList
         adapter = new LazyAdapter(getActivity(), products_items, "product_lists");
         list_of_products.setAdapter(adapter);
-
-        // Click event for single list row
         list_of_products.setOnItemClickListener(this);
     }
 

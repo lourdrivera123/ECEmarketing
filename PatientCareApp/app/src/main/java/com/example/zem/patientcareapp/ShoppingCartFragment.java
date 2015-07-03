@@ -338,8 +338,8 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 checkout_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent samplepaypal = new Intent(getActivity(), samplepaypal.class);
-                        startActivity(samplepaypal);
+//                        Intent samplepaypal = new Intent(getActivity(), samplepaypal.class);
+//                        startActivity(samplepaypal);
                     }
                 });
 
