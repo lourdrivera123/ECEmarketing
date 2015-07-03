@@ -5,13 +5,21 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+        <option name="gradleHome" value="C:/Program Files/Android/Android Studio/gradle/gradle-2.4" />
+=======
         <option name="gradleHome" value="C:\Program Files\Android\Android Studio\gradle\gradle-2.2.1" />
 
+>>>>>>> d74a75bb331eda32371a1e440ab74c749e162c1a
         <option name="gradleJvm" value="1.8" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/PayPalAndroidSDK-2.9.7" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/httpcore-4.3.1" />
+            <option value="$PROJECT_DIR$/httpmime-4.3.1" />
+            <option value="$PROJECT_DIR$/universal-image-loader-1.9.4" />
             <option value="$PROJECT_DIR$/volley" />
           </set>
         </option>
