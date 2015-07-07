@@ -1,8 +1,10 @@
 package com.example.zem.patientcareapp;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,11 +13,13 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +28,29 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.GetterSetter.ImageItem;
 import com.example.zem.patientcareapp.adapter.GridViewAdapter;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,8 +67,16 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     private ImageItem item;
 
     Dialog dialog1;
+    Dialog upload_dialog;
     private GridViewAdapter gridAdapter;
     String imageFileUri;
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+    private ProgressBar progressBar;
+    private String filePath = null;
+    private TextView txtPercentage;
+    long totalSize = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,6 +85,14 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         add_pres = (ImageButton) rootView.findViewById(R.id.add_pres);
         gridView = (GridView) rootView.findViewById(R.id.gridView);
 
+        upload_dialog = new Dialog(getActivity());
+        upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        upload_dialog.setContentView(R.layout.activity_upload);
+
+        txtPercentage = (TextView) upload_dialog.findViewById(R.id.txtPercentage);
+        progressBar = (ProgressBar) upload_dialog.findViewById(R.id.progressBar);
+
+
         imageItems = new ArrayList();
         uriItems = new ArrayList();
 
@@ -61,6 +100,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         gridView.setAdapter(gridAdapter);
         gridView.setOnItemClickListener(this);
         add_pres.setOnClickListener(this);
+
+//        PrescriptionFragment.imageLoader.init(ImageLoaderConfiguration.createDefault(getActivity()));
 
         return rootView;
     }
@@ -116,32 +157,29 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                 cursor.moveToFirst();
 
                 int columnIndex = cursor.getColumnIndex(projection[0]);
-                String filePath = cursor.getString(columnIndex);
+                String path = cursor.getString(columnIndex);
+                uriItems.add(path);
+
+                filePath = path;
+                showProgressbar();
+                new UploadFileToServer().execute();
+
                 cursor.close();
-
-                Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(rotateIMG(filePath), 960, 960);
-                item = new ImageItem(ThumbImage);
-                item.setImage(ThumbImage);
-
-                uriItems.add(filePath);
-                imageItems.add(new ImageItem(ThumbImage));
-                gridAdapter.notifyDataSetChanged();
             }
         } else if (requestCode == 1337 && resultCode == getActivity().RESULT_OK) { //CAMERA
             final File file = getTempFile(getActivity());
             try {
                 Bitmap captureBmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.fromFile(file));
+
                 Uri tempUri = getImageUri(getActivity(), captureBmp);
                 File finalFile = new File(getRealPathFromURI(tempUri));
                 String path = String.valueOf(finalFile);
-
-                Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(rotateIMG(path), 960, 960);
-                item = new ImageItem(ThumbImage);
-                item.setImage(ThumbImage);
-
-                imageItems.add(new ImageItem(ThumbImage));
                 uriItems.add(path);
-                gridAdapter.notifyDataSetChanged();
+
+                filePath = path;
+                showProgressbar();
+
+                new UploadFileToServer().execute();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -193,5 +231,145 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         Intent i = new Intent(getActivity(), FullScreenViewActivity.class);
         i.putExtra("position", position);
         startActivity(i);
+    }
+
+    /**
+     * Uploading the file to server
+     */
+    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            // setting progress bar to zero
+            progressBar.setProgress(0);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            // Making progress bar visible
+            progressBar.setVisibility(View.VISIBLE);
+
+            // updating progress bar value
+            progressBar.setProgress(progress[0]);
+
+            // updating percentage value
+            txtPercentage.setText(String.valueOf(progress[0]) + "%");
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return uploadFile();
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile() {
+            String responseString = null;
+
+            DbHelper dbHelper = new DbHelper(getActivity());
+            int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL+"?patient_id="+patientID);
+
+            try {
+                AndroidMultipartEntity entity = new AndroidMultipartEntity(
+                        new AndroidMultipartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                File sourceFile = new File(filePath);
+
+                // Adding file data to http body
+                entity.addPart("image", new FileBody(sourceFile));
+
+                // Extra parameters if you want to pass to server
+                entity.addPart("website",
+                        new StringBody("www.androidhive.info"));
+                entity.addPart("email", new StringBody("abc@gmail.com"));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.e(TAG, "Response from server: " + result);
+
+            JSONObject jObject = null;
+            String image_url = "";
+            try {
+                jObject = new JSONObject(result);
+                image_url = jObject.getString("file_path");
+                showAlert(image_url);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
+            imageLoader.init(ImageLoaderConfiguration.createDefault(getActivity()));
+// Load image, decode it to Bitmap and display Bitmap in ImageView (or any other view
+//  which implements ImageAware interface)
+//            imageLoader.displayImage(imageUri, imageItems);
+            // Load image, decode it to Bitmap and return Bitmap to callback
+            imageLoader.loadImage(image_url, new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(loadedImage, 960, 960);
+                    item = new ImageItem(ThumbImage);
+                    item.setImage(ThumbImage);
+
+                    imageItems.add(new ImageItem(ThumbImage));
+                    gridAdapter.notifyDataSetChanged();
+                }
+            });
+            upload_dialog.dismiss();
+            super.onPostExecute(result);
+        }
+    }
+
+    /**
+     * Method to show alert dialog
+     */
+    private void showAlert(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(message).setTitle("Response from Servers")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // do nothing
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public void showProgressbar() {
+        upload_dialog.show();
     }
 }

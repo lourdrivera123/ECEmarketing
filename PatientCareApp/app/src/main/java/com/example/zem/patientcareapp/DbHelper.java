@@ -1626,53 +1626,63 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
     /* PROMODISCOUNTS TABLE */
-    public boolean savePromoDiscount(PromoDiscount promoDiscount, String type) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
+        public boolean savePromoDiscount(PromoDiscount promoDiscount, String type) {
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
 
-        values.put(SERVER_PROMO_DISCOUNTS_ID, promoDiscount.getPromoDiscountId());
-        values.put(PROMO_D_NAME, promoDiscount.getName());
-        values.put(PROMO_D_LESS, promoDiscount.getLess());
-        values.put(PROMO_D_PRODUCT_ID, promoDiscount.getProductId());
-        values.put(PROMO_D_QUANTITY_REQUIRED, promoDiscount.getQuantityRequired());
-        values.put(PROMO_D_START_DATE, promoDiscount.getStartDate());
-        values.put(PROMO_D_END_DATE, promoDiscount.getEndDate());
-        values.put(PROMO_D_TYPE, promoDiscount.getType());
-        values.put(PROMO_D_CREATED_AT, promoDiscount.getCreatedAt());
-        values.put(PROMO_D_UPDATED_AT, promoDiscount.getUpdatedAt());
-        values.put(PROMO_D_DELETED_AT, promoDiscount.getDeletedAt());
+            values.put(SERVER_PROMO_DISCOUNTS_ID, promoDiscount.getPromoDiscountId());
+            values.put(PROMO_D_NAME, promoDiscount.getName());
+            values.put(PROMO_D_LESS, promoDiscount.getLess());
+            values.put(PROMO_D_PRODUCT_ID, promoDiscount.getProductId());
+            values.put(PROMO_D_QUANTITY_REQUIRED, promoDiscount.getQuantityRequired());
+            values.put(PROMO_D_START_DATE, promoDiscount.getStartDate());
+            values.put(PROMO_D_END_DATE, promoDiscount.getEndDate());
+            values.put(PROMO_D_TYPE, promoDiscount.getType());
+            values.put(PROMO_D_CREATED_AT, promoDiscount.getCreatedAt());
+            values.put(PROMO_D_UPDATED_AT, promoDiscount.getUpdatedAt());
+            values.put(PROMO_D_DELETED_AT, promoDiscount.getDeletedAt());
 
-        long row;
+            long row;
 
-        if (type.equals("insert")) {
-            row = db.insert(TBL_PROMO_DISCOUNTS, null, values);
-        } else {
-            row = db.update(TBL_PROMO_DISCOUNTS, values, PROMO_DISCOUNTS_ID + "=" + promoDiscount.getPromoDiscountId(), null);
+            if (type.equals("insert")) {
+                row = db.insert(TBL_PROMO_DISCOUNTS, null, values);
+            } else {
+                row = db.update(TBL_PROMO_DISCOUNTS, values, PROMO_DISCOUNTS_ID + "=" + promoDiscount.getPromoDiscountId(), null);
+            }
+            db.close();
+            return row > 0;
         }
-        db.close();
-        return row > 0;
-    }
+
+        /*public ArrayList<HashMap<String, String>> getPromoFreeProducts(int productID){
+            SQLiteDatabase db = getWritableDatabase();
+            String sql =
+
+        }*/
+
+
 
 
     /* PROMO_FREE_PRODUCTS */
-    public boolean savePromoFreeProducts(PromoFreeProducts promoFreeProducts, String type) {
-        long row;
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(SERVER_PROMO_FREE_PRODUCTS_ID, promoFreeProducts.getPromoFreeProductsId());
-        values.put(PROMO_FP_PROMO_ID, promoFreeProducts.getPromoId());
-        values.put(PROMO_FP_PRODUCT_ID, promoFreeProducts.getPromoFreeProductsId());
-        values.put(PROMO_FP_NO_OF_UNITS_FREE, promoFreeProducts.getNumberOfUnitsFree());
-        values.put(PROMO_FP_CREATED_AT, promoFreeProducts.getCreatedAt());
-        values.put(PROMO_FP_UPDATED_AT, promoFreeProducts.getUpdatedAt());
-        values.put(PROMO_FP_DELETED_AT, promoFreeProducts.getDeletedAt());
+        public boolean savePromoFreeProducts(PromoFreeProducts promoFreeProducts, String type) {
+            long row;
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(SERVER_PROMO_FREE_PRODUCTS_ID, promoFreeProducts.getPromoFreeProductsId());
+            values.put(PROMO_FP_PROMO_ID, promoFreeProducts.getPromoId());
+            values.put(PROMO_FP_PRODUCT_ID, promoFreeProducts.getPromoFreeProductsId());
+            values.put(PROMO_FP_NO_OF_UNITS_FREE, promoFreeProducts.getNumberOfUnitsFree());
+            values.put(PROMO_FP_CREATED_AT, promoFreeProducts.getCreatedAt());
+            values.put(PROMO_FP_UPDATED_AT, promoFreeProducts.getUpdatedAt());
+            values.put(PROMO_FP_DELETED_AT, promoFreeProducts.getDeletedAt());
 
-        if (type.equals("insert")) {
-            row = db.insert(TBL_PROMO_FREE_PRODUCTS, null, values);
-        } else {
-            row = db.update(TBL_PROMO_FREE_PRODUCTS, values, SERVER_PROMO_FREE_PRODUCTS_ID + "=" + promoFreeProducts.getPromoFreeProductsId(), null);
+            if (type.equals("insert")) {
+                row = db.insert(TBL_PROMO_FREE_PRODUCTS, null, values);
+            } else {
+                row = db.update(TBL_PROMO_FREE_PRODUCTS, values, SERVER_PROMO_FREE_PRODUCTS_ID + "=" + promoFreeProducts.getPromoFreeProductsId(), null);
+            }
+            return row > 0;
         }
-        return row > 0;
-    }
+
+
 
 }
