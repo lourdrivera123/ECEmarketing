@@ -126,6 +126,7 @@
         <activity android:name=".PromoDiscount" />
         <activity android:name=".PromoFreeProducts" />
         <activity android:name=".ImageItem" />
+        <activity android:name=".PromoFragment" />
 
         <meta-data
             android:name="android.app.default_searchable"
@@ -158,6 +159,7 @@
             android:name="io.card.payment.CardIOActivity"
             android:configChanges="keyboardHidden|orientation" />
         <activity android:name="io.card.payment.DataEntryActivity" />
+
 
     </application>
 </manifest>

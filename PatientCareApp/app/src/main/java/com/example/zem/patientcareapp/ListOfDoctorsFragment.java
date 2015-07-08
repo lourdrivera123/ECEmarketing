@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -145,7 +144,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                     sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
                     try {
                         dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
-//                        adapter.notifyDataSetChanged();
+                        refresh_doctor.setRefreshing(false);
                     } catch (Exception e) {
 
                     }
@@ -160,9 +159,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
             });
             queue.add(doctor_request);
         } else {
-            Toast.makeText(getActivity(), "Couldn't refresh feed", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            refresh_doctor.setRefreshing(false);
         }
-        refresh_doctor.setRefreshing(false);
     }
 }
 

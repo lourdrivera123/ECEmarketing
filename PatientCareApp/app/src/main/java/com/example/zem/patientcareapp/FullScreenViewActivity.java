@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 public class FullScreenViewActivity extends Activity {
     private FullScreenImageAdapter adapter;
     private ViewPager viewPager;
-    ArrayList<String> getUriItems;
+    ArrayList<Bitmap> getAllBitmap;
 
     ActionBar actionbar;
 
@@ -29,11 +30,11 @@ public class FullScreenViewActivity extends Activity {
         MainActivity.setCustomActionBar(actionbar);
         actionbar.setDisplayHomeAsUpEnabled(true);
 
-        getUriItems = PrescriptionFragment.uriItems;
+        getAllBitmap = PrescriptionFragment.allBitmap;
         Intent i = getIntent();
         int position = i.getIntExtra("position", 0);
 
-        adapter = new FullScreenImageAdapter(FullScreenViewActivity.this, getUriItems);
+        adapter = new FullScreenImageAdapter(FullScreenViewActivity.this, getAllBitmap);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(position);
     }

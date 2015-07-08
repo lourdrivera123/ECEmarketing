@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -91,14 +90,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         list_of_history.setAdapter(mAdapter);
 
         swipe_refresh.setOnRefreshListener(this);
-
-//        swipe_refresh.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                swipe_refresh.setRefreshing(true);
-//                //LOAD ALL UPDATES
-//            }
-//        });
 
         list_of_history.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         list_of_history.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {

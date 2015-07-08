@@ -12,9 +12,6 @@
         android:id="@+id/doctor_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/thumbnail"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:text="Dr. Angel Locsin"
         android:textColor="#040404"
         android:typeface="sans"
         android:textSize="15dip"
@@ -29,15 +26,12 @@
         android:textColor="#343434"
         android:textSize="10dip"
         android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:text="#67 Acacia Rd., Dexter Ave., Davao City"
         android:textStyle="bold" />
 
     <!-- Schedule Date -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="24th May 2015, Morning"
         android:id="@+id/consultation_schedule"
         android:textStyle="bold"
         android:textSize="12dp"

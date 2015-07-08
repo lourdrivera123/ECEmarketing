@@ -78,7 +78,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         add_qty.setOnClickListener(this);
         add_cart_btn.setOnClickListener(this);
 
-        qty_cart.setText("" + temp_qty);
+
         prod_name.setText(prod.getName());
         prod_generic.setText(prod.getGenericName());
         prod_unit.setText(prod.getUnit());
@@ -88,6 +88,8 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         qtyPerPacking = prod.getQtyPerPacking();
         productPacking = prod.getPacking();
         temp_qty = qtyPerPacking;
+
+        qty_cart.setText("" + temp_qty);
         prod_unit.setText("1 " + prod.getUnit() + " x " + qtyPerPacking + "(1 " + productPacking + ")");
 
     }

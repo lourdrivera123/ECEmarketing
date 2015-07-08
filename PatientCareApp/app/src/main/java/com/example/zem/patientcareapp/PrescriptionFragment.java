@@ -1,10 +1,7 @@
 package com.example.zem.patientcareapp;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -44,39 +41,48 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PrescriptionFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
     ImageButton add_pres;
     LinearLayout pick_camera_layout, pick_gallery_layout;
-    ArrayList<ImageItem> imageItems;
-    public static ArrayList<String> uriItems;
-
-    private GridView gridView;
-    private ImageItem item;
-
-    Dialog dialog1;
-    Dialog upload_dialog;
-    private GridViewAdapter gridAdapter;
-    String imageFileUri;
-
-    private static final String TAG = MainActivity.class.getSimpleName();
-
-    private ProgressBar progressBar;
-    private String filePath = null;
+    ProgressBar progressBar;
     private TextView txtPercentage;
+    GridView gridView;
+    Dialog upload_dialog, dialog1;
+
+    ArrayList<ImageItem> imageItems;
+    public static ArrayList<Bitmap> allBitmap;
+    ArrayList<String> uploadsByUser;
+
+    private ImageItem item;
+    private GridViewAdapter gridAdapter;
+    Helpers helper;
+    DbHelper dbhelper;
+
+    String imageFileUri, image_name;
+    String filePath = null;
     long totalSize = 0;
+    int patientID;
+
+    ImageLoader imageLoader;
+    DisplayImageOptions options;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,34 +98,93 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         txtPercentage = (TextView) upload_dialog.findViewById(R.id.txtPercentage);
         progressBar = (ProgressBar) upload_dialog.findViewById(R.id.progressBar);
 
-
         imageItems = new ArrayList();
-        uriItems = new ArrayList();
+        allBitmap = new ArrayList();
+
+        helper = new Helpers();
+        dbhelper = new DbHelper(getActivity());
+
+        patientID = HomeTileActivity.getUserID();
 
         gridAdapter = new GridViewAdapter(getActivity(), imageItems);
         gridView.setAdapter(gridAdapter);
         gridView.setOnItemClickListener(this);
         add_pres.setOnClickListener(this);
 
-//        PrescriptionFragment.imageLoader.init(ImageLoaderConfiguration.createDefault(getActivity()));
+        options = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
 
+        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(getActivity());
+        config.threadPriority(Thread.NORM_PRIORITY - 2);
+        config.denyCacheImageMultipleSizesInMemory();
+        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
+        config.diskCacheSize(50 * 1024 * 1024); // 50 MiB
+        config.tasksProcessingOrder(QueueProcessingType.LIFO);
+        config.writeDebugLogs(); // Remove for release app
+
+
+        imageLoader = ImageLoader.getInstance(); // Get singleton instance
+        imageLoader.init(config.build());
+
+        uploadsByUser = dbhelper.getUploadedPrescriptionsByUserID(patientID);
+        Log.d("uploadsbyuser size", uploadsByUser.size()+"");
+
+        if(uploadsByUser.size() > 0) {
+
+                    for (int x= 0; x < uploadsByUser.size(); x++) {
+
+                        Log.d("index zero uploads by user", uploadsByUser.get(x) + "");
+                        List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri(uploadsByUser.get(x), ImageLoader.getInstance().getMemoryCache());
+                        Log.d("List of cache", bm + "");
+                        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(bm.get(x), 960, 960);
+                        item = new ImageItem(ThumbImage);
+                        item.setImage(ThumbImage);
+
+                        allBitmap.add(bm.get(x));
+                        imageItems.add(new ImageItem(ThumbImage));
+                        gridAdapter.notifyDataSetChanged();
+                    }
+        }
+//
+//        Log.d("index zero uploads by user", uploadsByUser.get(0)+"");
+//        List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri("http://vinzry.0fees.us/db/uploads/user_/1435115918272.jpg", ImageLoader.getInstance().getMemoryCache());
+//        Log.d("List of cache", bm + "");
+//        for (int x= 0; x < uploadsByUser.size(); x++) {
+
+//            Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(bm.get(0), 960, 960);
+//            item = new ImageItem(ThumbImage);
+//            item.setImage(ThumbImage);
+//
+//            allBitmap.add(bm.get(0));
+//            imageItems.add(new ImageItem(ThumbImage));
+//            gridAdapter.notifyDataSetChanged();
+//        }
         return rootView;
     }
+
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_pres:
-                dialog1 = new Dialog(getActivity());
-                dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog1.setContentView(R.layout.dialog_gallery_camera);
-                dialog1.show();
+                if (helper.isNetworkAvailable(getActivity())) {
+                    dialog1 = new Dialog(getActivity());
+                    dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog1.setContentView(R.layout.dialog_gallery_camera);
+                    dialog1.show();
 
-                pick_camera_layout = (LinearLayout) dialog1.findViewById(R.id.pick_camera_layout);
-                pick_gallery_layout = (LinearLayout) dialog1.findViewById(R.id.pick_gallery_layout);
+                    pick_camera_layout = (LinearLayout) dialog1.findViewById(R.id.pick_camera_layout);
+                    pick_gallery_layout = (LinearLayout) dialog1.findViewById(R.id.pick_gallery_layout);
 
-                pick_camera_layout.setOnClickListener(this);
-                pick_gallery_layout.setOnClickListener(this);
+                    pick_camera_layout.setOnClickListener(this);
+                    pick_gallery_layout.setOnClickListener(this);
+                } else {
+                    Toast.makeText(getActivity(), "Network unavailable", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case R.id.pick_camera_layout:
@@ -158,7 +223,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
                 int columnIndex = cursor.getColumnIndex(projection[0]);
                 String path = cursor.getString(columnIndex);
-                uriItems.add(path);
 
                 filePath = path;
                 showProgressbar();
@@ -174,7 +238,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                 Uri tempUri = getImageUri(getActivity(), captureBmp);
                 File finalFile = new File(getRealPathFromURI(tempUri));
                 String path = String.valueOf(finalFile);
-                uriItems.add(path);
 
                 filePath = path;
                 showProgressbar();
@@ -233,9 +296,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         startActivity(i);
     }
 
-    /**
-     * Uploading the file to server
-     */
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         @Override
         protected void onPreExecute() {
@@ -246,13 +306,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            // Making progress bar visible
             progressBar.setVisibility(View.VISIBLE);
-
-            // updating progress bar value
             progressBar.setProgress(progress[0]);
-
-            // updating percentage value
             txtPercentage.setText(String.valueOf(progress[0]) + "%");
         }
 
@@ -263,15 +318,17 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
         @SuppressWarnings("deprecation")
         private String uploadFile() {
-            String responseString = null;
+            String responseString;
+
+            DbHelper dbHelper = new DbHelper(getActivity());
+            int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL);
+            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL+"?patient_id="+patientID);
 
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
                         new AndroidMultipartEntity.ProgressListener() {
-
                             @Override
                             public void transferred(long num) {
                                 publishProgress((int) ((num / (float) totalSize) * 100));
@@ -282,11 +339,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
                 // Adding file data to http body
                 entity.addPart("image", new FileBody(sourceFile));
-
-                // Extra parameters if you want to pass to server
-                entity.addPart("website",
-                        new StringBody("www.androidhive.info"));
-                entity.addPart("email", new StringBody("abc@gmail.com"));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);
@@ -300,70 +352,56 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                     // Server response
                     responseString = EntityUtils.toString(r_entity);
                 } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
+                    responseString = "Error occurred! Http Status Code: " + statusCode;
                 }
-
             } catch (ClientProtocolException e) {
                 responseString = e.toString();
             } catch (IOException e) {
                 responseString = e.toString();
             }
-
             return responseString;
-
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Log.e(TAG, "Response from server: " + result);
 
-            JSONObject jObject = null;
+            Log.d("response from server", result);
+            JSONObject jObject;
             String image_url = "";
             try {
                 jObject = new JSONObject(result);
                 image_url = jObject.getString("file_path");
-                showAlert(image_url);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
-            imageLoader.init(ImageLoaderConfiguration.createDefault(getActivity()));
-// Load image, decode it to Bitmap and display Bitmap in ImageView (or any other view
-//  which implements ImageAware interface)
-//            imageLoader.displayImage(imageUri, imageItems);
             // Load image, decode it to Bitmap and return Bitmap to callback
-            imageLoader.loadImage(image_url, new SimpleImageLoadingListener() {
+            ImageSize targetSize = new ImageSize(80, 50); // result Bitmap will be fit to this size
+            imageLoader.loadImage(image_url, targetSize, options, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(loadedImage, 960, 960);
-                    item = new ImageItem(ThumbImage);
-                    item.setImage(ThumbImage);
+                    if (dbhelper.insertUploadOnPrescription(patientID, imageUri)) {
 
-                    imageItems.add(new ImageItem(ThumbImage));
-                    gridAdapter.notifyDataSetChanged();
+
+//                        Log.d();
+                        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(loadedImage, 960, 960);
+                        item = new ImageItem(ThumbImage);
+                        item.setImage(ThumbImage);
+
+                        allBitmap.add(loadedImage);
+                        imageItems.add(new ImageItem(ThumbImage));
+                        gridAdapter.notifyDataSetChanged();
+                        List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri(imageUri, ImageLoader.getInstance().getMemoryCache());
+                        Log.d("image_uri from server", imageUri+"");
+                        Log.d("List of cache", bm + "");
+                    } else {
+                        Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             upload_dialog.dismiss();
             super.onPostExecute(result);
         }
-    }
-
-    /**
-     * Method to show alert dialog
-     */
-    private void showAlert(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(message).setTitle("Response from Servers")
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // do nothing
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
     public void showProgressbar() {
