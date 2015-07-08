@@ -29,7 +29,6 @@
 
         <Button
             style="@style/btn_checkout"
-            android:text="Php 12216.78"
             android:id="@+id/button_checkout"/>
     </LinearLayout>
 </RelativeLayout>

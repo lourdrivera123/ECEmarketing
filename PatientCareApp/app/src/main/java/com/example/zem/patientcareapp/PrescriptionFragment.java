@@ -320,8 +320,11 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         private String uploadFile() {
             String responseString;
 
+            DbHelper dbHelper = new DbHelper(getActivity());
+            int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
+
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL);
+            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL+"?patient_id="+patientID);
 
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
