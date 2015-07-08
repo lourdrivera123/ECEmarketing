@@ -145,7 +145,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                     sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
                     try {
                         dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
-                        adapter.notifyDataSetChanged();
+//                        adapter.notifyDataSetChanged();
                     } catch (Exception e) {
 
                     }
