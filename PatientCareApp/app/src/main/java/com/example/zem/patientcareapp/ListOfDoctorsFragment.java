@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +25,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-/**
- * Created by Zem on 4/29/2015.
- */
 
 public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     ListView list_of_doctors;

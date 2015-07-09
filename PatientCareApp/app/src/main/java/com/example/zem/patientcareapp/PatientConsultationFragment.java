@@ -1,11 +1,14 @@
 package com.example.zem.patientcareapp;
 
+import android.content.Intent;
+import android.media.Image;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import org.w3c.dom.Document;
@@ -15,10 +18,7 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Dexter B. on 5/5/2015.
- */
-public class PatientConsultationFragment extends Fragment {
+public class PatientConsultationFragment extends Fragment implements View.OnClickListener {
     // XML node keys
     static final String KEY_DOCTOR_NAME = "doctor"; // parent node
     static final String KEY_CLINIC_ADDRESS = "clinic_address";
@@ -27,65 +27,72 @@ public class PatientConsultationFragment extends Fragment {
     static final String KEY_SCHED = "entry";
     static final String KEY_ID = "id";
 
-    ListView  consultation_schedules;
+    ListView consultation_schedules;
+    ImageButton add_consultation;
+
     LazyAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.patient_consultation_layout, container, false);
 
-        ArrayList<HashMap<String, String>> consultationScheds = new ArrayList<HashMap<String, String>>();
+        consultation_schedules = (ListView) rootView.findViewById(R.id.consultation_schedules);
+        add_consultation = (ImageButton) rootView.findViewById(R.id.add_consultation);
+
+        add_consultation.setOnClickListener(this);
+
+        ArrayList<HashMap<String, String>> consultationScheds = new ArrayList();
         XMLParser parser = new XMLParser();
 
-        String xml= "<list>" +
-                        "<entry>\n" +
-                            "<id>14</id>\n" +
-                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>24th May 2015</date>\n" +
-                            "<schedule>AM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>11</id>\n" +
-                            "<doctor>Dr. Esel Barnes</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>19th May 2015</date>\n" +
-                            "<schedule>PM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>14</id>\n" +
-                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>24th May 2015</date>\n" +
-                            "<schedule>AM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>11</id>\n" +
-                            "<doctor>Dr. Esel Barnes</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>19th May 2015</date>\n" +
-                            "<schedule>PM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>14</id>\n" +
-                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>24th May 2015</date>\n" +
-                            "<schedule>AM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>11</id>\n" +
-                            "<doctor>Dr. Esel Barnes</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>19th May 2015</date>\n" +
-                            "<schedule>PM</schedule>\n" +
-                        "</entry>" +
+        String xml = "<list>" +
+                "<entry>\n" +
+                "<id>14</id>\n" +
+                "<doctor>Dr. Zemiel Asma</doctor>\n" +
+                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                "<date>24th May 2015</date>\n" +
+                "<schedule>AM</schedule>\n" +
+                "</entry>" +
+                "<entry>\n" +
+                "<id>11</id>\n" +
+                "<doctor>Dr. Esel Barnes</doctor>\n" +
+                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                "<date>19th May 2015</date>\n" +
+                "<schedule>PM</schedule>\n" +
+                "</entry>" +
+                "<entry>\n" +
+                "<id>14</id>\n" +
+                "<doctor>Dr. Zemiel Asma</doctor>\n" +
+                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                "<date>24th May 2015</date>\n" +
+                "<schedule>AM</schedule>\n" +
+                "</entry>" +
+                "<entry>\n" +
+                "<id>11</id>\n" +
+                "<doctor>Dr. Esel Barnes</doctor>\n" +
+                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                "<date>19th May 2015</date>\n" +
+                "<schedule>PM</schedule>\n" +
+                "</entry>" +
+                "<entry>\n" +
+                "<id>14</id>\n" +
+                "<doctor>Dr. Zemiel Asma</doctor>\n" +
+                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                "<date>24th May 2015</date>\n" +
+                "<schedule>AM</schedule>\n" +
+                "</entry>" +
+                "<entry>\n" +
+                "<id>11</id>\n" +
+                "<doctor>Dr. Esel Barnes</doctor>\n" +
+                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
+                "<date>19th May 2015</date>\n" +
+                "<schedule>PM</schedule>\n" +
+                "</entry>" +
                 "</list>";
         Document doc = parser.getDomElement(xml);
 
         NodeList nl = doc.getElementsByTagName(KEY_SCHED);
 
-        for (int x = 0; x < nl.getLength(); x++){
+        for (int x = 0; x < nl.getLength(); x++) {
             // creating new HashMaps
             HashMap<String, String> map = new HashMap<String, String>();
 
@@ -101,10 +108,15 @@ public class PatientConsultationFragment extends Fragment {
             consultationScheds.add(map);
         }
 
-        consultation_schedules = (ListView) rootView.findViewById(R.id.consultation_schedules);
         adapter = new LazyAdapter(getActivity(), consultationScheds, "consultation_lists");
 
         consultation_schedules.setAdapter(adapter);
         return rootView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(getActivity(), PatientConsultationActivity.class);
+        startActivity(intent);
     }
 }

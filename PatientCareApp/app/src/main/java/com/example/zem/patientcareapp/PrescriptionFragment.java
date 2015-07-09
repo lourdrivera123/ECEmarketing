@@ -38,7 +38,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -76,7 +75,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     Helpers helper;
     DbHelper dbhelper;
 
-    String imageFileUri, image_name;
+    String imageFileUri;
     String filePath = null;
     long totalSize = 0;
     int patientID;
@@ -131,24 +130,23 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 //        imageLoader.init(config.build());
 
         uploadsByUser = dbhelper.getUploadedPrescriptionsByUserID(patientID);
-        Log.d("uploadsbyuser size", uploadsByUser.size()+"");
 
-        if(uploadsByUser.size() > 0) {
-
-                    for (int x= 0; x < uploadsByUser.size(); x++) {
-
-                        Log.d("index zero uploads by user", uploadsByUser.get(x) + "");
-                        List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri(uploadsByUser.get(x), ImageLoader.getInstance().getMemoryCache());
-                        Log.d("List of cache", bm + "");
-                        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(bm.get(x), 960, 960);
-                        item = new ImageItem(ThumbImage);
-                        item.setImage(ThumbImage);
-
-                        allBitmap.add(bm.get(x));
-                        imageItems.add(new ImageItem(ThumbImage));
-                        gridAdapter.notifyDataSetChanged();
-                    }
-        }
+//        if(uploadsByUser.size() > 0) {
+//
+//                    for (int x= 0; x < uploadsByUser.size(); x++) {
+//
+//                        Log.d("index zero uploads by user", uploadsByUser.get(x) + "");
+//                        List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri(uploadsByUser.get(x), ImageLoader.getInstance().getMemoryCache());
+//                        Log.d("List of cache", bm + "");
+//                        Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(bm.get(x), 960, 960);
+//                        item = new ImageItem(ThumbImage);
+//                        item.setImage(ThumbImage);
+//
+//                        allBitmap.add(bm.get(x));
+//                        imageItems.add(new ImageItem(ThumbImage));
+//                        gridAdapter.notifyDataSetChanged();
+//                    }
+//        }
 //
 //        Log.d("index zero uploads by user", uploadsByUser.get(0)+"");
 //        List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri("http://vinzry.0fees.us/db/uploads/user_/1435115918272.jpg", ImageLoader.getInstance().getMemoryCache());
