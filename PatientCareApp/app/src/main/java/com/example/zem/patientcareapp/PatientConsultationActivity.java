@@ -1,105 +1,119 @@
 package com.example.zem.patientcareapp;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ListView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Calendar;
 
-/**
- * Created by Dexter B. on 5/5/2015.
- */
-public class PatientConsultationActivity extends Activity {
-    // XML node keys
-    static final String KEY_DOCTOR_NAME = "doctor"; // parent node
-    static final String KEY_CLINIC_ADDRESS = "clinic_address";
-    static final String KEY_SCHEDULE = "schedule";
-    static final String KEY_DATE = "date";
-    static final String KEY_SCHED = "entry";
-    static final String KEY_ID = "id";
-
-    ListView  consultation_schedules;
+public class PatientConsultationActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
     LazyAdapter adapter;
+
+    LinearLayout setDate, setTime;
+    TextView txtDate, txtTime;
+    CheckBox checkAlarm;
+
+    Calendar cal;
+
+    int hour, minute, new_hour, new_minute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.patient_consultation_layout);
+        setContentView(R.layout.new_consultation_layout);
 
-        ArrayList<HashMap<String, String>> consultationScheds = new ArrayList<HashMap<String, String>>();
-        XMLParser parser = new XMLParser();
+        ActionBar actionBar = getActionBar();
+        MainActivity.setCustomActionBar(actionBar);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        String xml= "<list>" +
-                        "<entry>\n" +
-                            "<id>14</id>\n" +
-                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>24th May 2015</date>\n" +
-                            "<schedule>AM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>11</id>\n" +
-                            "<doctor>Dr. Esel Barnes</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>19th May 2015</date>\n" +
-                            "<schedule>PM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>14</id>\n" +
-                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>24th May 2015</date>\n" +
-                            "<schedule>AM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>11</id>\n" +
-                            "<doctor>Dr. Esel Barnes</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>19th May 2015</date>\n" +
-                            "<schedule>PM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>14</id>\n" +
-                            "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>24th May 2015</date>\n" +
-                            "<schedule>AM</schedule>\n" +
-                        "</entry>" +
-                        "<entry>\n" +
-                            "<id>11</id>\n" +
-                            "<doctor>Dr. Esel Barnes</doctor>\n" +
-                            "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                            "<date>19th May 2015</date>\n" +
-                            "<schedule>PM</schedule>\n" +
-                        "</entry>" +
-                     "</list>";
-        Document doc = parser.getDomElement(xml);
+        setDate = (LinearLayout) findViewById(R.id.setDate);
+        setTime = (LinearLayout) findViewById(R.id.setTime);
+        txtDate = (TextView) findViewById(R.id.txtDate);
+        txtTime = (TextView) findViewById(R.id.txtTime);
+        checkAlarm = (CheckBox) findViewById(R.id.checkAlarm);
 
-        NodeList nl = doc.getElementsByTagName(KEY_SCHED);
+        cal = Calendar.getInstance();
+        hour = cal.get(Calendar.HOUR_OF_DAY);
+        minute = cal.get(Calendar.MINUTE);
+        txtTime.setText(hour + " : " + minute);
 
-        for (int x = 0; x < nl.getLength(); x++){
-            // creating new HashMaps
-            HashMap<String, String> map = new HashMap();
+        setDate.setOnClickListener(this);
+        setTime.setOnClickListener(this);
+    }
 
-            Element e = (Element) nl.item(x);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.save_menu, menu);
+        return true;
+    }
 
-            map.put(KEY_ID, parser.getValue(e, KEY_ID));
-            map.put(KEY_DOCTOR_NAME, parser.getValue(e, KEY_DOCTOR_NAME));
-            map.put(KEY_CLINIC_ADDRESS, parser.getValue(e, KEY_CLINIC_ADDRESS));
-            map.put(KEY_DATE, parser.getValue(e, KEY_DATE));
-            map.put(KEY_SCHEDULE, parser.getValue(e, KEY_SCHEDULE));
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.save) {
 
-            // let's add the map to the arraylist
-            consultationScheds.add(map);
+        } else {
+            this.finish();
         }
-        consultation_schedules = (ListView) findViewById(R.id.consultation_schedules);
-        adapter = new LazyAdapter(this, consultationScheds, "consultation_lists");
+        return super.onOptionsItemSelected(item);
+    }
 
-        consultation_schedules.setAdapter(adapter);
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.setDate:
+                DatePickerDialog datePicker = new DatePickerDialog(this, this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                datePicker.show();
+                break;
+
+            case R.id.setTime:
+                if (txtTime.getText().toString().equals(hour + " : " + minute)) {
+                    TimePickerDialog mTimePicker = new TimePickerDialog(this, onStartTimeListener, hour, minute, false);
+                    mTimePicker.show();
+                } else {
+                    TimePickerDialog mTimePicker = new TimePickerDialog(this, onStartTimeListener, new_hour, new_minute, false);
+                    mTimePicker.show();
+                }
+                break;
+        }
+    }
+
+    TimePickerDialog.OnTimeSetListener onStartTimeListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            String meridiem = "AM";
+            if (hourOfDay > 12) {
+                hourOfDay -= 12;
+                meridiem = "PM";
+            }
+            if (minute < 10)
+                txtTime.setText(hourOfDay + " : 0" + minute + " " + meridiem);
+            else
+                txtTime.setText(hourOfDay + " : " + minute + " " + meridiem);
+
+            new_hour = hourOfDay;
+            new_minute = minute;
+        }
+    };
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        String dateStr = String.format("%d/%d/%d", (monthOfYear + 1), dayOfMonth, year);
+        txtDate.setText(dateStr);
     }
 }

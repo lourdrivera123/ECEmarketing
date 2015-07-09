@@ -51,18 +51,7 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(this, MasterTabActivity.class);
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (get_parent_activity.equals("ListOfDoctorsFragment")) {
-                    intent.putExtra("selected", 3);
-                    startActivity(intent);
-                } else if (get_parent_activity.equals("PatientHistoryFragment")) {
-                    intent.putExtra("selected", 1);
-                    startActivity(intent);
-                }
-                return true;
-        }
+        this.finish();
         return super.onOptionsItemSelected(item);
     }
 

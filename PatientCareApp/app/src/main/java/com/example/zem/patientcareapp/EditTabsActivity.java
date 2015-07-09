@@ -18,6 +18,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -137,9 +140,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     .setTabListener(this));
         }
 
-        /**
-         * on swiping the viewpager make respective tab selected
-         * */
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
@@ -187,9 +187,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                     if (!hasError3) {
                                         long date = System.currentTimeMillis();
                                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
-                                        String dateString = sdf.format(date);
-
-                                        String uname = patient.getUsername();
 
                                         if (edit_int > 0) {
                                             String edit_uname = HomeTileActivity.getUname();
@@ -235,11 +232,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                 try {
                                                                     int success = response.getInt("success");
                                                                     System.out.println("success is: " + success);
-//                                                                    success = response.getInt("success");
                                                                     if (success == 2) {
                                                                         pDialog.hide();
                                                                         Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
-//                                                                    }
                                                                     } else if (success == 1) {
                                                                         patient_json_array_mysql = response.getJSONArray("patient");
                                                                         patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
@@ -258,12 +253,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                             Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     } else {
-                                                                        Toast.makeText(EditTabsActivity.this, "Sorry to interrupt the process but there is some problem with our server.", Toast.LENGTH_SHORT).show();
-
+                                                                        Toast.makeText(EditTabsActivity.this, "Error occcurred. Please try again later", Toast.LENGTH_SHORT).show();
                                                                     }
 
                                                                 } catch (JSONException e) {
-//                                                                    e.printStackTrace();
                                                                 }
 
                                                             }
@@ -277,7 +270,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 });
                                                 queue.add(jsObjRequest);
                                             } else {
-                                                Toast.makeText(EditTabsActivity.this, "Cannot save because there is no internet connection", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(EditTabsActivity.this, "Network error. Please check your internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }
@@ -296,6 +289,19 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             public void onPageScrollStateChanged(int arg0) {
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.close_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        this.finish();
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
