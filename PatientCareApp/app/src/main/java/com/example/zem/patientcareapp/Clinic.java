@@ -22,6 +22,10 @@ public class Clinic {
         this.clinicsId = clinics_id;
     }
 
+    public void setAddressUnitBuildingNo(String addressHouseNo) {
+        this.addressUnitBuildingNo = addressHouseNo;
+    }
+
     public void setAddressStreet(String addressStreet) {
         this.addressStreet = addressStreet;
     }
@@ -32,10 +36,6 @@ public class Clinic {
 
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
-    }
-
-    public void setAddressHouseNo(String addressHouseNo) {
-        this.addressUnitBuildingNo = addressHouseNo;
     }
 
     public void setAddressBarangay(String addressBarangay) {
@@ -93,7 +93,7 @@ public class Clinic {
         return contactNumber;
     }
 
-    public String getAddressHouseNo() {
+    public String getAddressUnitBuildingNo() {
         return addressUnitBuildingNo;
     }
 
