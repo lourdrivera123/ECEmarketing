@@ -80,7 +80,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     long totalSize = 0;
     int patientID;
 
-    ImageLoader imageLoader;
+//    ImageLoader imageLoader;
     DisplayImageOptions options;
 
     @Override
@@ -117,17 +117,17 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
 
-        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(getActivity());
-        config.threadPriority(Thread.NORM_PRIORITY - 2);
-        config.denyCacheImageMultipleSizesInMemory();
-        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
-        config.diskCacheSize(50 * 1024 * 1024); // 50 MiB
-        config.tasksProcessingOrder(QueueProcessingType.LIFO);
-        config.writeDebugLogs(); // Remove for release app
+//        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(getActivity());
+//        config.threadPriority(Thread.NORM_PRIORITY - 2);
+//        config.denyCacheImageMultipleSizesInMemory();
+//        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
+//        config.diskCacheSize(50 * 1024 * 1024); // 50 MiB
+//        config.tasksProcessingOrder(QueueProcessingType.LIFO);
+//        config.writeDebugLogs(); // Remove for release app
 
 
-        imageLoader = ImageLoader.getInstance(); // Get singleton instance
-        imageLoader.init(config.build());
+//        imageLoader = ImageLoader.getInstance(); // Get singleton instance
+//        imageLoader.init(config.build());
 
         uploadsByUser = dbhelper.getUploadedPrescriptionsByUserID(patientID);
 
@@ -375,7 +375,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
             // Load image, decode it to Bitmap and return Bitmap to callback
             ImageSize targetSize = new ImageSize(80, 50); // result Bitmap will be fit to this size
-            imageLoader.loadImage(image_url, targetSize, options, new SimpleImageLoadingListener() {
+            ImageLoader.getInstance().loadImage(image_url, targetSize, options, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     if (dbhelper.insertUploadOnPrescription(patientID, imageUri)) {
@@ -390,7 +390,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                         imageItems.add(new ImageItem(ThumbImage));
                         gridAdapter.notifyDataSetChanged();
                         List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri(imageUri, ImageLoader.getInstance().getMemoryCache());
-                        Log.d("image_uri from server", imageUri+"");
+                        Log.d("image_uri from server", imageUri + "");
                         Log.d("List of cache", bm + "");
                     } else {
                         Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
