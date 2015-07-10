@@ -56,6 +56,29 @@ public class SplashActivity extends Activity {
             if (helpers.isNetworkAvailable(this)){
 
                 // Request a string response from the provided URL.
+                JsonObjectRequest clinic_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response){
+                        sync = new Sync();
+                        sync.init(getBaseContext(), "get_clinics", "clinics", "clinic_id", response);
+                        try {
+                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("clinics", response.getString("server_timestamp"));
+                        } catch (Exception e) {
+                            System.out.println("error fetching server timestamp: "+ e);
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                        System.out.println("GWAPO DAW KO: " + error);
+                    }
+                });
+
+                // Request a string response from the provided URL.
                 JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
 
                     @Override
@@ -301,6 +324,7 @@ public class SplashActivity extends Activity {
                 });
                 
                 queue.add(doctor_request);
+                queue.add(clinic_request);
                 queue.add(doctor_specialty_request);
                 queue.add(doctor_sub_specialty_request);
                 queue.add(prod_category_request);

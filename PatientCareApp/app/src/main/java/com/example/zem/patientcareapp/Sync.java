@@ -131,6 +131,12 @@ public class Sync {
                                 } else {
                                     System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
                                 }
+                            } else if (tableName.equals("clinics")) {
+                                if (dbHelper.saveClinic(setClinic(json_object), "insert")) {
+                                    System.out.println("Treatments SUCCESSFULLY SAVED. <source: Sync.java>");
+                                } else {
+                                    System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
+                                }
                             }
                         }
                     }
@@ -397,6 +403,18 @@ public class Sync {
         }
 
         return doctor;
+    }
+
+    public Clinic setClinic(JSONObject json) {
+        Clinic clinic = new Clinic();
+        try {
+            clinic.setName(json.getString("name"));
+            clinic.setClinicsId(json.getInt("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return clinic;
     }
 
     public Specialty setSpecialty(JSONObject json) {
