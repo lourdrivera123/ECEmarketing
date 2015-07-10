@@ -4,16 +4,15 @@ package com.example.zem.patientcareapp;
  * Created by Dexter B. on 6/2/2015.
  */
 public class Clinic {
-    String name, addressHouseNo, addressStreet, addressBarangay, addressCityMunicipality, addressProvince, addressRegion, addressZip,
-            createdAt, updatedAt, deletedAt;
+    String name, contactNumber, addressUnitBuildingNo, addressStreet, addressBarangay, addressCityMunicipality, addressProvince, addressRegion,
+            addressZip, createdAt, updatedAt, deletedAt;
     int id, clinicsId;
 
-    public Clinic(){
+    public Clinic() {
 
     }
 
     /* SETTERS */
-
 
     public void setId(int id) {
         this.id = id;
@@ -23,17 +22,20 @@ public class Clinic {
         this.clinicsId = clinics_id;
     }
 
+    public void setAddressUnitBuildingNo(String addressHouseNo) {
+        this.addressUnitBuildingNo = addressHouseNo;
+    }
+
     public void setAddressStreet(String addressStreet) {
         this.addressStreet = addressStreet;
     }
-
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setAddressHouseNo(String addressHouseNo) {
-        this.addressHouseNo = addressHouseNo;
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
     }
 
     public void setAddressBarangay(String addressBarangay) {
@@ -87,8 +89,12 @@ public class Clinic {
         return name;
     }
 
-    public String getAddressHouseNo() {
-        return addressHouseNo;
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public String getAddressUnitBuildingNo() {
+        return addressUnitBuildingNo;
     }
 
     public String getAddressBarangay() {

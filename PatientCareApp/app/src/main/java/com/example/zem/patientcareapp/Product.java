@@ -4,7 +4,7 @@ package com.example.zem.patientcareapp;
  * Created by Dexter B. on 5/14/2015.
  */
 public class Product {
-    String name, dosageFormatAndStrength, genericName, description, unit,packing, photo, sku, createdAt, updatedAt, deletedAt;
+    String name, genericName, description, unit,packing, photo, sku, createdAt, updatedAt, deletedAt;
     int id, prescriptionRequired, productId,subCategoryId, qtyPerPacking;
     double price;
     public Product(){

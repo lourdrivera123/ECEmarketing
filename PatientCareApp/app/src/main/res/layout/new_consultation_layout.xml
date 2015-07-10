@@ -54,6 +54,7 @@
         android:id="@+id/setTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/d20"
         android:layout_marginTop="@dimen/d20"
         android:background="?android:attr/selectableItemBackground"
         android:orientation="vertical">
@@ -71,4 +72,17 @@
             android:text="12:51 PM"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
+
+    <AutoCompleteTextView
+        android:id="@+id/search_doctor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search Doctor" />
+
+    <AutoCompleteTextView
+        android:id="@+id/search_clinic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d20"
+        android:hint="Doctor's Clinic" />
 </LinearLayout>
