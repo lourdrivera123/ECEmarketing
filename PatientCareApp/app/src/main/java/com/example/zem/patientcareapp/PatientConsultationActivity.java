@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
@@ -17,18 +19,22 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class PatientConsultationActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
-    LazyAdapter adapter;
+    DbHelper dbhelper;
 
     LinearLayout setDate, setTime;
     TextView txtDate, txtTime;
     CheckBox checkAlarm;
+    AutoCompleteTextView search_doctor, search_clinic;
 
     Calendar cal;
+    ArrayAdapter<String> doctorAdapter;
+    ArrayList<HashMap<String, String>> doctorsHashmap;
+    ArrayList<String> listOfDoctors;
 
     int hour, minute, new_hour, new_minute;
 
@@ -41,11 +47,25 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         MainActivity.setCustomActionBar(actionBar);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        dbhelper = new DbHelper(this);
+
         setDate = (LinearLayout) findViewById(R.id.setDate);
         setTime = (LinearLayout) findViewById(R.id.setTime);
         txtDate = (TextView) findViewById(R.id.txtDate);
         txtTime = (TextView) findViewById(R.id.txtTime);
         checkAlarm = (CheckBox) findViewById(R.id.checkAlarm);
+        search_doctor = (AutoCompleteTextView) findViewById(R.id.search_doctor);
+        search_clinic = (AutoCompleteTextView) findViewById(R.id.search_clinic);
+
+        doctorsHashmap = dbhelper.getAllDoctors();
+        listOfDoctors = new ArrayList();
+
+        for (int i = 0; i < doctorsHashmap.size(); i++) {
+            listOfDoctors.add(doctorsHashmap.get(i).get("fullname"));
+        }
+
+        doctorAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfDoctors);
+        search_doctor.setAdapter(doctorAdapter);
 
         cal = Calendar.getInstance();
         hour = cal.get(Calendar.HOUR_OF_DAY);

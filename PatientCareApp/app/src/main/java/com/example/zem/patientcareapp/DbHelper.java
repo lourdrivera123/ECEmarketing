@@ -159,15 +159,16 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
     // CLINICS TABLE
-    public static final String CLINIC_NAME = "name",
-            CLINIC_ADDRESS_HOUSE_NO = "address_house_no",
+    public static final String TBL_CLINICS = "clinics",
+            CLINIC_NAME = "name",
+            CLINIC_CONTACT_NO = "contact_no",
+            CLINIC_ADDRESSS_UNIT_BUILDING_NO = "address_unit_building_no",
             CLINIC_ADDRESS_STREET = "address_street",
             CLINIC_ADDRESS_BARANGAY = "address_barangay",
             CLINIC_ADDRESS_CITY_MUNICIPALITY = "address_city_municipality",
             CLINIC_ADDRESS_PROVINCE = "address_province",
             CLINIC_ADDRESS_REGION = "address_region",
             CLINIC_ADDRESS_ZIP = "address_zip",
-            TBL_CLINICS = "clinics",
             CLINICS_ID = "id",
             SERVER_CLINICS_ID = "clinics_id";
 
@@ -315,9 +316,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "clinics"
-        String sql_create_clinics_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT," +
+        String sql_create_clinics_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT," +
                         " %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_CLINICS, CLINICS_ID, SERVER_CLINICS_ID, CLINIC_NAME, CLINIC_ADDRESS_HOUSE_NO, CLINIC_ADDRESS_STREET, CLINIC_ADDRESS_BARANGAY, CLINIC_ADDRESS_CITY_MUNICIPALITY,
+                TBL_CLINICS, CLINICS_ID, SERVER_CLINICS_ID, CLINIC_NAME, CLINIC_CONTACT_NO, CLINIC_ADDRESSS_UNIT_BUILDING_NO, CLINIC_ADDRESS_STREET, CLINIC_ADDRESS_BARANGAY, CLINIC_ADDRESS_CITY_MUNICIPALITY,
                 CLINIC_ADDRESS_PROVINCE, CLINIC_ADDRESS_REGION, CLINIC_ADDRESS_ZIP, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "clinic_doctor"
@@ -597,7 +598,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         values.put(SERVER_CLINICS_ID, clinic.getClinicsId());
         values.put(CLINIC_NAME, clinic.getName());
-        values.put(CLINIC_ADDRESS_HOUSE_NO, clinic.getAddressHouseNo());
+        values.put(CLINIC_ADDRESSS_UNIT_BUILDING_NO, clinic.getAddressHouseNo());
         values.put(CLINIC_ADDRESS_STREET, clinic.getAddressStreet());
         values.put(CLINIC_ADDRESS_BARANGAY, clinic.getAddressBarangay());
         values.put(CLINIC_ADDRESS_CITY_MUNICIPALITY, clinic.getAddressCityMunicipality());
