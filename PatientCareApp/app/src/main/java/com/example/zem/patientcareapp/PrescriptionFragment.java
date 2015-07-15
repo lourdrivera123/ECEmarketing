@@ -131,6 +131,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
         uploadsByUser = dbhelper.getUploadedPrescriptionsByUserID(patientID);
 
+        uploadsByUser.toArray(new String[uploadsByUser.size()]);
+
         if(uploadsByUser.size() > 0) {
 
                     for (int x= 0; x < uploadsByUser.size(); x++) {
@@ -149,18 +151,18 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         }
 
 //        Log.d("index zero uploads by user", uploadsByUser.get(0)+"");
-        List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri("https://lh6.googleusercontent.com/-55osAWw3x0Q/URquUtcFr5I/AAAAAAAAAbs/rWlj1RUKrYI/s1024/A%252520Photographer.jpg", ImageLoader.getInstance().getMemoryCache());
-        Log.d("List of cache", bm + "");
-        for (int x= 0; x < uploadsByUser.size(); x++) {
-
-            Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(bm.get(0), 960, 960);
-            item = new ImageItem(ThumbImage);
-            item.setImage(ThumbImage);
-
-            allBitmap.add(bm.get(0));
-            imageItems.add(new ImageItem(ThumbImage));
-            gridAdapter.notifyDataSetChanged();
-        }
+//        List<Bitmap> bm = MemoryCacheUtils.findCachedBitmapsForImageUri("https://lh6.googleusercontent.com/-55osAWw3x0Q/URquUtcFr5I/AAAAAAAAAbs/rWlj1RUKrYI/s1024/A%252520Photographer.jpg", ImageLoader.getInstance().getMemoryCache());
+//        Log.d("List of cache", bm + "");
+//        for (int x= 0; x < uploadsByUser.size(); x++) {
+//
+//            Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(bm.get(0), 960, 960);
+//            item = new ImageItem(ThumbImage);
+//            item.setImage(ThumbImage);
+//
+//            allBitmap.add(bm.get(0));
+//            imageItems.add(new ImageItem(ThumbImage));
+//            gridAdapter.notifyDataSetChanged();
+//        }
         return rootView;
     }
 
@@ -379,8 +381,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     if (dbhelper.insertUploadOnPrescription(patientID, imageUri)) {
-
-
 //                        Log.d();
                         Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(loadedImage, 960, 960);
                         item = new ImageItem(ThumbImage);

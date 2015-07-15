@@ -26,4 +26,5 @@ public class Config {
 
     public static final boolean DEVELOPER_MODE = false;
 
+    public static final String IMAGE_POSITION = "Image Position";
 }
