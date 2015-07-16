@@ -28,6 +28,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".PatientCareApplication"
         android:icon="@drawable/ic_app"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
@@ -133,6 +134,9 @@
         <activity android:name=".PromoFragment" />
         <activity android:name=".samplepaypal" />
         <activity android:name=".UploadActivity" />
+        <activity android:name=".TrialPrescriptionFragment" />
+        <activity android:name=".SimpleImageActivity" />
+        <activity android:name=".ImagePagerFragment" />
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"
