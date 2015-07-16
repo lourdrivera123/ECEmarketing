@@ -19,18 +19,18 @@ import android.widget.RelativeLayout;
 public class FullScreenImageAdapter extends PagerAdapter {
 
     private Activity _activity;
-    private ArrayList<String> _imagePaths;
+    private ArrayList<Bitmap> imgBitmap;
     private LayoutInflater inflater;
 
     // constructor
-    public FullScreenImageAdapter(Activity activity, ArrayList<String> imagePaths) {
+    public FullScreenImageAdapter(Activity activity, ArrayList<Bitmap> imgBitmap) {
         this._activity = activity;
-        this._imagePaths = imagePaths;
+        this.imgBitmap = imgBitmap;
     }
 
     @Override
     public int getCount() {
-        return this._imagePaths.size();
+        return this.imgBitmap.size();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.imgDisplay);
 
-        Bitmap bitmap = PrescriptionFragment.rotateIMG(_imagePaths.get(position));
+        Bitmap bitmap = imgBitmap.get(position);
         imgDisplay.setImageBitmap(bitmap);
 
         container.addView(viewLayout);

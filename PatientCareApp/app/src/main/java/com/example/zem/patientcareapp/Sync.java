@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,7 +60,7 @@ public class Sync {
 
                         if (json_object != null) {
                             if (tableName.equals("products")) {
-                                System.out.println("FUCKING JSON for PRODUCTS: "+json_object.toString());
+                                System.out.println("FUCKING JSON for PRODUCTS: " + json_object.toString());
                                 if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
                                 } else {
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
@@ -129,6 +130,7 @@ public class Sync {
                                 } else {
                                     System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
                                 }
+
                             }else if ( tableName.equals("discounts_free_products")){
                                 System.out.print("promo_discounts: I am in sync.java");
                                 if( dbHelper.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert" ) ){
@@ -149,6 +151,19 @@ public class Sync {
                                     System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
                                 }else {
                                     System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
+                                }
+
+                            } else if (tableName.equals("clinics")) {
+                                if (dbHelper.saveClinic(setClinic(json_object), "insert")) {
+                                    System.out.println("Clinics SUCCESSFULLY SAVED. <source: Sync.java>");
+                                } else {
+                                    System.out.println("Clinics FAILED TO SAVE. <source: Sync.java>");
+                                }
+                            } else if (tableName.equals("clinic_doctor")) {
+                                if (dbHelper.saveClinicDoctor(setClinicDoctor(json_object), "insert")) {
+                                    System.out.println("ClinicDoctor SUCCESSFULLY SAVED. <source: Sync.java>");
+                                } else {
+                                    System.out.println("ClinicDoctor FAILED TO SAVE. <source: Sync.java>");
                                 }
                             }
                         }
@@ -338,7 +353,7 @@ public class Sync {
                 JSONObject product_json_object_mysql = json_array_mysql.getJSONObject(i);
                 Boolean flag = false;
 
-                if(json_array_sqlite == null){
+                if (json_array_sqlite == null) {
                     json_array_final_storage.put(product_json_object_mysql);
                 } else {
 
@@ -373,7 +388,7 @@ public class Sync {
 
                 JSONObject json_object_mysql = json_array_mysql.getJSONObject(i);
 
-                if(!json_object_mysql.getString("updated_at").equals("null")){
+                if (!json_object_mysql.getString("updated_at").equals("null")) {
 
                     if (checkDateTime(json_object_mysql.getString("updated_at"), dbHelper.getLastUpdate(tblname))) { //to be repared
                         //the sqlite last update is lesser than from mysql
@@ -416,6 +431,45 @@ public class Sync {
         }
 
         return doctor;
+    }
+
+    public Clinic setClinic(JSONObject json) {
+        Clinic clinic = new Clinic();
+        try {
+            clinic.setName(json.getString("name"));
+            clinic.setClinicsId(json.getInt("id"));
+            clinic.setContactNumber(json.getString("contact_no"));
+            clinic.setAddressUnitBuildingNo(json.getString("address_unit_building_no"));
+            clinic.setAddressStreet(json.getString("address_street"));
+            clinic.setAddressBarangay(json.getString("address_barangay"));
+            clinic.setAddressCityMunicipality(json.getString("address_city_municipality"));
+            clinic.setAddressProvince(json.getString("address_province"));
+            clinic.setAddressRegion(json.getString("address_region"));
+            clinic.setAddressZip(json.getString("address_zip"));
+            clinic.setCreatedAt(json.getString("created_at"));
+            clinic.setUpdatedAt(json.getString("updated_at"));
+            clinic.setDeletedAt(json.getString("deleted_at"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return clinic;
+    }
+
+    public ClinicDoctor setClinicDoctor(JSONObject json) {
+        ClinicDoctor cd = new ClinicDoctor();
+
+        try {
+            cd.setServerID(json.getInt("id"));
+            cd.setDoctorID(json.getInt("doctor_id"));
+            cd.setClinicID(json.getInt("clinic_id"));
+            cd.setSchedule(json.getString("clinic_sched"));
+            cd.setIsActive(json.getInt("is_active"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return cd;
     }
 
     public Specialty setSpecialty(JSONObject json) {
@@ -541,7 +595,7 @@ public class Sync {
         Basket basket = new Basket();
         basket.setBasketId(json.getInt(DbHelper.BASKET_ID));
         basket.setQuantity(Double.parseDouble(json.getString(DbHelper.BASKET_QUANTITY)));
-        basket.setUpdatedAt(json.getString(DbHelper.BASKET_UPDATED_AT));
+        basket.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
         basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
         basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
         return basket;

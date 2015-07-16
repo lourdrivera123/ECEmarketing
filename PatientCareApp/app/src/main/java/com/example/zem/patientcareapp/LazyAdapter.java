@@ -4,10 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +84,7 @@ public class LazyAdapter extends BaseAdapter {
             TextView artist = (TextView) vi.findViewById(R.id.specialty); // artist name
             ImageView list_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
 
-            HashMap<String, String> doctor = new HashMap<String, String>();
+            HashMap<String, String> doctor;
             doctor = data.get(position);
 
             // Setting all values in listview
@@ -112,30 +108,19 @@ public class LazyAdapter extends BaseAdapter {
 
             final String productPacking;
             final String productUnit;
-            final int productId, productQtyPerPacking, aPQtyP;
+            final int productId, productQtyPerPacking;
 
 
             HashMap<String, String> map;
-            System.out.println("FUCKING DATAAA: " + data.toString());
             map = data.get(position);
-
-            System.out.println("FUCKING MAPPP: " + map.toString());
-
             final Map<String, HashMap<String, String>> productQuantity = ProductsFragment.productQuantity;
 
-            System.out.println("FUCKING PQ: " + productQuantity.toString());
-
-
             String fuckyou = map.get("id");
-            System.out.println("FUCKING YOU: " + fuckyou);
-
 
             productId = Integer.parseInt(fuckyou);
             productPacking = productQuantity.get(productId + "").get("packing");
             productUnit = map.get("unit");
-            System.out.println("FUCKING QTY_PER_PACKING: " + map.get("qty_per_packing"));
             productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ? Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
-
 
             product_quantity.setText(productQtyPerPacking + "");
 
@@ -144,8 +129,6 @@ public class LazyAdapter extends BaseAdapter {
             product_quantity.setId(PID);
             product_description.setTag(PID);
 
-
-
             final TextView tv_new_product_quantity = (TextView) vi.findViewById(PID);
             final TextView tv_new_product_description = (TextView) vi.findViewWithTag(PID);
 
@@ -153,11 +136,10 @@ public class LazyAdapter extends BaseAdapter {
                 @SuppressLint("NewApi")
                 @Override
                 public void onClick(View v) {
-                    System.out.println("FUCKING +ID NAKO: tv_new_product_quantity: "+tv_new_product_quantity.getId()+" product_quantity:"+product_quantity.getId());
 
                     int qty = Integer.parseInt(productQuantity.get(productId + "").get("temp_basket_qty"));
                     int productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ?
-                                                Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
+                            Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
 
                     qty += productQtyPerPacking;
                     tv_new_product_quantity.setText(qty + "");
@@ -175,7 +157,6 @@ public class LazyAdapter extends BaseAdapter {
                 @SuppressLint("NewApi")
                 @Override
                 public void onClick(View v) {
-                    System.out.println("FUCKING -ID NAKO: tv_new_product_quantity"+tv_new_product_quantity.getId()+" product_quantity:"+product_quantity.getId());
                     int qty = Integer.parseInt(productQuantity.get(productId + "").get("temp_basket_qty"));
                     int productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ?
                             Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
@@ -276,30 +257,8 @@ public class LazyAdapter extends BaseAdapter {
                     } else {
                         Toast.makeText(activity, "Sorry, please connect to the internet.", Toast.LENGTH_SHORT).show();
                     }
-
                 }
             });
-
-
-
-        } else if (list_type.equals("consultation_lists")) {
-            vi = inflater.inflate(R.layout.list_row_consultations, null);
-
-            TextView doctor = (TextView) vi.findViewById(R.id.doctor_name);
-            TextView clinic_address = (TextView) vi.findViewById(R.id.clinic_address);
-            TextView consultation_schedule = (TextView) vi.findViewById(R.id.consultation_schedule);
-
-            HashMap<String, String> schedule;
-            schedule = data.get(position);
-
-            // Setting all values in listview
-            doctor.setText(schedule.get(PatientConsultationFragment.KEY_DOCTOR_NAME));
-            clinic_address.setText(schedule.get(PatientConsultationFragment.KEY_CLINIC_ADDRESS));
-
-            String sched = schedule.get(PatientConsultationFragment.KEY_DATE) + ", " +
-                    (schedule.get(PatientConsultationFragment.KEY_SCHEDULE).equals("AM") ? "Morning" : "Afternoon");
-
-            consultation_schedule.setText(sched);
 
         } else if (list_type.equals("basket_items")) {
             try {
@@ -333,7 +292,6 @@ public class LazyAdapter extends BaseAdapter {
                 System.out.println("FUCKING ERROR on LazyAdapter@basket_items" + e.getMessage());
                 e.printStackTrace();
             }
-
 
         } else if (list_type.equals("ready_for_checkout_items")) {
             vi = inflater.inflate(R.layout.checkout_list_item, null);
@@ -380,7 +338,7 @@ public class LazyAdapter extends BaseAdapter {
 
 
 
-            SimpleDateFormat df = new SimpleDateFormat("MMMMM d, Y");
+            SimpleDateFormat df = new SimpleDateFormat("MMMMM d, yyyy");
 
             promoName.setText(promo_item.get("promo_name"));
             less.setText("HURRY!");
@@ -393,7 +351,7 @@ public class LazyAdapter extends BaseAdapter {
             try{
                 Date dateStart = fmt.parse(promo_item.get("start_date"));
                 Date dateEnd = fmt.parse(promo_item.get("end_date"));
-                duration.setText("Starting "+df.format(dateStart) +" to "+df.format(dateStart) );
+                duration.setText("Starting "+df.format(dateStart) +" to "+df.format(dateEnd) );
             }catch(Exception e){
                 System.out.println("Oh snap! We got some error <source: LazyAdapter@promo_items."+e.getMessage());
             }

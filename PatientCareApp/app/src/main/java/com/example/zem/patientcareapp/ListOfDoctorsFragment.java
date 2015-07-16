@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,10 +25,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-/**
- * Created by Zem on 4/29/2015.
- */
 
 public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     ListView list_of_doctors;
@@ -145,7 +139,8 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                     sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
                     try {
                         dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
-                        adapter.notifyDataSetChanged();
+
+                        refresh_doctor.setRefreshing(false);
                     } catch (Exception e) {
 
                     }
@@ -160,9 +155,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
             });
             queue.add(doctor_request);
         } else {
-            Toast.makeText(getActivity(), "Couldn't refresh feed", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            refresh_doctor.setRefreshing(false);
         }
-        refresh_doctor.setRefreshing(false);
     }
 }
 

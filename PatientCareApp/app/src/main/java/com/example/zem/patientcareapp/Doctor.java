@@ -10,7 +10,7 @@ public class Doctor implements Serializable {
             photo = "", affiliation = "", specialty = "", sub_specialty = "",
             created_at = "", updated_at = "", deleted_at = "";
 
-    private int id = 0, prc_no = 0, doc_id = 0, sub_specialty_id = 0;
+    private int prc_no = 0, doc_id = 0, sub_specialty_id = 0;
 
     public Doctor() {
 
@@ -58,10 +58,6 @@ public class Doctor implements Serializable {
         this.photo = photo;
     }
 
-    public void setID(int id) {
-        this.id = id;
-    }
-
     public void setAffiliation(String affiliation) {
         this.affiliation = affiliation;
     }
@@ -82,13 +78,6 @@ public class Doctor implements Serializable {
     /**
      * GETTERS ------------------------------------------------------------------- *
      */
-
-    public String getFullname(boolean middlename_is_full) {
-        if (middlename_is_full == true) {
-            return fname + " " + mname + " " + lname;
-        }
-        return fname + " " + mname.indexOf(0) + ". " + lname;
-    }
 
     public int getDoc_id() {
         return doc_id;
@@ -124,10 +113,6 @@ public class Doctor implements Serializable {
 
     public String getPhoto() {
         return photo;
-    }
-
-    public int getID() {
-        return id;
     }
 
     public String getAffiliation() {

@@ -33,18 +33,11 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
     Button save_treatment, cancel_treatment;
     String s_date, s_doctor, s_complaint, s_diagnosis, s_generic_name, s_qty, s_dosage, s_medicine;
 
-    ArrayList<HashMap<String, String>> arrayOfDoctors;
-    ArrayList<HashMap<String, String>> items;
-    ArrayList<HashMap<String, String>> update_treatments;
-
-    ArrayList<String> doctors;
-    ArrayList<String> medicine;
-    ArrayList<String> treatments;
-
-    ArrayAdapter treatmentsAdapter;
-    ArrayAdapter medicineAdapter;
-
+    ArrayList<HashMap<String, String>> arrayOfDoctors, items, update_treatments;
+    ArrayList<String> doctors, medicine, treatments;
     HashMap<String, String> map;
+
+    ArrayAdapter treatmentsAdapter, medicineAdapter;
 
     DbHelper dbhelper;
     Dialog dialog;
