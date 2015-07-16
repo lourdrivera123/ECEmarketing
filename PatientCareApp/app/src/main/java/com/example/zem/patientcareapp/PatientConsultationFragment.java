@@ -1,36 +1,31 @@
 package com.example.zem.patientcareapp;
 
+import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PatientConsultationFragment extends Fragment implements View.OnClickListener {
-    // XML node keys
-    static final String KEY_DOCTOR_NAME = "doctor"; // parent node
-    static final String KEY_CLINIC_ADDRESS = "clinic_address";
-    static final String KEY_SCHEDULE = "schedule";
-    static final String KEY_DATE = "date";
-    static final String KEY_SCHED = "entry";
-    static final String KEY_ID = "id";
-
     ListView consultation_schedules;
     ImageButton add_consultation;
+    TextView doctor_name, clinic_address, consultation_schedule;
 
-    LazyAdapter adapter;
+    private ConsultationAdapter consultAdapter;
+    DbHelper dbhelper;
+
+    ArrayList<HashMap<String, String>> listOfAllConsultations;
+    ArrayList<String> consultationDoctors;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,78 +34,18 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         consultation_schedules = (ListView) rootView.findViewById(R.id.consultation_schedules);
         add_consultation = (ImageButton) rootView.findViewById(R.id.add_consultation);
 
+        dbhelper = new DbHelper(getActivity());
+        listOfAllConsultations = dbhelper.getAllConsultationsByUserId(HomeTileActivity.getUserID());
+        consultationDoctors = new ArrayList();
+
+        for (int x = 0; x < listOfAllConsultations.size(); x++) {
+            consultationDoctors.add(listOfAllConsultations.get(x).get(dbhelper.CONSULT_DOCTOR));
+        }
+        consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, R.id.doctor_name, consultationDoctors);
+        consultation_schedules.setAdapter(consultAdapter);
+
         add_consultation.setOnClickListener(this);
 
-        ArrayList<HashMap<String, String>> consultationScheds = new ArrayList();
-        XMLParser parser = new XMLParser();
-
-        String xml = "<list>" +
-                "<entry>\n" +
-                "<id>14</id>\n" +
-                "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>24th May 2015</date>\n" +
-                "<schedule>AM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>11</id>\n" +
-                "<doctor>Dr. Esel Barnes</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>19th May 2015</date>\n" +
-                "<schedule>PM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>14</id>\n" +
-                "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>24th May 2015</date>\n" +
-                "<schedule>AM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>11</id>\n" +
-                "<doctor>Dr. Esel Barnes</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>19th May 2015</date>\n" +
-                "<schedule>PM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>14</id>\n" +
-                "<doctor>Dr. Zemiel Asma</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>24th May 2015</date>\n" +
-                "<schedule>AM</schedule>\n" +
-                "</entry>" +
-                "<entry>\n" +
-                "<id>11</id>\n" +
-                "<doctor>Dr. Esel Barnes</doctor>\n" +
-                "<clinic_address>#67 Acacia Rd., Dexter Ave., Davao City</clinic_address>\n" +
-                "<date>19th May 2015</date>\n" +
-                "<schedule>PM</schedule>\n" +
-                "</entry>" +
-                "</list>";
-        Document doc = parser.getDomElement(xml);
-
-        NodeList nl = doc.getElementsByTagName(KEY_SCHED);
-
-        for (int x = 0; x < nl.getLength(); x++) {
-            // creating new HashMaps
-            HashMap<String, String> map = new HashMap<String, String>();
-
-            Element e = (Element) nl.item(x);
-
-            map.put(KEY_ID, parser.getValue(e, KEY_ID));
-            map.put(KEY_DOCTOR_NAME, parser.getValue(e, KEY_DOCTOR_NAME));
-            map.put(KEY_CLINIC_ADDRESS, parser.getValue(e, KEY_CLINIC_ADDRESS));
-            map.put(KEY_DATE, parser.getValue(e, KEY_DATE));
-            map.put(KEY_SCHEDULE, parser.getValue(e, KEY_SCHEDULE));
-
-            // let's add the map to the arraylist
-            consultationScheds.add(map);
-        }
-
-        adapter = new LazyAdapter(getActivity(), consultationScheds, "consultation_lists");
-
-        consultation_schedules.setAdapter(adapter);
         return rootView;
     }
 
@@ -118,5 +53,29 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
     public void onClick(View v) {
         Intent intent = new Intent(getActivity(), PatientConsultationActivity.class);
         startActivity(intent);
+    }
+
+    private class ConsultationAdapter extends ArrayAdapter {
+
+        public ConsultationAdapter(Context context, int resource, int textViewResourceId, ArrayList<String> objects) {
+            super(context, resource, textViewResourceId, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
+            Drawable d = getResources().getDrawable(R.drawable.list_selector);
+            v.setBackgroundDrawable(d);
+
+            doctor_name = (TextView) v.findViewById(R.id.doctor_name);
+            clinic_address = (TextView) v.findViewById(R.id.clinic_address);
+            consultation_schedule = (TextView) v.findViewById(R.id.consultation_schedule);
+
+            doctor_name.setText(listOfAllConsultations.get(position).get(dbhelper.CONSULT_DOCTOR));
+            clinic_address.setText(listOfAllConsultations.get(position).get(dbhelper.CONSULT_CLINIC));
+            consultation_schedule.setText(listOfAllConsultations.get(position).get(dbhelper.CONSULT_DATE) + ", " + listOfAllConsultations.get(position).get(dbhelper.CONSULT_PART_OF_DAY));
+
+            return v;
+        }
     }
 }

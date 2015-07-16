@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
+import com.example.zem.patientcareapp.GetterSetter.Consultation;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -242,9 +243,21 @@ public class DbHelper extends SQLiteOpenHelper {
             PRESCRIPTIONS_FILENAME = "filename",
             PRESCRIPTIONS_APPROVED = "is_approved";
 
+    //CONSULTATION
+    public static final String TBL_PATIENT_CONSULTATIONS = "consultations",
+            CONSULT_ID = "id",
+            CONSULT_PATIENT_ID = "patientID",
+            CONSULT_DOCTOR = "doctor",
+            CONSULT_CLINIC = "clinic",
+            CONSULT_DATE = "date",
+            CONSULT_PART_OF_DAY = "partOfDay",
+            CONSULT_IS_ALARMED = "isAlarm",
+            CONSULT_TIME = "alarmedTime",
+            CONSULT_IS_FINISHED = "finished";
+
     public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at";
 
-    public static String doctors_string_xml = "", products_string_xml = "";
+    public static String doctors_string_xml = "";
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -358,6 +371,11 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_create_prescriptions_upload = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT)",
                 TBL_PATIENT_PRESCRIPTIONS, PRESCRIPTIONS_ID, PRESCRIPTIONS_SERVER_ID, PRESCRIPTIONS_PATIENT_ID, PRESCRIPTIONS_FILENAME, PRESCRIPTIONS_APPROVED, CREATED_AT, DELETED_AT);
 
+        //SQL to create PATIENT CONSULTATIONS
+        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, " +
+                        "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)", TBL_PATIENT_CONSULTATIONS, CONSULT_ID, CONSULT_PATIENT_ID,
+                CONSULT_DOCTOR, CONSULT_CLINIC, CONSULT_DATE, CONSULT_PART_OF_DAY, CONSULT_IS_ALARMED, CONSULT_TIME, CONSULT_IS_FINISHED);
+
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_specialties);
         db.execSQL(sql_create_tbl_sub_specialties);
@@ -378,6 +396,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_promo_discount_table);
         db.execSQL(sql_create_promo_free_products_table);
         db.execSQL(sql_create_prescriptions_upload);
+        db.execSQL(sql_create_consultations);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
         insertTableNamesToUpdates(TBL_SPECIALTIES, db);
@@ -398,7 +417,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-    //INSERT METHODS
+    /////////////////////////////INSERT METHODS///////////////////////////////////////
     public boolean insertPatient(JSONObject patient_json_object_mysql, Patient patient) {
         int patient_id = 0;
         String created_at = "";
@@ -469,7 +488,6 @@ public class DbHelper extends SQLiteOpenHelper {
         return row > 0;
     }
 
-    /* SYNC CHECKER and etc. */
     public boolean insertTableNamesToUpdates(String table_name, SQLiteDatabase db) {
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -516,7 +534,6 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
-    /* Insert new product category */
     public boolean insertProductCategory(ProductCategory category) throws SQLiteConstraintException {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -547,6 +564,25 @@ public class DbHelper extends SQLiteOpenHelper {
 
         long rowID = db.insert(TBL_PATIENT_PRESCRIPTIONS, null, values);
         db.close();
+        return rowID > 0;
+    }
+
+    public boolean insertPatientConsultation(Consultation consult) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(CONSULT_PATIENT_ID, consult.getPatientID());
+        values.put(CONSULT_DOCTOR, consult.getDoctor());
+        values.put(CONSULT_CLINIC, consult.getClinic());
+        values.put(CONSULT_DATE, consult.getDate());
+        values.put(CONSULT_PART_OF_DAY, consult.getPartOfDay());
+        values.put(CONSULT_IS_ALARMED, consult.getIsAlarmed());
+        values.put(CONSULT_TIME, consult.getTime());
+        values.put(CONSULT_IS_FINISHED, consult.getIsFinished());
+
+        long rowID = db.insert(TBL_PATIENT_CONSULTATIONS, null, values);
+        db.close();
+
         return rowID > 0;
     }
     //////////////////////////END OF INSERT METHODS///////////////////////////
@@ -1576,12 +1612,52 @@ public class DbHelper extends SQLiteOpenHelper {
         return list_of_filename;
     }
 
-//    public ArrayList<HashMap<String, String>> getAllDoctorClinic() {
-//        ArrayList<HashMap<String, String>> listOfDoctorClinic = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
-//
-//        String sql = "";
-//    }
+    public ArrayList<HashMap<String, String>> getAllDoctorClinic() {
+        ArrayList<HashMap<String, String>> listOfDoctorClinic = new ArrayList();
+        SQLiteDatabase db = getWritableDatabase();
+
+        String sql = "select d.lname, d.mname, d.fname, c.name, cd.clinic_sched from " + TBL_DOCTORS + " as d INNER JOIN " +
+                TBL_CLINIC_DOCTOR + " as cd on " + "d.doc_id = cd.doctor_id INNER JOIN " + TBL_CLINICS + " as c on cd.clinic_id = " +
+                "c.clinics_id WHERE cd.is_active = 1";
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            HashMap<String, String> map = new HashMap();
+            String fullname = cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME));
+
+            map.put("fullname", fullname);
+            map.put("clinic_name", cur.getString(cur.getColumnIndex(CLINIC_NAME)));
+            map.put("clinic_sched", cur.getString(cur.getColumnIndex(CD_CLINIC_SCHED)));
+            listOfDoctorClinic.add(map);
+        }
+        cur.close();
+        db.close();
+
+        return listOfDoctorClinic;
+    }
+
+    public ArrayList<HashMap<String, String>> getAllConsultationsByUserId(int userID) {
+        ArrayList<HashMap<String, String>> listOfAllConsultations = new ArrayList();
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_PATIENT_CONSULTATIONS + " WHERE " + CONSULT_PATIENT_ID + " = " + userID;
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            HashMap<String, String> map = new HashMap();
+            map.put(CONSULT_DOCTOR, cur.getString(cur.getColumnIndex(CONSULT_DOCTOR)));
+            map.put(CONSULT_CLINIC, cur.getString(cur.getColumnIndex(CONSULT_CLINIC)));
+            map.put(CONSULT_DATE, cur.getString(cur.getColumnIndex(CONSULT_DATE)));
+            map.put(CONSULT_PART_OF_DAY, cur.getString(cur.getColumnIndex(CONSULT_PART_OF_DAY)));
+            map.put(CONSULT_IS_ALARMED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED))));
+            map.put(CONSULT_TIME, cur.getString(cur.getColumnIndex(CONSULT_TIME)));
+            map.put(CONSULT_IS_FINISHED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED))));
+            listOfAllConsultations.add(map);
+        }
+        db.close();
+        cur.close();
+
+        return listOfAllConsultations;
+    }
     /////////////////////////END OF GET METHODS/////////////////////////////////
 
     /////////////////////////UPDATE METHODS////////////////////////////////////

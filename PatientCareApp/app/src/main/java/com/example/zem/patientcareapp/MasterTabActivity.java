@@ -116,4 +116,16 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             new ShoppingCartFragment();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+            startActivity(new Intent(this, HomeTileActivity.class));
+        } else {
+            getFragmentManager().popBackStack();
+        }
+    }
 }
