@@ -1,45 +1,51 @@
 package com.example.zem.patientcareapp;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Dexter B. on 7/6/2015.
  */
 public class PromoFragment extends Fragment {
     View root_view;
+    ListView promoItems;
     Helpers helpers;
     DbHelper dbHelper;
     RequestQueue queue;
-
+    LazyAdapter adapter;
+    ArrayList<HashMap<String, String>> promoDiscounts;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
         root_view = rootView;
+        promoItems = (ListView) root_view.findViewById(R.id.list_of_doctors);
 
         helpers = new Helpers();
         dbHelper = new DbHelper(getActivity());
 
+        promoDiscounts = dbHelper.getPromo();
 
-        /*arrayOfSearchDoctors = new ArrayList();
-        temp_doctors = new ArrayList();
+        adapter = new LazyAdapter(getActivity(), promoDiscounts, "promo_items");
+        promoItems.setAdapter(adapter);
 
-        search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
+        promoItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        doctor_items = dbHelper.getAllDoctors();
-        populateDoctorListView(rootView, doctor_items);*/
+            }
+        });
 
         return rootView;
     }

@@ -21,7 +21,9 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -361,7 +363,42 @@ public class LazyAdapter extends BaseAdapter {
 
             itemName.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
             itemAmount.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+
+        } else if(list_type.equals("promo_items")){
+            vi = inflater.inflate(R.layout.list_row_promo_item, null);
+            TextView promoName, less, lessAmount, duration;
+            promoName = (TextView) vi.findViewById(R.id.promo_name);
+            less = (TextView) vi.findViewById(R.id.less);
+            lessAmount = (TextView) vi.findViewById(R.id.less_amount);
+            duration = (TextView) vi.findViewById(R.id.duration);
+
+            HashMap<String, String> promo_item;
+
+            promo_item = data.get(position);
+
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+
+
+
+            SimpleDateFormat df = new SimpleDateFormat("MMMMM d, Y");
+
+            promoName.setText(promo_item.get("promo_name"));
+            less.setText("HURRY!");
+            if(promo_item.get("max_discount") != null){
+                lessAmount.setText("Up to "+promo_item.get("min_discount")+" - "+promo_item.get("max_discount")+"% DISCOUNT");
+            } else {
+                lessAmount.setText("Free items available on selected products.");
+            }
+
+            try{
+                Date dateStart = fmt.parse(promo_item.get("start_date"));
+                Date dateEnd = fmt.parse(promo_item.get("end_date"));
+                duration.setText("Starting "+df.format(dateStart) +" to "+df.format(dateStart) );
+            }catch(Exception e){
+                System.out.println("Oh snap! We got some error <source: LazyAdapter@promo_items."+e.getMessage());
+            }
         }
+
         return vi;
     }
 }

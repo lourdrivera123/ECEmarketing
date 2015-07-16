@@ -13,9 +13,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * Created by Dexter B. on 5/11/2015.
@@ -130,6 +128,27 @@ public class Sync {
                                     System.out.println("Treatments SUCCESSFULLY SAVED. <source: Sync.java>");
                                 } else {
                                     System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
+                                }
+                            }else if ( tableName.equals("discounts_free_products")){
+                                System.out.print("promo_discounts: I am in sync.java");
+                                if( dbHelper.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert" ) ){
+                                    System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
+                                }else {
+                                    System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
+                                }
+                            }else if ( tableName.equals("free_products") ){
+                                System.out.print("promo_free_products: I am in sync.java");
+                                if( dbHelper.saveFreeProducts(setFreeProducts(json_object), "insert" ) ){
+                                    System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
+                                }else {
+                                    System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
+                                }
+                            }else if( tableName.equals("promo") ){
+                                System.out.println("allPromo Json: "+json_object.toString());
+                                if( dbHelper.savePromo( setPromo(json_object), "insert" ) ){
+                                    System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
+                                }else {
+                                    System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
                                 }
                             }
                         }
@@ -528,34 +547,46 @@ public class Sync {
         return basket;
     }
 
-    public PromoDiscount setPromoDiscount(JSONObject json) throws JSONException {
-        PromoDiscount promoDiscount = new PromoDiscount();
+    public DiscountsFreeProducts setDiscountsFreeProducts(JSONObject json) throws JSONException {
+        DiscountsFreeProducts discountsFreeProducts = new DiscountsFreeProducts();
 
-        promoDiscount.setPromoDiscountId(json.getInt(DbHelper.PROMO_DISCOUNTS_ID));
-        promoDiscount.setProductId(json.getInt(DbHelper.PROMO_D_PRODUCT_ID));
-        promoDiscount.setName(json.getString(DbHelper.PROMO_D_NAME));
-        promoDiscount.setLess(json.getDouble(DbHelper.PROMO_D_LESS));
-        promoDiscount.setQuantityRequired(json.getInt(DbHelper.PROMO_D_QUANTITY_REQUIRED));
-        promoDiscount.setStartDate(json.getString(DbHelper.PROMO_D_START_DATE));
-        promoDiscount.setEndDate(json.getString(DbHelper.PROMO_D_END_DATE));
-        promoDiscount.setType(json.getInt(DbHelper.PROMO_D_TYPE));
-        promoDiscount.setCreatedAt(json.getString(DbHelper.PROMO_D_CREATED_AT));
-        promoDiscount.setUpdatedAt(json.getString(DbHelper.PROMO_D_UPDATED_AT));
-        promoDiscount.setDeletedAt(json.getString(DbHelper.PROMO_D_DELETED_AT));
+        discountsFreeProducts.setDfpId(json.getInt(DbHelper.DFP_ID));
+        discountsFreeProducts.setProductId(json.getInt(DbHelper.DFP_PRODUCT_ID));
+        discountsFreeProducts.setPromoId(json.getInt(DbHelper.DFP_PROMO_ID));
+        discountsFreeProducts.setLess(json.getDouble(DbHelper.DFP_LESS));
+        discountsFreeProducts.setQuantityRequired(json.getInt(DbHelper.DFP_QUANTITY_REQUIRED));
+        discountsFreeProducts.setType(json.getInt(DbHelper.DFP_TYPE));
+        discountsFreeProducts.setCreatedAt(json.getString(DbHelper.DFP_CREATED_AT));
+        discountsFreeProducts.setUpdatedAt(json.getString(DbHelper.DFP_UPDATED_AT));
+        discountsFreeProducts.setDeletedAt(json.getString(DbHelper.DFP_DELETED_AT));
 
-        return promoDiscount;
+        return discountsFreeProducts;
     }
 
-    public PromoFreeProducts setPromoFreeProducts(JSONObject json) throws JSONException{
-        PromoFreeProducts promoFreeProducts = new PromoFreeProducts();
+    public FreeProducts setFreeProducts(JSONObject json) throws JSONException{
+        FreeProducts freeProducts = new FreeProducts();
 
-        promoFreeProducts.setPromoFreeProductsId(json.getInt(DbHelper.PROMO_FREE_PRODUCTS_ID));
-        promoFreeProducts.setPromoId(json.getInt(DbHelper.PROMO_FP_PROMO_ID));
-        promoFreeProducts.setNumberOfUnitsFree(json.getInt(DbHelper.PROMO_FP_NO_OF_UNITS_FREE));
-        promoFreeProducts.setCreatedAt(json.getString(DbHelper.PROMO_FP_CREATED_AT));
-        promoFreeProducts.setUpdatedAt(json.getString(DbHelper.PROMO_FP_UPDATED_AT));
-        promoFreeProducts.setDeletedAt(json.getString(DbHelper.PROMO_FP_DELETED_AT));
+        freeProducts.setFreeProductsId(json.getInt(DbHelper.FP_ID));
+        freeProducts.setDfpId(json.getInt(DbHelper.FP_DFP_ID));
+        freeProducts.setQuantityFree(json.getInt(DbHelper.FP_QTY_FREE));
+        freeProducts.setCreatedAt(json.getString(DbHelper.FP_CREATED_AT));
+        freeProducts.setUpdatedAt(json.getString(DbHelper.FP_UPDATED_AT));
+        freeProducts.setDeletedAt(json.getString(DbHelper.FP_DELETED_AT));
 
-        return promoFreeProducts;
+        return freeProducts;
+    }
+
+    public Promo setPromo(JSONObject json) throws JSONException{
+        Promo promo = new Promo();
+
+        promo.setServerPromoId(json.getInt(DbHelper.PROMO_ID));
+        promo.setName(json.getString(DbHelper.PROMO_NAME));
+        promo.setStartDate(json.getString(DbHelper.PROMO_START_DATE));
+        promo.setEndDate(json.getString(DbHelper.PROMO_END_DATE));
+        promo.setCreatedAt(json.getString(DbHelper.PROMO_CREATED_AT));
+        promo.setUpdatedAt(json.getString(DbHelper.PROMO_UPDATED_AT));
+        promo.setDeletedAt(json.getString(DbHelper.PROMO_DELETED_AT));
+
+        return promo;
     }
 }

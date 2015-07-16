@@ -277,7 +277,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
                             @Override
                             public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
+                                publishProgress( (int) ((num / (float) totalSize) * 100) );
                             }
                         });
 

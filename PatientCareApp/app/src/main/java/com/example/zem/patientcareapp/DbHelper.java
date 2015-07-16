@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -247,31 +246,43 @@ public class DbHelper extends SQLiteOpenHelper {
             DS_DOCTOR_ID = "doctor_id",
             DS_IS_ACTIVE = "is_active";
 
-    // PROMO DISCOUNT TABLE
-    public static final String PROMO_D_PRODUCT_ID = "product_id",
-            PROMO_D_NAME = "name",
-            PROMO_D_START_DATE = "start_date",
-            PROMO_D_END_DATE = "end_date",
-            PROMO_D_TYPE = "type",
-            PROMO_D_QUANTITY_REQUIRED = "quantity_required",
-            PROMO_D_LESS = "less",
-            PROMO_D_CREATED_AT = "created_at",
-            PROMO_D_UPDATED_AT = "updated_at",
-            PROMO_D_DELETED_AT = "deleted_at",
-            TBL_PROMO_DISCOUNTS = "promo_discounts",
-            PROMO_DISCOUNTS_ID = "id",
-            SERVER_PROMO_DISCOUNTS_ID = "promo_discounts_id";
 
-    // PROMO FREE PRODUCTS TABLE
-    public static final String PROMO_FP_PRODUCT_ID = "product_id",
-            PROMO_FP_PROMO_ID = "promo_id",
-            PROMO_FP_NO_OF_UNITS_FREE = "no_of_units_free",
-            PROMO_FP_CREATED_AT = "created_at",
-            PROMO_FP_UPDATED_AT = "updated_at",
-            PROMO_FP_DELETED_AT = "deleted_at",
-            TBL_PROMO_FREE_PRODUCTS = "promo_free_products",
-            PROMO_FREE_PRODUCTS_ID = "id",
-            SERVER_PROMO_FREE_PRODUCTS_ID = "promo_free_products_id";
+    // PROMOS TABLE
+    public static final String TBL_PROMO = "promo",
+        PROMO_ID = "id",
+        SERVER_PROMO_ID = "promo_id",
+        PROMO_NAME = "name",
+        PROMO_START_DATE = "start_date",
+        PROMO_END_DATE = "end_date",
+        PROMO_CREATED_AT = "created_at",
+        PROMO_UPDATED_AT = "updated_at",
+        PROMO_DELETED_AT = "deleted_at";
+
+
+    // DISCOUNTS or FREE PRODUCTS PROMOTION TABLE
+    public static final String TBL_DISCOUNTS_FREE_PRODUCTS = "discounts_free_products",
+        DFP_ID = "id",
+        SERVER_DFP_ID = "dfp_id",
+        DFP_PROMO_ID = "promo_id",
+        DFP_PRODUCT_ID = "product_id",
+        DFP_TYPE = "type",                          // type = 1 or 0 , 1 for Free Products and 0 for Discount
+        DFP_QUANTITY_REQUIRED = "quantity_required",
+        DFP_LESS = "less",                          // (optional) default = 0. Applicable only if type is Discount
+        DFP_CREATED_AT = "created_at",
+        DFP_UPDATED_AT = "updated_at",
+        DFP_DELETED_AT = "deleted_at";
+
+    // FREE PRODUCTS TABLE
+    public static final String TBL_FREE_PRODUCTS = "free_products",
+        FP_ID = "id",
+        SERVER_FP_ID = "free_products_id",
+        FP_DFP_ID = "dfp_id",               // foreign key ID from discounts_free_products table
+        FP_PRODUCT_ID = "product_id",       // the ID of the free item
+        FP_QTY_FREE = "quantity_free",      // how many items are for free
+        FP_CREATED_AT = "created_at",
+        FP_UPDATED_AT = "updated_at",
+        FP_DELETED_AT = "deleted_at";
+
 
     public static String doctors_string_xml = "", products_string_xml = "";
 
@@ -371,15 +382,26 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_create_doctor_secretary_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
                 TBL_DOCTOR_SECRETARY, DS_DOCTOR_ID, DS_SECRETARY_ID, DS_IS_ACTIVE);
 
-        // SQL to create table "promo_discount"
-        String sql_create_promo_discount_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s  TEXT , %s  TEXT , " +
-                        "%s INTEGER, %s INTEGER, %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_PROMO_DISCOUNTS, PROMO_DISCOUNTS_ID, SERVER_PROMO_DISCOUNTS_ID, PROMO_D_PRODUCT_ID, PROMO_D_NAME, PROMO_D_START_DATE, PROMO_D_END_DATE,
-                PROMO_D_TYPE, PROMO_D_QUANTITY_REQUIRED, PROMO_D_LESS, PROMO_D_CREATED_AT, PROMO_D_UPDATED_AT, PROMO_D_DELETED_AT);
+        // SQL to create table "promo"
+        String sql_create_promo_table = String.format("CREATE TABLE %s( %s INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "%s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
+                TBL_PROMO, PROMO_ID, SERVER_PROMO_ID, PROMO_NAME, PROMO_START_DATE,
+                PROMO_END_DATE, PROMO_CREATED_AT, PROMO_UPDATED_AT, PROMO_DELETED_AT );
 
-        // SQL to create table "promo_free_products"
-        String sql_create_promo_free_products_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_PROMO_FREE_PRODUCTS, PROMO_FREE_PRODUCTS_ID, SERVER_PROMO_FREE_PRODUCTS_ID, PROMO_FP_PRODUCT_ID, PROMO_FP_PROMO_ID, PROMO_FP_NO_OF_UNITS_FREE, PROMO_FP_CREATED_AT, PROMO_FP_UPDATED_AT, PROMO_FP_DELETED_AT);
+        // SQL to create table discounts_free_products
+        String sql_create_discounts_free_products_table = String.format(
+          "CREATE TABLE %s(" +
+                  "%s INTEGER PRIMARY KEY AUTOINCREMENT," +
+                  "%s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT"+
+                  ")", TBL_DISCOUNTS_FREE_PRODUCTS,  DFP_ID, SERVER_DFP_ID, DFP_PROMO_ID, DFP_PRODUCT_ID, DFP_TYPE,
+                DFP_QUANTITY_REQUIRED, DFP_LESS,DFP_CREATED_AT, DFP_UPDATED_AT, DFP_DELETED_AT );
+
+        // SQL to create tale "free_products"
+        String sql_create_free_products_table = String.format(
+                "CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "%s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_FREE_PRODUCTS, FP_ID, SERVER_FP_ID, FP_DFP_ID, FP_PRODUCT_ID, FP_QTY_FREE,
+                FP_CREATED_AT, FP_UPDATED_AT, FP_DELETED_AT );
 
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_specialties);
@@ -398,8 +420,9 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_secretaries_table);
         db.execSQL(sql_create_clinic_secretary_table);
         db.execSQL(sql_create_doctor_secretary_table);
-        db.execSQL(sql_create_promo_discount_table);
-        db.execSQL(sql_create_promo_free_products_table);
+        db.execSQL(sql_create_promo_table);
+        db.execSQL(sql_create_discounts_free_products_table);
+        db.execSQL(sql_create_free_products_table);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
         insertTableNamesToUpdates(TBL_SPECIALTIES, db);
@@ -1625,64 +1648,133 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
 
-    /* PROMODISCOUNTS TABLE */
-        public boolean savePromoDiscount(PromoDiscount promoDiscount, String type) {
+    /* PROMO TABLE */
+        public boolean savePromo(Promo promo, String action){
             SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
 
-            values.put(SERVER_PROMO_DISCOUNTS_ID, promoDiscount.getPromoDiscountId());
-            values.put(PROMO_D_NAME, promoDiscount.getName());
-            values.put(PROMO_D_LESS, promoDiscount.getLess());
-            values.put(PROMO_D_PRODUCT_ID, promoDiscount.getProductId());
-            values.put(PROMO_D_QUANTITY_REQUIRED, promoDiscount.getQuantityRequired());
-            values.put(PROMO_D_START_DATE, promoDiscount.getStartDate());
-            values.put(PROMO_D_END_DATE, promoDiscount.getEndDate());
-            values.put(PROMO_D_TYPE, promoDiscount.getType());
-            values.put(PROMO_D_CREATED_AT, promoDiscount.getCreatedAt());
-            values.put(PROMO_D_UPDATED_AT, promoDiscount.getUpdatedAt());
-            values.put(PROMO_D_DELETED_AT, promoDiscount.getDeletedAt());
+            values.put(SERVER_PROMO_ID, promo.getServerPromoId());
+            values.put(PROMO_NAME, promo.getName());
+            values.put(PROMO_START_DATE, promo.getStartDate());
+            values.put(PROMO_END_DATE, promo.getEndDate());
+            values.put(PROMO_CREATED_AT, promo.getCreatedAt());
+            values.put(PROMO_UPDATED_AT, promo.getUpdatedAt());
+            values.put(PROMO_DELETED_AT, promo.getDeletedAt());
 
             long row;
 
-            if (type.equals("insert")) {
-                row = db.insert(TBL_PROMO_DISCOUNTS, null, values);
+            if (action.equals("insert")) {
+                row = db.insert(TBL_PROMO, null, values);
             } else {
-                row = db.update(TBL_PROMO_DISCOUNTS, values, PROMO_DISCOUNTS_ID + "=" + promoDiscount.getPromoDiscountId(), null);
+                row = db.update(TBL_PROMO, values, SERVER_PROMO_ID + "=" + promo.getServerPromoId(), null);
             }
             db.close();
             return row > 0;
         }
 
-        /*public ArrayList<HashMap<String, String>> getPromoFreeProducts(int productID){
+    /* DISCOUNTS & FREE PRODUCTS TABLE TABLE */
+        public boolean saveDiscountsFreeProducts(DiscountsFreeProducts discountsFreeProducts, String action) {
             SQLiteDatabase db = getWritableDatabase();
-            String sql =
+            ContentValues values = new ContentValues();
 
-        }*/
+            values.put(SERVER_DFP_ID, discountsFreeProducts.getDfpId());
+            values.put(DFP_LESS, discountsFreeProducts.getLess());
+            values.put(DFP_PROMO_ID, discountsFreeProducts.getPromoId());
+            values.put(DFP_PRODUCT_ID, discountsFreeProducts.getProductId());
+            values.put(DFP_QUANTITY_REQUIRED, discountsFreeProducts.getQuantityRequired());
+            values.put(DFP_TYPE, discountsFreeProducts.getType());
+            values.put(DFP_CREATED_AT, discountsFreeProducts.getCreatedAt());
+            values.put(DFP_UPDATED_AT, discountsFreeProducts.getUpdatedAt());
+            values.put(DFP_DELETED_AT, discountsFreeProducts.getDeletedAt());
 
+            long row;
+
+            if (action.equals("insert")) {
+                row = db.insert(TBL_DISCOUNTS_FREE_PRODUCTS, null, values);
+            } else {
+                row = db.update(TBL_DISCOUNTS_FREE_PRODUCTS, values, SERVER_DFP_ID + "=" + discountsFreeProducts.getDfpId(), null);
+            }
+            db.close();
+            return row > 0;
+        }
 
 
 
     /* PROMO_FREE_PRODUCTS */
-        public boolean savePromoFreeProducts(PromoFreeProducts promoFreeProducts, String type) {
+        public boolean saveFreeProducts(FreeProducts freeProducts, String action) {
             long row;
             SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(SERVER_PROMO_FREE_PRODUCTS_ID, promoFreeProducts.getPromoFreeProductsId());
-            values.put(PROMO_FP_PROMO_ID, promoFreeProducts.getPromoId());
-            values.put(PROMO_FP_PRODUCT_ID, promoFreeProducts.getPromoFreeProductsId());
-            values.put(PROMO_FP_NO_OF_UNITS_FREE, promoFreeProducts.getNumberOfUnitsFree());
-            values.put(PROMO_FP_CREATED_AT, promoFreeProducts.getCreatedAt());
-            values.put(PROMO_FP_UPDATED_AT, promoFreeProducts.getUpdatedAt());
-            values.put(PROMO_FP_DELETED_AT, promoFreeProducts.getDeletedAt());
+            values.put(SERVER_FP_ID, freeProducts.getFreeProductsId());
+            values.put(FP_DFP_ID, freeProducts.getDfpId());
+            values.put(FP_PRODUCT_ID, freeProducts.getFreeProductsId());
+            values.put(FP_QTY_FREE, freeProducts.getQuantityFree());
+            values.put(FP_CREATED_AT, freeProducts.getCreatedAt());
+            values.put(FP_UPDATED_AT, freeProducts.getUpdatedAt());
+            values.put(FP_DELETED_AT, freeProducts.getDeletedAt());
 
-            if (type.equals("insert")) {
-                row = db.insert(TBL_PROMO_FREE_PRODUCTS, null, values);
+            if (action.equals("insert")) {
+                row = db.insert(TBL_FREE_PRODUCTS, null, values);
             } else {
-                row = db.update(TBL_PROMO_FREE_PRODUCTS, values, SERVER_PROMO_FREE_PRODUCTS_ID + "=" + promoFreeProducts.getPromoFreeProductsId(), null);
+                row = db.update(TBL_FREE_PRODUCTS, values, SERVER_FP_ID + "=" + freeProducts.getFreeProductsId(), null);
             }
             return row > 0;
         }
 
+
+    public ArrayList<HashMap<String, String>> getPromo(){
+        String sql = "Select pr.name as promo_name, pr.*, (Select min(dfp.less) from discounts_free_products as dfp " +
+                "where dfp.promo_id = pr.promo_id and dfp.type=0) as min_discount, " +
+                " (Select max(dfp.less) from discounts_free_products as dfp where dfp.promo_id = pr.promo_id and dfp.type=0) as max_discount from promo as pr " +
+                "where  datetime('now') <= datetime(pr.end_date) and datetime('now') >= datetime(pr.start_date)";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cur = db.rawQuery(sql, null);
+
+        ArrayList<HashMap<String, String>> promo = new ArrayList<>();
+
+        cur.moveToFirst();
+        while (!cur.isAfterLast()){
+
+            HashMap<String, String> map = new HashMap<>();
+            map.put("promo_name", cur.getString( cur.getColumnIndex("promo_name") ));
+            map.put("min_discount", cur.getString( cur.getColumnIndex("min_discount") ));
+            map.put("max_discount", cur.getString( cur.getColumnIndex("max_discount") ));
+            map.put("start_date", cur.getString( cur.getColumnIndex("start_date") ));
+            map.put("end_date", cur.getString( cur.getColumnIndex("end_date") ));
+
+
+            promo.add(map);
+            cur.moveToNext();
+        }
+
+        cur.close();
+        db.close();
+        return promo;
+
+    }
+
+    public ArrayList<HashMap<String, String>> getPromoFreeProducts(int promoId){
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "Select pfp.*, p.name as product_name, pd.name as promo_name, pd.quantity_required from promo_free_products " +
+                "as pfp inner join promo_discounts as pd inner join products as p on p.product_id=pd.product_id where pfp.promo_id="+promoId+
+                " and datetime(pd.end_date) >= datetime('now')";
+        Cursor cur = db.rawQuery(sql, null);
+        ArrayList<HashMap<String, String>> products = new ArrayList<>();
+
+        while(!cur.isAfterLast()){
+            HashMap<String, String> map = new HashMap<>();
+            map.put("promo_name", cur.getString( cur.getColumnIndex("promo_name") ));
+            map.put("product_name", cur.getString( cur.getColumnIndex("product_name") ));
+            map.put("no_of_units_free", cur.getString( cur.getColumnIndex("no_of_units_free") ));
+            map.put("quantity_required", cur.getString( cur.getColumnIndex("quantity_required") ));
+
+            products.add(map);
+            cur.moveToNext();
+        }
+        cur.close();
+        db.close();
+        return products;
+    }
 
 
 }

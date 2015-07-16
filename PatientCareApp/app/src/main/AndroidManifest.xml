@@ -123,8 +123,8 @@
         <activity android:name=".PreloadNonUserRelatedData" />
         <activity android:name=".ServerRequest" />
         <activity android:name=".Basket" />
-        <activity android:name=".PromoDiscount" />
-        <activity android:name=".PromoFreeProducts" />
+        <activity android:name=".DiscountsFreeProducts" />
+        <activity android:name=".FreeProducts" />
         <activity android:name=".ImageItem" />
         <activity android:name=".PromoFragment" />
 
