@@ -13,13 +13,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
-import android.widget.Toast;
+
+import com.example.zem.patientcareapp.GetterSetter.Patient;
 
 import java.util.ArrayList;
 import java.util.HashMap;

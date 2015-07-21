@@ -32,15 +32,6 @@ public class PromoFragment extends Fragment {
         helpers = new Helpers();
         dbHelper = new DbHelper(getActivity());
 
-
-        /*arrayOfSearchDoctors = new ArrayList();
-        temp_doctors = new ArrayList();
-
-        search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
-
-        doctor_items = dbHelper.getAllDoctors();
-        populateDoctorListView(rootView, doctor_items);*/
-
         return rootView;
     }
 }

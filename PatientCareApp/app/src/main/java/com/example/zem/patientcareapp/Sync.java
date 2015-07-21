@@ -6,7 +6,21 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.GetterSetter.Clinic;
 import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
+import com.example.zem.patientcareapp.GetterSetter.Doctor;
+import com.example.zem.patientcareapp.GetterSetter.Dosage;
+import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.GetterSetter.PatientRecord;
+import com.example.zem.patientcareapp.GetterSetter.Product;
+import com.example.zem.patientcareapp.GetterSetter.ProductCategory;
+import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
+import com.example.zem.patientcareapp.GetterSetter.PromoDiscount;
+import com.example.zem.patientcareapp.GetterSetter.PromoFreeProducts;
+import com.example.zem.patientcareapp.GetterSetter.Specialty;
+import com.example.zem.patientcareapp.GetterSetter.SubSpecialty;
+import com.example.zem.patientcareapp.GetterSetter.Treatments;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,9 +28,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * Created by Dexter B. on 5/11/2015.

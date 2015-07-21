@@ -6,10 +6,24 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
+import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.GetterSetter.Clinic;
 import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
 import com.example.zem.patientcareapp.GetterSetter.Consultation;
+import com.example.zem.patientcareapp.GetterSetter.Doctor;
+import com.example.zem.patientcareapp.GetterSetter.Dosage;
+import com.example.zem.patientcareapp.GetterSetter.Medicine;
+import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.GetterSetter.PatientRecord;
+import com.example.zem.patientcareapp.GetterSetter.Product;
+import com.example.zem.patientcareapp.GetterSetter.ProductCategory;
+import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
+import com.example.zem.patientcareapp.GetterSetter.PromoDiscount;
+import com.example.zem.patientcareapp.GetterSetter.PromoFreeProducts;
+import com.example.zem.patientcareapp.GetterSetter.Specialty;
+import com.example.zem.patientcareapp.GetterSetter.SubSpecialty;
+import com.example.zem.patientcareapp.GetterSetter.Treatments;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -566,25 +580,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
         return rowID > 0;
     }
-
-    public boolean insertPatientConsultation(Consultation consult) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(CONSULT_PATIENT_ID, consult.getPatientID());
-        values.put(CONSULT_DOCTOR, consult.getDoctor());
-        values.put(CONSULT_CLINIC, consult.getClinic());
-        values.put(CONSULT_DATE, consult.getDate());
-        values.put(CONSULT_PART_OF_DAY, consult.getPartOfDay());
-        values.put(CONSULT_IS_ALARMED, consult.getIsAlarmed());
-        values.put(CONSULT_TIME, consult.getTime());
-        values.put(CONSULT_IS_FINISHED, consult.getIsFinished());
-
-        long rowID = db.insert(TBL_PATIENT_CONSULTATIONS, null, values);
-        db.close();
-
-        return rowID > 0;
-    }
     //////////////////////////END OF INSERT METHODS///////////////////////////
 
     /////////////////////////SAVE METHODS (INSERT AND UPDATE)///////////////////////
@@ -773,9 +768,34 @@ public class DbHelper extends SQLiteOpenHelper {
             rowID = db.update(TBL_SUB_SPECIALTIES, values, SUB_SPECIALTY_ID + "=" + sub_specialty.getSpecialty_id(), null);
         }
 
+        db.close();
         return rowID > 0;
     }
-    //END OF SAVE METHODS
+
+    public boolean savePatientConsultation(Consultation consult, String request) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        long rowID = 0;
+
+        values.put(CONSULT_PATIENT_ID, consult.getPatientID());
+        values.put(CONSULT_DOCTOR, consult.getDoctor());
+        values.put(CONSULT_CLINIC, consult.getClinic());
+        values.put(CONSULT_DATE, consult.getDate());
+        values.put(CONSULT_PART_OF_DAY, consult.getPartOfDay());
+        values.put(CONSULT_IS_ALARMED, consult.getIsAlarmed());
+        values.put(CONSULT_TIME, consult.getTime());
+        values.put(CONSULT_IS_FINISHED, consult.getIsFinished());
+
+        if(request.equals("add")) {
+            rowID = db.insert(TBL_PATIENT_CONSULTATIONS, null, values);
+        } else if(request.equals("update")) {
+            rowID = db.update(TBL_PATIENT_CONSULTATIONS, values, CONSULT_ID + "=" + consult.getId(), null);
+        }
+        db.close();
+
+        return rowID > 0;
+    }
+    //////////////////////////////END OF SAVE METHODS//////////////////////////
 
     //to be worked out
     public boolean updateLastUpdatedTable(String table_name, String server_timestamp) {
@@ -1644,6 +1664,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
+            map.put(CONSULT_ID, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_ID))));
             map.put(CONSULT_DOCTOR, cur.getString(cur.getColumnIndex(CONSULT_DOCTOR)));
             map.put(CONSULT_CLINIC, cur.getString(cur.getColumnIndex(CONSULT_CLINIC)));
             map.put(CONSULT_DATE, cur.getString(cur.getColumnIndex(CONSULT_DATE)));
@@ -1657,6 +1678,30 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.close();
 
         return listOfAllConsultations;
+    }
+
+    public Consultation getConsultationById(int ID, int patientID) {
+        SQLiteDatabase db = getWritableDatabase();
+        Consultation consult = new Consultation();
+        String sql = "SELECT * FROM " + TBL_PATIENT_CONSULTATIONS + " WHERE " + CONSULT_ID + " = " + ID + " AND " +
+                CONSULT_PATIENT_ID + " = " + patientID;
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            consult.setId(cur.getInt(cur.getColumnIndex(CONSULT_ID)));
+            consult.setPatientID(cur.getInt(cur.getColumnIndex(CONSULT_PATIENT_ID)));
+            consult.setIsAlarmed(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED)));
+            consult.setIsFinished(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED)));
+            consult.setDoctor(cur.getString(cur.getColumnIndex(CONSULT_DOCTOR)));
+            consult.setClinic(cur.getString(cur.getColumnIndex(CONSULT_CLINIC)));
+            consult.setDate(cur.getString(cur.getColumnIndex(CONSULT_DATE)));
+            consult.setPartOfDay(cur.getString(cur.getColumnIndex(CONSULT_PART_OF_DAY)));
+            consult.setTime(cur.getString(cur.getColumnIndex(CONSULT_TIME)));
+        }
+        cur.close();
+        db.close();
+
+        return consult;
     }
     /////////////////////////END OF GET METHODS/////////////////////////////////
 

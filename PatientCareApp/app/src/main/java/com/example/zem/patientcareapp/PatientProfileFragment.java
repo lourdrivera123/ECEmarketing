@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.zem.patientcareapp.GetterSetter.Patient;
+
 public class PatientProfileFragment extends Fragment {
     ImageView image_holder;
     DbHelper dbhelper;

@@ -46,16 +46,17 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
     ArrayAdapter<String> clinicAdapter;
     ArrayAdapter<String> partOfDayAdapter;
 
-    int isAlarm;
     ArrayList<HashMap<String, String>> doctorsHashmap;
     ArrayList<HashMap<String, String>> doctorClinicHashmap;
     ArrayList<String> listOfClinic;
     ArrayList<String> listOfDoctors;
+    String request;
     String[] partOfDay = new String[]{
             "Morning", "Afternoon"
     };
 
     int hour, minute, new_hour, new_minute;
+    int isAlarm, updateID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         dbhelper = new DbHelper(this);
-        consult = new Consultation();
+        Intent getIntent = getIntent();
 
         setDate = (LinearLayout) findViewById(R.id.setDate);
         setTime = (LinearLayout) findViewById(R.id.setTime);
@@ -79,6 +80,34 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         spinner_clinic = (Spinner) findViewById(R.id.spinner_clinic);
         spin_dayTime = (Spinner) findViewById(R.id.spin_dayTime);
 
+        cal = Calendar.getInstance();
+        hour = cal.get(Calendar.HOUR_OF_DAY);
+        minute = cal.get(Calendar.MINUTE);
+
+        if (getIntent.getStringExtra("request").equals("add")) {
+            request = "add";
+            consult = new Consultation();
+
+            txtTime.setText(hour + " : " + minute);
+            txtDate.setText((cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DATE) + "/" + cal.get(Calendar.YEAR));
+        } else {
+            request = "update";
+            updateID = Integer.parseInt(getIntent.getStringExtra("updateID"));
+            consult = dbhelper.getConsultationById(updateID, HomeTileActivity.getUserID());
+
+            txtDate.setText(consult.getDate());
+            search_doctor.setText(consult.getDoctor());
+            search_clinic.setText(consult.getClinic());
+
+            Toast.makeText(this, "is alarmed: " + consult.getIsAlarmed(), Toast.LENGTH_SHORT).show();
+
+            if (consult.getIsAlarmed() == 1) {
+                checkAlarm.setChecked(true);
+                setTime.setVisibility(View.VISIBLE);
+            }
+        }
+
+
         doctorClinicHashmap = dbhelper.getAllDoctorClinic();
         doctorsHashmap = dbhelper.getAllDoctors();
         listOfDoctors = new ArrayList();
@@ -89,11 +118,6 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
 
         partOfDayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, partOfDay);
         doctorAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfDoctors);
-        cal = Calendar.getInstance();
-        hour = cal.get(Calendar.HOUR_OF_DAY);
-        minute = cal.get(Calendar.MINUTE);
-        txtTime.setText(hour + " : " + minute);
-        txtDate.setText((cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DATE) + "/" + cal.get(Calendar.YEAR));
 
         search_doctor.setAdapter(doctorAdapter);
         spin_dayTime.setAdapter(partOfDayAdapter);
@@ -125,6 +149,9 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
                     consult.setClinic(spinner_clinic.getSelectedItem().toString());
                 }
 
+                if (request.equals("update"))
+                    consult.setId(updateID);
+
                 consult.setPatientID(HomeTileActivity.getUserID());
                 consult.setDoctor(search_doctor.getText().toString());
                 consult.setDate(txtDate.getText().toString());
@@ -133,7 +160,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
                 consult.setTime(txtTime.getText().toString());
                 consult.setIsFinished(0);
 
-                if (dbhelper.insertPatientConsultation(consult)) {
+                if (dbhelper.savePatientConsultation(consult, request)) {
                     Intent intent = new Intent(this, MasterTabActivity.class);
                     intent.putExtra("selected", 4);
                     startActivity(intent);

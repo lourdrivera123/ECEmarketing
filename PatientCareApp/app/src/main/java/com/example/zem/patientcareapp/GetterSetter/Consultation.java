@@ -5,11 +5,15 @@ package com.example.zem.patientcareapp.GetterSetter;
  */
 public class Consultation {
 
-    int patientID, isAlarmed, isFinished;
+    int id, patientID, isAlarmed, isFinished;
     String doctor, clinic, date, partOfDay, time;
 
     public Consultation() {
 
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setPatientID(int patientID) {
@@ -42,6 +46,11 @@ public class Consultation {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+
+    public int getId() {
+        return id;
     }
 
     public int getPatientID() {
