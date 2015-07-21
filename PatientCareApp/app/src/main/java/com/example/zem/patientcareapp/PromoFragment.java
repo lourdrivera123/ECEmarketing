@@ -46,7 +46,6 @@ public class PromoFragment extends Fragment {
 
             }
         });
-
         return rootView;
     }
 }

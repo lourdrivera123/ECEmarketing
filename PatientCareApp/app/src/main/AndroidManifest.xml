@@ -107,11 +107,14 @@
             android:name=".PrescriptionFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
-        <activity android:name=".Patient" />
-        <activity android:name=".Medicine" />
-        <activity android:name=".Doctor" />
-        <activity android:name=".PatientRecord" />
-        <activity android:name=".Product" />
+        <activity android:name=".GetterSetter.Patient" />
+        <activity android:name=".GetterSetter.Medicine" />
+        <activity android:name=".GetterSetter.Doctor" />
+        <activity android:name=".GetterSetter.PatientRecord" />
+        <activity android:name=".GetterSetter.Product" />
+	<activity android:name=".GetterSetter.Basket" />
+        <activity android:name=".GetterSetter.PromoDiscount" />
+        <activity android:name=".GetterSetter.PromoFreeProducts" />
         <activity android:name=".ClinicDoctor" />
 
         <activity android:name=".RoundImage" />
@@ -125,14 +128,12 @@
         <activity android:name=".AppController" />
         <activity android:name=".LruBitmapCache" />
         <activity android:name=".Sync" />
-        <activity android:name=".ProductCategory" />
-        <activity android:name=".ProductSubCategory" />
+        <activity android:name=".GetterSetter.ProductCategory" />
+        <activity android:name=".GetterSetter.ProductSubCategory" />
         <activity android:name=".ProductCategoriesFragment" />
         <activity android:name=".PreloadNonUserRelatedData" />
         <activity android:name=".ServerRequest" />
-        <activity android:name=".Basket" />
-        <activity android:name=".DiscountsFreeProducts" />
-        <activity android:name=".FreeProducts" />
+
         <activity android:name=".ImageItem" />
         <activity android:name=".PromoFragment" />
         <activity android:name=".samplepaypal" />

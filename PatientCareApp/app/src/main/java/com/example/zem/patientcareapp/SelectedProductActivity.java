@@ -16,6 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.GetterSetter.Product;
+
 import java.util.HashMap;
 
 /**
