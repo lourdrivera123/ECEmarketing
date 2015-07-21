@@ -13,6 +13,9 @@ import android.view.MenuItem;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
     private MasterTabsAdapter mAdapter;
     private String[] tabs = {"Profile", "My Records", "Test Results", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
@@ -22,6 +25,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     DbHelper dbHelper;
     Intent intent;
     int unselected = 0;
+    ArrayList<HashMap<String, String>> listOfAllConsultations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,13 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             public void onPageScrollStateChanged(int arg0) {
             }
         });
+
+
+        System.out.println("FUCKING USER: "+dbHelper.getCurrentLoggedInPatient().getServerID());
+        listOfAllConsultations = dbHelper.getAllConsultationsByUserId(dbHelper.getCurrentLoggedInPatient().getServerID());
+        for(HashMap<String, String> consultation : listOfAllConsultations){
+            System.out.println("FUCKING CONSULTATION: "+consultation.toString());
+        }
     }
 
     @Override

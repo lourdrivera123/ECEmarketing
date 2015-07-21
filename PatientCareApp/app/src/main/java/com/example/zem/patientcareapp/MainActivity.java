@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +63,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     JSONArray patient_json_array_mysql = null;
     JSONObject patient_json_object_mysql = null;
+    ArrayList<HashMap<String, String>> listOfAllConsultations;
+    AlarmService alarmService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         dbHelper = new DbHelper(this);
         helpers = new Helpers();
+        alarmService = new AlarmService(this);
         main = this;
         queue = Volley.newRequestQueue(this);
         sync = new Sync();
@@ -90,6 +94,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
+
+
+
     }
 
     @Override
