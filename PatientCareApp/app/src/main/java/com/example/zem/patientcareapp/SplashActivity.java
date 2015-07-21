@@ -314,7 +314,7 @@ public class SplashActivity extends Activity {
                 });
 
                 // Request a string response from the provided URL.
-                JsonObjectRequest promo_discounts_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_promo_discounts"), null, new Response.Listener<JSONObject>() {
+                JsonObjectRequest promo_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_promo"), null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -323,13 +323,67 @@ public class SplashActivity extends Activity {
                         System.out.print("promo discounts: I am in splash activity");
 
                         sync = new Sync();
-                        sync.init(getBaseContext(), "get_promo_discounts", "promo_discounts", "promo_discounts_id", response);
+                        sync.init(getBaseContext(), "get_promo", "promo", "promo_id", response);
 
                         try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("treatments", response.getString("server_timestamp"));
+                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("promo", response.getString("server_timestamp"));
                         } catch (Exception e) {
                             System.out.println("error fetching server timestamp: " + e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+                // Request a string response from the provided URL.
+                JsonObjectRequest discounts_free_products_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_discounts_free_products"), null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("splash get_discounts_free_products response: ", ""+response.toString());
+
+                        System.out.print("promo free_products: I am in splash activity");
+
+                        sync = new Sync();
+                        sync.init(getBaseContext(), "get_discounts_free_products", "discounts_free_products", "dfp_id", response);
+
+                        try {
+                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("discounts_free_products", response.getString("server_timestamp"));
+                        } catch (Exception e) {
+                            System.out.println("error fetching server timestamp: "+ e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                // Request a string response from the provided URL.
+                JsonObjectRequest free_products_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_free_products"), null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("splash get_free_products response: ", ""+response.toString());
+
+                        System.out.println("free_products: I am in splash activity");
+
+                        sync = new Sync();
+                        sync.init(getBaseContext(), "get_free_products", "free_products", "free_products_id", response);
+
+                        try {
+                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
+                            dbHelper.updateLastUpdatedTable("promo_discounts", response.getString("server_timestamp"));
+                        } catch (Exception e) {
+                            System.out.println("error fetching server timestamp: "+ e);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -349,7 +403,9 @@ public class SplashActivity extends Activity {
                 queue.add(treatments_request);
                 queue.add(dosage_request);
                 queue.add(prod_request);
-                queue.add(promo_discounts_request);
+                queue.add(promo_request);
+                queue.add(discounts_free_products_request);
+                queue.add(free_products_request);
                 queue.add(clinic_doctor_request);
 
                 settings.edit().putBoolean("my_first_time", false).commit();

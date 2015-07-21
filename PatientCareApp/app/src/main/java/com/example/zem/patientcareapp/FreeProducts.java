@@ -3,11 +3,11 @@ package com.example.zem.patientcareapp;
 /**
  * Created by User PC on 6/5/2015.
  */
-public class PromoFreeProducts {
-    int id, promoFreeProductsId, promoId, numberOfUnitsFree;
+public class FreeProducts {
+    int id, freeProductsId, dfpId, quantityFree, productId;
     String createdAt, updatedAt, deletedAt;
 
-    public PromoFreeProducts(){
+    public FreeProducts(){
 
     }
 
@@ -17,16 +17,20 @@ public class PromoFreeProducts {
         this.id = id;
     }
 
-    public void setPromoFreeProductsId(int promoFreeProductsId) {
-        this.promoFreeProductsId = promoFreeProductsId;
+    public void setFreeProductsId(int freeProductsId) {
+        this.freeProductsId = freeProductsId;
     }
 
-    public void setPromoId(int promoId) {
-        this.promoId = promoId;
+    public void setDfpId(int dfpId) {
+        this.dfpId = dfpId;
     }
 
-    public void setNumberOfUnitsFree(int numberOfUnitsFree) {
-        this.numberOfUnitsFree = numberOfUnitsFree;
+    public void setQuantityFree(int quantityFree) {
+        this.quantityFree = quantityFree;
+    }
+
+    public void setProductId(int productId){
+        this.productId = productId;
     }
 
     public void setCreatedAt(String createdAt) {
@@ -47,16 +51,20 @@ public class PromoFreeProducts {
         return id;
     }
 
-    public int getPromoFreeProductsId() {
-        return promoFreeProductsId;
+    public int getFreeProductsId() {
+        return freeProductsId;
     }
 
-    public int getPromoId() {
-        return promoId;
+    public int getDfpId() {
+        return dfpId;
     }
 
-    public int getNumberOfUnitsFree() {
-        return numberOfUnitsFree;
+    public int getQuantityFree() {
+        return quantityFree;
+    }
+
+    public int getProductId(){
+        return productId;
     }
 
     public String getCreatedAt() {

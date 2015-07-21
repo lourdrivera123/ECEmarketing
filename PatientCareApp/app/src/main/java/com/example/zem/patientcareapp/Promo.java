@@ -1,17 +1,15 @@
 package com.example.zem.patientcareapp;
 
+import java.io.Serializable;
+
 /**
- * Created by Dexter B. on 6/5/2015.
+ * Created by Dexter B. on 7/10/2015.
  */
-public class PromoDiscount {
+public class Promo implements Serializable {
     String name, startDate, endDate, createdAt, updatedAt, deletedAt;
-    int type, quantityRequired, productId, id, promoDiscountId;
-    double less;
-    public PromoDiscount(){
+    int id, serverPromoId;
 
-    }
-
-    /* SETTERS */
+    // Setters
 
     public void setName(String name) {
         this.name = name;
@@ -37,31 +35,16 @@ public class PromoDiscount {
         this.deletedAt = deletedAt;
     }
 
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public void setQuantityRequired(int quantityRequired) {
-        this.quantityRequired = quantityRequired;
-    }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setPromoDiscountId(int promoDiscountId) {
-        this.promoDiscountId = promoDiscountId;
+    public void setServerPromoId(int serverPromoId) {
+        this.serverPromoId = serverPromoId;
     }
 
-    public void setLess(double less) {
-        this.less = less;
-    }
 
-    /* GETTERS */
+    // Getters
 
     public String getName() {
         return name;
@@ -87,28 +70,11 @@ public class PromoDiscount {
         return deletedAt;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public int getQuantityRequired() {
-        return quantityRequired;
-    }
-
-    public int getProductId() {
-        return productId;
-    }
-
     public int getId() {
         return id;
     }
 
-    public int getPromoDiscountId() {
-        return promoDiscountId;
-    }
-
-    public double getLess() {
-        return less;
+    public int getServerPromoId() {
+        return serverPromoId;
     }
 }
-

@@ -109,6 +109,9 @@
         <activity android:name=".GetterSetter.Doctor" />
         <activity android:name=".GetterSetter.PatientRecord" />
         <activity android:name=".GetterSetter.Product" />
+	<activity android:name=".GetterSetter.Basket" />
+        <activity android:name=".GetterSetter.PromoDiscount" />
+        <activity android:name=".GetterSetter.PromoFreeProducts" />
         <activity android:name=".ClinicDoctor" />
 
         <activity android:name=".RoundImage" />
@@ -127,9 +130,7 @@
         <activity android:name=".ProductCategoriesFragment" />
         <activity android:name=".PreloadNonUserRelatedData" />
         <activity android:name=".ServerRequest" />
-        <activity android:name=".GetterSetter.Basket" />
-        <activity android:name=".GetterSetter.PromoDiscount" />
-        <activity android:name=".GetterSetter.PromoFreeProducts" />
+
         <activity android:name=".ImageItem" />
         <activity android:name=".PromoFragment" />
         <activity android:name=".samplepaypal" />

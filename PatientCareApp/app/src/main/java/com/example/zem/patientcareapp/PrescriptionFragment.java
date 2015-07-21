@@ -331,7 +331,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                         new AndroidMultipartEntity.ProgressListener() {
                             @Override
                             public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
+                                publishProgress( (int) ((num / (float) totalSize) * 100) );
                             }
                         });
 
