@@ -87,7 +87,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
         helper = new Helpers();
 
         patientID = dbhelper.getCurrentLoggedInPatient().getServerID();
-//
+
         uploadsByUser = dbhelper.getUploadedPrescriptionsByUserID(patientID);
         gridView.setAdapter(new ImageAdapter(getActivity(), uploadsByUser));
 

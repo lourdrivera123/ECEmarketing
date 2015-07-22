@@ -104,7 +104,7 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
         });
 
         if (update_recordID > 0) {
-            record = dbhelper.getPatientRecordByRecordID(update_recordID, HomeTileActivity.getUserID());
+            record = dbhelper.getPatientRecordByRecordID(update_recordID, SidebarActivity.getUserID());
             update_treatments = dbhelper.getTreatmentByRecordID(update_recordID);
 
             for (int x = 0; x < update_treatments.size(); x++) {
@@ -165,7 +165,7 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
                     diagnosis.setError("Field required");
                 }
             } else {
-                String uname = HomeTileActivity.getUname();
+                String uname = SidebarActivity.getUname();
                 patient = dbhelper.getloginPatient(uname);
 
                 record = new PatientRecord();

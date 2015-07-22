@@ -1557,7 +1557,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public Patient getCurrentLoggedInPatient() {
-        Patient patient = this.getloginPatient(HomeTileActivity.getUname());
+        Patient patient = this.getloginPatient(SidebarActivity.getUname());
         return patient;
     }
 

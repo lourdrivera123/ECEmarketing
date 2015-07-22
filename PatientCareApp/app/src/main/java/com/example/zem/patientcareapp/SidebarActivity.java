@@ -1,41 +1,39 @@
 package com.example.zem.patientcareapp;
 
+/**
+ * Created by Zem on 7/16/2015.
+ */
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.app.ActionBar;
+import android.app.Activity;
+//import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
-import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
+public class SidebarActivity extends FragmentActivity  {
 
-import java.util.ArrayList;
-
-public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
-    private MasterTabsAdapter mAdapter;
-    private String[] tabs = {"Profile", "My Records", "Test Results", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
-    private ViewPager viewPager;
-    private ActionBar actionBar;
-
-    DbHelper dbHelper;
-    Intent intent;
-    int unselected = 0;
-
-    //from sidebar
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -53,48 +51,31 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter adapter;
 
+    //from hometile
+    public static SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
+
+    ArrayAdapter search_adapter;
+    ArrayList<HashMap<String, String>> hash_allProducts;
+    ArrayList<String> products;
+
+    FragmentTransaction fragmentTransaction;
+
+    AutoCompleteTextView search_product;
+
+    int productID = 0;
+
+    static Patient patient;
+    static DbHelper dbHelper;
+
+    public static String uname;
+    public static int userID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.master_tab_layout);
-        dbHelper = new DbHelper(this);
+        setContentView(R.layout.sidebar_layout);
 
-        actionBar = getActionBar();
-        MainActivity.setCustomActionBar(actionBar);
-
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        actionBar = getActionBar();
-        mAdapter = new MasterTabsAdapter(getSupportFragmentManager());
-
-        viewPager.setAdapter(mAdapter);
-        actionBar.setHomeButtonEnabled(false);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // Adding Tabs
-        for (String tab_name : tabs) {
-            actionBar.addTab(actionBar.newTab().setText(tab_name)
-                    .setTabListener(this));
-        }
-
-        intent = getIntent();
-        actionBar.setSelectedNavigationItem(intent.getIntExtra("selected", 0));
-
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-            }
-        });
-
-        //for sidebar
         mTitle = mDrawerTitle = getTitle();
 
         // load slide menu items
@@ -157,57 +138,51 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        // update the main content by replacing fragments
-        Fragment fragment = null;
-        switch (intent.getIntExtra("selected", 0)) {
-            case 0:
-                fragment = new PatientProfileFragment();
-                break;
-            case 1:
-                fragment = new PatientHistoryFragment();
-                break;
-            case 2:
-                fragment = new TrialPrescriptionFragment();
-                break;
-            case 3:
-                fragment = new ListOfDoctorsFragment();
-                break;
-            case 4:
-                fragment = new PatientConsultationFragment();
-                break;
-            case 5:
-                fragment = new ProductsFragment();
-                break;
-            case 6:
-                fragment = new ShoppingCartFragment();
-                break;
-            case 7:
-                fragment = new PatientHistoryFragment();
-                break;
-            case 8:
-                fragment = new PatientHistoryFragment();
-                break;
-
-            default:
-                break;
+        if (savedInstanceState == null) {
+            // on first time display view for first nav item
+            displayView(0);
         }
 
-        if (fragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.frame_container, fragment).commit();
+        dbHelper = new DbHelper(this);
+        hash_allProducts = dbHelper.getAllProducts();
+        products = new ArrayList();
 
-            // update selected item and title, then close the drawer
-            mDrawerList.setItemChecked(intent.getIntExtra("selected", 0), true);
-            mDrawerList.setSelection(intent.getIntExtra("selected", 0));
-            setTitle(navMenuTitles[intent.getIntExtra("selected", 0)]);
-            mDrawerLayout.closeDrawer(mDrawerList);
+        for (int x = 0; x < hash_allProducts.size(); x++) {
+            products.add(hash_allProducts.get(x).get(dbHelper.PRODUCT_NAME));
         }
 
-//        if (savedInstanceState == null) {
-//            // on first time display view for first nav item
-//            displayView(0);
-//        }
+        ActionBar actionbar = getActionBar();
+        MainActivity.setCustomActionBar(actionbar);
+
+        sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+        editor = sharedpreferences.edit();
+
+        createCustomSearchBar(actionbar);
+
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (dbHelper.checkUserIfRegistered(getUname()) > 0) {
+
+        } else {
+            editor.clear();
+            editor.commit();
+            moveTaskToBack(true);
+//            HomeTileActivity.this.finish();
+            startActivity(new Intent(this, MainActivity.class));
+        }
+    }
+
+    public static String getUname() {
+        uname = sharedpreferences.getString("nameKey", "DEFAULT");
+        return uname;
+    }
+
+    public static int getUserID() {
+        patient = dbHelper.getloginPatient(getUname());
+        userID = patient.getServerID();
+
+        return userID;
     }
 
     /**
@@ -225,7 +200,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mastertabs_menu, menu);
+        getMenuInflater().inflate(R.menu.logout_menu, menu);
         return true;
     }
 
@@ -235,29 +210,29 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+        // Handle action bar actions click
         switch (item.getItemId()) {
-            case R.id.logout_menu:
-                SharedPreferences sharedpreferences = getSharedPreferences
-                        (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.clear();
-                editor.commit();
-                MasterTabActivity.this.finish();
-                startActivity(new Intent(this, MainActivity.class));
-                break;
-
-            case R.id.edit_profile:
-                int edit = 7;
-
-                Intent intent = new Intent(this, EditTabsActivity.class);
-                intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
-                startActivity(intent);
-                break;
+//            case R.id.action_settings:
+//                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
+    /***
+     * Called when invalidateOptionsMenu() is triggered
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // if nav drawer is opened, hide the action items
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+//        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
 
+    /**
+     * Diplaying fragment view for selected nav drawer list item
+     * */
     private void displayView(int position) {
         // update the main content by replacing fragments
         Fragment fragment = null;
@@ -279,7 +254,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
                 break;
             case 5:
                 fragment = new TrialPrescriptionFragment();
-                break;        
+                break;
 
             default:
                 break;
@@ -307,6 +282,11 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         getActionBar().setTitle(mTitle);
     }
 
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -321,25 +301,42 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        if (tab.getPosition() == 6) {
-            new ShoppingCartFragment();
-        }
-        mAdapter.notifyDataSetChanged();
-        viewPager.setCurrentItem(tab.getPosition());
-    }
+    public void createCustomSearchBar(ActionBar actionbar) {
+        actionbar.setDisplayShowHomeEnabled(true);
+        actionbar.setDisplayShowTitleEnabled(false);
+        LayoutInflater mInflater = LayoutInflater.from(this);
 
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        unselected = tab.getPosition();
-        new ShoppingCartFragment();
-    }
+        View mCustomView = mInflater.inflate(R.layout.searchview_layout, null);
 
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        if (tab.getPosition() == 6) {
-            new ShoppingCartFragment();
-        }
+        search_product = (AutoCompleteTextView) mCustomView.findViewById(R.id.search_product);
+        search_adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, products);
+        search_product.setAdapter(search_adapter);
+
+        search_product.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search_product.setCursorVisible(true);
+                search_product.setFocusableInTouchMode(true);
+                search_product.setFocusable(true);
+            }
+        });
+
+        search_product.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item_clicked = parent.getItemAtPosition(position).toString();
+                int itemID = products.indexOf(item_clicked);
+                productID = Integer.parseInt(hash_allProducts.get(itemID).get(dbHelper.SERVER_PRODUCT_ID));
+
+                Intent intent = new Intent(getBaseContext(), SelectedProductActivity.class);
+                intent.putExtra(SelectedProductActivity.PRODUCT_ID, productID);
+                intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "HomeTile");
+                startActivity(intent);
+//                HomeTileActivity.this.finish();
+            }
+        });
+
+        actionbar.setCustomView(mCustomView);
+        actionbar.setDisplayShowCustomEnabled(true);
     }
 }

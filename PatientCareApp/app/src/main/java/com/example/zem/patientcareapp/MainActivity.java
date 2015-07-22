@@ -99,7 +99,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (sharedpreferences.contains(name)) {
             if (sharedpreferences.contains(pass)) {
                 helpers.showNotification(this);
-                Intent i = new Intent(this, HomeTileActivity.class);
+                Intent i = new Intent(this, SidebarActivity.class);
                 startActivity(i);
             }
         } else {
@@ -167,7 +167,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                                     editor.putString(pass, password);
                                                     editor.commit();
                                                     helpers.showNotification(getBaseContext());
-                                                    Intent i = new Intent(getBaseContext(), HomeTileActivity.class);
+                                                    Intent i = new Intent(getBaseContext(), SidebarActivity.class);
                                                     startActivity(i);
                                                 } else {
                                                     Toast.makeText(MainActivity.this, "Username or Password is incorrect", Toast.LENGTH_SHORT).show();

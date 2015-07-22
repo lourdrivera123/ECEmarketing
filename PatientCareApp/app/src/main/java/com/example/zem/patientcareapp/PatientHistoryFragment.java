@@ -64,7 +64,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         dbHelper = new DbHelper(getActivity());
         helpers = new Helpers();
 
-        hashHistory = dbHelper.getPatientRecord(HomeTileActivity.getUserID());
+        hashHistory = dbHelper.getPatientRecord(SidebarActivity.getUserID());
         medRecords = new ArrayList();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();

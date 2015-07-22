@@ -37,7 +37,7 @@ public class PatientProfileFragment extends Fragment {
         email = (TextView) rootView.findViewById(R.id.email);
         cp_no = (TextView) rootView.findViewById(R.id.cp_no);
 
-        String patient_uname = HomeTileActivity.getUname();
+        String patient_uname = SidebarActivity.getUname();
         Patient loginUser = dbhelper.getloginPatient(patient_uname);
 
         ptnt_name = loginUser.getFname() + " " + loginUser.getLname();

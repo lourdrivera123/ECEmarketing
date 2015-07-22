@@ -34,7 +34,7 @@ public class AccountFragment extends Fragment {
         dbhelper = new DbHelper(getActivity());
 
         if (edit > 0) {
-            String edit_uname = HomeTileActivity.getUname();
+            String edit_uname = SidebarActivity.getUname();
             Patient patient = dbhelper.getloginPatient(edit_uname);
 
             username.setText(patient.getUsername());

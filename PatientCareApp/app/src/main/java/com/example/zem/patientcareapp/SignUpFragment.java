@@ -59,7 +59,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
         birthdate.setOnClickListener(this);
 
         if (edit > 0) {
-            String edit_uname = HomeTileActivity.getUname();
+            String edit_uname = SidebarActivity.getUname();
             Patient patient = dbhelper.getloginPatient(edit_uname);
 
             fname.setText(patient.getFname());

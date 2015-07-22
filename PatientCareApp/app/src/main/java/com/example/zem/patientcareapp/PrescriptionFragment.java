@@ -103,7 +103,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         helper = new Helpers();
         dbhelper = new DbHelper(getActivity());
 
-        patientID = HomeTileActivity.getUserID();
+        patientID = SidebarActivity.getUserID();
 
         gridAdapter = new GridViewAdapter(getActivity(), imageItems);
         gridView.setAdapter(gridAdapter);
