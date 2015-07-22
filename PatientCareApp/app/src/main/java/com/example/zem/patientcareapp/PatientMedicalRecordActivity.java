@@ -6,7 +6,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +19,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.zem.patientcareapp.GetterSetter.Medicine;
+import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.GetterSetter.PatientRecord;
+import com.example.zem.patientcareapp.GetterSetter.Product;
 
 import java.util.ArrayList;
 import java.util.Calendar;

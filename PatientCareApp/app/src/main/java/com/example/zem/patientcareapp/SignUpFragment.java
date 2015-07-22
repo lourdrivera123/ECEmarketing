@@ -12,7 +12,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
+
+import com.example.zem.patientcareapp.GetterSetter.Patient;
 
 import java.util.Calendar;
 
@@ -38,7 +39,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.patient_general_info_layout, container, false);
-        
+
         dbhelper = new DbHelper(getActivity());
         int edit = EditTabsActivity.edit_int;
 
@@ -102,7 +103,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
 
                     updateDate(year, month - 1, day);
                 }
-
                 break;
         }
     }

@@ -249,7 +249,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onRefresh() {
-// stopping swipe refresh
         swipe_refresh.setRefreshing(false);
     }
 

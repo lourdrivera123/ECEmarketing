@@ -11,6 +11,7 @@ import com.example.zem.patientcareapp.ListOfDoctorsFragment;
 import com.example.zem.patientcareapp.PatientProfileFragment;
 import com.example.zem.patientcareapp.PrescriptionFragment;
 import com.example.zem.patientcareapp.ProductsFragment;
+import com.example.zem.patientcareapp.PromoFragment;
 import com.example.zem.patientcareapp.ShoppingCartFragment;
 import com.example.zem.patientcareapp.TrialPrescriptionFragment;
 
@@ -42,7 +43,7 @@ public class MasterTabsAdapter extends FragmentStatePagerAdapter{
             case 6:
                 return new ShoppingCartFragment();
             case 7:
-                return new PatientHistoryFragment();
+                return new PromoFragment();
             case 8:
                 return new PatientHistoryFragment();
         }

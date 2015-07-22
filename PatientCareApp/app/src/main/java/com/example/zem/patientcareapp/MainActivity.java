@@ -1,9 +1,6 @@
 package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,10 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +21,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.GetterSetter.Patient;
 
 import org.json.JSONArray;
 import org.json.JSONException;

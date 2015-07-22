@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/promo_name"
+        android:singleLine="false"
+        android:layout_weight="0.6"
+        android:textSize="@dimen/abc_action_bar_content_inset_material"
+        android:textColor="#000"
+        android:shadowColor="#000"
+        android:shadowRadius="4"
+        android:text="Back to School PROMO"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/less"
+        android:text="LESS:"
+        android:shadowColor="#38e655"
+        android:textColor="#000"
+        android:shadowRadius="12"
+        android:rotation="317"
+        android:textStyle="bold"
+        android:textColorHighlight="#000"
+        android:layout_below="@id/promo_name"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/less_amount"
+        android:text="75% DISCOUNT"
+        android:textColor="#ff1309"
+        android:textSize="17sp"
+        android:layout_marginLeft="45dp"
+        android:layout_alignParentRight="@+id/less"
+        android:layout_below="@id/promo_name"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Starting June 21, 2015 to December 31, 2015"
+        android:layout_below="@id/less_amount"
+        android:id="@+id/duration"/>
+
+
+
+</RelativeLayout>

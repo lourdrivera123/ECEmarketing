@@ -1,4 +1,4 @@
-package com.example.zem.patientcareapp;
+package com.example.zem.patientcareapp.GetterSetter;
 
 import java.io.Serializable;
 

@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.zem.patientcareapp.GetterSetter.Doctor;
+
 public class DoctorActivity extends Activity implements View.OnClickListener {
     TextView doctor_name, specialty, clinic_name, clinic_address_first_line, clinic_address_second_line;
 
