@@ -104,16 +104,6 @@
             android:name=".PrescriptionFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
-        <activity android:name=".GetterSetter.Patient" />
-        <activity android:name=".GetterSetter.Medicine" />
-        <activity android:name=".GetterSetter.Doctor" />
-        <activity android:name=".GetterSetter.PatientRecord" />
-        <activity android:name=".GetterSetter.Product" />
-	<activity android:name=".GetterSetter.Basket" />
-        <activity android:name=".GetterSetter.PromoDiscount" />
-        <activity android:name=".GetterSetter.PromoFreeProducts" />
-        <activity android:name=".ClinicDoctor" />
-
         <activity android:name=".RoundImage" />
         <activity android:name=".FileCache" />
         <activity android:name=".Utils" />
@@ -125,8 +115,6 @@
         <activity android:name=".AppController" />
         <activity android:name=".LruBitmapCache" />
         <activity android:name=".Sync" />
-        <activity android:name=".GetterSetter.ProductCategory" />
-        <activity android:name=".GetterSetter.ProductSubCategory" />
         <activity android:name=".ProductCategoriesFragment" />
         <activity android:name=".PreloadNonUserRelatedData" />
         <activity android:name=".ServerRequest" />

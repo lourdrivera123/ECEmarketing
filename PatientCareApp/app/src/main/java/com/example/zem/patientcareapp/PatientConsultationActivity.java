@@ -99,8 +99,6 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
             search_doctor.setText(consult.getDoctor());
             search_clinic.setText(consult.getClinic());
 
-            Toast.makeText(this, "is alarmed: " + consult.getIsAlarmed(), Toast.LENGTH_SHORT).show();
-
             if (consult.getIsAlarmed() == 1) {
                 checkAlarm.setChecked(true);
                 setTime.setVisibility(View.VISIBLE);

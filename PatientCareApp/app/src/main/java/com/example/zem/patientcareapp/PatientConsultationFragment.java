@@ -1,6 +1,8 @@
 package com.example.zem.patientcareapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
@@ -74,7 +76,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo menuinfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final AdapterView.AdapterContextMenuInfo menuinfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         switch (item.getItemId()) {
             case R.id.update_cart:
@@ -85,6 +87,30 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
                 break;
 
             case R.id.delete_cart:
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                dialog.setTitle("Delete?");
+                dialog.setMessage("1 record will be deleted.");
+                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int consultID = Integer.parseInt(listOfAllConsultations.get(menuinfo.position).get("id"));
+
+                        if (dbhelper.deleteConsultation(consultID)) {
+                            listOfAllConsultations.remove(menuinfo.position);
+                            consultationDoctors.remove(menuinfo.position);
+                            consultAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.create().show();
 
                 break;
         }

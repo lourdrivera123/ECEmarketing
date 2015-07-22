@@ -93,7 +93,6 @@ public class LazyAdapter extends BaseAdapter {
         } else if (list_type.equals("product_lists")) {
             vi = inflater.inflate(R.layout.list_row_products, null);
 
-
             product_name = (TextView) vi.findViewById(R.id.product_name); // product name
             product_description = (TextView) vi.findViewById(R.id.product_description); // product description
             product_price = (TextView) vi.findViewById(R.id.product_price); // product price
