@@ -32,6 +32,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
+import com.example.zem.patientcareapp.GetterSetter.*;
+
 public class SidebarActivity extends FragmentActivity  {
 
     private DrawerLayout mDrawerLayout;
@@ -65,7 +67,7 @@ public class SidebarActivity extends FragmentActivity  {
 
     int productID = 0;
 
-    static Patient patient;
+    static com.example.zem.patientcareapp.GetterSetter.Patient patient;
     static DbHelper dbHelper;
 
     public static String uname;

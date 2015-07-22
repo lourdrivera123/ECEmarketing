@@ -45,7 +45,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         add_consultation = (ImageButton) rootView.findViewById(R.id.add_consultation);
 
         dbhelper = new DbHelper(getActivity());
-        listOfAllConsultations = dbhelper.getAllConsultationsByUserId(HomeTileActivity.getUserID());
+        listOfAllConsultations = dbhelper.getAllConsultationsByUserId(SidebarActivity.getUserID());
         consultationDoctors = new ArrayList();
         consult = new Consultation();
 
