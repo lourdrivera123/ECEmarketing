@@ -27,8 +27,8 @@
         android:required="false" />
 
     <application
-        android:allowBackup="true"
         android:name=".PatientCareApplication"
+        android:allowBackup="true"
         android:icon="@drawable/ic_app"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
@@ -36,9 +36,7 @@
             android:name=".MainActivity"
             launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Holo.Light">
-
-        </activity>
+            android:theme="@android:style/Theme.Holo.Light" />
         <activity
             android:name=".SignUpFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -50,17 +48,15 @@
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".ListOfDoctorsFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize"></activity>
-        <activity
-            android:name=".DoctorActivity"
-            launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".PatientProfileFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".PatientHistoryFragment"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".TrialPrescriptionFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".ShoppingCartFragment"
@@ -69,14 +65,29 @@
             android:name=".ProductsFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
+            android:name=".PatientConsultationFragment"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".ProductCategoriesFragment"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".PromoFragment"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+
+        <!--Activities-->
+        <activity
+            android:name=".DoctorActivity"
+            launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MyFancyTheme" />
+        <activity
             android:name=".HomeTileActivity"
             launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Holo.Light" />
         <activity
             android:name=".MasterTabActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".EditTabsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -89,6 +100,9 @@
             android:name=".SelectedProductActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
+            android:name=".SimpleImageActivity"
+            android:theme="@style/Theme.MyFancyTheme" />
+        <activity
             android:name=".PatientConsultationActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity android:name=".SplashActivity">
@@ -97,34 +111,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".FullScreenViewActivity"
-            android:theme="@style/Theme.MyFancyTheme" />
-        <activity
-            android:name=".PrescriptionFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
 
-        <activity android:name=".RoundImage" />
         <activity android:name=".FileCache" />
         <activity android:name=".Utils" />
         <activity android:name=".MemoryCache" />
         <activity android:name=".LazyAdapter" />
         <activity android:name=".ImageLoader" />
         <activity android:name=".DbHelper" />
-        <activity android:name=".PatientConsultationFragment" />
         <activity android:name=".AppController" />
         <activity android:name=".LruBitmapCache" />
         <activity android:name=".Sync" />
-        <activity android:name=".ProductCategoriesFragment" />
         <activity android:name=".PreloadNonUserRelatedData" />
         <activity android:name=".ServerRequest" />
-
         <activity android:name=".ImageItem" />
-        <activity android:name=".PromoFragment" />
         <activity android:name=".samplepaypal" />
         <activity android:name=".UploadActivity" />
-        <activity android:name=".TrialPrescriptionFragment" />
-        <activity android:name=".SimpleImageActivity" />
         <activity android:name=".ImagePagerFragment" />
 
         <service

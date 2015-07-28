@@ -10,12 +10,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
 public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
     private MasterTabsAdapter mAdapter;
-    private String[] tabs = {"Profile", "My Records", "Test Results", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
+    private String[] tabs = {"Profile", "My Records", "Prescription", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
     private ViewPager viewPager;
     private ActionBar actionBar;
 
@@ -31,16 +32,14 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
         actionBar = getActionBar();
         MainActivity.setCustomActionBar(actionBar);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
-        actionBar = getActionBar();
         mAdapter = new MasterTabsAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(mAdapter);
-        actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        // Adding Tabs
         for (String tab_name : tabs) {
             actionBar.addTab(actionBar.newTab().setText(tab_name)
                     .setTabListener(this));
@@ -73,25 +72,24 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.logout_menu:
-                SharedPreferences sharedpreferences = getSharedPreferences
-                        (MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.clear();
-                editor.commit();
-                MasterTabActivity.this.finish();
-                startActivity(new Intent(this, MainActivity.class));
-                break;
+        if (item.getItemId() == R.id.logout_menu) {
+            SharedPreferences sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.clear();
+            editor.commit();
+            MasterTabActivity.this.finish();
+            startActivity(new Intent(this, MainActivity.class));
 
-            case R.id.edit_profile:
-                int edit = 7;
+        } else if (item.getItemId() == R.id.edit_profile) {
+            int edit = 7;
 
-                Intent intent = new Intent(this, EditTabsActivity.class);
-                intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
-                startActivity(intent);
-                break;
+            Intent intent = new Intent(this, EditTabsActivity.class);
+            intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
+            startActivity(intent);
+        } else if (item.getItemId() == android.R.id.home) {
+            this.finish();
         }
+
         return super.onOptionsItemSelected(item);
     }
 

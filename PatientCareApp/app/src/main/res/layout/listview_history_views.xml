@@ -1,62 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rel_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector"
-    android:orientation="horizontal"
-    android:padding="5dip">
+    android:orientation="vertical"
+    android:paddingTop="5dp">
 
-    <LinearLayout
-        android:id="@+id/thumbnail"
-        android:layout_width="wrap_content"
+    <!-- Date -->
+    <TextView
+        android:id="@+id/record_date"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="3dip"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dip">
-
-        <ImageView
-            android:id="@+id/list_image"
-            android:scaleType="centerCrop"
-            android:background="@drawable/photo_circle"
-            android:layout_width="40dp"
-            android:layout_height="40dp" />
-    </LinearLayout>
+        android:layout_marginRight="5dp"
+        android:gravity="right"
+        android:text="02/23/1995"
+        android:textColor="#5B9A68"
+        android:textSize="10dp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/doctor_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/thumbnail"
-        android:layout_toRightOf="@+id/thumbnail"
+        android:layout_marginLeft="5dp"
         android:text="Dr. Zemiel Asma"
         android:textColor="#040404"
-        android:typeface="sans"
         android:textSize="15dip"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:typeface="sans" />
 
     <TextView
         android:id="@+id/findings"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/doctor_name"
-        android:textColor="#343434"
-        android:textSize="10dip"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:text="Findings sa doctor" />
-
-    <!-- Date -->
-    <TextView
-        android:id="@+id/record_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="02/23/1995"
-        android:textStyle="bold"
-        android:textSize="10dp"
-        android:layout_alignBottom="@+id/product_description"
-        android:layout_alignTop="@+id/product_name"
-        android:textColor="#5B9A68"
-        android:layout_alignParentRight="true" />
-</RelativeLayout>
+        android:text="Findings sa doctor"
+        android:textColor="#343434"
+        android:textSize="10dip" />
+</LinearLayout>

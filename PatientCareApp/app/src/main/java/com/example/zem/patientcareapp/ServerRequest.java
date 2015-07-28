@@ -50,10 +50,6 @@ public class ServerRequest {
         isSuccessful = false;
         this.request = request;
         if (helpers.isNetworkAvailable(activity)) {
-
-
-            System.out.print("FUCKING PARAMS: " + params.toString());
-
                 /* This is where we get the results */
             if( pDialog != null ){
                 pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
@@ -72,7 +68,6 @@ public class ServerRequest {
 
                                     // if table requested is "BASKETS"
                                    if( params.get("table").equals("baskets") ){
-
                                        if( params.get("action").equals("insert") ){
                                            if(success == 1){
                                                int insertedId = Integer.parseInt(response.getString("last_inserted_id"));
@@ -85,8 +80,6 @@ public class ServerRequest {
                                                basket.setQuantity(Double.parseDouble(params.get("quantity")));
                                                basket.setProductId(Integer.parseInt(params.get("product_id")));
                                                basket.setCreatedAt(sdf.format(now));
-
-
 
                                                if( dbHelper.insertBasket(basket) ){
                                                    Toast.makeText(activity, successMessage, Toast.LENGTH_SHORT).show();
@@ -116,12 +109,9 @@ public class ServerRequest {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("volley error ", "" + error.toString());
-                    System.out.println("error is: " + error);
                     if( pDialog != null ) pDialog.hide();
                 }
             });
-
-
             queue.add(jsObjRequest);
         }
         return isSuccessful;
@@ -129,11 +119,6 @@ public class ServerRequest {
 
     public boolean getResponse(){
         return this.isSuccessful;
-    }
-
-
-    public void setProgressDialog(ProgressDialog progressDialog){
-        this.pDialog = progressDialog;
     }
 
     public void setSuccessMessage(String msg){

@@ -1,11 +1,12 @@
 package com.example.zem.patientcareapp;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,7 +14,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -27,15 +30,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.zem.patientcareapp.GetterSetter.ImageItem;
-import com.example.zem.patientcareapp.adapter.GridViewAdapter;
 import com.nostra13.universalimageloader.core.*;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -52,7 +50,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Zem on 7/10/2015.
@@ -77,33 +74,29 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     long totalSize = 0;
     int patientID;
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.prescriptions_layout, container, false);
-        gridView = (GridView) rootView.findViewById(R.id.gridView);
+
         dbhelper = new DbHelper(getActivity());
         helper = new Helpers();
 
+        gridView = (GridView) rootView.findViewById(R.id.gridView);
+        add_pres = (ImageButton) rootView.findViewById(R.id.add_pres);
+
         patientID = dbhelper.getCurrentLoggedInPatient().getServerID();
-//
         uploadsByUser = dbhelper.getUploadedPrescriptionsByUserID(patientID);
+
+        add_pres.setOnClickListener(this);
+
         gridView.setAdapter(new ImageAdapter(getActivity(), uploadsByUser));
-
-
+        gridView.setOnCreateContextMenuListener(this);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Image selected position", position+"");
-
                 startImagePagerActivity(position);
             }
         });
-
-        //start of clone to prescription fragment
-        add_pres = (ImageButton) rootView.findViewById(R.id.add_pres);
-        gridView = (GridView) rootView.findViewById(R.id.gridView);
 
         upload_dialog = new Dialog(getActivity());
         upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -112,9 +105,36 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
         txtPercentage = (TextView) upload_dialog.findViewById(R.id.txtPercentage);
         progressBar = (ProgressBar) upload_dialog.findViewById(R.id.progressBar);
 
-        add_pres.setOnClickListener(this);
-
         return rootView;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.delete_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        if (item.getItemId() == R.id.delete_context) {
+            AlertDialog.Builder delete = new AlertDialog.Builder(getActivity());
+            delete.setTitle("Delete?");
+            delete.setNegativeButton("No", null);
+            delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (helper.isNetworkAvailable(getActivity())) {
+
+                    } else {
+                        Toast.makeText(getActivity(), "Please connect to the internet.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            delete.show();
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -217,7 +237,6 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         @Override
         protected void onPreExecute() {
-            // setting progress bar to zero
             progressBar.setProgress(0);
             super.onPreExecute();
         }
@@ -242,7 +261,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL+"?patient_id="+patientID);
+            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL + "?patient_id=" + patientID);
 
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
@@ -282,10 +301,10 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
         @Override
         protected void onPostExecute(String result) {
-
             Log.d("response from server", result);
             JSONObject jObject;
             String image_url = "";
+            int serverID = 0;
             try {
                 jObject = new JSONObject(result);
                 image_url = jObject.getString("file_path");
@@ -293,8 +312,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                 e.printStackTrace();
             }
 
-           //put the refresh grid here
-            //or the display newly added image here
+            //put the refresh grid here or the display newly added image here
             if (dbhelper.insertUploadOnPrescription(patientID, image_url)) {
                 uploadsByUser = dbhelper.getUploadedPrescriptionsByUserID(patientID);
                 gridView.setAdapter(new ImageAdapter(getActivity(), uploadsByUser));
@@ -394,7 +412,6 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
     protected void startImagePagerActivity(int position) {
         Intent intent = new Intent(getActivity(), SimpleImageActivity.class);
-//        intent.putExtra(Constants.Extra.FRAGMENT_INDEX, ImagePagerFragment.INDEX);
         intent.putExtra(Config.IMAGE_POSITION, position);
         startActivity(intent);
     }

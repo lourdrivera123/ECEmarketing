@@ -205,7 +205,10 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             String meridiem = "AM";
-            if (hourOfDay > 12) {
+
+            if (hourOfDay == 12) {
+                meridiem = "PM";
+            } else if (hourOfDay > 11) {
                 hourOfDay -= 12;
                 meridiem = "PM";
             }
