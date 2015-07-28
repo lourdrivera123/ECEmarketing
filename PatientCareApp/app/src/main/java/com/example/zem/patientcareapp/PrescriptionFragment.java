@@ -368,9 +368,11 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             Log.d("response from server", result);
             JSONObject jObject;
             String image_url = "";
+            int server_id = 0;
             try {
                 jObject = new JSONObject(result);
                 image_url = jObject.getString("file_path");
+                server_id = jObject.getInt("server_id");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
