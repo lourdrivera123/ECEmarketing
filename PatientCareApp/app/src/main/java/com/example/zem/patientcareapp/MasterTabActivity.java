@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
     private MasterTabsAdapter mAdapter;
     private String[] tabs = {"Profile", "My Records", "Prescription", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
@@ -62,6 +65,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             public void onPageScrollStateChanged(int arg0) {
             }
         });
+
     }
 
     @Override

@@ -308,6 +308,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             try {
                 jObject = new JSONObject(result);
                 image_url = jObject.getString("file_path");
+                serverID = jObject.getInt("server_id");
             } catch (JSONException e) {
                 e.printStackTrace();
             }

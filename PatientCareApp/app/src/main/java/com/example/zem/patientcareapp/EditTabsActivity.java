@@ -185,7 +185,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                     validateUserAccountInfo();
                                     if (!hasError3) {
                                         if (edit_int > 0) {
-                                            String edit_uname = HomeTileActivity.getUname();
+                                            String edit_uname = SidebarActivity.getUname();
                                             editUser = dbHelper.getloginPatient(edit_uname);
                                             int userID = editUser.getId();
                                             String chosenPhoto = patient.getPhoto();
@@ -244,7 +244,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                             editor.commit();
                                                                             pDialog.hide();
                                                                             helpers.showNotification(getBaseContext());
-                                                                            startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+                                                                            startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                                                         } else {
                                                                             Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                                                                         }

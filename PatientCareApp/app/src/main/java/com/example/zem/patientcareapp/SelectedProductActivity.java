@@ -97,7 +97,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (get_parent.equals("HomeTile")) {
-                    startActivity(new Intent(this, HomeTileActivity.class));
+                    startActivity(new Intent(this, SidebarActivity.class));
                 } else if (get_parent.equals("ProductsFragment")) {
                     Intent intent = new Intent(this, MasterTabActivity.class);
                     intent.putExtra("selected", 5);

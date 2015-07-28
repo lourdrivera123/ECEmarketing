@@ -127,6 +127,14 @@
         <activity android:name=".samplepaypal" />
         <activity android:name=".UploadActivity" />
         <activity android:name=".ImagePagerFragment" />
+        <activity
+            android:name=".SidebarActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@android:style/Theme.Holo.Light">
+
+        </activity>
+        <activity android:name=".HomeTileActivityClone" />
+
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"

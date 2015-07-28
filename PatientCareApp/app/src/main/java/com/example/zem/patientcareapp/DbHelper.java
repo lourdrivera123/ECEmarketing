@@ -1294,11 +1294,6 @@ public class DbHelper extends SQLiteOpenHelper {
         return items;
     }
 
-    public Patient getCurrentLoggedInPatient() {
-        Patient patient = this.getloginPatient(HomeTileActivity.getUname());
-        return patient;
-    }
-
     public ArrayList<String> getUploadedPrescriptionsByUserID(int patientID) {
         ArrayList<String> list_of_filename = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
@@ -1604,6 +1599,11 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
 
         return medicine;
+    }
+
+    public Patient getCurrentLoggedInPatient() {
+        Patient patient = this.getloginPatient(SidebarActivity.getUname());
+        return patient;
     }
 
     public ArrayList<HashMap<String, String>> getDoctorName() {
