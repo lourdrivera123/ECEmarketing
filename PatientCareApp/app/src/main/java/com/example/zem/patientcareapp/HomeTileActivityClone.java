@@ -104,61 +104,6 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
         return rootView;
 
     }
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-////        setContentView(R.layout.home_tile_layout);
-//
-//        hometile = this;
-//            ActionBar actionbar = getActionBar();
-//            MainActivity.setCustomActionBar(actionbar);
-//
-//            sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-//            editor = sharedpreferences.edit();
-//
-//            dbHelper = new DbHelper(this);
-//            hash_allProducts = dbHelper.getAllProducts();
-//            products = new ArrayList();
-//
-//            for (int x = 0; x < hash_allProducts.size(); x++) {
-//                products.add(hash_allProducts.get(x).get(dbHelper.PRODUCT_NAME));
-//            }
-//            createCustomSearchBar(actionbar);
-//
-//            FragmentManager fragmentManager = getFragmentManager();
-//            fragmentTransaction = fragmentManager.beginTransaction();
-//
-//            profile_btn = (ImageButton) findViewById(R.id.profile_btn);
-//            news_btn = (ImageButton) findViewById(R.id.news_btn);
-//            promos_btn = (ImageButton) findViewById(R.id.promos_btn);
-//            doctors_btn = (ImageButton) findViewById(R.id.doctors_btn);
-//            history_btn = (ImageButton) findViewById(R.id.history_btn);
-//            test_results_btn = (ImageButton) findViewById(R.id.test_results_btn);
-//            cart_btn = (ImageButton) findViewById(R.id.cart_btn);
-//            products_btn = (ImageButton) findViewById(R.id.products_btn);
-//            consultation_btn = (ImageButton) findViewById(R.id.consultation_btn);
-//
-//            consultation_btn.setOnClickListener(this);
-//            profile_btn.setOnClickListener(this);
-//            news_btn.setOnClickListener(this);
-//            promos_btn.setOnClickListener(this);
-//            doctors_btn.setOnClickListener(this);
-//            history_btn.setOnClickListener(this);
-//            test_results_btn.setOnClickListener(this);
-//            cart_btn.setOnClickListener(this);
-//            products_btn.setOnClickListener(this);
-//
-//            if (dbHelper.checkUserIfRegistered(getUname()) > 0) {
-//
-//            } else {
-//                editor.clear();
-//                editor.commit();
-//                moveTaskToBack(true);
-//                HomeTileActivity.this.finish();
-//                startActivity(new Intent(this, MainActivity.class));
-//        }
-//    }
 
     @Override
     public void onClick(View v) {

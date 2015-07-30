@@ -38,40 +38,40 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Holo.Light" />
         <activity
-            android:name=".SignUpFragment"
+            android:name=".Fragment.SignUpFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".AccountFragment"
+            android:name=".Fragment.AccountFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".ContactsFragment"
+            android:name=".Fragment.ContactsFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".ListOfDoctorsFragment"
+            android:name=".Fragment.ListOfDoctorsFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".PatientProfileFragment"
+            android:name=".Fragment.PatientProfileFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".PatientHistoryFragment"
+            android:name=".Fragment.PatientHistoryFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".TrialPrescriptionFragment"
+            android:name=".Fragment.TrialPrescriptionFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".ShoppingCartFragment"
+            android:name=".Fragment.ShoppingCartFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".ProductsFragment"
+            android:name=".Fragment.ProductsFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".PatientConsultationFragment"
+            android:name=".Fragment.PatientConsultationFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".ProductCategoriesFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".PromoFragment"
+            android:name=".Fragment.PromoFragment"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <!--Activities-->
@@ -126,7 +126,7 @@
         <activity android:name=".ImageItem" />
         <activity android:name=".samplepaypal" />
         <activity android:name=".UploadActivity" />
-        <activity android:name=".ImagePagerFragment" />
+        <activity android:name=".Fragment.ImagePagerFragment" />
         <activity
             android:name=".SidebarActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

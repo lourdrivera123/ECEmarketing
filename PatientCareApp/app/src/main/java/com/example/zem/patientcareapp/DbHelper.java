@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.ArrayAdapter;
 
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.GetterSetter.Clinic;
@@ -597,11 +598,11 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
-    public boolean insertUploadOnPrescription(Integer patientID, String filename) {
+    public boolean insertUploadOnPrescription(Integer patientID, String filename, int serverID) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(PRESCRIPTIONS_SERVER_ID, 0);
+        values.put(PRESCRIPTIONS_SERVER_ID, serverID);
         values.put(PRESCRIPTIONS_PATIENT_ID, patientID);
         values.put(PRESCRIPTIONS_FILENAME, filename);
         values.put(PRESCRIPTIONS_APPROVED, 0);
@@ -633,7 +634,6 @@ public class DbHelper extends SQLiteOpenHelper {
             rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
         } else if (request.equals("update")) {
             rowID = db.update(TBL_PATIENT_RECORDS, values, RECORDS_ID + "=" + record.getRecordID(), null);
-
         }
         db.close();
         return rowID;
@@ -1294,19 +1294,23 @@ public class DbHelper extends SQLiteOpenHelper {
         return items;
     }
 
-    public ArrayList<String> getUploadedPrescriptionsByUserID(int patientID) {
-        ArrayList<String> list_of_filename = new ArrayList();
+    public ArrayList<HashMap<String, String>> getPrescriptionByUserID(int patientID) {
+        ArrayList<HashMap<String, String>> listOfFilename = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PATIENT_PRESCRIPTIONS + " WHERE " + PRESCRIPTIONS_PATIENT_ID + " = " + patientID;
         Cursor cur = db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
-            list_of_filename.add(cur.getString(cur.getColumnIndex(PRESCRIPTIONS_FILENAME)));
+            HashMap<String, String> map = new HashMap();
+            map.put(PRESCRIPTIONS_SERVER_ID, String.valueOf(cur.getInt(cur.getColumnIndex(PRESCRIPTIONS_SERVER_ID))));
+            map.put(PRESCRIPTIONS_FILENAME, cur.getString(cur.getColumnIndex(PRESCRIPTIONS_FILENAME)));
+            listOfFilename.add(map);
         }
+
         cur.close();
         db.close();
 
-        return list_of_filename;
+        return listOfFilename;
     }
 
     public ArrayList<HashMap<String, String>> getAllDoctorClinic() {

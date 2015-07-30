@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.ActionBar;
-import android.app.Activity;
 //import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -32,9 +31,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
-import com.example.zem.patientcareapp.GetterSetter.*;
+import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 
-public class SidebarActivity extends FragmentActivity  {
+public class SidebarActivity extends FragmentActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -189,7 +188,7 @@ public class SidebarActivity extends FragmentActivity  {
 
     /**
      * Slide menu item click listener
-     * */
+     */
     private class SlideMenuClickListener implements
             ListView.OnItemClickListener {
         @Override
@@ -234,7 +233,7 @@ public class SidebarActivity extends FragmentActivity  {
 
     /**
      * Diplaying fragment view for selected nav drawer list item
-     * */
+     */
     private void displayView(int position) {
         // update the main content by replacing fragments
         Fragment fragment = null;
@@ -334,7 +333,6 @@ public class SidebarActivity extends FragmentActivity  {
                 intent.putExtra(SelectedProductActivity.PRODUCT_ID, productID);
                 intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "HomeTile");
                 startActivity(intent);
-//                HomeTileActivity.this.finish();
             }
         });
 

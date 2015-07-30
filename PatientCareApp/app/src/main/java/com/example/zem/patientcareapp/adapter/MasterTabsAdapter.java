@@ -4,14 +4,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.zem.patientcareapp.PatientConsultationFragment;
-import com.example.zem.patientcareapp.PatientHistoryFragment;
-import com.example.zem.patientcareapp.ListOfDoctorsFragment;
-import com.example.zem.patientcareapp.PatientProfileFragment;
-import com.example.zem.patientcareapp.ProductsFragment;
-import com.example.zem.patientcareapp.PromoFragment;
-import com.example.zem.patientcareapp.ShoppingCartFragment;
-import com.example.zem.patientcareapp.TrialPrescriptionFragment;
+import com.example.zem.patientcareapp.Fragment.PatientConsultationFragment;
+import com.example.zem.patientcareapp.Fragment.PatientHistoryFragment;
+import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
+import com.example.zem.patientcareapp.Fragment.PatientProfileFragment;
+import com.example.zem.patientcareapp.Fragment.ProductsFragment;
+import com.example.zem.patientcareapp.Fragment.PromoFragment;
+import com.example.zem.patientcareapp.Fragment.ShoppingCartFragment;
+import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 
 /**
  * Created by Esel on 5/5/2015.

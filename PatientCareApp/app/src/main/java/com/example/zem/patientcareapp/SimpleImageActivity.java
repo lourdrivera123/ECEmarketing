@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.zem.patientcareapp.Fragment.ImagePagerFragment;
+
 public class SimpleImageActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {

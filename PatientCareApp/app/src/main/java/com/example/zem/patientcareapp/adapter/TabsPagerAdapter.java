@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.zem.patientcareapp.AccountFragment;
-import com.example.zem.patientcareapp.ContactsFragment;
-import com.example.zem.patientcareapp.SignUpFragment;
+import com.example.zem.patientcareapp.Fragment.AccountFragment;
+import com.example.zem.patientcareapp.Fragment.ContactsFragment;
+import com.example.zem.patientcareapp.Fragment.SignUpFragment;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 

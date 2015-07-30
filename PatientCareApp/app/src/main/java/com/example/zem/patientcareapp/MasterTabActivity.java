@@ -10,12 +10,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import com.example.zem.patientcareapp.Fragment.ShoppingCartFragment;
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
     private MasterTabsAdapter mAdapter;
