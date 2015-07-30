@@ -94,9 +94,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         int ID = Integer.parseInt(doctor_items.get(position).get(KEY_ID));
         Intent intent = new Intent(getActivity(), DoctorActivity.class);
         intent.putExtra(dbHelper.RECORDS_DOCTOR_ID, ID);
-        intent.putExtra(DoctorActivity.PARENT_ACTIVITY, "ListOfDoctorsFragment");
         startActivity(intent);
-        getActivity().finish();
     }
 
     @Override

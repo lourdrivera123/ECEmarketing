@@ -21,9 +21,6 @@ import com.example.zem.patientcareapp.GetterSetter.Product;
 
 import java.util.HashMap;
 
-/**
- * Created by User PC on 6/16/2015.
- */
 public class SelectedProductActivity extends Activity implements View.OnClickListener {
     public static final String PRODUCT_ID = "productID";
     public static final String UP_ACTIVITY = "parent_activity";
@@ -81,7 +78,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         add_qty.setOnClickListener(this);
         add_cart_btn.setOnClickListener(this);
 
-
         prod_name.setText(prod.getName());
         prod_generic.setText(prod.getGenericName());
         prod_unit.setText(prod.getUnit());
@@ -94,13 +90,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
 
         qty_cart.setText("" + temp_qty);
         prod_unit.setText("1 " + prod.getUnit() + " x " + qtyPerPacking + "(1 " + productPacking + ")");
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        this.finish();
-        super.onBackPressed();
     }
 
     @Override
@@ -125,6 +114,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -147,7 +137,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                     qty_cart.setText("" + temp_qty);
                 }
 
-                prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "("+(temp_qty/qtyPerPacking)+" " + productPacking + ")");
+                prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "(" + (temp_qty / qtyPerPacking) + " " + productPacking + ")");
 
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -161,9 +151,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                 temp_qty += qtyPerPacking;
                 add_qty.setImageResource(R.drawable.ic_plus_dead);
                 qty_cart.setText("" + temp_qty);
-
-                prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "("+(temp_qty/qtyPerPacking)+" " + productPacking + ")");
-
+                prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "(" + (temp_qty / qtyPerPacking) + " " + productPacking + ")");
 
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -179,7 +167,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                         double new_qty;
                         new_qty = Double.parseDouble(String.valueOf(temp_qty));
 
-                    /* let's check if the product already exists in our basket */
                         final Basket basket = dbhelper.getBasket(get_productID);
 
                         if (basket.getBasketId() > 0) {
@@ -197,13 +184,19 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                             hashMap.put("id", String.valueOf(basket.getBasketId()));
 
                             serverRequest.init(this, hashMap, "insert_basket");
-                            serverRequest.setProgressDialog(pDialog);
+
+                            final ProgressDialog pdialog = new ProgressDialog(this);
+                            pdialog.setCancelable(false);
+                            pdialog.setMessage("Loading...");
+                            pdialog.show();
+
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     boolean responseFromServer = serverRequest.getResponse();
                                     if (responseFromServer) {
                                         if (dbhelper.updateBasket(basket)) {
+                                            pdialog.dismiss();
                                             Toast.makeText(getBaseContext(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
@@ -214,8 +207,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                                 }
                             }, 2500);
                         } else {
-                        /* since, we can't find the product in baskets table, let's insert a new one */
-                            HashMap<String, String> hashMap = new HashMap<String, String>();
+                            final HashMap<String, String> hashMap = new HashMap();
                             hashMap.put("product_id", String.valueOf(get_productID));
                             hashMap.put("quantity", String.valueOf(new_qty));
                             hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
@@ -223,16 +215,26 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                             hashMap.put("request", "crud");
                             hashMap.put("action", "insert");
 
-                            serverRequest.setProgressDialog(pDialog);
+                            final ProgressDialog pdialog = new ProgressDialog(this);
+                            pdialog.setCancelable(false);
+                            pdialog.setMessage("Loading...");
+                            pdialog.show();
 
-                            serverRequest.setSuccessMessage("New item has been added to your cart!");
-                            serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
-                            serverRequest.init(this, hashMap, "insert_basket");
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    pdialog.dismiss();
+
+                                    serverRequest.setSuccessMessage("New item has been added to your cart!");
+                                    serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
+                                    serverRequest.init(getBaseContext(), hashMap, "insert_basket");
+                                }
+                            }, 2500);
                         }
                     } catch (Exception e) {
                     }
                 } else {
-                    Toast.makeText(this, "Sorry, please connect to the internet.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

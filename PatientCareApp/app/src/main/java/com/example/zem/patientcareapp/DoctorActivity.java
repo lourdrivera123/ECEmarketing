@@ -16,8 +16,6 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
     DbHelper dbHelper;
     Doctor doctor;
 
-    public static final String PARENT_ACTIVITY = "parent_acitivity";
-    String get_parent_activity = "";
     int id = 0;
     int doctorID;
 
@@ -33,7 +31,6 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
         dbHelper = new DbHelper(this);
         Intent intent = getIntent();
         doctorID = intent.getIntExtra(dbHelper.RECORDS_DOCTOR_ID, 0);
-        get_parent_activity = intent.getStringExtra(PARENT_ACTIVITY);
 
         doctor_name = (TextView) findViewById(R.id.doctor_name);
         specialty = (TextView) findViewById(R.id.specialty);

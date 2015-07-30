@@ -5,8 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +52,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public int update_recordID = 0;
 
     DbHelper dbHelper;
-    RoundImage roundedImage;
     Helpers helpers;
 
     @Override
@@ -234,7 +230,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             case R.id.view_doctor_btn:
                 Intent intent_doctoractivity = new Intent(getActivity(), DoctorActivity.class);
                 intent_doctoractivity.putExtra(DbHelper.RECORDS_DOCTOR_ID, DOCTOR_ID);
-                intent_doctoractivity.putExtra(DoctorActivity.PARENT_ACTIVITY, "PatientHistoryFragment");
                 startActivity(intent_doctoractivity);
                 break;
 
@@ -301,22 +296,20 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
+            View v = super.getView(position, convertView, parent);
             Drawable d = getResources().getDrawable(R.drawable.list_selector);
             v.setBackgroundDrawable(d);
 
-            ImageView img = (ImageView) v.findViewById(R.id.list_image);
             TextView record_date = (TextView) v.findViewById(R.id.record_date);
             TextView findings = (TextView) v.findViewById(R.id.findings);
+            TextView doctor = (TextView) v.findViewById(R.id.doctor_name);
 
+            doctor.setText("Dr. " + hashHistory.get(position).get(DbHelper.RECORDS_DOCTOR_NAME));
+            doctor.setTag(position);
             record_date.setText(hashHistory.get(position).get(DbHelper.RECORDS_DATE));
             record_date.setTag(position);
             findings.setText(hashHistory.get(position).get(DbHelper.RECORDS_FINDINGS));
             findings.setTag(position);
-
-            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_app);
-            roundedImage = new RoundImage(bm);
-            img.setImageDrawable(roundedImage);
 
             if (mSelection.get(position) != null) {
                 v.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));// this is a selected position so make it red

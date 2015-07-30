@@ -129,7 +129,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         if (position != 0) {
             String item = ((TextView) view).getText().toString();
 
-            final int categoryId = dbHelper.categoryGetIdByName(item);
+            final int categoryId = dbHelper.getCategoryIdByName(item);
             String[] arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
 
             final Dialog dialog = new Dialog(getActivity());

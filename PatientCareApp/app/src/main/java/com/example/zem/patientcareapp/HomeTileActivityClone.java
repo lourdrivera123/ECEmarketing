@@ -21,6 +21,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 
+import com.example.zem.patientcareapp.GetterSetter.Patient;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

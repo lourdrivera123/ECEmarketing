@@ -348,7 +348,6 @@ public class Sync {
             if (date1.compareTo(date2) < 0) {
                 something = true;
                 System.out.println("date2 is Greater than my date1");
-//            Log.d("date2 is Greater than my date1", "adsasd");
             }
 
 
@@ -434,7 +433,6 @@ public class Sync {
             doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
             doctor.setPrc_no(json.getInt("prc_no"));
             doctor.setSub_specialty_id(json.getInt("sub_specialty_id"));
-            doctor.setPhoto(json.getString("photo"));
             doctor.setAffiliation(json.getString("affiliation"));
             doctor.setCreated_at(json.getString("created_at"));
             doctor.setUpdated_at(json.getString("updated_at"));

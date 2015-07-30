@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -86,7 +85,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
                 startActivity(intent);
                 break;
 
-            case R.id.delete_cart:
+            case R.id.delete_context:
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                 dialog.setTitle("Delete?");
                 dialog.setMessage("1 record will be deleted.");
