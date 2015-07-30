@@ -20,6 +20,12 @@
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
+        <item>@drawable/ic_plus</item>
+        <item>@drawable/ic_plus</item>
+        <item>@drawable/ic_plus</item>
+        <item>@drawable/ic_plus</item>
+        <item>@drawable/ic_plus</item>
+        <item>@drawable/ic_plus</item>
     </array>
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>1
