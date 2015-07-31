@@ -34,7 +34,7 @@ public class ServerRequest {
     String request;
     ProgressDialog pDialog;
 
-    String  successMessage = "Success!.",
+    String successMessage = "Success!.",
             errorMessage = "Sorry, something went wrong.";
 
     public ServerRequest() {
@@ -49,13 +49,9 @@ public class ServerRequest {
         helpers = new Helpers();
         isSuccessful = false;
         this.request = request;
+
         if (helpers.isNetworkAvailable(activity)) {
-
-
-            System.out.print("FUCKING PARAMS: " + params.toString());
-
-                /* This is where we get the results */
-            if( pDialog != null ){
+            if (pDialog != null) {
                 pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
                 pDialog.show();
             }
@@ -68,79 +64,72 @@ public class ServerRequest {
                             try {
                                 int success = Integer.parseInt(response.getString("success"));
                                 System.out.println("success is: " + success);
-                                System.out.println("RESPONSE: "+response.toString());
+                                System.out.println("RESPONSE: " + response.toString());
 
-                                    // if table requested is "BASKETS"
-                                   if( params.get("table").equals("baskets") ){
+                                // if table requested is "BASKETS"
+                                if (params.get("table").equals("baskets")) {
+                                    if (params.get("action").equals("insert")) {
+                                        if (success == 1) {
+                                            int insertedId = Integer.parseInt(response.getString("last_inserted_id"));
 
-                                       if( params.get("action").equals("insert") ){
-                                           if(success == 1){
-                                               int insertedId = Integer.parseInt(response.getString("last_inserted_id"));
+                                            Basket basket = new Basket();
+                                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                            Date now = new Date();
 
-                                               Basket basket = new Basket();
-                                               SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                               Date now = new Date();
+                                            basket.setBasketId(insertedId);
+                                            basket.setQuantity(Double.parseDouble(params.get("quantity")));
+                                            basket.setProductId(Integer.parseInt(params.get("product_id")));
+                                            basket.setCreatedAt(sdf.format(now));
 
-                                               basket.setBasketId(insertedId);
-                                               basket.setQuantity(Double.parseDouble(params.get("quantity")));
-                                               basket.setProductId(Integer.parseInt(params.get("product_id")));
-                                               basket.setCreatedAt(sdf.format(now));
+                                            if (dbHelper.insertBasket(basket)) {
+                                                Toast.makeText(activity, successMessage, Toast.LENGTH_SHORT).show();
+                                                isSuccessful = true;
+                                            }
 
-
-
-                                               if( dbHelper.insertBasket(basket) ){
-                                                   Toast.makeText(activity, successMessage, Toast.LENGTH_SHORT).show();
-                                                   isSuccessful = true;
-                                               }
-
-                                               if( pDialog != null ) pDialog.hide();
-                                           }
-                                       }else if( params.get("action").equals("update") ){
-                                           if( success == 1 ){
-                                               isSuccessful = true;
-                                           }
-                                       }else if( params.get("action").equals("delete") ){
-                                           if( success == 1 ){
-                                               isSuccessful = true;
-                                           }
-                                       }
-                                   }
-
+                                            if (pDialog != null) pDialog.hide();
+                                        }
+                                    } else if (params.get("action").equals("update")) {
+                                        if (success == 1) {
+                                            isSuccessful = true;
+                                        }
+                                    } else if (params.get("action").equals("delete")) {
+                                        if (success == 1) {
+                                            isSuccessful = true;
+                                        }
+                                    }
+                                } else if (params.get("table").equals("patient_prescriptions")) {
+                                    if (params.get("action").equals("delete")) {
+                                        if (success == 1) {
+                                            isSuccessful = true;
+                                        }
+                                    }
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                if( pDialog != null ) pDialog.hide();
+                                if (pDialog != null) pDialog.hide();
                             }
-
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("volley error ", "" + error.toString());
-                    System.out.println("error is: " + error);
-                    if( pDialog != null ) pDialog.hide();
+                    if (pDialog != null) pDialog.hide();
                 }
             });
-
-
             queue.add(jsObjRequest);
         }
         return isSuccessful;
     }
 
-    public boolean getResponse(){
+    public boolean getResponse() {
         return this.isSuccessful;
     }
 
-
-    public void setProgressDialog(ProgressDialog progressDialog){
-        this.pDialog = progressDialog;
-    }
-
-    public void setSuccessMessage(String msg){
+    public void setSuccessMessage(String msg) {
         this.successMessage = msg;
     }
 
-    public void setErrorMessage(String msg){
+    public void setErrorMessage(String msg) {
         this.errorMessage = msg;
     }
 }

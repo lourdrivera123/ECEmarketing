@@ -31,35 +31,34 @@
 
                     <ImageView
                         android:id="@+id/image_holder"
-                        android:background="@drawable/image_bg"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/img_holder" />
+                        android:src="@mipmap/doctor_photo" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="0.6"
                     android:gravity="center_vertical"
-                    android:layout_weight="0.6">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/doctor_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"
+                        android:text="Villareal, Mary Joy, MI. PhD"
                         android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:text="Villareal, Mary Joy, MI. PhD" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/specialty"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"
-                        android:textSize="10sp"
-                        android:text="(Cardiologist, cardiosublogist)" />
+                        android:text="(Cardiologist, cardiosublogist)"
+                        android:textSize="10sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -79,8 +78,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="@dimen/d10">
+                    android:layout_marginBottom="@dimen/d10"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/clinic_name"

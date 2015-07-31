@@ -11,13 +11,12 @@ import com.example.zem.patientcareapp.GetterSetter.Clinic;
 import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
 import com.example.zem.patientcareapp.GetterSetter.Doctor;
 import com.example.zem.patientcareapp.GetterSetter.Dosage;
+import com.example.zem.patientcareapp.GetterSetter.FreeProducts;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.GetterSetter.PatientRecord;
 import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.GetterSetter.ProductCategory;
 import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
-import com.example.zem.patientcareapp.GetterSetter.PromoDiscount;
-import com.example.zem.patientcareapp.GetterSetter.PromoFreeProducts;
 import com.example.zem.patientcareapp.GetterSetter.Specialty;
 import com.example.zem.patientcareapp.GetterSetter.SubSpecialty;
 import com.example.zem.patientcareapp.GetterSetter.Treatments;
@@ -349,7 +348,6 @@ public class Sync {
             if (date1.compareTo(date2) < 0) {
                 something = true;
                 System.out.println("date2 is Greater than my date1");
-//            Log.d("date2 is Greater than my date1", "adsasd");
             }
 
 
@@ -435,7 +433,6 @@ public class Sync {
             doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
             doctor.setPrc_no(json.getInt("prc_no"));
             doctor.setSub_specialty_id(json.getInt("sub_specialty_id"));
-            doctor.setPhoto(json.getString("photo"));
             doctor.setAffiliation(json.getString("affiliation"));
             doctor.setCreated_at(json.getString("created_at"));
             doctor.setUpdated_at(json.getString("updated_at"));

@@ -71,9 +71,12 @@ public class AlarmService {
                         //we will write the code to send SMS inside onRecieve() method pf Alarmreciever class
                         Intent intentAlarm = new Intent(context, AlarmReceiver.class);
 
-                        Bundle extras = new Bundle();
-                        extras.putSerializable("map", map);
-                        intentAlarm.putExtras(extras);
+                        // Bundle extras = new Bundle();
+                        // extras.putSerializable("map", map);
+                        intentAlarm.putExtra("id", map.get("id"));
+                        intentAlarm.putExtra("doctor", map.get("doctor"));
+                        intentAlarm.putExtra("clinic", map.get("clinic"));
+                        intentAlarm.putExtra("partOfDay", map.get("partOfDay"));
 
                         // create the object
 

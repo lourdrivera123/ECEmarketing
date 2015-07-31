@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class Doctor implements Serializable {
     private String fname = "", mname = "", lname = "",
-            photo = "", affiliation = "", specialty = "", sub_specialty = "",
+            affiliation = "", specialty = "", sub_specialty = "",
             created_at = "", updated_at = "", deleted_at = "";
 
     private int prc_no = 0, doc_id = 0, sub_specialty_id = 0;
@@ -54,10 +54,6 @@ public class Doctor implements Serializable {
         this.sub_specialty_id = sub_specialty_id;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
     public void setAffiliation(String affiliation) {
         this.affiliation = affiliation;
     }
@@ -66,18 +62,11 @@ public class Doctor implements Serializable {
         this.created_at = created_at;
     }
 
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
-    }
+    public void setUpdated_at(String updated_at) { this.updated_at = updated_at; }
 
     public void setDeleted_at(String deleted_at) {
         this.deleted_at = deleted_at;
     }
-
-
-    /**
-     * GETTERS ------------------------------------------------------------------- *
-     */
 
     public int getDoc_id() {
         return doc_id;
@@ -109,10 +98,6 @@ public class Doctor implements Serializable {
 
     public int getSub_specialty_id() {
         return sub_specialty_id;
-    }
-
-    public String getPhoto() {
-        return photo;
     }
 
     public String getAffiliation() {

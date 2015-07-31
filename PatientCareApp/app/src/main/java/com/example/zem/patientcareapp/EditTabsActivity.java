@@ -31,7 +31,6 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +40,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.Fragment.SignUpFragment;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
 
@@ -73,7 +73,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_barangay, address_city_municipality, address_province, address_zip,
             email, tel_no, cell_no;
     Spinner address_region;
-    int int_unit, int_lot, int_block, int_phase, int_house;
     String s_unit_no, s_building, s_lot_no, s_block_no, s_phase_no, s_house_no, s_street, s_barangay, s_city, s_province, s_zip, s_email, s_tel_no, s_cell_no, s_region;
 
     // ACCOUNT INFO FRAGMENT
@@ -186,11 +185,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                 if (!hasError && !hasError2) {
                                     validateUserAccountInfo();
                                     if (!hasError3) {
-                                        long date = System.currentTimeMillis();
-                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM");
-
                                         if (edit_int > 0) {
-                                            String edit_uname = HomeTileActivity.getUname();
+                                            String edit_uname = SidebarActivity.getUname();
                                             editUser = dbHelper.getloginPatient(edit_uname);
                                             int userID = editUser.getId();
                                             String chosenPhoto = patient.getPhoto();
@@ -248,31 +244,30 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                             editor.putString("nameKey", patient.getUsername());
                                                                             editor.commit();
                                                                             pDialog.hide();
+
                                                                             Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
                                                                             helpers.showNotification(getBaseContext(), resultIntent, 001, "Happy Birthday", "Happy Birthday and a Happy New Year", true);
                                                                             startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+
                                                                         } else {
                                                                             Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     } else {
                                                                         Toast.makeText(EditTabsActivity.this, "Error occcurred. Please try again later", Toast.LENGTH_SHORT).show();
                                                                     }
-
                                                                 } catch (JSONException e) {
                                                                 }
-
                                                             }
                                                         }, new Response.ErrorListener() {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
-                                                        pDialog.hide();
+                                                        pDialog.dismiss();
                                                         Log.d("volley error ", "" + error.toString());
-                                                        System.out.println("error is: " + error);
                                                     }
                                                 });
                                                 queue.add(jsObjRequest);
                                             } else {
-                                                Toast.makeText(EditTabsActivity.this, "Network error. Please check your internet connection", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(EditTabsActivity.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }
@@ -322,7 +317,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     public Map<String, String> setParams() {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap();
 
         params.put("request", "register");
         params.put("fname", patient.getFname());
@@ -427,18 +422,14 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         patient.setSex(s_sex);
 
         //NOT REQUIRED VARIABLES
-        if (s_mname.equals("")) {
-            patient.setMname("");
-        } else {
-            patient.setMname(s_mname);
-        }
+        if (s_mname.equals(""))
+            s_mname = "";
 
-        if (s_occupation.equals("")) {
-            patient.setOccupation("");
-        } else {
-            patient.setOccupation(s_occupation);
-        }
+        if (s_occupation.equals(""))
+            s_occupation = "";
 
+        patient.setMname(s_mname);
+        patient.setOccupation(s_occupation);
         patient.setCivil_status(s_civil_status);
     }
 
@@ -528,60 +519,38 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
 
         //NOT REQUIRED VARIABLES
-        if (s_unit_no.equals("")) {
-            int_unit = 0;
-        } else {
-            int_unit = Integer.parseInt(s_unit_no);
-            patient.setUnit_floor_room_no(int_unit);
-        }
+        if (s_unit_no.equals(""))
+            s_unit_no = "0";
 
-        if (s_building.equals("")) {
-            s_building = null;
-            patient.setBuilding("");
-        } else {
-            patient.setBuilding(s_building);
-        }
+        if (s_lot_no.equals(""))
+            s_lot_no = "0";
 
-        if (s_lot_no.equals("")) {
-            int_lot = 0;
-        } else {
-            int_lot = Integer.parseInt(s_lot_no);
-            patient.setLot_no(int_lot);
-        }
+        if (s_block_no.equals(""))
+            s_block_no = "0";
 
-        if (s_block_no.equals("")) {
-            int_block = 0;
-        } else {
-            int_block = Integer.parseInt(s_block_no);
-            patient.setBlock_no(int_block);
-        }
+        if (s_phase_no.equals(""))
+            s_phase_no = "0";
 
-        if (s_phase_no.equals("")) {
-            int_phase = 0;
-        } else {
-            int_phase = Integer.parseInt(s_phase_no);
-            patient.setPhase_no(int_phase);
-        }
+        if (s_house_no.equals(""))
+            s_house_no = "0";
 
-        if (s_house_no.equals("")) {
-            int_house = 0;
-        } else {
-            int_house = Integer.parseInt(s_house_no);
-            patient.setAddress_house_no(int_house);
-        }
+        if (s_tel_no.equals(""))
+            s_tel_no = "";
 
-        if (s_tel_no.equals("")) {
-            patient.setTel_no("");
-        } else {
-            patient.setTel_no(s_tel_no);
-        }
+        if (s_building.equals(""))
+            s_building = "";
 
-        if (s_email.equals("")) {
-            patient.setEmail("");
-        } else {
-            patient.setEmail(s_email);
-        }
+        if (s_email.equals(""))
+            s_email = "";
 
+        patient.setUnit_floor_room_no(Integer.parseInt(s_unit_no));
+        patient.setLot_no(Integer.parseInt(s_lot_no));
+        patient.setBlock_no(Integer.parseInt(s_block_no));
+        patient.setPhase_no(Integer.parseInt(s_phase_no));
+        patient.setAddress_house_no(Integer.parseInt(s_house_no));
+        patient.setTel_no(s_tel_no);
+        patient.setBuilding(s_building);
+        patient.setEmail(s_email);
         patient.setAddress_region(s_region);
     }
 

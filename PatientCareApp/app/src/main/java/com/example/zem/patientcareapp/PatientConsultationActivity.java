@@ -93,13 +93,11 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         } else {
             request = "update";
             updateID = Integer.parseInt(getIntent.getStringExtra("updateID"));
-            consult = dbhelper.getConsultationById(updateID, HomeTileActivity.getUserID());
+            consult = dbhelper.getConsultationById(updateID, SidebarActivity.getUserID());
 
             txtDate.setText(consult.getDate());
             search_doctor.setText(consult.getDoctor());
             search_clinic.setText(consult.getClinic());
-
-            Toast.makeText(this, "is alarmed: " + consult.getIsAlarmed(), Toast.LENGTH_SHORT).show();
 
             if (consult.getIsAlarmed() == 1) {
                 checkAlarm.setChecked(true);
@@ -152,7 +150,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
                 if (request.equals("update"))
                     consult.setId(updateID);
 
-                consult.setPatientID(HomeTileActivity.getUserID());
+                consult.setPatientID(SidebarActivity.getUserID());
                 consult.setDoctor(search_doctor.getText().toString());
                 consult.setDate(txtDate.getText().toString());
                 consult.setPartOfDay(spin_dayTime.getSelectedItem().toString());
@@ -207,7 +205,10 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             String meridiem = "AM";
-            if (hourOfDay > 12) {
+
+            if (hourOfDay == 12) {
+                meridiem = "PM";
+            } else if (hourOfDay > 11) {
                 hourOfDay -= 12;
                 meridiem = "PM";
             }

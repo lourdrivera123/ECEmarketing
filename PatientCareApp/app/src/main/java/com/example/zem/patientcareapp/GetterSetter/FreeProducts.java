@@ -1,4 +1,4 @@
-package com.example.zem.patientcareapp;
+package com.example.zem.patientcareapp.GetterSetter;
 
 /**
  * Created by User PC on 6/5/2015.

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,9 +94,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         int ID = Integer.parseInt(doctor_items.get(position).get(KEY_ID));
         Intent intent = new Intent(getActivity(), DoctorActivity.class);
         intent.putExtra(dbHelper.RECORDS_DOCTOR_ID, ID);
-        intent.putExtra(DoctorActivity.PARENT_ACTIVITY, "ListOfDoctorsFragment");
         startActivity(intent);
-        getActivity().finish();
     }
 
     @Override
@@ -129,7 +128,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onRefresh() {
-        if (helpers.isNetworkAvailable(getActivity())) {
+//        if (helpers.hasActiveInternetConnection(getActivity())) {
             // Request a string response from the provided URL.
             JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
 
@@ -151,13 +150,14 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    Log.d("error refresh", "check network");
                 }
             });
             queue.add(doctor_request);
-        } else {
-            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
-            refresh_doctor.setRefreshing(false);
-        }
+//        } else {
+//            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
+//            refresh_doctor.setRefreshing(false);
+//        }
     }
 }
 

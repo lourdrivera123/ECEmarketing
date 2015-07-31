@@ -46,26 +46,29 @@ public class AlarmReceiver extends BroadcastReceiver
         // Show the toast  like in above screen shot
 //        Bundle map = intent.getExtras();
 
-        Bundle bundle = intent.getExtras();
-        System.out.println("Bundle bundle on AlarmReceiver: "+bundle.toString());
+        /*Bundle bundle = intent.getExtras();
+        System.out.println("Bundle bundle on AlarmReceiver: "+bundle.toString());*/
 
 
 
         String title = "", message = "";
         int id = 001;
-        if( bundle != null ) {
+        try{
             HashMap<String, String> map;
-            map = (HashMap<String, String>) bundle.getSerializable("consultation");
+            /*map = (HashMap<String, String>) bundle.getSerializable("consultation");*/
 
-            System.out.println("Serializable map on AlarmReceiver: "+map.toString());
+//            System.out.println("Serializable map on AlarmReceiver: "+map.toString());
 
-            String doctor = map.get("doctor"), clinic = map.get("clinic"), am_pm = map.get("partOfDay");
+            String doctor = intent.getStringExtra("doctor"), clinic = intent.getStringExtra("clinic"), am_pm = intent.getStringExtra("partOfDay");
             Toast.makeText(context, "Alarm Triggered and SMS Sent", Toast.LENGTH_LONG).show();
             System.out.println("ALARM!!!!!!!<source: AlarmReceiver.java>");
 
             title = "Consultation Reminder...";
-            message = "You have a consultation today with Dr."+doctor+"\n at "+clinic+" this "+am_pm;
-            id = Integer.parseInt(map.get("id"));
+            message = "Dr."+doctor+"\n at "+clinic+" this "+am_pm;
+            id = Integer.parseInt(intent.getStringExtra("id"));
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         Intent resultIntent = new Intent(context, MainActivity.class);
@@ -76,7 +79,7 @@ public class AlarmReceiver extends BroadcastReceiver
         v.vibrate(500);
 
         try {
-            MediaPlayer mMediaPlayer = new MediaPlayer();
+            MediaPlayer mMediaPlayer;
             Uri alert =  RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setDataSource(context, alert);
