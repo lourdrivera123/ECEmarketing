@@ -46,17 +46,25 @@ public class Helpers {
         return cursor.getString(cursor.getColumnIndex(columnName));
     }
 
-    public void showNotification(Context context) {
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.ic_app)
-                        .setContentTitle("It's your Birthday!")
-                        .setSound(uri)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setContentText("I hope, it will be your last. ;)");
+    public void showNotification(Context context, Intent resultIntent, int mNotificationId, String title, String body, boolean playRingTone) {
+        NotificationCompat.Builder mBuilder;
 
-        Intent resultIntent = new Intent(context, MainActivity.class);
+        if( playRingTone ) {
+            Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            mBuilder = new NotificationCompat.Builder(context)
+                            .setSmallIcon(R.drawable.ic_app)
+                            .setContentTitle(title)
+                            .setSound(uri)
+                            .setDefaults(Notification.DEFAULT_SOUND)
+                            .setContentText(body);
+        }else{
+            mBuilder = new NotificationCompat.Builder(context)
+                            .setSmallIcon(R.drawable.ic_app)
+                            .setContentTitle(title)
+                            .setContentText(body);
+        }
+
+//        Intent resultIntent = new Intent(context, MainActivity.class);
 
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.
@@ -71,7 +79,7 @@ public class Helpers {
         mBuilder.setContentIntent(resultPendingIntent);
 
         // Sets an ID for the notification
-        int mNotificationId = 001;
+//        int mNotificationId = 001;
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

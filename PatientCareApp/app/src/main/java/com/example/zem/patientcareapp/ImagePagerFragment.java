@@ -49,7 +49,6 @@ ArrayList<String> uploadsByUser;
 
 	DbHelper dbhelper;
 
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.img_full_screen, container, false);
@@ -60,7 +59,7 @@ ArrayList<String> uploadsByUser;
 //
 		uploadsByUser = dbhelper.getUploadedPrescriptionsByUserID(patientID);
 
-		Log.d("uploadsbyuser on imagepager", uploadsByUser + "");
+//		Log.d("uploadsbyuser on imagepager", uploadsByUser.toString()+"");
 
 		ViewPager pager = (ViewPager) rootView.findViewById(R.id.pager);
 

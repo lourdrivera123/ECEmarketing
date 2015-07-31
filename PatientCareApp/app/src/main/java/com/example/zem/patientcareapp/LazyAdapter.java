@@ -334,8 +334,6 @@ public class LazyAdapter extends BaseAdapter {
 
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
 
-
-
             SimpleDateFormat df = new SimpleDateFormat("MMMMM d, yyyy");
 
             promoName.setText(promo_item.get("promo_name"));

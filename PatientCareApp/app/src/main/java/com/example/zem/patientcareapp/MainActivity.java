@@ -99,7 +99,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         if (sharedpreferences.contains(name)) {
             if (sharedpreferences.contains(pass)) {
-                helpers.showNotification(this);
+//                helpers.showNotification(this, "Title ni diri", "Diri dapita ang mensahe");
                 Intent i = new Intent(this, HomeTileActivity.class);
                 startActivity(i);
             }
@@ -167,7 +167,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                                     editor.putString(name, uname);
                                                     editor.putString(pass, password);
                                                     editor.commit();
-                                                    helpers.showNotification(getBaseContext());
+//                                                    helpers.showNotification(getBaseContext(), "Title ni diri", "Mao ni diri ang Mensahe");
                                                     Intent i = new Intent(getBaseContext(), HomeTileActivity.class);
                                                     startActivity(i);
                                                 } else {

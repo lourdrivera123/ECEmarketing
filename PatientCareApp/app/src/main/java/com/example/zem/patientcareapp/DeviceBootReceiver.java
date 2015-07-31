@@ -17,9 +17,10 @@ import android.widget.Toast;
  *         Start your repeating alarm here.
  */
 public class DeviceBootReceiver extends BroadcastReceiver {
-
+    Helpers helpers;
     @Override
     public void onReceive(Context context, Intent intent) {
+        helpers = new Helpers();
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             /* Setting the alarm here */
 
@@ -34,6 +35,9 @@ public class DeviceBootReceiver extends BroadcastReceiver {
             manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
             Toast.makeText(context, "Alarm Set", Toast.LENGTH_SHORT).show();
+            System.out.println("Alarm is fucking set");
+            Intent resultIntent = new Intent(context, MainActivity.class);
+            helpers.showNotification(context, resultIntent, 001, "Alarm!!!!", "ALARMA!!!", false);
         }
     }
 }

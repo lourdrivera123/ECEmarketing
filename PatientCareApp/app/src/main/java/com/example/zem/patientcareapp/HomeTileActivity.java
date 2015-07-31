@@ -2,13 +2,16 @@ package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,11 +21,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HomeTileActivity extends Activity implements View.OnClickListener {
     ImageButton profile_btn, news_btn, promos_btn, cart_btn, history_btn, products_btn, test_results_btn, doctors_btn,
@@ -38,15 +49,18 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
 
     static Patient patient;
     static DbHelper dbHelper;
+    static AlarmService alarmService;
+
+    PendingIntent pendingIntent;
 
     ArrayAdapter search_adapter;
-    ArrayList<HashMap<String, String>> hash_allProducts;
+    ArrayList<HashMap<String, String>> hash_allProducts, listOfAllConsultations;
     ArrayList<String> products;
 
     int productID = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_tile_layout);
 
@@ -58,6 +72,7 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         editor = sharedpreferences.edit();
 
         dbHelper = new DbHelper(this);
+        alarmService = new AlarmService(this);
         hash_allProducts = dbHelper.getAllProducts();
         products = new ArrayList();
 
@@ -90,6 +105,44 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
         products_btn.setOnClickListener(this);
 
         if (dbHelper.checkUserIfRegistered(getUname()) > 0) {
+
+            // Get all the consultation events
+            System.out.println("FUCKING USER: "+dbHelper.getCurrentLoggedInPatient().getServerID());
+            alarmService.patientConsultationReminder();
+            /*listOfAllConsultations = dbHelper.getAllConsultationsByUserId(dbHelper.getCurrentLoggedInPatient().getServerID());
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+
+            try{
+                List<Date> dates = new ArrayList<Date>();
+
+                // // context variable contains your `Context`
+                // AlarmManager mgrAlarm = (AlarmManager) this.getSystemService(ALARM_SERVICE);
+                // ArrayList<PendingIntent> intentArray = new ArrayList<PendingIntent>();
+
+                int x = listOfAllConsultations.toArray().length;
+                int y = 0;
+                for(HashMap<String, String> consultation : listOfAllConsultations){
+                    System.out.println("FUCKING CONSULTATION: "+consultation.toString());
+                    y++;
+                    if( consultation.get("isAlarm").equals("1") && consultation.get("finished").equals("0") ){
+                        String time = consultation.get("alarmedTime").replace(" ", "");
+                        System.out.println("FUCK: "+consultation.get("date").trim() + " " + (time.substring(0, time.length()-2))+
+                                " "+time.substring(time.length()-2, time.length()) );
+                        Date newDate = sdf.parse(consultation.get("date").trim() + " " + (time.substring(0, time.length()-2))+
+                                " "+time.substring(time.length()-2, time.length()));
+
+                        GregorianCalendar calendar = new GregorianCalendar();
+                        calendar.setTime(newDate);
+
+                        alarmService.scheduleAlarm(calendar, consultation);
+
+                        System.out.println("FUCKING NEW DATE: "+newDate.toString());
+
+                    }
+                }
+            }catch(ParseException e){
+                System.out.println("Oh snap! We got some error <source: HomeTileActivity.java@onCreate>"+e.toString());
+            }*/
 
         } else {
             editor.clear();
