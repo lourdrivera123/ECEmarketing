@@ -89,8 +89,8 @@ public class AlarmService {
 
                         String msg = "Alarm Scheduled for " + calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DATE) + " " +
                                 calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND) + "." + calendar.get(Calendar.MILLISECOND);
-                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
 
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                         System.out.println(msg);
                     }
                 }

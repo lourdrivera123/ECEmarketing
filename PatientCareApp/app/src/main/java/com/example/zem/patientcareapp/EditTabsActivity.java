@@ -324,7 +324,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("lname", patient.getLname());
         params.put("mname", patient.getMname());
         params.put("username", patient.getUsername());
-        params.put("password", patient.getPassword());
+        params.put("password", helpers.md5(patient.getPassword()));
         params.put("occupation", patient.getOccupation());
         params.put("birthdate", patient.getBirthdate());
         params.put("sex", patient.getSex());

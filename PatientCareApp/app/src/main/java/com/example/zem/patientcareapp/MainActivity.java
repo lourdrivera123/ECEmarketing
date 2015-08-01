@@ -215,7 +215,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         params.put("request", "login");
         params.put("username", patient.getUsername());
-        params.put("password", patient.getPassword());
+        params.put("password", helpers.md5(patient.getPassword()));
         return params;
     }
 
