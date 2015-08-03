@@ -276,8 +276,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                             editor.putString("nameKey", patient.getUsername());
                                                                             editor.commit();
                                                                             pDialog.hide();
-                                                                            helpers.showNotification(getBaseContext());
-                                                                            startActivity(new Intent(getBaseContext(), SidebarActivity.class));
+
+                                                                            Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
+                                                                            helpers.showNotification(getBaseContext(), resultIntent, 001, "Happy Birthday", "Happy Birthday and a Happy New Year", true);
+                                                                            startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+
                                                                         } else {
                                                                             Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                                                                         }
@@ -359,7 +362,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("lname", patient.getLname());
         params.put("mname", patient.getMname());
         params.put("username", patient.getUsername());
-        params.put("password", patient.getPassword());
+        params.put("password", helpers.md5(patient.getPassword()));
         params.put("occupation", patient.getOccupation());
         params.put("birthdate", patient.getBirthdate());
         params.put("sex", patient.getSex());

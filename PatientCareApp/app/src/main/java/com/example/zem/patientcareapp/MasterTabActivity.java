@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import com.example.zem.patientcareapp.Fragment.ShoppingCartFragment;
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
+
 public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
     private MasterTabsAdapter mAdapter;
     private String[] tabs = {"Profile", "My Records", "Prescription", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};

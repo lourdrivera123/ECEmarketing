@@ -63,6 +63,7 @@ public class SidebarActivity extends FragmentActivity {
     FragmentTransaction fragmentTransaction;
 
     AutoCompleteTextView search_product;
+    AlarmService alarmService;
 
     int productID = 0;
 
@@ -164,7 +165,9 @@ public class SidebarActivity extends FragmentActivity {
         fragmentTransaction = fragmentManager.beginTransaction();
 
         if (dbHelper.checkUserIfRegistered(getUname()) > 0) {
-
+            // start consultation schedules reminder
+            alarmService = new AlarmService(this);
+            alarmService.patientConsultationReminder();
         } else {
             editor.clear();
             editor.commit();

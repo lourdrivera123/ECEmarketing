@@ -34,6 +34,7 @@ import java.util.HashMap;
 public class PatientConsultationActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener, TextWatcher, CompoundButton.OnCheckedChangeListener {
     DbHelper dbhelper;
     Consultation consult;
+    AlarmService alarmService;
 
     LinearLayout setDate, setTime;
     TextView txtDate, txtTime;
@@ -68,6 +69,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         dbhelper = new DbHelper(this);
+        alarmService = new AlarmService(this);
         Intent getIntent = getIntent();
 
         setDate = (LinearLayout) findViewById(R.id.setDate);
@@ -159,6 +161,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
                 consult.setIsFinished(0);
 
                 if (dbhelper.savePatientConsultation(consult, request)) {
+                    alarmService.patientConsultationReminder();
                     Intent intent = new Intent(this, MasterTabActivity.class);
                     intent.putExtra("selected", 4);
                     startActivity(intent);

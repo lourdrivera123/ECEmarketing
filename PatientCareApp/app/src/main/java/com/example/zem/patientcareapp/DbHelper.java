@@ -41,6 +41,7 @@ import java.util.List;
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "PatientCare";
     public static final int DB_VERSION = 1;
+    Helpers helper = new Helpers();
 
     //PATIENTS_TABLE
     public static final String TBL_PATIENTS = "patients",
@@ -971,7 +972,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public boolean LoginUser(String uname, String password) {
         int login = 0;
         SQLiteDatabase db = getWritableDatabase();
-        String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + password + "'";
+        String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + helper.md5(password) + "'";
         Cursor cur = db.rawQuery(sql1, null);
         cur.moveToFirst();
 
@@ -1003,7 +1004,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_MNAME, patient.getMname());
         values.put(PTNT_LNAME, patient.getLname());
         values.put(PTNT_USERNAME, patient.getUsername());
-        values.put(PTNT_PASSWORD, patient.getPassword());
+        values.put(PTNT_PASSWORD, helper.md5(patient.getPassword()));
         values.put(PTNT_OCCUPATION, patient.getOccupation());
         values.put(PTNT_BIRTHDATE, patient.getBirthdate());
         values.put(PTNT_SEX, patient.getSex());
