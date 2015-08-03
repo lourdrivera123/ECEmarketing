@@ -286,7 +286,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+       public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.close_menu, menu);
         return true;

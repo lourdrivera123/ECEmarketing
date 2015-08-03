@@ -30,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 
@@ -92,19 +93,13 @@ public class SidebarActivity extends FragmentActivity {
         navDrawerItems = new ArrayList<NavDrawerItem>();
 
         // adding nav drawer items to array
-        // Home
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-        // Find People
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-        // Photos
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-        // Communities, Will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
-        // Pages
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
-        // What's hot, We  will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
 
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -169,7 +164,6 @@ public class SidebarActivity extends FragmentActivity {
             editor.clear();
             editor.commit();
             moveTaskToBack(true);
-//            HomeTileActivity.this.finish();
             startActivity(new Intent(this, MainActivity.class));
         }
     }
@@ -200,6 +194,13 @@ public class SidebarActivity extends FragmentActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        MainActivity.main.finish();
+        this.finish();
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.logout_menu, menu);
         return true;
@@ -207,17 +208,19 @@ public class SidebarActivity extends FragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // toggle nav drawer on selecting action bar app icon/title
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle action bar actions click
+
         switch (item.getItemId()) {
-//            case R.id.action_settings:
-//                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            case R.id.logout:
+                editor.clear();
+                editor.commit();
+                startActivity(new Intent(this, MainActivity.class));
+                this.finish();
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     /***
@@ -227,13 +230,9 @@ public class SidebarActivity extends FragmentActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-//        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
-    /**
-     * Diplaying fragment view for selected nav drawer list item
-     */
     private void displayView(int position) {
         // update the main content by replacing fragments
         Fragment fragment = null;
@@ -282,11 +281,6 @@ public class SidebarActivity extends FragmentActivity {
         mTitle = title;
         getActionBar().setTitle(mTitle);
     }
-
-    /**
-     * When using the ActionBarDrawerToggle, you must call it during
-     * onPostCreate() and onConfigurationChanged()...
-     */
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
