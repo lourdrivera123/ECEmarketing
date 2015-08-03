@@ -80,7 +80,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
         btnCheckout.setOnClickListener(this);
 
-        if (helper.isNetworkAvailable(getActivity())) {
+//        if (helper.isNetworkAvailable(getActivity())) {
             String url = helper.get_url("get_basket_items") + "&patient_id=" + dbHelper.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
             JsonObjectRequest basket_items_request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
@@ -114,11 +114,12 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
                 }
             });
             queue.add(basket_items_request);
-        }
+//        }
         lv_items.setOnCreateContextMenuListener(this);
         return rootView;
     }
@@ -250,6 +251,8 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                 } catch (Exception e) {
                                     System.out.println("BASKET ERROR: " + e.getMessage());
                                     e.printStackTrace();
+                                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
                                 }
                             } else {
                                 Toast.makeText(getActivity(), "Please connect to the internet", Toast.LENGTH_SHORT).show();
