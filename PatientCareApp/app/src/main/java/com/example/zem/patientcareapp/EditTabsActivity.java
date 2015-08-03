@@ -205,20 +205,52 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 photo = editUser.getPhoto();
                                             }
 
-                                            if (dbHelper.updatePatient(patient, userID, photo)) {
-                                                Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(getBaseContext(), MasterTabActivity.class);
-                                                intent.putExtra("selected", 0);
-                                                startActivity(intent);
-                                            } else {
-                                                Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-                                            }
+                                            patient.setServerID(editUser.getServerID());
+
+                                            Map<String, String> params = setParams("update");
+
+
+                                            CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
+                                                    new Response.Listener<JSONObject>() {
+                                                        @Override
+                                                        public void onResponse(JSONObject response) {
+                                                            Log.d("response jsobjrequest success 1", "" + response.toString());
+
+                                                            try {
+                                                                patient_json_array_mysql = response.getJSONArray("patient");
+                                                                patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
+                                                                Log.d("response jsobjrequest", "" + response.toString());
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                            if (dbHelper.savePatient(patient_json_object_mysql, patient, "update")) {
+                                                                Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
+                                                                Intent intent = new Intent(getBaseContext(), MasterTabActivity.class);
+                                                                intent.putExtra("selected", 0);
+                                                                startActivity(intent);
+                                                            } else {
+                                                                Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }, new Response.ErrorListener() {
+                                                @Override
+                                                public void onErrorResponse(VolleyError error) {
+//                                                    pDialog.dismiss();
+                                                    Log.d("volley error dri nga side", "" + error.toString());
+                                                }
+                                            });
+                                            queue.add(jsObjRequest);
+
+
+
                                         } else {
                                             pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
                                             pDialog.show();
-                                            if (helpers.isNetworkAvailable(getBaseContext())) {
+//                                            if (helpers.isNetworkAvailable(getBaseContext())) {
 
-                                                Map<String, String> params = setParams();
+                                                Map<String, String> params = setParams("register");
 
                                                 CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
                                                         new Response.Listener<JSONObject>() {
@@ -235,17 +267,20 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                     } else if (success == 1) {
                                                                         patient_json_array_mysql = response.getJSONArray("patient");
                                                                         patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
-                                                                        Log.d("response jsobjrequest", "" + response.toString());
+                                                                        Log.d("response", "" + response.toString());
 
                                                                         //saving to sqlite database
-                                                                        if (dbHelper.insertPatient(patient_json_object_mysql, patient)) {
+                                                                        if (dbHelper.savePatient(patient_json_object_mysql, patient, "insert")) {
                                                                             SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                                                                             SharedPreferences.Editor editor = sharedpreferences.edit();
                                                                             editor.putString("nameKey", patient.getUsername());
                                                                             editor.commit();
                                                                             pDialog.hide();
-                                                                            helpers.showNotification(getBaseContext());
-                                                                            startActivity(new Intent(getBaseContext(), SidebarActivity.class));
+
+                                                                            Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
+                                                                            helpers.showNotification(getBaseContext(), resultIntent, 001, "Happy Birthday", "Happy Birthday and a Happy New Year", true);
+                                                                            startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+
                                                                         } else {
                                                                             Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                                                                         }
@@ -263,9 +298,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                     }
                                                 });
                                                 queue.add(jsObjRequest);
-                                            } else {
-                                                Toast.makeText(EditTabsActivity.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
-                                            }
+//                                            } else {
+//                                                Toast.makeText(EditTabsActivity.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
+//                                            }
                                         }
                                     }
                                 }
@@ -313,15 +348,21 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
     }
 
-    public Map<String, String> setParams() {
+    public Map<String, String> setParams(String request) {
         Map<String, String> params = new HashMap();
-
-        params.put("request", "register");
+        if(request.equals("update")){
+            params.put("id", String.valueOf(patient.getServerID()));
+            params.put("request", "crud");
+            params.put("action", "update");
+            params.put("table", "patients");
+        } else {
+            params.put("request", request);
+        }
         params.put("fname", patient.getFname());
         params.put("lname", patient.getLname());
         params.put("mname", patient.getMname());
         params.put("username", patient.getUsername());
-        params.put("password", patient.getPassword());
+        params.put("password", helpers.md5(patient.getPassword()));
         params.put("occupation", patient.getOccupation());
         params.put("birthdate", patient.getBirthdate());
         params.put("sex", patient.getSex());
@@ -341,8 +382,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("address_region", patient.getAddress_region());
         params.put("address_zip", patient.getAddress_zip());
         params.put("tel_no", patient.getTel_no());
-        params.put("cell_no", patient.getMobile_no());
-        params.put("email", patient.getEmail());
+        params.put("mobile_no", patient.getMobile_no());
+        params.put("email_address", patient.getEmail());
         params.put("photo", patient.getPhoto());
 
         return params;

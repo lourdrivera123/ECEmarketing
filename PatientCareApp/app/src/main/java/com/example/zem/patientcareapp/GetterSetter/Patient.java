@@ -7,7 +7,6 @@ import java.io.Serializable;
  */
 public class Patient implements Serializable {
 
-
     private String fname = "", mname = "", lname = "", username = "", password = "",
             occupation = "", doctor_referred_by = "", doctor_referred_to = "", birthdate = "",
             sex = "", civil_status = "", height = "", weight = "", address_street = "",

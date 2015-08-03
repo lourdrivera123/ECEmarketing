@@ -77,7 +77,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
 
-        if (helpers.isNetworkAvailable(getActivity())) {
+//        if (helpers.isNetworkAvailable(getActivity())) {
             products_items = dbHelper.getAllProducts();
 
             for (HashMap<String, String> map : products_items) {
@@ -95,7 +95,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             category_list = dbHelper.getAllProductCategoriesArray();
             populateListView(rootView, category_list);
             pDialog.hide();
-        }
+//        }
         return rootView;
     }
 
@@ -187,7 +187,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onRefresh() {
-        if (helpers.isNetworkAvailable(getActivity())) {
+//        if (helpers.isNetworkAvailable(getActivity())) {
             JsonObjectRequest product_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
 
                 @Override
@@ -209,13 +209,15 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+//                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
                 }
             });
             queue.add(product_request);
-        } else {
-            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
-            refresh_products_list.setRefreshing(false);
-        }
+//        } else {
+//            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
+//            refresh_products_list.setRefreshing(false);
+//        }
     }
 }

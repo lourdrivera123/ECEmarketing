@@ -173,7 +173,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_pres:
-                if (helper.isNetworkAvailable(getActivity())) {
+//                if (helper.isNetworkAvailable(getActivity())) {
                     dialog1 = new Dialog(getActivity());
                     dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog1.setContentView(R.layout.dialog_gallery_camera);
@@ -184,9 +184,9 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
                     pick_camera_layout.setOnClickListener(this);
                     pick_gallery_layout.setOnClickListener(this);
-                } else {
-                    Toast.makeText(getActivity(), "Network unavailable", Toast.LENGTH_SHORT).show();
-                }
+//                } else {
+//                    Toast.makeText(getActivity(), "Network unavailable", Toast.LENGTH_SHORT).show();
+//                }
                 break;
 
             case R.id.pick_camera_layout:

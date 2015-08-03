@@ -41,6 +41,7 @@ import java.util.List;
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "PatientCare";
     public static final int DB_VERSION = 1;
+    Helpers helper = new Helpers();
 
     //PATIENTS_TABLE
     public static final String TBL_PATIENTS = "patients",
@@ -512,6 +513,66 @@ public class DbHelper extends SQLiteOpenHelper {
         return insert_patient > 0;
     }
 
+    public boolean savePatient(JSONObject patient_json_object_mysql, Patient patient, String request) {
+        int patient_id = 0;
+        String created_at = "";
+
+        try {
+            patient_id = patient_json_object_mysql.getInt("id");
+            created_at = patient_json_object_mysql.getString("created_at");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(PTNT_PATIENT_ID, patient_id);
+        values.put(PTNT_FNAME, patient.getFname());
+        values.put(PTNT_MNAME, patient.getMname());
+        values.put(PTNT_LNAME, patient.getLname());
+        values.put(PTNT_USERNAME, patient.getUsername());
+        values.put(PTNT_PASSWORD, patient.getPassword());
+        values.put(PTNT_OCCUPATION, patient.getOccupation());
+        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
+        values.put(PTNT_SEX, patient.getSex());
+        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
+        values.put(PTNT_HEIGHT, patient.getHeight());
+        values.put(PTNT_WEIGHT, patient.getWeight());
+        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
+        values.put(PTNT_BUILDING, patient.getBuilding());
+        values.put(PTNT_LOT_NO, patient.getLot_no());
+        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
+        values.put(PTNT_PHASE_NO, patient.getPhase_no());
+        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
+        values.put(PTNT_STREET, patient.getAddress_street());
+        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
+        values.put(PTNT_CITY, patient.getAddress_city_municipality());
+        values.put(PTNT_PROVINCE, patient.getAddress_province());
+        values.put(PTNT_REGION, patient.getAddress_region());
+        values.put(PTNT_ZIP, patient.getAddress_zip());
+        values.put(PTNT_TEL_NO, patient.getTel_no());
+        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
+        values.put(PTNT_EMAIL, patient.getEmail());
+        values.put(PTNT_PHOTO, patient.getPhoto());
+        values.put(CREATED_AT, created_at);
+
+
+        long rowID = 0;
+
+        if (request.equals("insert")) {
+            rowID = db.insert(TBL_PATIENTS, null, values);
+        } else if (request.equals("update")) {
+            rowID = db.update(TBL_PATIENTS, values, PTNT_PATIENT_ID + "=" + patient_id, null);
+        }
+
+        db.close();
+
+
+        return rowID > 0;
+
+    }
+
     public boolean insertBasket(Basket basket) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
@@ -911,7 +972,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public boolean LoginUser(String uname, String password) {
         int login = 0;
         SQLiteDatabase db = getWritableDatabase();
-        String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + password + "'";
+        String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + helper.md5(password) + "'";
         Cursor cur = db.rawQuery(sql1, null);
         cur.moveToFirst();
 
@@ -943,7 +1004,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_MNAME, patient.getMname());
         values.put(PTNT_LNAME, patient.getLname());
         values.put(PTNT_USERNAME, patient.getUsername());
-        values.put(PTNT_PASSWORD, patient.getPassword());
+        values.put(PTNT_PASSWORD, helper.md5(patient.getPassword()));
         values.put(PTNT_OCCUPATION, patient.getOccupation());
         values.put(PTNT_BIRTHDATE, patient.getBirthdate());
         values.put(PTNT_SEX, patient.getSex());

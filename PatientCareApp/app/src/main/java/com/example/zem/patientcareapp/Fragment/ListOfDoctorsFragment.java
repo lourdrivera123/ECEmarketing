@@ -133,7 +133,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onRefresh() {
-        if (helpers.isNetworkAvailable(getActivity())) {
+//        if (helpers.isNetworkAvailable(getActivity())) {
             // Request a string response from the provided URL.
             JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
 
@@ -154,14 +154,14 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                 }
             });
             queue.add(doctor_request);
-        } else {
-            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
-            refresh_doctor.setRefreshing(false);
-        }
+//        } else {
+//            Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+//            refresh_doctor.setRefreshing(false);
+//        }
     }
 }
 

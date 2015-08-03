@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +57,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     JSONArray patient_json_array_mysql = null;
     JSONObject patient_json_object_mysql = null;
+    ArrayList<HashMap<String, String>> listOfAllConsultations;
+    AlarmService alarmService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         dbHelper = new DbHelper(this);
         helpers = new Helpers();
+        alarmService = new AlarmService(this);
         main = this;
         queue = Volley.newRequestQueue(this);
         sync = new Sync();
@@ -84,6 +88,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
+
+
+
     }
 
     @Override
@@ -92,7 +99,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         if (sharedpreferences.contains(name)) {
             if (sharedpreferences.contains(pass)) {
-                helpers.showNotification(this);
                 Intent i = new Intent(this, SidebarActivity.class);
                 startActivity(i);
             }
@@ -160,8 +166,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                                     editor.putString(name, uname);
                                                     editor.putString(pass, password);
                                                     editor.commit();
-                                                    helpers.showNotification(getBaseContext());
+
                                                     Intent i = new Intent(getBaseContext(), SidebarActivity.class);
+
                                                     startActivity(i);
                                                 } else {
                                                     Toast.makeText(MainActivity.this, "Username or Password is incorrect", Toast.LENGTH_SHORT).show();
@@ -208,7 +215,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         params.put("request", "login");
         params.put("username", patient.getUsername());
-        params.put("password", patient.getPassword());
+        params.put("password", helpers.md5(patient.getPassword()));
         return params;
     }
 
