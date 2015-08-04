@@ -42,6 +42,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.Fragment.SignUpFragment;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
 
 import org.json.JSONArray;
@@ -116,9 +117,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         Intent intent = getIntent();
         signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
+        signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
-        queue = Volley.newRequestQueue(this);
+        queue = VolleySingleton.getInstance().getRequestQueue();
         url = "http://vinzry.0fees.us/db/post.php";
 
         pDialog = new ProgressDialog(this);

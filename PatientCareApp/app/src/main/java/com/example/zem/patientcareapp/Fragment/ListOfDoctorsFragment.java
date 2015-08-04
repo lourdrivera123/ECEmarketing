@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,11 @@ import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.DoctorActivity;
 import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.LazyAdapter;
+import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.Sync;
 
@@ -65,7 +70,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
         helpers = new Helpers();
         dbHelper = new DbHelper(getActivity());
-        queue = Volley.newRequestQueue(getActivity());
+        queue = VolleySingleton.getInstance().getRequestQueue();
 
         arrayOfSearchDoctors = new ArrayList();
         temp_doctors = new ArrayList();
@@ -133,35 +138,22 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onRefresh() {
-//        if (helpers.isNetworkAvailable(getActivity())) {
-            // Request a string response from the provided URL.
-            JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
+        GetRequest.getJSONobj(getActivity(), "get_doctors", "doctors", "doc_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                Log.d("response using interface <ListOfDoctorsFragment.java>", response + "");
+                doctor_items = dbHelper.getAllDoctors();
+                populateDoctorListView(root_view, doctor_items);
+                refresh_doctor.setRefreshing(false);
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
-                    try {
-                        dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("Error", "asdasda ");
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
 
-                        refresh_doctor.setRefreshing(false);
-                    } catch (Exception e) {
-
-                    }
-                    doctor_items = dbHelper.getAllDoctors();
-                    populateDoctorListView(root_view, doctor_items);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
-                }
-            });
-            queue.add(doctor_request);
-//        } else {
-//            Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
-//            refresh_doctor.setRefreshing(false);
-//        }
+            }
+        });
     }
 }
 

@@ -27,7 +27,10 @@ import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
 import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.LazyAdapter;
+import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SelectedProductActivity;
 import com.example.zem.patientcareapp.ServerRequest;
@@ -187,37 +190,21 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onRefresh() {
-//        if (helpers.isNetworkAvailable(getActivity())) {
-            JsonObjectRequest product_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d("response from update", response.toString());
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_products", "products", "product_id", response);
-                    try {
-                        System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                        dbHelper.updateLastUpdatedTable("products", response.getString("server_timestamp"));
-                        refresh_products_list.setRefreshing(false);
-                    } catch (Exception e) {
-                        System.out.println("error fetching server timestamp: " + e);
-                    }
+        GetRequest.getJSONobj(getActivity(), "get_products", "products", "product_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                Log.d("response using interface <ProductsFragment.java >", response + "");
+                products_items = dbHelper.getAllProducts();
+                populateProductsListView(root_view, products_items);
+                refresh_products_list.setRefreshing(false);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("Error", "asdasda ");
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
 
-                    products_items = dbHelper.getAllProducts();
-                    populateProductsListView(root_view, products_items);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
-
-//                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                }
-            });
-            queue.add(product_request);
-//        } else {
-//            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
-//            refresh_products_list.setRefreshing(false);
-//        }
+            }
+        });
     }
 }

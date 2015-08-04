@@ -14,6 +14,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.GetRequest;
 
 import org.json.JSONObject;
 
@@ -50,363 +53,178 @@ public class SplashActivity extends Activity {
 
             if (helpers.isNetworkAvailable(this)) {
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest clinic_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_clinics"), null, new Response.Listener<JSONObject>() {
-
+                //request for clinic
+                GetRequest.getJSONobj(SplashActivity.this, "get_clinics", "clinics", "clinics_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_clinics", "clinics", "clinics_id", response);
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("clinics", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
-
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - clinic request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest clinic_doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_clinic_doctor"), null, new Response.Listener<JSONObject>() {
-
+                //request for clinic doctor request
+                GetRequest.getJSONobj(SplashActivity.this, "get_clinic_doctor", "clinic_doctor", "clinic_doctor_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_clinic_doctor", "clinic_doctor", "clinic_doctor_id", response);
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("clinic_doctor", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
-
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - clinic_doctor request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
-
+                //request for doctor request
+                GetRequest.getJSONobj(SplashActivity.this, "get_doctors", "doctors", "doc_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_doctors", "doctors", "doc_id", response);
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
-
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - doctor request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
-                        System.out.println("GWAPO DAW KO: " + error);
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest doctor_specialty_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctor_specialties"), null, new Response.Listener<JSONObject>() {
-
+                //request for doctor specialties request
+                GetRequest.getJSONobj(SplashActivity.this, "get_doctor_specialties", "specialties", "specialty_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_doctor_specialties", "specialties", "specialty_id", response);
-
-                        System.out.println("response in specialty: " + response.toString());
-
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("specialties", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
-
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - specialties request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
-                        System.out.println("GWAPO DAW KO: " + error);
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest doctor_sub_specialty_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctor_sub_specialties"), null, new Response.Listener<JSONObject>() {
-
+                //request for doctor subspecialties request
+                GetRequest.getJSONobj(SplashActivity.this, "get_doctor_sub_specialties", "sub_specialties", "sub_specialty_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_doctor_sub_specialties", "sub_specialties", "sub_specialty_id", response);
-
-                        System.out.println("response in sub specialty: " + response.toString());
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("sub_specialties", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
-
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - subspecialties request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
-                        System.out.println("GWAPO DAW KO: " + error);
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest prod_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
-
+                //request for product categories request
+                GetRequest.getJSONobj(SplashActivity.this, "get_product_categories", "product_categories", "product_category_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        System.out.println("fucking response on SplashActivity@get_products: " + response);
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_products", "products", "product_id", response);
-
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("products", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error on SplashActivity@get_products: " + e);
-                        }
-
-                        Intent mainactivity = new Intent(getBaseContext(), MainActivity.class);
-                        startActivity(mainactivity);
-                        finish();
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - product categories request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
-                        System.out.println("error on SplashActivity@get_products: " + error);
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest prod_category_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_product_categories"), null, new Response.Listener<JSONObject>() {
-
+                //request for product subcategories request
+                GetRequest.getJSONobj(SplashActivity.this, "get_product_subcategories&cat=all", "product_subcategories", "product_subcategory_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_product_categories", "product_categories", "product_category_id", response);
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("product_categories", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - product subcategories request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest prod_sub_cat_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_product_subcategories&cat=all"), null, new Response.Listener<JSONObject>() {
-
+                //request for dosages request
+                GetRequest.getJSONobj(SplashActivity.this, "get_dosages", "dosage_format_and_strength", "dosage_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_product_subcategories&cat=all", "product_subcategories", "product_subcategory_id", response);
-
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("product_subcategories", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - dosages request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest dosage_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_dosages"), null, new Response.Listener<JSONObject>() {
-
+                //request for patient records request
+                GetRequest.getJSONobj(SplashActivity.this, "get_patient_records", "patient_records", "record_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_dosages", "dosage_format_and_strength", "dosage_id", response);
-
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("dosage_format_and_strength", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - patient records request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest patient_record_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_patient_records"), null, new Response.Listener<JSONObject>() {
-
+                //request for treatments request
+                GetRequest.getJSONobj(SplashActivity.this, "get_treatments", "treatments", "treatments_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-
-                        System.out.print("patient records: I am in splash activity");
-                        Log.d("splash patient record response: ", "" + response.toString());
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_patient_records", "patient_records", "record_id", response);
-
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("patient_records", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - treatments request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest treatments_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_treatments"), null, new Response.Listener<JSONObject>() {
-
+                //request for promos request
+                GetRequest.getJSONobj(SplashActivity.this, "get_promo", "promo", "promo_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("splash treatment response: ", "" + response.toString());
-
-                        System.out.print("treatments: I am in splash activity");
-
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_treatments", "treatments", "treatments_id", response);
-
-                        try {
-                            System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("treatments", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - promos request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest promo_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_promo"), null, new Response.Listener<JSONObject>() {
-
+                //request for discounts_free_products request
+                GetRequest.getJSONobj(SplashActivity.this, "get_discounts_free_products", "discounts_free_products", "dfp_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("splash promo discounts response: ", "" + response.toString());
-
-                        System.out.print("promo discounts: I am in splash activity");
-
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_promo", "promo", "promo_id", response);
-
-                        try {
-                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("promo", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: " + e);
-                        }
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - discounts_free_products request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-
-
-                // Request a string response from the provided URL.
-                JsonObjectRequest discounts_free_products_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_discounts_free_products"), null, new Response.Listener<JSONObject>() {
-
+                //request for free_products request
+                GetRequest.getJSONobj(SplashActivity.this, "get_free_products", "free_products", "free_products_id", new RespondListener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("splash get_discounts_free_products response: ", ""+response.toString());
-
-                        System.out.print("promo free_products: I am in splash activity");
-
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_discounts_free_products", "discounts_free_products", "dfp_id", response);
-
-                        try {
-                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("discounts_free_products", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: "+ e);
-                        }
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - free_products request >", response + "");
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest free_products_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_free_products"), null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("splash get_free_products response: ", ""+response.toString());
-
-                        System.out.println("free_products: I am in splash activity");
-
-                        sync = new Sync();
-                        sync.init(getBaseContext(), "get_free_products", "free_products", "free_products_id", response);
-
-                        try {
-                            System.out.println("timestamp from server: "+response.getString("server_timestamp"));
-                            dbHelper.updateLastUpdatedTable("promo_discounts", response.getString("server_timestamp"));
-                        } catch (Exception e) {
-                            System.out.println("error fetching server timestamp: "+ e);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error on request", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                queue.add(doctor_request);
-                queue.add(clinic_request);
-                queue.add(doctor_specialty_request);
-                queue.add(doctor_sub_specialty_request);
-                queue.add(prod_category_request);
-                queue.add(prod_sub_cat_request);
-                queue.add(patient_record_request);
-                queue.add(treatments_request);
-                queue.add(dosage_request);
-                queue.add(prod_request);
-                queue.add(promo_request);
-                queue.add(discounts_free_products_request);
-                queue.add(free_products_request);
-                queue.add(clinic_doctor_request);
+                Intent mainactivity = new Intent(getBaseContext(), MainActivity.class);
+                startActivity(mainactivity);
+                finish();
 
                 settings.edit().putBoolean("my_first_time", false).commit();
 

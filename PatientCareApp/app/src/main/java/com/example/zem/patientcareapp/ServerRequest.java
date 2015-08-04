@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.Network.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +44,7 @@ public class ServerRequest {
 
     public boolean init(final Context getActivity, HashMap<String, String> parameters, String request) {
         activity = getActivity;
-        queue = Volley.newRequestQueue(activity);
+        queue = VolleySingleton.getInstance().getRequestQueue();
         params = parameters;
         dbHelper = new DbHelper(activity);
         helpers = new Helpers();

@@ -14,6 +14,9 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
  * Created by Zem on 7/9/2015.
  */
 public class PatientCareApplication extends Application {
+
+    public static PatientCareApplication sInstance;
+
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @SuppressWarnings("unused")
     @Override
@@ -22,6 +25,8 @@ public class PatientCareApplication extends Application {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
         }
+
+        sInstance = this;
 
         super.onCreate();
 
@@ -43,5 +48,18 @@ public class PatientCareApplication extends Application {
 
         // Initialize ImageLoader with configuration.
         com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(config.build());
+    }
+
+//    public void onCreate(){
+//        super.onCreate();
+//
+//    }
+
+    public static PatientCareApplication getInstance(){
+        return sInstance;
+    }
+
+    public static Context getAppContext(){
+        return sInstance.getApplicationContext();
     }
 }
