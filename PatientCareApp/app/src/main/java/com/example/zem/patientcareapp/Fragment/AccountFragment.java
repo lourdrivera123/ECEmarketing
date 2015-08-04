@@ -1,29 +1,50 @@
 package com.example.zem.patientcareapp.Fragment;
 
+import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.EditTabsActivity;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.MainActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarActivity;
 
-public class AccountFragment extends Fragment {
+import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class AccountFragment extends Fragment implements View.OnClickListener {
     ImageView image_holder;
-    EditText username, password, confirm_password;
-    Button btn_save;
+    EditText username, current_pass, new_pass, retype_new_pass;
+    TextView changePassword, show_and_hide_pass;
+    Button btn_save, save, cancel;
+
     DbHelper dbhelper;
+    static Helpers helpers;
+
+    Dialog dialog;
+
+    public static String NEW_PASS = "";
+    public static int checkIfChangedPass = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,21 +52,18 @@ public class AccountFragment extends Fragment {
 
         image_holder = (ImageView) rootView.findViewById(R.id.image_holder);
         username = (EditText) rootView.findViewById(R.id.username);
-        password = (EditText) rootView.findViewById(R.id.password);
-        confirm_password = (EditText) rootView.findViewById(R.id.confirm_password);
         btn_save = (Button) rootView.findViewById(R.id.btn_save);
+        changePassword = (TextView) rootView.findViewById(R.id.changePassword);
 
         int edit = EditTabsActivity.edit_int;
         dbhelper = new DbHelper(getActivity());
+        helpers = new Helpers();
 
         if (edit > 0) {
             String edit_uname = SidebarActivity.getUname();
             Patient patient = dbhelper.getloginPatient(edit_uname);
 
             username.setText(patient.getUsername());
-            password.setText(patient.getPassword());
-            confirm_password.setText(patient.getPassword());
-
             String imgFile = patient.getPhoto();
 
             if (imgFile != null) {
@@ -55,7 +73,93 @@ public class AccountFragment extends Fragment {
             }
         }
 
+        changePassword.setOnClickListener(this);
         return rootView;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.changePassword:
+                dialog = new Dialog(getActivity());
+                dialog.setTitle("Change password");
+                dialog.setContentView(R.layout.change_password_layout);
+                dialog.show();
+
+                current_pass = (EditText) dialog.findViewById(R.id.current_pass);
+                new_pass = (EditText) dialog.findViewById(R.id.new_pass);
+                retype_new_pass = (EditText) dialog.findViewById(R.id.retype_new_pass);
+                save = (Button) dialog.findViewById(R.id.save);
+                cancel = (Button) dialog.findViewById(R.id.cancel);
+                show_and_hide_pass = (TextView) dialog.findViewById(R.id.show_and_hide_pass);
+
+                show_and_hide_pass.setOnClickListener(this);
+                save.setOnClickListener(this);
+                cancel.setOnClickListener(this);
+
+                break;
+
+            case R.id.save:
+                String current = helpers.md5(current_pass.getText().toString());
+                String newPass = helpers.md5(new_pass.getText().toString());
+                String retype = helpers.md5(retype_new_pass.getText().toString());
+                int check = 0;
+
+                if (current.equals("")) {
+                    current_pass.setError("Field required");
+                    check += 1;
+                } else {
+                    if (!current.equals(SidebarActivity.getPass())) {
+                        current_pass.setError("Incorrect password");
+                        check += 1;
+                    }
+                }
+                if (newPass.equals("")) {
+                    new_pass.setError("Field required");
+                    check += 1;
+                }
+                if (retype.equals("")) {
+                    retype_new_pass.setError("Field required");
+                    check += 1;
+                }
+                if (!newPass.equals(retype)) {
+                    check += 1;
+                    retype_new_pass.setError("Passwords do not match");
+                    new_pass.setError("Passwords do not match");
+                } else {
+                    retype_new_pass.setError(null);
+                    new_pass.setError(null);
+                }
+
+                if (check == 0) {
+                    checkIfChangedPass = 20;
+                    NEW_PASS = newPass;
+                    dialog.dismiss();
+                }
+
+                break;
+
+            case R.id.cancel:
+                dialog.dismiss();
+                break;
+
+            case R.id.show_and_hide_pass:
+                if (show_and_hide_pass.getText().equals(getResources().getString(R.string.hide_password))) {
+                    current_pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    new_pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    retype_new_pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+                    show_and_hide_pass.setText(getResources().getString(R.string.show_password));
+                } else {
+                    current_pass.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    new_pass.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    retype_new_pass.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+                    show_and_hide_pass.setText(getResources().getString(R.string.hide_password));
+                }
+                show_and_hide_pass.setPaintFlags(show_and_hide_pass.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+                break;
+        }
+    }
 }

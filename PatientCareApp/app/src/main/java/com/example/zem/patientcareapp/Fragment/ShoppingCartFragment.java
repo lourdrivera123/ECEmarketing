@@ -233,10 +233,10 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                                     total_amount.setText("\u20B1 " + TotalAmount);
 
                                                     adapter.notifyDataSetChanged();
-                                                    pdialog.dismiss();
                                                 } else {
                                                     Toast.makeText(getActivity(), "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                                 }
+                                                pdialog.dismiss();
                                             }
                                         }
                                     }, 3000);
@@ -288,11 +288,11 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                                 total_amount.setText("\u20B1 " + TotalAmount);
                                                 items.remove(pos);
                                                 adapter.notifyDataSetChanged();
-                                                pdialog.dismiss();
                                             } else {
                                                 Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                             }
                                         }
+                                        pdialog.dismiss();
                                     }
                                 }, 3000);
                             } else {

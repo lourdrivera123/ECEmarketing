@@ -35,8 +35,8 @@ import com.example.zem.patientcareapp.Config;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.ViewPagerActivity;
 import com.example.zem.patientcareapp.ServerRequest;
-import com.example.zem.patientcareapp.SimpleImageActivity;
 import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -67,7 +67,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     private TextView txtPercentage;
     Dialog upload_dialog, dialog1;
 
-    ArrayList<HashMap<String, String>> uploadsByUser;
+    public static ArrayList<HashMap<String, String>> uploadsByUser;
     ArrayList<String> arrayOfPrescriptions;
 
     Helpers helper;
@@ -133,39 +133,35 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if (helper.isNetworkAvailable(getActivity())) {
-                        final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(dbhelper.PRESCRIPTIONS_SERVER_ID));
-                        serverRequest = new ServerRequest();
-                        HashMap<String, String> hashMap = new HashMap();
-                        hashMap.put("table", "patient_prescriptions");
-                        hashMap.put("request", "crud");
-                        hashMap.put("action", "delete");
-                        hashMap.put("id", String.valueOf(serverID));
-                        serverRequest.init(getActivity(), hashMap, "insert");
+                    final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(dbhelper.PRESCRIPTIONS_SERVER_ID));
+                    serverRequest = new ServerRequest();
+                    HashMap<String, String> hashMap = new HashMap();
+                    hashMap.put("table", "patient_prescriptions");
+                    hashMap.put("request", "crud");
+                    hashMap.put("action", "delete");
+                    hashMap.put("id", String.valueOf(serverID));
+                    serverRequest.init(getActivity(), hashMap, "insert");
 
-                        final ProgressDialog pdialog = new ProgressDialog(getActivity());
-                        pdialog.setCancelable(false);
-                        pdialog.setMessage("Deleting...");
-                        pdialog.show();
+                    final ProgressDialog pdialog = new ProgressDialog(getActivity());
+                    pdialog.setCancelable(false);
+                    pdialog.setMessage("Deleting...");
+                    pdialog.show();
 
-                        rootView.postDelayed(new Runnable() {
-                            public void run() {
-                                boolean responseFromServer = serverRequest.getResponse();
+                    rootView.postDelayed(new Runnable() {
+                        public void run() {
+                            boolean responseFromServer = serverRequest.getResponse();
 
-                                if (responseFromServer) {
-                                    if (dbhelper.deletePrescriptionByServerID(serverID)) {
-                                        arrayOfPrescriptions = refreshPrescriptionList();
-                                        gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
-                                        pdialog.dismiss();
-                                    } else {
-                                        Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
-                                    }
+                            if (responseFromServer) {
+                                if (dbhelper.deletePrescriptionByServerID(serverID)) {
+                                    arrayOfPrescriptions = refreshPrescriptionList();
+                                    gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
+                                } else {
+                                    Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }, 3000);
-                    } else {
-                        Toast.makeText(getActivity(), "Please connect to the internet.", Toast.LENGTH_SHORT).show();
-                    }
+                            pdialog.dismiss();
+                        }
+                    }, 3000);
                 }
             });
             delete.show();
@@ -436,7 +432,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     }
 
     protected void startImagePagerActivity(int position) {
-        Intent intent = new Intent(getActivity(), SimpleImageActivity.class);
+        Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
         intent.putExtra(Config.IMAGE_POSITION, position);
         startActivity(intent);
     }

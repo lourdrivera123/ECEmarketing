@@ -85,6 +85,9 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
+            android:name=".ViewPagerActivity"
+            android:theme="@style/Theme.MyFancyTheme" />
+        <activity
             android:name=".HomeTileActivity"
             launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -102,9 +105,6 @@
             android:theme="@android:style/Theme.Holo.Light" />
         <activity
             android:name=".SelectedProductActivity"
-            android:theme="@style/Theme.MyFancyTheme" />
-        <activity
-            android:name=".SimpleImageActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".PatientConsultationActivity"
@@ -130,7 +130,6 @@
         <activity android:name=".ImageItem" />
         <activity android:name=".samplepaypal" />
         <activity android:name=".UploadActivity" />
-        <activity android:name=".Fragment.ImagePagerFragment" />
         <activity
             android:name=".SidebarActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

@@ -81,23 +81,23 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         pDialog.setMessage("Loading...");
 
 //        if (helpers.isNetworkAvailable(getActivity())) {
-            products_items = dbHelper.getAllProducts();
+        products_items = dbHelper.getAllProducts();
 
-            for (HashMap<String, String> map : products_items) {
+        for (HashMap<String, String> map : products_items) {
 
-                HashMap<String, String> tempMap = new HashMap();
-                tempMap.put("id", map.get("id"));
-                tempMap.put("product_id", map.get("product_id"));
-                tempMap.put("qty_per_packing", map.get("qty_per_packing"));
-                tempMap.put("packing", map.get("packing"));
-                tempMap.put("temp_basket_qty", "0");
-                productQuantity.put(map.get("product_id"), tempMap);
-            }
+            HashMap<String, String> tempMap = new HashMap();
+            tempMap.put("id", map.get("id"));
+            tempMap.put("product_id", map.get("product_id"));
+            tempMap.put("qty_per_packing", map.get("qty_per_packing"));
+            tempMap.put("packing", map.get("packing"));
+            tempMap.put("temp_basket_qty", "0");
+            productQuantity.put(map.get("product_id"), tempMap);
+        }
 
-            populateProductsListView(rootView, products_items);
-            category_list = dbHelper.getAllProductCategoriesArray();
-            populateListView(rootView, category_list);
-            pDialog.hide();
+        populateProductsListView(rootView, products_items);
+        category_list = dbHelper.getAllProductCategoriesArray();
+        populateListView(rootView, category_list);
+        pDialog.hide();
 //        }
         return rootView;
     }
@@ -190,7 +190,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onRefresh() {
-
         GetRequest.getJSONobj(getActivity(), "get_products", "products", "product_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {

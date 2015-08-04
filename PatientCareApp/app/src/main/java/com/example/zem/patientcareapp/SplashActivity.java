@@ -166,7 +166,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+              s          Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
                     }
                 });
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,14 +217,16 @@ public class LazyAdapter extends BaseAdapter {
                                         boolean responseFromServer = serverRequest.getResponse();
                                         if (responseFromServer) {
                                             if (dbhelper.updateBasket(basket)) {
-                                                pdialog.dismiss();
                                                 Toast.makeText(activity, "Your cart has been updated.", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                                Log.d("error on dbhelper", "error");
                                             }
                                         } else {
                                             Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                            Log.d("responseFromServer", "error");
                                         }
+                                        pdialog.dismiss();
                                     }
                                 }, 2500);
                             } else { //INSERT NEW PRODUCT IN BASKETS TABLE//
@@ -243,7 +246,7 @@ public class LazyAdapter extends BaseAdapter {
                                         serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
                                         serverRequest.init(activity, hashMap, "insert_basket");
                                     }
-                                }, 3000);
+                                }, 2500);
                             }
                         } catch (Exception e) {
                         }

@@ -48,21 +48,13 @@
                 android:layout_height="wrap_content"
                 android:hint="Username" />
 
-            <EditText
-                android:id="@+id/password"
+            <TextView
+                android:id="@+id/changePassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Password"
-                android:inputType="textPassword" />
-
-            <EditText
-                android:id="@+id/confirm_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Confirm Password"
-                android:inputType="textPassword" />
+                android:drawableLeft="@drawable/ic_update"
+                android:gravity="center_vertical"
+                android:text="Change Password" />
 
             <Button
                 android:id="@+id/btn_save"
