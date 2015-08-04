@@ -10,12 +10,12 @@
     <string name="desc_list_item_icon">Item Icon</string>
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
-        <item >Home</item>
-        <item >Find People</item>
-        <item >Photos</item>
-        <item >Communities</item>
-        <item >Pages</item>
-        <item >What\'s Hot</item>
+        <item>Home</item>
+        <item>Find People</item>
+        <item>Photos</item>
+        <item>Communities</item>
+        <item>Pages</item>
+        <item>What\'s Hot</item>
     </string-array>
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
@@ -28,5 +28,7 @@
         <item>@drawable/ic_plus</item>
     </array>
     <string name="drawer_open">Slider Menu Opened</string>
-    <string name="drawer_close">Slider Menu Closed</string>1
+    <string name="drawer_close">Slider Menu Closed</string>
+    <string name="show_password"><u>Show password</u></string>
+    <string name="hide_password"><u>Hide password</u></string>
 </resources>

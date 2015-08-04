@@ -78,23 +78,23 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         pDialog.setMessage("Loading...");
 
 //        if (helpers.isNetworkAvailable(getActivity())) {
-            products_items = dbHelper.getAllProducts();
+        products_items = dbHelper.getAllProducts();
 
-            for (HashMap<String, String> map : products_items) {
+        for (HashMap<String, String> map : products_items) {
 
-                HashMap<String, String> tempMap = new HashMap();
-                tempMap.put("id", map.get("id"));
-                tempMap.put("product_id", map.get("product_id"));
-                tempMap.put("qty_per_packing", map.get("qty_per_packing"));
-                tempMap.put("packing", map.get("packing"));
-                tempMap.put("temp_basket_qty", "0");
-                productQuantity.put(map.get("product_id"), tempMap);
-            }
+            HashMap<String, String> tempMap = new HashMap();
+            tempMap.put("id", map.get("id"));
+            tempMap.put("product_id", map.get("product_id"));
+            tempMap.put("qty_per_packing", map.get("qty_per_packing"));
+            tempMap.put("packing", map.get("packing"));
+            tempMap.put("temp_basket_qty", "0");
+            productQuantity.put(map.get("product_id"), tempMap);
+        }
 
-            populateProductsListView(rootView, products_items);
-            category_list = dbHelper.getAllProductCategoriesArray();
-            populateListView(rootView, category_list);
-            pDialog.hide();
+        populateProductsListView(rootView, products_items);
+        category_list = dbHelper.getAllProductCategoriesArray();
+        populateListView(rootView, category_list);
+        pDialog.hide();
 //        }
         return rootView;
     }
@@ -187,37 +187,29 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onRefresh() {
-//        if (helpers.isNetworkAvailable(getActivity())) {
-            JsonObjectRequest product_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest product_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d("response from update", response.toString());
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_products", "products", "product_id", response);
-                    try {
-                        System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                        dbHelper.updateLastUpdatedTable("products", response.getString("server_timestamp"));
-                        refresh_products_list.setRefreshing(false);
-                    } catch (Exception e) {
-                        System.out.println("error fetching server timestamp: " + e);
-                    }
-
-                    products_items = dbHelper.getAllProducts();
-                    populateProductsListView(root_view, products_items);
+            @Override
+            public void onResponse(JSONObject response) {
+                sync = new Sync();
+                sync.init(getActivity(), "get_products", "products", "product_id", response);
+                try {
+                    System.out.println("timestamp from server: " + response.getString("server_timestamp"));
+                    dbHelper.updateLastUpdatedTable("products", response.getString("server_timestamp"));
+                    refresh_products_list.setRefreshing(false);
+                } catch (Exception e) {
+                    System.out.println("error fetching server timestamp: " + e);
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
 
-//                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                }
-            });
-            queue.add(product_request);
-//        } else {
-//            Toast.makeText(getActivity(), "Couldn't refresh feed. Please check your Internet connection", Toast.LENGTH_LONG).show();
-//            refresh_products_list.setRefreshing(false);
-//        }
+                products_items = dbHelper.getAllProducts();
+                populateProductsListView(root_view, products_items);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            }
+        });
+        queue.add(product_request);
     }
 }

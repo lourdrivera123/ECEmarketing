@@ -196,7 +196,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                                     boolean responseFromServer = serverRequest.getResponse();
                                     if (responseFromServer) {
                                         if (dbhelper.updateBasket(basket)) {
-                                            pdialog.dismiss();
                                             Toast.makeText(getBaseContext(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
@@ -204,6 +203,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                                     } else {
                                         Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
                                     }
+                                    pdialog.dismiss();
                                 }
                             }, 2500);
                         } else {

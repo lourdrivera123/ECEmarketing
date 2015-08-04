@@ -72,6 +72,7 @@ public class SidebarActivity extends FragmentActivity {
     static DbHelper dbHelper;
 
     public static String uname;
+    static String pass;
     public static int userID;
 
     @Override
@@ -172,8 +173,13 @@ public class SidebarActivity extends FragmentActivity {
     }
 
     public static String getUname() {
-        uname = sharedpreferences.getString("nameKey", "DEFAULT");
+        uname = sharedpreferences.getString(MainActivity.name, "DEFAULT");
         return uname;
+    }
+
+    public static String getPass() {
+        pass = sharedpreferences.getString(MainActivity.pass, "DEFAULT");
+        return pass;
     }
 
     public static int getUserID() {
@@ -183,14 +189,10 @@ public class SidebarActivity extends FragmentActivity {
         return userID;
     }
 
-    /**
-     * Slide menu item click listener
-     */
     private class SlideMenuClickListener implements
             ListView.OnItemClickListener {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // display view for selected nav drawer item
             displayView(position);
         }

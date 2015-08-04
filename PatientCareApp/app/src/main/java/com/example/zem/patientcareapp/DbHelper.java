@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.GetterSetter.Clinic;
 import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
@@ -517,11 +519,15 @@ public class DbHelper extends SQLiteOpenHelper {
         int patient_id = 0;
         String created_at = "";
 
-        try {
-            patient_id = patient_json_object_mysql.getInt("id");
-            created_at = patient_json_object_mysql.getString("created_at");
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (request.equals("update")) {
+            patient_id = patient.getServerID();
+        } else {
+            try {
+                patient_id = patient_json_object_mysql.getInt("id");
+                created_at = patient_json_object_mysql.getString("created_at");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         SQLiteDatabase db = getWritableDatabase();
@@ -532,7 +538,6 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_MNAME, patient.getMname());
         values.put(PTNT_LNAME, patient.getLname());
         values.put(PTNT_USERNAME, patient.getUsername());
-        values.put(PTNT_PASSWORD, patient.getPassword());
         values.put(PTNT_OCCUPATION, patient.getOccupation());
         values.put(PTNT_BIRTHDATE, patient.getBirthdate());
         values.put(PTNT_SEX, patient.getSex());
@@ -557,12 +562,15 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_PHOTO, patient.getPhoto());
         values.put(CREATED_AT, created_at);
 
-
         long rowID = 0;
 
         if (request.equals("insert")) {
+            values.put(PTNT_PASSWORD, patient.getPassword());
             rowID = db.insert(TBL_PATIENTS, null, values);
         } else if (request.equals("update")) {
+            if (AccountFragment.checkIfChangedPass > 0)
+                values.put(PTNT_PASSWORD, patient.getPassword());
+
             rowID = db.update(TBL_PATIENTS, values, PTNT_PATIENT_ID + "=" + patient_id, null);
         }
 
@@ -1154,6 +1162,7 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setId(cur.getInt(cur.getColumnIndex(PTNT_ID)));
             patient.setServerID(cur.getInt(cur.getColumnIndex(PTNT_PATIENT_ID)));
             patient.setFname(cur.getString(cur.getColumnIndex(PTNT_FNAME)));
+            patient.setMname(cur.getString(cur.getColumnIndex(PTNT_MNAME)));
             patient.setLname(cur.getString(cur.getColumnIndex(PTNT_LNAME)));
             patient.setUsername(cur.getString(cur.getColumnIndex(PTNT_USERNAME)));
             patient.setPassword(cur.getString(cur.getColumnIndex(PTNT_PASSWORD)));

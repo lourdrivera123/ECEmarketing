@@ -86,9 +86,6 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(this, MasterTabActivity.class);
-                intent.putExtra("selected", 2);
-                startActivity(intent);
                 this.finish();
                 break;
 

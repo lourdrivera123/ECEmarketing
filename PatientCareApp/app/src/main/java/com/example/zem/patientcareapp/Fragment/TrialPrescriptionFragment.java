@@ -155,11 +155,11 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                                 if (dbhelper.deletePrescriptionByServerID(serverID)) {
                                     arrayOfPrescriptions = refreshPrescriptionList();
                                     gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
-                                    pdialog.dismiss();
                                 } else {
                                     Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                 }
                             }
+                            pdialog.dismiss();
                         }
                     }, 3000);
                 }
