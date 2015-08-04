@@ -5,7 +5,7 @@ package com.example.zem.patientcareapp.GetterSetter;
  */
 public class Basket {
     int patienId, productId, basketId, id;
-    double quantity;
+    int quantity;
     String createdAt, updatedAt;
 
 
@@ -25,7 +25,7 @@ public class Basket {
         this.productId = productId;
     }
 
-    public void setQuantity(double quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
@@ -53,7 +53,7 @@ public class Basket {
         return productId;
     }
 
-    public double getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 

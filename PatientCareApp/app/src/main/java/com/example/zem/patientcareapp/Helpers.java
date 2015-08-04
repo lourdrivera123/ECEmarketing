@@ -179,8 +179,10 @@ public class Helpers {
         return "";
     }
 
-    public String getPluralForm(String noun){
+    public String getPluralForm(String noun, int qty){
         String lastChar = "";
+
+        if(qty < 2) return  noun;
 
         lastChar = noun.substring(noun.length() -2);
         if( lastChar.equals("um") ) return noun.replace("um", "a");

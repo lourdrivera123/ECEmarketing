@@ -53,7 +53,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         consult = new Consultation();
 
         for (int x = 0; x < listOfAllConsultations.size(); x++) {
-            consultationDoctors.add(listOfAllConsultations.get(x).get(dbhelper.CONSULT_DOCTOR));
+            consultationDoctors.add(listOfAllConsultations.get(x).get(DbHelper.CONSULT_DOCTOR));
         }
         consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, R.id.doctor_name, consultationDoctors);
         listOfConsultations.setAdapter(consultAdapter);
@@ -84,7 +84,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         switch (item.getItemId()) {
             case R.id.update_cart:
                 Intent intent = new Intent(getActivity(), PatientConsultationActivity.class);
-                intent.putExtra("updateID", listOfAllConsultations.get(menuinfo.position).get(dbhelper.CONSULT_ID));
+                intent.putExtra("updateID", listOfAllConsultations.get(menuinfo.position).get(DbHelper.CONSULT_ID));
                 intent.putExtra("request", "update");
                 startActivity(intent);
                 break;
@@ -136,9 +136,9 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
             clinic_address = (TextView) v.findViewById(R.id.clinic_address);
             consultation_schedule = (TextView) v.findViewById(R.id.consultation_schedule);
 
-            doctor_name.setText("Dr. " + listOfAllConsultations.get(position).get(dbhelper.CONSULT_DOCTOR));
-            clinic_address.setText(listOfAllConsultations.get(position).get(dbhelper.CONSULT_CLINIC));
-            consultation_schedule.setText(listOfAllConsultations.get(position).get(dbhelper.CONSULT_DATE) + ", " + listOfAllConsultations.get(position).get(dbhelper.CONSULT_PART_OF_DAY));
+            doctor_name.setText("Dr. " + listOfAllConsultations.get(position).get(DbHelper.CONSULT_DOCTOR));
+            clinic_address.setText(listOfAllConsultations.get(position).get(DbHelper.CONSULT_CLINIC));
+            consultation_schedule.setText(listOfAllConsultations.get(position).get(DbHelper.CONSULT_DATE) + ", " + listOfAllConsultations.get(position).get(dbhelper.CONSULT_PART_OF_DAY));
 
             return v;
         }

@@ -14,9 +14,9 @@
         android:fillViewport="true">
 
         <TableLayout
-            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center">
 
             <TableRow>
 
@@ -31,117 +31,107 @@
                     android:src="@mipmap/profile_tile" />
 
                 <ImageButton
+                    android:id="@+id/history_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:background="?android:attr/selectableItemBackground"
-                    android:src="@mipmap/history_tile"
-                    android:id="@+id/history_btn" />
+                    android:src="@mipmap/history_tile" />
 
                 <ImageButton
+                    android:id="@+id/test_results_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:background="?android:attr/selectableItemBackground"
-                    android:src="@mipmap/results_tile"
-                    android:id="@+id/test_results_btn" />
+                    android:src="@mipmap/results_tile" />
             </TableRow>
 
             <TableRow android:layout_marginTop="@dimen/d10">
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_weight="1"
                     android:width="0dp"
+                    android:gravity="center"
                     android:text="Profile" />
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_weight="1"
                     android:width="0dp"
+                    android:gravity="center"
                     android:text="Patient History" />
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_weight="1"
                     android:width="0dp"
+                    android:gravity="center"
                     android:text="Prescription" />
             </TableRow>
 
             <TableRow android:layout_marginTop="@dimen/d40">
 
                 <ImageButton
+                    android:id="@+id/doctors_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:background="?android:attr/selectableItemBackground"
-                    android:src="@mipmap/doctors_tile"
-                    android:id="@+id/doctors_btn" />
+                    android:src="@mipmap/doctors_tile" />
 
                 <ImageButton
+                    android:id="@+id/consultation_btn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:background="?android:attr/selectableItemBackground"
-                    android:src="@mipmap/consultation_tile"
-                    android:id="@+id/consultation_btn" />
+                    android:src="@mipmap/consultation_tile" />
 
                 <ImageButton
+                    android:id="@+id/products_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:background="?android:attr/selectableItemBackground"
-                    android:src="@mipmap/product_tile"
-                    android:id="@+id/products_btn" />
+                    android:src="@mipmap/product_tile" />
             </TableRow>
 
             <TableRow android:layout_marginTop="@dimen/d10">
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_weight="1"
                     android:width="0dp"
+                    android:gravity="center"
                     android:text="Doctors" />
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_weight="1"
                     android:width="0dp"
+                    android:gravity="center"
                     android:text="Consultation" />
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_weight="1"
                     android:width="0dp"
+                    android:gravity="center"
                     android:text="Products" />
             </TableRow>
 
             <TableRow android:layout_marginTop="@dimen/d40">
-
-                <ImageButton
-                    android:id="@+id/cart_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:src="@mipmap/cart_tile" />
 
                 <ImageButton
                     android:id="@+id/promos_btn"
@@ -152,6 +142,16 @@
                     android:layout_weight="1"
                     android:background="?android:attr/selectableItemBackground"
                     android:src="@mipmap/discounts_tile" />
+
+                <ImageButton
+                    android:id="@+id/cart_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@mipmap/cart_tile" />
 
                 <ImageButton
                     android:id="@+id/news_btn"
@@ -168,23 +168,23 @@
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_weight="1"
                     android:width="0dp"
+                    android:gravity="center"
                     android:text="Cart" />
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_weight="1"
                     android:width="0dp"
+                    android:gravity="center"
                     android:text="Promos" />
 
                 <TextView
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="center"
                     android:text="News" />
             </TableRow>
         </TableLayout>

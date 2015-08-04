@@ -605,7 +605,7 @@ public class Sync {
     public Basket setBasket(JSONObject json) throws JSONException {
         Basket basket = new Basket();
         basket.setBasketId(json.getInt(DbHelper.BASKET_ID));
-        basket.setQuantity(Double.parseDouble(json.getString(DbHelper.BASKET_QUANTITY)));
+        basket.setQuantity(Integer.parseInt(json.getString(DbHelper.BASKET_QUANTITY)));
         basket.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
         basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
         basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));

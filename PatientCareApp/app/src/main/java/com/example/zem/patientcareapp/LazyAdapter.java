@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Fragment.ProductsFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.GetterSetter.Product;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -108,9 +109,7 @@ public class LazyAdapter extends BaseAdapter {
             map = data.get(position);
             final Map<String, HashMap<String, String>> productQuantity = ProductsFragment.productQuantity;
 
-            String fuckyou = map.get("id");
-
-            productId = Integer.parseInt(fuckyou);
+            productId = Integer.parseInt(map.get("id"));
             productPacking = productQuantity.get(productId + "").get("packing");
             productUnit = map.get("unit");
             productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ? Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
@@ -137,8 +136,8 @@ public class LazyAdapter extends BaseAdapter {
                     tv_new_product_quantity.setText(qty + "");
 
                     productQuantity.get(productId + "").put("temp_basket_qty", qty + "");
-                    double totalPacking = (qty / productQtyPerPacking);
-                    String fiProductPacking = totalPacking > 1 ? helpers.getPluralForm(productPacking) : productPacking;
+                    int totalPacking = (qty / productQtyPerPacking);
+                    String fiProductPacking = helpers.getPluralForm(productPacking, totalPacking);
                     tv_new_product_description.setText("1 " + productUnit + " x " + qty + "(" + totalPacking + " " + fiProductPacking + ")");
 
                     ProductsFragment.productQuantity = productQuantity;
@@ -159,8 +158,8 @@ public class LazyAdapter extends BaseAdapter {
                     }
                     productQuantity.get(productId + "").put("temp_basket_qty", qty + "");
                     tv_new_product_quantity.setText(qty + "");
-                    double totalPacking = (qty / productQtyPerPacking);
-                    String fiProductPacking = totalPacking > 1 ? helpers.getPluralForm(productPacking) : productPacking;
+                    int totalPacking = (qty / productQtyPerPacking);
+                    String fiProductPacking = helpers.getPluralForm(productPacking, totalPacking);
                     tv_new_product_description.setText("1 " + productUnit + " x " + qty + "(" + totalPacking + " " + fiProductPacking + ")");
 
                     ProductsFragment.productQuantity = productQuantity;
@@ -170,7 +169,7 @@ public class LazyAdapter extends BaseAdapter {
             // Setting all values in listview
             vi.setTag(PID);
             product_name.setText(map.get(DbHelper.PRODUCT_NAME));
-            product_description.setText("1 " + productUnit + " x " + productQtyPerPacking + "(1.0 " + productPacking + ")");
+            product_description.setText("1 " + productUnit + " x " + productQtyPerPacking + "(1 " + productPacking + ")");
             product_price.setText("\u20B1 " + map.get(DbHelper.PRODUCT_PRICE));
 
             final View tempVi = vi;
@@ -185,8 +184,8 @@ public class LazyAdapter extends BaseAdapter {
 
                     if (helpers.isNetworkAvailable(activity)) {
                         try {
-                            double new_qty;
-                            new_qty = Double.parseDouble(product_quantity.getText().toString());
+                            int new_qty;
+                            new_qty = Integer.parseInt(product_quantity.getText().toString());
                             final Basket basket = dbhelper.getBasket(get_productID);
 
                             final ProgressDialog pdialog = new ProgressDialog(activity);
@@ -202,7 +201,7 @@ public class LazyAdapter extends BaseAdapter {
                                 hashMap.put("table", "baskets");
                                 hashMap.put("request", "crud");
 
-                                double old_qty = basket.getQuantity();
+                                int old_qty = basket.getQuantity();
                                 basket.setQuantity(new_qty + old_qty);
                                 hashMap.put("quantity", String.valueOf(basket.getQuantity()));
                                 hashMap.put("action", "update");
@@ -265,21 +264,33 @@ public class LazyAdapter extends BaseAdapter {
                 qty = (TextView) vi.findViewById(R.id.product_quantity);
                 total = (TextView) vi.findViewById(R.id.total);
 
+                System.out.println("BASKET ITEMS: "+basket_items.toString());
                 // Do the fucking stuffs here
                 price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
                 quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
-                String unit = basket_items.get(DbHelper.PRODUCT_UNIT);
+                String unit, packing;
+                int basketId;
+                int qtyPerPacking;
+                unit = basket_items.get(DbHelper.PRODUCT_UNIT);
+                basketId= Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID));
+                packing = basket_items.get(DbHelper.PRODUCT_PACKING);
+                qtyPerPacking = Integer.parseInt(basket_items.get(DbHelper.PRODUCT_QTY_PER_PACKING));
+
+
 
                 // Setting all values in listview
                 productName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
                 total_amount = price * quantity;
 
-                total.setText(total_amount + "");
+                total.setText("\u20B1 "+total_amount + "");
                 qty.setText(quantity + "");
-                productPrice.setText("Quantity: " + quantity + "\nPrice: \u20B1 " + price + " / " + (!unit.equals("0") ? unit : ""));
+                int num = quantity/qtyPerPacking;
+                productPrice.setText("Quantity: " + quantity + " x "+helpers.getPluralForm(unit, quantity)+" ("+num+" "+helpers.getPluralForm(packing, num)+")"+
+                        "\nPrice: \u20B1 " + price + " / " + (!unit.equals("0") ? unit : "") );
 
-                qty.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+                qty.setId(basketId);
                 total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+                total.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
             } catch (Exception e) {
                 System.out.println("error on LazyAdapter@basket_items" + e.getMessage());
                 e.printStackTrace();
@@ -328,9 +339,9 @@ public class LazyAdapter extends BaseAdapter {
             SimpleDateFormat df = new SimpleDateFormat("MMMMM d, yyyy");
 
             promoName.setText(promo_item.get("promo_name"));
-            less.setText("HURRY!");
+            less.setText("LESS:");
             if (promo_item.get("max_discount") != null) {
-                lessAmount.setText("Up to " + promo_item.get("min_discount") + " - " + promo_item.get("max_discount") + "% DISCOUNT");
+                lessAmount.setText("Upto " + promo_item.get("min_discount") + " - " + promo_item.get("max_discount") + "% DISCOUNT");
             } else {
                 lessAmount.setText("Free items available on selected products.");
             }

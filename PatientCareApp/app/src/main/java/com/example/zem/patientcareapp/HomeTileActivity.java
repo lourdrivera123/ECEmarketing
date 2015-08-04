@@ -188,13 +188,13 @@ public class HomeTileActivity extends Activity implements View.OnClickListener {
                 startActivity(intent);
                 break;
 
-            case R.id.cart_btn:
-                intent.putExtra("selected", 6);
+            case R.id.promos_btn:
+                intent.putExtra("selected", 7);
                 startActivity(intent);
                 break;
 
-            case R.id.promos_btn:
-                intent.putExtra("selected", 7);
+            case R.id.cart_btn:
+                intent.putExtra("selected", 8);
                 startActivity(intent);
                 break;
 

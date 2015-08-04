@@ -129,7 +129,7 @@ public class DbHelper extends SQLiteOpenHelper {
             PRODUCT_NAME = "name",
             PRODUCT_GENERIC_NAME = "generic_name",
             PRODUCT_DESCRIPTION = "description",
-            PRODUCT_PRESCRIPTION_REQUIRED = "presciption_required",
+            PRODUCT_PRESCRIPTION_REQUIRED = "prescription_required",
             PRODUCT_PRICE = "price",
             PRODUCT_UNIT = "unit",
             PRODUCT_PACKING = "packing",
@@ -1256,7 +1256,7 @@ public class DbHelper extends SQLiteOpenHelper {
             basket.setBasketId(cur.getInt(cur.getColumnIndex(SERVER_BASKET_ID)));
             basket.setPatienId(cur.getInt(cur.getColumnIndex(BASKET_PATIENT_ID)));
             basket.setProductId(cur.getInt(cur.getColumnIndex(BASKET_PRODUCT_ID)));
-            basket.setQuantity(cur.getDouble(cur.getColumnIndex(BASKET_QUANTITY)));
+            basket.setQuantity(cur.getInt(cur.getColumnIndex(BASKET_QUANTITY)));
             basket.setCreatedAt(cur.getString(cur.getColumnIndex(CREATED_AT)));
             basket.setUpdatedAt(cur.getString(cur.getColumnIndex(UPDATED_AT)));
             cur.moveToNext();
@@ -1269,7 +1269,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public ArrayList<HashMap<String, String>> getAllBasketItems() {
         ArrayList<HashMap<String, String>> items = new ArrayList();
 
-        String sql = "Select b.id, b.basket_id, p.product_id, p.name, p.price, p.sku, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
+        String sql = "Select b.id, b.basket_id, p.product_id, p.name, p.price, p.packing, p.qty_per_packing," +
+                " p.prescription_required, p.sku, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
                 "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where b.patient_id=" + this.getCurrentLoggedInPatient().getServerID() + "";
 
         SQLiteDatabase db = getWritableDatabase();
@@ -1286,6 +1287,9 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(BASKET_QUANTITY, String.valueOf(cur.getInt(cur.getColumnIndex(BASKET_QUANTITY))));
             map.put(PRODUCT_UNIT, cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
             map.put(PRODUCT_SKU, cur.getString(cur.getColumnIndex(PRODUCT_SKU)));
+            map.put(PRODUCT_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
+            map.put(PRODUCT_QTY_PER_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_QTY_PER_PACKING)));
+            map.put(PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(PRODUCT_PRESCRIPTION_REQUIRED)));
             items.add(map);
             cur.moveToNext();
         }

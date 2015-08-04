@@ -59,7 +59,7 @@ public class ServerRequest {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            System.out.println("response is: " + response);
+                            System.out.println("response is: " + response+"\n"+" url: "+url+"\n"+" params: "+params.toString());
 
                             try {
                                 int success = Integer.parseInt(response.getString("success"));
@@ -77,7 +77,7 @@ public class ServerRequest {
                                             Date now = new Date();
 
                                             basket.setBasketId(insertedId);
-                                            basket.setQuantity(Double.parseDouble(params.get("quantity")));
+                                            basket.setQuantity(Integer.parseInt(params.get("quantity")));
                                             basket.setProductId(Integer.parseInt(params.get("product_id")));
                                             basket.setCreatedAt(sdf.format(now));
 
