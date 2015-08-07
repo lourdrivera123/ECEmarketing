@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,7 +31,10 @@ import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.LazyAdapter;
+import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.Sync;
@@ -61,14 +65,12 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     ServerRequest serverRequest;
     View root_view;
     Button btnCheckout;
-    Sync sync;
     RequestQueue queue;
 
     @SuppressLint("NewApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.cart_layout, container, false);
-        sync = new Sync();
         queue = Volley.newRequestQueue(getActivity());
         root_view = rootView;
         dbHelper = new DbHelper(getActivity());
@@ -80,18 +82,12 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
         btnCheckout.setOnClickListener(this);
 
-        String url = helper.get_url("get_basket_items") + "&patient_id=" + dbHelper.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
-        JsonObjectRequest basket_items_request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        String url_raw = "get_basket_items&patient_id=" + dbHelper.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
 
+        GetRequest.getJSONobj(getActivity(), url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
-
-                sync = new Sync();
-                sync.init(getActivity(), "get_basket_items", "baskets", "basket_id", response);
-
-                try {
-                    System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                    dbHelper.updateLastUpdatedTable("baskets", response.getString("server_timestamp"));
+            public void getResult(JSONObject response) {
+                Log.d("response using interface <ShoppingCartFragment.java >", response + "");
 
                     items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
 
@@ -106,18 +102,16 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
                     adapter = new LazyAdapter(getActivity(), items, "basket_items");
                     lv_items.setAdapter(adapter);
-                } catch (Exception e) {
-                    System.out.println("error fetching server timestamp: " + e);
-                }
+
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("Error", "asdasda ");
                 Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
 
             }
         });
-        queue.add(basket_items_request);
+
         lv_items.setOnCreateContextMenuListener(this);
         return rootView;
     }
