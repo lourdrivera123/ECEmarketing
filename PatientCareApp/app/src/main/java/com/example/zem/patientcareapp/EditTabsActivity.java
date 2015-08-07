@@ -78,8 +78,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     String s_unit_no, s_building, s_lot_no, s_block_no, s_phase_no, s_house_no, s_street, s_barangay, s_city, s_province, s_zip, s_email, s_tel_no, s_cell_no, s_region;
 
     // ACCOUNT INFO FRAGMENT
-    String username = "";
-    String s_filepath = "";
+    String username = "", pass = "", s_filepath = "";
     ImageView image_holder;
     Drawable d;
 
@@ -100,6 +99,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     JSONObject patient_json_object_mysql = null;
     JSONArray patient_json_array_mysql = null;
 
+    public static SharedPreferences sharedpreferences;
+
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         ActionBar actionbar = getActionBar();
         MainActivity.setCustomActionBar(actionbar);
+
+        sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
 
         Intent intent = getIntent();
         signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
@@ -221,14 +224,14 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                 e.printStackTrace();
                                                             }
 
-                                                            System.out.println("PATIENT: " + patient.toString());
-
                                                             if (success == 1) {
                                                                 if (dbHelper.savePatient(patient_json_object_mysql, patient, "update")) {
+                                                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                                    editor.putString(MainActivity.name, patient.getUsername());
+                                                                    editor.putString(MainActivity.pass, patient.getPassword());
+                                                                    editor.commit();
+
                                                                     Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
-                                                                    Intent intent = new Intent(getBaseContext(), MasterTabActivity.class);
-                                                                    intent.putExtra("selected", 0);
-                                                                    startActivity(intent);
                                                                     EditTabsActivity.this.finish();
                                                                 } else {
                                                                     Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
@@ -273,13 +276,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                     if (dbHelper.savePatient(patient_json_object_mysql, patient, "insert")) {
                                                                         SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                                                                         SharedPreferences.Editor editor = sharedpreferences.edit();
-                                                                        editor.putString("nameKey", patient.getUsername());
+                                                                        editor.putString(MainActivity.name, patient.getUsername());
+                                                                        editor.putString(MainActivity.pass, patient.getPassword());
                                                                         editor.commit();
                                                                         pDialog.hide();
 
-                                                                        Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
-                                                                        helpers.showNotification(getBaseContext(), resultIntent, 001, "Happy Birthday", "Happy Birthday and a Happy New Year", true);
-                                                                        startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
+                                                                        startActivity(new Intent(getBaseContext(), SidebarActivity.class));
+                                                                        EditTabsActivity.this.finish();
 
                                                                     } else {
                                                                         Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
@@ -358,7 +361,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             params.put("table", "patients");
         } else {
             params.put("request", request);
-            params.put("password", helpers.md5(patient.getPassword()));
+            params.put("password", patient.getPassword());
         }
         params.put("fname", patient.getFname());
         params.put("lname", patient.getLname());
@@ -599,7 +602,21 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         username = et_username.getText().toString();
 
         count = 0;
-        limit = 1;
+        limit = 2;
+
+        if (signup_int > 0) {
+            EditText password = (EditText) findViewById(R.id.password);
+
+            if (password.getText().toString().equals("")) {
+                password.setError("Field is required");
+            } else {
+                pass = helpers.md5(password.getText().toString());
+                patient.setPassword(pass);
+                count++;
+            }
+        } else {
+            count++;
+        }
 
         if (username.equals("")) {
             et_username.setError("Field is required");

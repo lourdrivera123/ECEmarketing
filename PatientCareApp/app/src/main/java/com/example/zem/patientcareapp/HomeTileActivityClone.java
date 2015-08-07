@@ -98,7 +98,7 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
 //            editor.clear();
 //            editor.commit();
 //            moveTaskToBack(true);
-//            HomeTileActivity.this.finish();
+//            HomeTileActivityClone.this.finish();
 //            startActivity(new Intent(this, MainActivity.class));
 //        }
         return rootView;
@@ -226,7 +226,7 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
 //                intent.putExtra(SelectedProductActivity.PRODUCT_ID, productID);
 //                intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "HomeTile");
 //                startActivity(intent);
-//                HomeTileActivity.this.finish();
+//                HomeTileActivityClone.this.finish();
 //            }
 //        });
 //

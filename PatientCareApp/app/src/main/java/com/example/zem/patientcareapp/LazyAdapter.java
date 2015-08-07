@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Created by Dexter B. on 5/4/2015.
  */
@@ -79,15 +78,13 @@ public class LazyAdapter extends BaseAdapter {
 
             TextView title = (TextView) vi.findViewById(R.id.title); // title
             TextView artist = (TextView) vi.findViewById(R.id.specialty); // artist name
-            ImageView list_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
 
             HashMap<String, String> doctor;
             doctor = data.get(position);
 
             // Setting all values in listview
-            title.setText(doctor.get(DbHelper.DOC_FULLNAME));
+            title.setText("Dr. " + doctor.get(DbHelper.DOC_FULLNAME));
             artist.setText(doctor.get(DbHelper.DOC_SPECIALTY_NAME));
-            list_image.setImageResource(R.mipmap.doctor_photo);
 
         } else if (list_type.equals("product_lists")) {
             vi = inflater.inflate(R.layout.list_row_products, null);
@@ -268,7 +265,7 @@ public class LazyAdapter extends BaseAdapter {
                 qty = (TextView) vi.findViewById(R.id.product_quantity);
                 total = (TextView) vi.findViewById(R.id.total);
 
-                // Do the fucking stuffs here
+                // Do stuffs here
                 price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
                 quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
                 String unit = basket_items.get(DbHelper.PRODUCT_UNIT);
@@ -299,7 +296,7 @@ public class LazyAdapter extends BaseAdapter {
             TextView itemAmount = (TextView) vi.findViewById(R.id.item_amount);
             TextView itemQuantity = (TextView) vi.findViewById(R.id.item_quantity);
 
-            // Do the fucking stuffs here
+            // Do stuffs here
             double price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
             int quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
 

@@ -236,6 +236,10 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
         public int removeView(ViewPager pager, int position) {
             uploadsByUser.remove(position);
             hashPrescriptions.remove(position);
+
+            if (hashPrescriptions.size() == 0 && uploadsByUser.size() == 0)
+                ViewPagerActivity.this.finish();
+
             pagerAdapter = new MyPagerAdapter(ViewPagerActivity.this, uploadsByUser);
             pager.setAdapter(pagerAdapter);
             pager.setCurrentItem(position);

@@ -34,7 +34,7 @@ import java.util.Map;
 
 public class AccountFragment extends Fragment implements View.OnClickListener {
     ImageView image_holder;
-    EditText username, current_pass, new_pass, retype_new_pass;
+    EditText username, current_pass, new_pass, retype_new_pass, password;
     TextView changePassword, show_and_hide_pass;
     Button btn_save, save, cancel;
 
@@ -54,12 +54,16 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         username = (EditText) rootView.findViewById(R.id.username);
         btn_save = (Button) rootView.findViewById(R.id.btn_save);
         changePassword = (TextView) rootView.findViewById(R.id.changePassword);
+        password = (EditText) rootView.findViewById(R.id.password);
 
         int edit = EditTabsActivity.edit_int;
         dbhelper = new DbHelper(getActivity());
         helpers = new Helpers();
 
         if (edit > 0) {
+            changePassword.setVisibility(View.VISIBLE);
+            password.setVisibility(View.GONE);
+
             String edit_uname = SidebarActivity.getUname();
             Patient patient = dbhelper.getloginPatient(edit_uname);
 
@@ -71,6 +75,9 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 Drawable d = new BitmapDrawable(yourSelectedImage);
                 image_holder.setImageDrawable(d);
             }
+        } else {
+            changePassword.setVisibility(View.GONE);
+            password.setVisibility(View.VISIBLE);
         }
 
         changePassword.setOnClickListener(this);

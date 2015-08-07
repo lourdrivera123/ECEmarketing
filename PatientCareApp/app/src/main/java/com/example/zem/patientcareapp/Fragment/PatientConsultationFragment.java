@@ -55,7 +55,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         for (int x = 0; x < listOfAllConsultations.size(); x++) {
             consultationDoctors.add(listOfAllConsultations.get(x).get(dbhelper.CONSULT_DOCTOR));
         }
-        consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, R.id.doctor_name, consultationDoctors);
+        consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, consultationDoctors);
         listOfConsultations.setAdapter(consultAdapter);
 
         add_consultation.setOnClickListener(this);
@@ -65,9 +65,16 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
     }
 
     @Override
+    public void onResume() {
+        Toast.makeText(getActivity(), "onResume", Toast.LENGTH_SHORT).show();
+        super.onResume();
+    }
+
+    @Override
     public void onClick(View v) {
         Intent intent = new Intent(getActivity(), PatientConsultationActivity.class);
         intent.putExtra("request", "add");
+        intent.putExtra("doctorID", 0);
         startActivity(intent);
     }
 
@@ -122,13 +129,13 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
     private class ConsultationAdapter extends ArrayAdapter {
 
-        public ConsultationAdapter(Context context, int resource, int textViewResourceId, ArrayList<String> objects) {
-            super(context, resource, textViewResourceId, objects);
+        public ConsultationAdapter(Context context, int resource, ArrayList<String> objects) {
+            super(context, resource, objects);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
+            View v = super.getView(position, convertView, parent);
             Drawable d = getResources().getDrawable(R.drawable.list_selector);
             v.setBackgroundDrawable(d);
 

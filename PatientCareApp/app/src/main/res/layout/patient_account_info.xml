@@ -48,6 +48,14 @@
                 android:layout_height="wrap_content"
                 android:hint="Username" />
 
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:visibility="gone"
+                android:hint="Password" />
+
             <TextView
                 android:id="@+id/changePassword"
                 android:layout_width="match_parent"
@@ -56,14 +64,20 @@
                 android:gravity="center_vertical"
                 android:text="Change Password" />
 
-            <Button
-                android:id="@+id/btn_save"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/d40"
-                android:layout_weight="1"
-                android:background="#5B9A68"
-                android:text="Save" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/btn_save"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d40"
+                    android:layout_weight="1"
+                    android:background="#5B9A68"
+                    android:text="Save" />
+            </TableRow>
+
         </TableLayout>
     </LinearLayout>
 </ScrollView>
