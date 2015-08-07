@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,10 +31,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.AndroidMultipartEntity;
 import com.example.zem.patientcareapp.Config;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ViewPagerActivity;
 import com.example.zem.patientcareapp.ServerRequest;
@@ -140,17 +145,17 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                     hashMap.put("request", "crud");
                     hashMap.put("action", "delete");
                     hashMap.put("id", String.valueOf(serverID));
-                    serverRequest.init(getActivity(), hashMap, "insert");
 
                     final ProgressDialog pdialog = new ProgressDialog(getActivity());
                     pdialog.setCancelable(false);
                     pdialog.setMessage("Deleting...");
                     pdialog.show();
 
-                    rootView.postDelayed(new Runnable() {
-                        public void run() {
+                    PostRequest.send(getActivity(), hashMap, "insert", serverRequest, new RespondListener<JSONObject>() {
+                        @Override
+                        public void getResult(JSONObject response) {
+                            Log.d("response using interface <TrialPrescriptionFragment.java>", response + "");
                             boolean responseFromServer = serverRequest.getResponse();
-
                             if (responseFromServer) {
                                 if (dbhelper.deletePrescriptionByServerID(serverID)) {
                                     arrayOfPrescriptions = refreshPrescriptionList();
@@ -160,8 +165,15 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                                 }
                             }
                             pdialog.dismiss();
+
                         }
-                    }, 3000);
+                    }, new ErrorListener<VolleyError>() {
+                        public void getError(VolleyError error) {
+                            Log.d("Error", "asdasda ");
+                            Toast.makeText(getActivity(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+                        }
+                    });
                 }
             });
             delete.show();
@@ -173,7 +185,6 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_pres:
-//                if (helper.isNetworkAvailable(getActivity())) {
                     dialog1 = new Dialog(getActivity());
                     dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog1.setContentView(R.layout.dialog_gallery_camera);
@@ -184,9 +195,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
                     pick_camera_layout.setOnClickListener(this);
                     pick_gallery_layout.setOnClickListener(this);
-//                } else {
-//                    Toast.makeText(getActivity(), "Network unavailable", Toast.LENGTH_SHORT).show();
-//                }
+
                 break;
 
             case R.id.pick_camera_layout:

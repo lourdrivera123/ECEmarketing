@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,8 +17,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.GetterSetter.Product;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.PostRequest;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -183,16 +190,15 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                             hashMap.put("action", "update");
                             hashMap.put("id", String.valueOf(basket.getBasketId()));
 
-                            serverRequest.init(this, hashMap, "insert_basket");
-
                             final ProgressDialog pdialog = new ProgressDialog(this);
                             pdialog.setCancelable(false);
                             pdialog.setMessage("Loading...");
                             pdialog.show();
 
-                            handler.postDelayed(new Runnable() {
+                            PostRequest.send(getBaseContext(), hashMap, "insert_basket", serverRequest, new RespondListener<JSONObject>() {
                                 @Override
-                                public void run() {
+                                public void getResult(JSONObject response) {
+                                    Log.d("response using interface <SelectedProductActivity.java>", response + "");
                                     boolean responseFromServer = serverRequest.getResponse();
                                     if (responseFromServer) {
                                         if (dbhelper.updateBasket(basket)) {
@@ -205,7 +211,14 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                                     }
                                     pdialog.dismiss();
                                 }
-                            }, 2500);
+                            }, new ErrorListener<VolleyError>() {
+                                public void getError(VolleyError error) {
+                                    Log.d("Error", "asdasda ");
+                                    Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+                                }
+                            });
+
                         } else {
                             final HashMap<String, String> hashMap = new HashMap();
                             hashMap.put("product_id", String.valueOf(get_productID));
@@ -220,16 +233,22 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                             pdialog.setMessage("Loading...");
                             pdialog.show();
 
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    pdialog.dismiss();
+                            serverRequest.setSuccessMessage("New item has been added to your cart!");
+                            serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
 
-                                    serverRequest.setSuccessMessage("New item has been added to your cart!");
-                                    serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
-                                    serverRequest.init(getBaseContext(), hashMap, "insert_basket");
+                            PostRequest.send(getBaseContext(), hashMap, "insert_basket", serverRequest, new RespondListener<JSONObject>() {
+                                @Override
+                                public void getResult(JSONObject response) {
+                                    Log.d("response using interface <SelectedProductActivity.java>", response + "");
+                                    pdialog.dismiss();
                                 }
-                            }, 2500);
+                            }, new ErrorListener<VolleyError>() {
+                                public void getError(VolleyError error) {
+                                    Log.d("Error", "asdasda ");
+                                    Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+                                }
+                            });
                         }
                     } catch (Exception e) {
                     }

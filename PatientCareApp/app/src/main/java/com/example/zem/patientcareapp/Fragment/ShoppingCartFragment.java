@@ -35,6 +35,7 @@ import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.Sync;
@@ -89,19 +90,19 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
             public void getResult(JSONObject response) {
                 Log.d("response using interface <ShoppingCartFragment.java >", response + "");
 
-                    items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
+                items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
 
-                    for (HashMap<String, String> item : items) {
-                        double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
-                        double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
-                        double total = price * quantity;
-                        TotalAmount += total;
-                    }
+                for (HashMap<String, String> item : items) {
+                    double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
+                    double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
+                    double total = price * quantity;
+                    TotalAmount += total;
+                }
 
-                    total_amount.setText("\u20B1 " + TotalAmount);
+                total_amount.setText("\u20B1 " + TotalAmount);
 
-                    adapter = new LazyAdapter(getActivity(), items, "basket_items");
-                    lv_items.setAdapter(adapter);
+                adapter = new LazyAdapter(getActivity(), items, "basket_items");
+                lv_items.setAdapter(adapter);
 
             }
         }, new ErrorListener<VolleyError>() {
@@ -208,7 +209,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     hashMap.put("id", String.valueOf(basket.getBasketId()));
 
                                   /* We already have that item in our basket, let's update it */
-                                    serverRequest.init(getActivity(), hashMap, "insert_basket");
+//                                    serverRequest.init(getActivity(), hashMap, "insert_basket");
 
                                     final ProgressDialog pdialog = new ProgressDialog(getActivity());
                                     pdialog.setCancelable(false);
@@ -262,42 +263,44 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     confirmationDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (helper.isNetworkAvailable(getActivity())) {
-                                final double amount = Double.parseDouble(row.get("price")) * Double.parseDouble(row.get("quantity"));
-                                serverRequest = new ServerRequest();
-                                HashMap<String, String> hashMap = new HashMap();
-                                hashMap.put("table", "baskets");
-                                hashMap.put("request", "crud");
-                                hashMap.put("action", "delete");
-                                hashMap.put("id", String.valueOf(row.get("basket_id")));
-                                serverRequest.init(getActivity(), hashMap, "insert");
+                            final double amount = Double.parseDouble(row.get("price")) * Double.parseDouble(row.get("quantity"));
+                            serverRequest = new ServerRequest();
+                            HashMap<String, String> hashMap = new HashMap();
+                            hashMap.put("table", "baskets");
+                            hashMap.put("request", "crud");
+                            hashMap.put("action", "delete");
+                            hashMap.put("id", String.valueOf(row.get("basket_id")));
 
-                                final ProgressDialog pdialog = new ProgressDialog(getActivity());
-                                pdialog.setCancelable(false);
-                                pdialog.setMessage("Loading...");
-                                pdialog.show();
+                            final ProgressDialog pdialog = new ProgressDialog(getActivity());
+                            pdialog.setCancelable(false);
+                            pdialog.setMessage("Loading...");
+                            pdialog.show();
 
-                                root_view.postDelayed(new Runnable() {
-                                    public void run() {
-                                        // Actions to do after 3 seconds
-                                        boolean responseFromServer = serverRequest.getResponse();
-                                        System.out.println("RESPONSE FROM SERVER: " + responseFromServer);
-                                        if (responseFromServer) {
-                                            if (dbHelper.deleteBasketItem(Integer.parseInt(row.get("basket_id")))) {
-                                                TotalAmount -= amount;
-                                                total_amount.setText("\u20B1 " + TotalAmount);
-                                                items.remove(pos);
-                                                adapter.notifyDataSetChanged();
-                                            } else {
-                                                Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
-                                            }
+                            PostRequest.send(getActivity(), hashMap, "insert", serverRequest, new RespondListener<JSONObject>() {
+                                @Override
+                                public void getResult(JSONObject response) {
+                                    Log.d("response using interface <ShoppingCartFragment.java>", response + "");
+                                    boolean responseFromServer = serverRequest.getResponse();
+                                    System.out.println("RESPONSE FROM SERVER: " + responseFromServer);
+                                    if (responseFromServer) {
+                                        if (dbHelper.deleteBasketItem(Integer.parseInt(row.get("basket_id")))) {
+                                            TotalAmount -= amount;
+                                            total_amount.setText("\u20B1 " + TotalAmount);
+                                            items.remove(pos);
+                                            adapter.notifyDataSetChanged();
+                                        } else {
+                                            Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                         }
-                                        pdialog.dismiss();
                                     }
-                                }, 3000);
-                            } else {
-                                Toast.makeText(getActivity(), "Please connect to the internet", Toast.LENGTH_SHORT).show();
-                            }
+                                    pdialog.dismiss();
+
+                                }
+                            }, new ErrorListener<VolleyError>() {
+                                public void getError(VolleyError error) {
+                                    Log.d("Error", "asdasda ");
+                                    Toast.makeText(getActivity(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                }
+                            });
                         }
                     });
                     confirmationDialog.show();

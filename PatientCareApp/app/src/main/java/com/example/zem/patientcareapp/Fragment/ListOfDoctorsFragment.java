@@ -62,7 +62,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     Sync sync;
     View root_view;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
@@ -138,6 +137,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onRefresh() {
+        //request for doctors
         GetRequest.getJSONobj(getActivity(), "get_doctors", "doctors", "doc_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
@@ -145,15 +145,45 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                 doctor_items = dbHelper.getAllDoctors();
                 populateDoctorListView(root_view, doctor_items);
                 refresh_doctor.setRefreshing(false);
-
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Log.d("Error", "asdasda ");
                 Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
-
             }
         });
+
+        //request for clinic
+        GetRequest.getJSONobj(getActivity(), "get_clinics", "clinics", "clinics_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                Log.d("response using interface <SplashActivity.java - clinic request >", response + "");
+                doctor_items = dbHelper.getAllDoctors();
+                populateDoctorListView(root_view, doctor_items);
+                refresh_doctor.setRefreshing(false);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("Error", error + "");
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        //request for clinic doctor request
+        GetRequest.getJSONobj(getActivity(), "get_clinic_doctor", "clinic_doctor", "clinic_doctor_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                Log.d("response using interface <SplashActivity.java - clinic_doctor request >", response + "");
+                doctor_items = dbHelper.getAllDoctors();
+                populateDoctorListView(root_view, doctor_items);
+                refresh_doctor.setRefreshing(false);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("Error", error + "");
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            }
+        });
+        
     }
 }
 
