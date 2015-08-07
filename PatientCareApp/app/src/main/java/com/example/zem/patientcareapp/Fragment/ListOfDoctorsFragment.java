@@ -51,12 +51,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     DbHelper dbHelper;
     RequestQueue queue;
 
-    // XML node keys
-    static final String KEY_FULL_NAME = "fullname"; // parent node
-    static final String KEY_SPECIALTY = "specialty";
-    static final String KEY_PHOTO = "photo";
-    static final String KEY_ID = "id";
-
     LazyAdapter adapter;
     Helpers helpers;
     Sync sync;
@@ -85,7 +79,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     public void populateDoctorListView(View rootView, ArrayList<HashMap<String, String>> doctor_items) {
         for (int i = 0; i < doctor_items.size(); i++) {
-            arrayOfSearchDoctors.add(doctor_items.get(i).get(KEY_FULL_NAME));
+            arrayOfSearchDoctors.add(doctor_items.get(i).get(dbHelper.DOC_FULLNAME));
         }
         temp_doctors.addAll(doctor_items);
 
@@ -100,11 +94,12 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        int ID = Integer.parseInt(doctor_items.get(position).get(KEY_ID));
+        int ID = Integer.parseInt(doctor_items.get(position).get(dbHelper.DOC_DOC_ID));
         Intent intent = new Intent(getActivity(), DoctorActivity.class);
-        intent.putExtra(dbHelper.RECORDS_DOCTOR_ID, ID);
+        intent.putExtra(dbHelper.DOC_DOC_ID, ID);
         startActivity(intent);
     }
+
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -125,10 +120,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
                 HashMap<String, String> map = new HashMap();
 
-                map.put(KEY_ID, temp_doctors.get(doctorindex).get(KEY_ID));
-                map.put(KEY_FULL_NAME, temp_doctors.get(doctorindex).get(KEY_FULL_NAME));
-                map.put(KEY_SPECIALTY, temp_doctors.get(doctorindex).get(KEY_SPECIALTY));
-                map.put(KEY_PHOTO, temp_doctors.get(doctorindex).get(KEY_PHOTO));
+                map.put(dbHelper.DOC_DOC_ID, temp_doctors.get(doctorindex).get(dbHelper.DOC_DOC_ID));
+                map.put(dbHelper.DOC_FULLNAME, temp_doctors.get(doctorindex).get(dbHelper.DOC_FULLNAME));
+                map.put(dbHelper.DOC_SPECIALTY_NAME, temp_doctors.get(doctorindex).get(dbHelper.DOC_SPECIALTY_NAME));
                 doctor_items.add(map);
                 adapter.notifyDataSetChanged();
             }

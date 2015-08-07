@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
@@ -24,6 +25,7 @@ public class PatientProfileFragment extends Fragment {
 
     TextView patient_name, username, birthdate, civil_status, height_weight, occupation, address_first_line, address_second_line, email, cp_no;
     String ptnt_name, unit_no, building, lot_no, block_no, phase_no, house_no = "";
+    String patient_uname;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class PatientProfileFragment extends Fragment {
 
         dbhelper = new DbHelper(getActivity());
         image_holder = (ImageView) rootView.findViewById(R.id.image_holder);
+        patient_name = (TextView) rootView.findViewById(R.id.patient_name);
         patient_name = (TextView) rootView.findViewById(R.id.patient_name);
         username = (TextView) rootView.findViewById(R.id.username);
         birthdate = (TextView) rootView.findViewById(R.id.birthdate);
@@ -42,11 +45,22 @@ public class PatientProfileFragment extends Fragment {
         email = (TextView) rootView.findViewById(R.id.email);
         cp_no = (TextView) rootView.findViewById(R.id.cp_no);
 
-        String patient_uname = SidebarActivity.getUname();
+        loadData();
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        loadData();
+        super.onResume();
+    }
+
+    private void loadData() {
+
+        patient_uname = SidebarActivity.getUname();
         Patient loginUser = dbhelper.getloginPatient(patient_uname);
 
         ptnt_name = loginUser.getFname() + " " + loginUser.getLname();
-
         username.setText("username: " + patient_uname);
 
         patient_name.setText(ptnt_name);
@@ -120,14 +134,5 @@ public class PatientProfileFragment extends Fragment {
             Drawable d = new BitmapDrawable(getResources(), yourSelectedImage);
             image_holder.setImageDrawable(d);
         }
-        return rootView;
-    }
-
-    @SuppressWarnings("deprecation")
-    private void setRes(ImageView iv, Drawable drawable) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-            iv.setBackground(drawable);
-        else
-            iv.setBackgroundDrawable(drawable);
     }
 }

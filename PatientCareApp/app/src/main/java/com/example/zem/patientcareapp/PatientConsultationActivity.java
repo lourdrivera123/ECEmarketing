@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,6 +57,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
 
     int hour, minute, new_hour, new_minute;
     int isAlarm, updateID;
+    int doctorID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,20 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         hour = cal.get(Calendar.HOUR_OF_DAY);
         minute = cal.get(Calendar.MINUTE);
 
+        doctorClinicHashmap = dbhelper.getAllActiveClinics();
+        doctorsHashmap = dbhelper.getAllDoctors();
+        listOfDoctors = new ArrayList();
+
+        partOfDayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, partOfDay);
+        doctorAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfDoctors);
+
+        search_doctor.setAdapter(doctorAdapter);
+
         if (getIntent.getStringExtra("request").equals("add")) {
+            if (getIntent.getIntExtra("doctorID", 0) > 0) {
+                doctorID = getIntent.getIntExtra("doctorID", 0);
+            }
+
             request = "add";
             consult = new Consultation();
 
@@ -107,19 +120,10 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
             }
         }
 
-
-        doctorClinicHashmap = dbhelper.getAllDoctorClinic();
-        doctorsHashmap = dbhelper.getAllDoctors();
-        listOfDoctors = new ArrayList();
-
         for (int i = 0; i < doctorsHashmap.size(); i++) {
             listOfDoctors.add(doctorsHashmap.get(i).get("fullname"));
         }
 
-        partOfDayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, partOfDay);
-        doctorAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfDoctors);
-
-        search_doctor.setAdapter(doctorAdapter);
         spin_dayTime.setAdapter(partOfDayAdapter);
         search_doctor.addTextChangedListener(this);
         search_doctor.setOnItemClickListener(this);

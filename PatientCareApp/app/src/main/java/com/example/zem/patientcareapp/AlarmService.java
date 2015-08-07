@@ -137,7 +137,7 @@ public class AlarmService {
                 }
             }*/
         }catch(Exception e){
-            System.out.println("Oh snap! We got some error <source: HomeTileActivity.java@onCreate>"+e.toString());
+            System.out.println("Oh snap! We got some error <source: HomeTileActivityClone.java@onCreate>"+e.toString());
         }
     }
 

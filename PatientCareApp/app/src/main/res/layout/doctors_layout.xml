@@ -62,6 +62,17 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <Button
+                android:id="@+id/scheduleConsultation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/ColorPrimary"
+                android:drawableLeft="@mipmap/ic_add_new_schedule"
+                android:gravity="center_vertical"
+                android:text="Schedule Consultation"
+                android:textAlignment="gravity"
+                android:textColor="@color/white" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -75,34 +86,10 @@
                     android:text="CLINIC INFORMATION"
                     android:textStyle="bold" />
 
-                <LinearLayout
+                <ListView
+                    android:id="@+id/listOfDoctors"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/d10"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/clinic_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="Doctor's Clinic"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/clinic_address_first_line"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="#86 Acacia St., Cabantian" />
-
-                    <TextView
-                        android:id="@+id/clinic_address_second_line"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="Dexter City, Davao del Sur, Philippines, 8000" />
-                </LinearLayout>
+                    android:layout_height="match_parent" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

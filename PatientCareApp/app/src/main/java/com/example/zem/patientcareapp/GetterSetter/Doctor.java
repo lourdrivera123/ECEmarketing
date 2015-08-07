@@ -10,7 +10,7 @@ public class Doctor implements Serializable {
             affiliation = "", specialty = "", sub_specialty = "",
             created_at = "", updated_at = "", deleted_at = "";
 
-    private int prc_no = 0, doc_id = 0, sub_specialty_id = 0;
+    private int prc_no = 0, server_doc_id = 0, doc_id = 0, sub_specialty_id = 0;
 
     public Doctor() {
 
@@ -20,6 +20,10 @@ public class Doctor implements Serializable {
         this.setFname(first_name);
         this.setMname(middle_name);
         this.setLname(last_name);
+    }
+
+    public void setServer_doc_id(int server_doc_id) {
+        this.server_doc_id = server_doc_id;
     }
 
     public void setDoc_id(int doc_id) {
@@ -62,10 +66,16 @@ public class Doctor implements Serializable {
         this.created_at = created_at;
     }
 
-    public void setUpdated_at(String updated_at) { this.updated_at = updated_at; }
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
+    }
 
     public void setDeleted_at(String deleted_at) {
         this.deleted_at = deleted_at;
+    }
+
+    public int getServer_doc_id() {
+        return server_doc_id;
     }
 
     public int getDoc_id() {

@@ -122,6 +122,13 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     }
 
     @Override
+    public void onResume() {
+        arrayOfPrescriptions = refreshPrescriptionList();
+        gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
+        super.onResume();
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.delete_context_menu, menu);
@@ -185,17 +192,16 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_pres:
-                    dialog1 = new Dialog(getActivity());
-                    dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog1.setContentView(R.layout.dialog_gallery_camera);
-                    dialog1.show();
+                dialog1 = new Dialog(getActivity());
+                dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog1.setContentView(R.layout.dialog_gallery_camera);
+                dialog1.show();
 
-                    pick_camera_layout = (LinearLayout) dialog1.findViewById(R.id.pick_camera_layout);
-                    pick_gallery_layout = (LinearLayout) dialog1.findViewById(R.id.pick_gallery_layout);
+                pick_camera_layout = (LinearLayout) dialog1.findViewById(R.id.pick_camera_layout);
+                pick_gallery_layout = (LinearLayout) dialog1.findViewById(R.id.pick_gallery_layout);
 
-                    pick_camera_layout.setOnClickListener(this);
-                    pick_gallery_layout.setOnClickListener(this);
-
+                pick_camera_layout.setOnClickListener(this);
+                pick_gallery_layout.setOnClickListener(this);
                 break;
 
             case R.id.pick_camera_layout:
@@ -302,7 +308,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL + "?patient_id=" + patientID);
+            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL + "?patient_id=" + patientID);ap
 
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
