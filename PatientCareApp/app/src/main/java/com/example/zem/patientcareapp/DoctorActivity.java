@@ -14,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.GetterSetter.Doctor;
-import com.example.zem.patientcareapp.GetterSetter.Patient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.doctors_layout);
+        setContentView(R.layout.doctor_profile);
 
         doctor_name = (TextView) findViewById(R.id.doctor_name);
         specialty = (TextView) findViewById(R.id.specialty);

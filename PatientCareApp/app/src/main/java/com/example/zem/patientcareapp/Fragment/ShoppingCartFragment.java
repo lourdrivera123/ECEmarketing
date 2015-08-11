@@ -22,11 +22,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
@@ -37,7 +34,6 @@ import com.example.zem.patientcareapp.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
-import com.example.zem.patientcareapp.Sync;
 
 import org.json.JSONObject;
 
@@ -48,29 +44,30 @@ import java.util.HashMap;
  * Created by Dexter B. on 5/6/2015.
  */
 public class ShoppingCartFragment extends Fragment implements View.OnClickListener {
-    ListView lv_items;
     LazyAdapter adapter;
-    public ArrayList<HashMap<String, String>> items;
-    HashMap<String, String> map;
-    public static TextView total_amount;
-    public Double TotalAmount = 0.00, oldTotal = 0.00, newTotal = 0.00;
-
-    EditText et_qty;
-    TextView tv_amount, p_name, p_total, p_price;
-    int gbl_pos = 0, old_qty = 0, newQty = 0;
-
-    HashMap<String, String> row;
     DbHelper dbHelper;
     Helpers helper;
     ServerRequest serverRequest;
-    View root_view;
+
+    public ArrayList<HashMap<String, String>> items;
+    HashMap<String, String> row;
+
+    public Double TotalAmount = 0.00, oldTotal = 0.00, newTotal = 0.00;
+    int gbl_pos = 0, old_qty = 0, newQty = 0;
+
+    TextView tv_amount, p_name, p_total, p_price;
+    public static TextView total_amount;
+    EditText et_qty;
+    ListView lv_items;
     Button btnCheckout;
+
+    View root_view;
     RequestQueue queue;
 
     @SuppressLint("NewApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.cart_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_shopping_cart_fragment, container, false);
         queue = Volley.newRequestQueue(getActivity());
         root_view = rootView;
         dbHelper = new DbHelper(getActivity());

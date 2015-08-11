@@ -293,6 +293,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                     Toast.makeText(EditTabsActivity.this, "Error occcurred. Please try again later", Toast.LENGTH_SHORT).show();
                                                                 }
                                                             } catch (JSONException e) {
+                                                                Log.d("error on catch", e.toString());
                                                             }
                                                         }
                                                     }, new Response.ErrorListener() {

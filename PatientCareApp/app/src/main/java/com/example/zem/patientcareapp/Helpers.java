@@ -95,10 +95,7 @@ public class Helpers {
                 }
             });
             queue.add(website_request);
-//            Log.e("true man ko", "true");
 
-        } else {
-//            Log.e("false lagi ko", "true");
         }
 //        return connection;
     }
@@ -127,8 +124,6 @@ public class Helpers {
                             .setContentText(body);
         }
 
-//        Intent resultIntent = new Intent(context, MainActivity.class);
-
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.
         PendingIntent resultPendingIntent =
@@ -142,7 +137,7 @@ public class Helpers {
         mBuilder.setContentIntent(resultPendingIntent);
 
         // Sets an ID for the notification
-//        int mNotificationId = 001;
+        // int mNotificationId = 001;
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -151,7 +146,7 @@ public class Helpers {
     }
 
     public String get_url(String request){
-        return "http://vinzry.0fees.us/db/get.php?q="+request;
+        return "http://192.168.177.1/db/get.php?q="+request;
     }
 
     public String md5(final String s) {

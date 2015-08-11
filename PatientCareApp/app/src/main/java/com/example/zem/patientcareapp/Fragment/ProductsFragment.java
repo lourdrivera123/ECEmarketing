@@ -17,12 +17,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
@@ -34,7 +31,6 @@ import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SelectedProductActivity;
 import com.example.zem.patientcareapp.ServerRequest;
-import com.example.zem.patientcareapp.Sync;
 
 import org.json.JSONObject;
 
@@ -50,7 +46,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     ArrayAdapter category_list_adapter;
     DbHelper dbHelper;
     Helpers helpers;
-    Sync sync;
     ServerRequest serverRequest;
     List<String> category_list;
     SwipeRefreshLayout refresh_products_list;
@@ -63,7 +58,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.products_layout, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_products_fragment, container, false);
         root_view = rootView;
 
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);

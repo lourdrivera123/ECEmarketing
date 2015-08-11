@@ -15,12 +15,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.DoctorActivity;
 import com.example.zem.patientcareapp.Helpers;
@@ -58,7 +54,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_list_of_doctors_fragment, container, false);
         root_view = rootView;
 
         helpers = new Helpers();

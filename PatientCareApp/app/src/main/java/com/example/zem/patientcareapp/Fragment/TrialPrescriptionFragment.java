@@ -83,7 +83,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.prescriptions_layout, container, false);
+        rootView = inflater.inflate(R.layout.fragment_trial_prescription_fragment, container, false);
 
         dbhelper = new DbHelper(getActivity());
         helper = new Helpers();

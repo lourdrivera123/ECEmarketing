@@ -42,7 +42,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.patient_consultation_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_patient_consultation_fragment, container, false);
 
         listOfConsultations = (ListView) rootView.findViewById(R.id.consultation_schedules);
         add_consultation = (ImageButton) rootView.findViewById(R.id.add_consultation);

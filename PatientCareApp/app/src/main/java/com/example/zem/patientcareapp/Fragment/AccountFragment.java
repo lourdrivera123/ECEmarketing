@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.EditTabsActivity;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Helpers;
-import com.example.zem.patientcareapp.MainActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarActivity;
-
-import org.w3c.dom.Text;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AccountFragment extends Fragment implements View.OnClickListener {
     ImageView image_holder;
@@ -48,7 +40,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.patient_account_info, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_account_fragment, container, false);
 
         image_holder = (ImageView) rootView.findViewById(R.id.image_holder);
         username = (EditText) rootView.findViewById(R.id.username);

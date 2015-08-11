@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Network.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public static final String name = "nameKey";
     public static final String pass = "passwordKey";
     String uname, password;
-    String url = "http://vinzry.0fees.us/db/post.php";
+    String url = "http://192.168.177.1/db/post.php";
 
     ProgressDialog pDialog;
     RequestQueue queue;
@@ -71,7 +73,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         helpers = new Helpers();
         alarmService = new AlarmService(this);
         main = this;
-        queue = Volley.newRequestQueue(this);
+        queue =  VolleySingleton.getInstance().getRequestQueue();
         sync = new Sync();
 
         pDialog = new ProgressDialog(this);
@@ -129,6 +131,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     patient = new Patient();
                     patient.setUsername(uname);
                     patient.setPassword(helpers.md5(password));
+
                     if (helpers.isNetworkAvailable(getBaseContext())) {
 
                         final Map<String, String> params = setParams();
@@ -192,6 +195,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.signup:
                 int signup = 23;
+
+                Dialog dialog = new Dialog(this);
+                dialog.setTitle("How did you hear about us?");
+                dialog.setContentView(R.layout.dialog_referral);
+                dialog.show();
 
                 Intent intent = new Intent(this, EditTabsActivity.class);
                 intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
