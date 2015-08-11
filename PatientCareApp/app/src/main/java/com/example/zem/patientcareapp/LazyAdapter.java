@@ -15,8 +15,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Fragment.ProductsFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.PostRequest;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -181,7 +187,6 @@ public class LazyAdapter extends BaseAdapter {
                     final ServerRequest serverRequest = new ServerRequest();
                     int get_productID = tempPID;
 
-                    if (helpers.isNetworkAvailable(activity)) {
                         try {
                             double new_qty;
                             new_qty = Double.parseDouble(product_quantity.getText().toString());
@@ -206,11 +211,10 @@ public class LazyAdapter extends BaseAdapter {
                                 hashMap.put("action", "update");
                                 hashMap.put("id", String.valueOf(basket.getBasketId()));
 
-                                serverRequest.init(activity, hashMap, "insert_basket");
-
-                                tempVi.postDelayed(new Runnable() {
+                                PostRequest.send(activity, hashMap, "insert_basket", serverRequest, new RespondListener<JSONObject>() {
                                     @Override
-                                    public void run() {
+                                    public void getResult(JSONObject response) {
+                                        Log.d("response using interface <LazyAdapter.java>", response + "");
                                         boolean responseFromServer = serverRequest.getResponse();
                                         if (responseFromServer) {
                                             if (dbhelper.updateBasket(basket)) {
@@ -225,7 +229,14 @@ public class LazyAdapter extends BaseAdapter {
                                         }
                                         pdialog.dismiss();
                                     }
-                                }, 2500);
+                                }, new ErrorListener<VolleyError>() {
+                                    public void getError(VolleyError error) {
+                                        Log.d("Error", "asdasda ");
+                                        Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+                                    }
+                                });
+
                             } else { //INSERT NEW PRODUCT IN BASKETS TABLE//
                                 final HashMap<String, String> hashMap = new HashMap();
                                 hashMap.put("product_id", String.valueOf(get_productID));
@@ -235,21 +246,25 @@ public class LazyAdapter extends BaseAdapter {
                                 hashMap.put("request", "crud");
                                 hashMap.put("action", "insert");
 
-                                tempVi.postDelayed(new Runnable() {
+                                serverRequest.setSuccessMessage("New item has been added to your cart!");
+                                serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
+
+                                PostRequest.send(activity, hashMap, "insert_basket", serverRequest, new RespondListener<JSONObject>() {
                                     @Override
-                                    public void run() {
+                                    public void getResult(JSONObject response) {
+                                        Log.d("response using interface <LazyAdapter.java - 2nd row>", response + "");
                                         pdialog.dismiss();
-                                        serverRequest.setSuccessMessage("New item has been added to your cart!");
-                                        serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
-                                        serverRequest.init(activity, hashMap, "insert_basket");
                                     }
-                                }, 2500);
+                                }, new ErrorListener<VolleyError>() {
+                                    public void getError(VolleyError error) {
+                                        Log.d("Error", "asdasda ");
+                                        Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+                                    }
+                                });
                             }
                         } catch (Exception e) {
                         }
-                    } else {
-                        Toast.makeText(activity, "Sorry, please connect to the internet.", Toast.LENGTH_SHORT).show();
-                    }
                 }
             });
 

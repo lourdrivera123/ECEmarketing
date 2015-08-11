@@ -21,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
@@ -122,6 +123,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 uname = username_txtfield.getText().toString();
                 password = password_txtfield.getText().toString();
 
+                // Request a string response from the provided URL.
+                String url ="http://vinzry.0fees.us/db/post.php?request=login&username=tae&password=5902672fc81ef15da758d5e843d31fcb";
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                // Display the first 500 characters of the response string.
+                                Log.d("string response", response+ "");
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("error response", error + "");
+                    }
+                });
+// Add the request to the RequestQueue.
+                queue.add(stringRequest);
+
                 if (uname.equals("")) {
                     username_txtfield.setError("Field Required");
                 } else if (password.equals("")) {
@@ -131,8 +150,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     patient = new Patient();
                     patient.setUsername(uname);
                     patient.setPassword(helpers.md5(password));
-
-                    if (helpers.isNetworkAvailable(getBaseContext())) {
+//                    if (helpers.isNetworkAvailable(getBaseContext())) {
 
                         final Map<String, String> params = setParams();
 
@@ -140,9 +158,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             @Override
                             public void onResponse(JSONObject response) {
                                 Log.d("ifsuccess", response + "");
+                                Log.d("response on jsobjrequest", response + "");
 
                                 try {
                                     int success = response.getInt("success");
+
                                     if (success == 1) {
                                         patient_json_array_mysql = response.getJSONArray("patient");
 
@@ -175,6 +195,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                     pDialog.dismiss();
 
                                 } catch (JSONException e) {
+                                    Log.d("try catch error", e + "");
                                     Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -182,15 +203,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 pDialog.dismiss();
-                                Toast.makeText(getBaseContext(), "error" + error.toString(), Toast.LENGTH_SHORT).show();
+                                Log.d("custom request error", error + "");
+//                                Toast.makeText(getBaseContext(), "error" + error.toString(), Toast.LENGTH_SHORT).show();
+                                  Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+
                             }
                         });
 
                         queue.add(jsObjRequest);
 
-                    } else {
-                        Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
-                    }
+//                    } else {
+//                        Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+//                    }
                 }
                 break;
             case R.id.signup:

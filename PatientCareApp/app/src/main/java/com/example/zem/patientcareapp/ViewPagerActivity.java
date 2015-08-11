@@ -23,12 +23,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,16 +109,16 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                         hashMap.put("request", "crud");
                         hashMap.put("action", "delete");
                         hashMap.put("id", String.valueOf(serverID));
-                        serverRequest.init(getBaseContext(), hashMap, "insert");
 
                         final ProgressDialog pdialog = new ProgressDialog(ViewPagerActivity.this);
                         pdialog.setCancelable(false);
                         pdialog.setMessage("Deleting...");
                         pdialog.show();
 
-                        new Handler().postDelayed(new Runnable() {
+                        PostRequest.send(getBaseContext(), hashMap, "insert", serverRequest, new RespondListener<JSONObject>() {
                             @Override
-                            public void run() {
+                            public void getResult(JSONObject response) {
+                                Log.d("response using interface <ViewPagerActivity.java>", response + "");
                                 boolean responseFromServer = serverRequest.getResponse();
 
                                 if (responseFromServer) {
@@ -123,8 +129,15 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                                         Toast.makeText(getBaseContext(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
+
                             }
-                        }, 2000);
+                        }, new ErrorListener<VolleyError>() {
+                            public void getError(VolleyError error) {
+                                Log.d("Error", "asdasda ");
+                                Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+                            }
+                        });
                     }
                 });
                 delete.show();
