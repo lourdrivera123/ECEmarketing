@@ -55,7 +55,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         for (int x = 0; x < listOfAllConsultations.size(); x++) {
             consultationDoctors.add(listOfAllConsultations.get(x).get(dbhelper.CONSULT_DOCTOR));
         }
-        consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, consultationDoctors);
+        consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, R.id.doctor_name, consultationDoctors);
         listOfConsultations.setAdapter(consultAdapter);
 
         add_consultation.setOnClickListener(this);
@@ -66,7 +66,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
     @Override
     public void onResume() {
-        Toast.makeText(getActivity(), "onResume", Toast.LENGTH_SHORT).show();
+
         super.onResume();
     }
 
@@ -129,8 +129,8 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
     private class ConsultationAdapter extends ArrayAdapter {
 
-        public ConsultationAdapter(Context context, int resource, ArrayList<String> objects) {
-            super(context, resource, objects);
+        public ConsultationAdapter(Context context, int resource, int textViewResourceId, ArrayList<String> objects) {
+            super(context, resource, textViewResourceId, objects);
         }
 
         @Override

@@ -96,7 +96,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         startActivity(intent);
     }
 
-
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
     }

@@ -88,11 +88,6 @@
             android:name=".ViewPagerActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
-            android:name=".HomeTileActivity"
-            launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Holo.Light" />
-        <activity
             android:name=".MasterTabActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
