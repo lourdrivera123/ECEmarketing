@@ -29,8 +29,6 @@ import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.Helpers;
-import com.example.zem.patientcareapp.HomeTileActivity;
-import com.example.zem.patientcareapp.HomeTileActivityClone;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.LazyAdapter;
@@ -38,7 +36,6 @@ import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
-import com.example.zem.patientcareapp.Sync;
 import com.example.zem.patientcareapp.samplepaypal;
 
 import org.json.JSONObject;
@@ -345,6 +342,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     public void onClick(View v) {
                         Intent samppaypal = new Intent(getActivity(), samplepaypal.class);
                         startActivity(samppaypal);
+
                     }
                 });
 
