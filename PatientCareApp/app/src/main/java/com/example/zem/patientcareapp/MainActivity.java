@@ -12,8 +12,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,11 +41,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+    EditText username_txtfield, password_txtfield, referredBy, hiddenOthers;
+    ImageView referredPhoto;
     TextView signup, forgotpw;
-    Button login_btn;
-
-    EditText username_txtfield, password_txtfield;
+    RadioButton referredByFriend, others;
+    LinearLayout hiddenLayout;
+    Button login_btn, continueBtn;
 
     DbHelper dbHelper;
     static Helpers helpers;
@@ -86,12 +94,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         username_txtfield = (EditText) findViewById(R.id.username_txtfield);
         password_txtfield = (EditText) findViewById(R.id.password_txtfield);
 
-        login_btn.setBackgroundColor(0xFF5B9A68);
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -139,7 +144,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d("ifsuccess", response + "");
-                            Log.d("response on jsobjrequest", response + "");
+                            Log.d("response on jrequest", response + "");
 
                             try {
                                 int success = response.getInt("success");
@@ -194,16 +199,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 break;
             case R.id.signup:
-                int signup = 23;
+                final int signup = 23;
 
                 Dialog dialog = new Dialog(this);
-                dialog.setTitle("How did you hear about us?");
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_referral);
                 dialog.show();
 
-                Intent intent = new Intent(this, EditTabsActivity.class);
-                intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
-                startActivity(intent);
+                hiddenLayout = (LinearLayout) dialog.findViewById(R.id.hiddenLayout);
+                referredPhoto = (ImageView) dialog.findViewById(R.id.referredPhoto);
+                referredBy = (EditText) dialog.findViewById(R.id.referredBy);
+                referredByFriend = (RadioButton) dialog.findViewById(R.id.referredByFriend);
+                others = (RadioButton) dialog.findViewById(R.id.others);
+                hiddenOthers = (EditText) dialog.findViewById(R.id.hiddenOthers);
+                continueBtn = (Button) dialog.findViewById(R.id.continueBtn);
+
+                continueBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getBaseContext(), EditTabsActivity.class);
+                        intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
+                        startActivity(intent);
+                    }
+                });
+
+                referredByFriend.setOnCheckedChangeListener(this);
+                others.setOnCheckedChangeListener(this);
                 break;
         }
     }
@@ -222,5 +243,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
         actionbar.setBackgroundDrawable(colorDrawable);
         actionbar.setDisplayShowTitleEnabled(false);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (referredByFriend.isChecked()) {
+            hiddenLayout.setVisibility(View.VISIBLE);
+            hiddenOthers.setVisibility(View.GONE);
+        }
+        if (others.isChecked()) {
+            hiddenLayout.setVisibility(View.GONE);
+            hiddenOthers.setVisibility(View.VISIBLE);
+        }
     }
 }
