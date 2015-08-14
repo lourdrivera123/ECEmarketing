@@ -15,6 +15,10 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.ConvertCurrencyRequest;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalItem;
 import com.paypal.android.sdk.payments.PayPalPayment;
@@ -49,7 +53,11 @@ public class samplepaypal extends Activity {
     private List<PayPalItem> productsInCart = new ArrayList<PayPalItem>();
 
     DbHelper dbHelper;
+    BigDecimal amount;
 
+    PayPalItem[] items;
+    PayPalPaymentDetails paymentDetails;
+    PayPalPayment payment;
     // PayPal configuration
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration()
             .environment(Config.PAYPAL_ENVIRONMENT).clientId(
@@ -178,7 +186,7 @@ public class samplepaypal extends Activity {
      * */
     private PayPalPayment prepareFinalCart() {
 
-        PayPalItem[] items = new PayPalItem[productsInCart.size()];
+        items = new PayPalItem[productsInCart.size()];
         items = productsInCart.toArray(items);
 
         // Total amount
@@ -190,21 +198,42 @@ public class samplepaypal extends Activity {
         // If you have tax, add it here
         BigDecimal tax = new BigDecimal("0.0");
 
-        PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails(
+        paymentDetails = new PayPalPaymentDetails(
                 shipping, subtotal, tax);
 
-        BigDecimal amount = subtotal.add(shipping).add(tax);
+//        BigDecimal amount = subtotal.add(shipping).add(tax);
+//        BigDecimal amount = new BigDecimal("0.0");
 
-        PayPalPayment payment = new PayPalPayment(
-                amount,
-                Config.DEFAULT_CURRENCY,
-                "Description about transaction. This will be displayed to the user.",
-                Config.PAYMENT_INTENT);
+        HashMap<String, String> hashMap = new HashMap();
+        hashMap.put("amount_in_php", String.valueOf(subtotal));
 
-        payment.items(items).paymentDetails(paymentDetails);
+        ConvertCurrencyRequest.send(hashMap, new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                Log.d("response using interface <samplepaypal.java>", response + "");
+                try {
+                    amount = new BigDecimal(response.getString("amount_converted"));
+                    Log.d("amount converted", amount + "");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                payment = new PayPalPayment(
+                        amount,
+                        Config.DEFAULT_CURRENCY,
+                        "Description about transaction. This will be displayed to the user.",
+                        Config.PAYMENT_INTENT);
 
-        // Custom field like invoice_number etc.,
-        payment.custom("This is text that will be associated with the payment that the app can use.");
+                payment.items(items).paymentDetails(paymentDetails);
+
+                // Custom field like invoice_number etc.,
+                payment.custom("This is text that will be associated with the payment that the app can use.");
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("errror <samplepaypal>", error + "");
+                Toast.makeText(getBaseContext(), "Cannot proceed to checkout. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            }
+        });
 
         return payment;
 

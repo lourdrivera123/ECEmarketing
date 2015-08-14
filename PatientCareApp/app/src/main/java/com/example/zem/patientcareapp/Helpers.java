@@ -146,7 +146,7 @@ public class Helpers {
     }
 
     public String get_url(String request){
-        return "http://192.168.177.1/db/get.php?q="+request;
+        return "http://192.168.10.1/db/get.php?q="+request;
     }
 
     public String md5(final String s) {
