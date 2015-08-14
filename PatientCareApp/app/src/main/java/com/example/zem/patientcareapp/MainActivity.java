@@ -50,7 +50,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public static final String name = "nameKey";
     public static final String pass = "passwordKey";
     String uname, password;
-    String url = "http://192.168.177.1/db/post.php";
+    String url = "http://192.168.10.1/db/post.php";
 
     ProgressDialog pDialog;
     RequestQueue queue;
