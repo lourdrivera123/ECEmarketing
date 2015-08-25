@@ -10,25 +10,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarActivity;
 
 public class PatientProfileFragment extends Fragment {
     ImageView image_holder;
     DbHelper dbhelper;
+    Helpers helpers;
 
     TextView patient_name, username, birthdate, civil_status, height_weight, occupation, address_first_line, address_second_line, email, cp_no;
     String ptnt_name, unit_no, building, lot_no, block_no, phase_no, house_no = "";
     String patient_uname;
+    ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_patient_profile_fragment, container, false);
 
+        helpers = new Helpers();
         dbhelper = new DbHelper(getActivity());
         image_holder = (ImageView) rootView.findViewById(R.id.image_holder);
         patient_name = (TextView) rootView.findViewById(R.id.patient_name);
@@ -42,6 +47,8 @@ public class PatientProfileFragment extends Fragment {
         address_second_line = (TextView) rootView.findViewById(R.id.address_second_line);
         email = (TextView) rootView.findViewById(R.id.email);
         cp_no = (TextView) rootView.findViewById(R.id.cp_no);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
+
 
         loadData();
         return rootView;
@@ -128,9 +135,7 @@ public class PatientProfileFragment extends Fragment {
         String imgFile = loginUser.getPhoto();
 
         if (imgFile != null || !imgFile.equals("")) {
-            Bitmap yourSelectedImage = BitmapFactory.decodeFile(imgFile);
-            Drawable d = new BitmapDrawable(getResources(), yourSelectedImage);
-            image_holder.setImageDrawable(d);
+            helpers.setImage(imgFile, progressBar, image_holder);
         }
     }
 }

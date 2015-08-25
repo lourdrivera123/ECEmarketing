@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
@@ -27,11 +29,14 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +51,20 @@ import com.example.zem.patientcareapp.Fragment.SignUpFragment;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,6 +120,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     public static SharedPreferences sharedpreferences;
 
+    ProgressBar progressBar;
+    private TextView txtPercentage;
+    Dialog upload_dialog, dialog1;
+    long totalSize = 0;
+    String purpose = "";
+    String image_url = "";
+
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,11 +146,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         Intent intent = getIntent();
         signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
-        signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
         queue = VolleySingleton.getInstance().getRequestQueue();
-        url = "http://vinzry.0fees.us/db/post.php";
+        url = "http://192.168.10.1/db/post.php";
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
@@ -635,14 +659,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     public void setProfilePhoto() {
         String path = patient.getPhoto();
-
-        if (check > 0) { //IF RETURNED FROM ON ACTIVITY RESULT
-            Bitmap yourSelectedImage = BitmapFactory.decodeFile(path);
-            d = new BitmapDrawable(yourSelectedImage);
-            image_holder.setImageDrawable(d);
-        } else {
-            image_holder = (ImageView) findViewById(R.id.image_holder);
-        }
+//        if (check > 0) { //IF RETURNED FROM ON ACTIVITY RESULT
+//            Bitmap yourSelectedImage = BitmapFactory.decodeFile(path);
+//            d = new BitmapDrawable(yourSelectedImage);
+//            image_holder.setImageDrawable(d);
+//        } else {
+//            image_holder = (ImageView) findViewById(R.id.image_holder);
+//        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -661,11 +684,17 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     s_filepath = filePath;
                     cursor.close();
 
-                    patient.setPhoto(filePath);
+                    Log.d("onactivityresykt", "yess");
 
-                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-                    d = new BitmapDrawable(yourSelectedImage);
-                    image_holder.setImageDrawable(d);
+                    if (edit_int > 0) {
+                        purpose = "profile_upload_update";
+                    } else {
+                        purpose = "profile_upload_insert";
+                    }
+
+//                    filePath = filePath;
+                    showProgressbar();
+                    new UploadFileToServer().execute();
 
                     check = 23;
 
@@ -718,4 +747,112 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, year, monthOfYear, dayOfMonth);
         datePicker.show();
     }
+
+    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            progressBar.setProgress(0);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(progress[0]);
+            txtPercentage.setText(String.valueOf(progress[0]) + "%");
+            Log.d("naa ko sa progressupdate", "true");
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            Log.d("naa ko sa doinbg", "true");
+
+            return uploadFile();
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile() {
+            Log.d("naa ko sa uploadfile", "true");
+            String responseString;
+
+//            DbHelper dbHelper = new DbHelper(getBaseContext());
+            int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL + "?patient_id=" + patientID);
+
+            try {
+                AndroidMultipartEntity entity = new AndroidMultipartEntity(
+                        new AndroidMultipartEntity.ProgressListener() {
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                File sourceFile = new File(s_filepath);
+
+                // Adding file data to http body
+                entity.addPart("image", new FileBody(sourceFile));
+                entity.addPart("purpose", new StringBody(purpose));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: " + statusCode;
+                }
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.d("naa ko sa onpostexecute", "true");
+            Log.d("resulta sa lasto", result + "");
+
+            JSONObject jObject;
+            int serverID = 0;
+            try {
+                jObject = new JSONObject(result);
+                image_url = jObject.getString("file_path");
+                patient.setPhoto(image_url);
+
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+
+                helpers.setImage(image_url, progressBar, image_holder);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            upload_dialog.dismiss();
+            super.onPostExecute(result);
+        }
+    }
+
+    public void showProgressbar() {
+        Log.d("sulod", "brownout man");
+        //for upload
+        upload_dialog = new Dialog(this);
+        upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        upload_dialog.setContentView(R.layout.activity_upload);
+
+        txtPercentage = (TextView) upload_dialog.findViewById(R.id.txtPercentage);
+        progressBar = (ProgressBar) upload_dialog.findViewById(R.id.progressBar);
+        upload_dialog.show();
+    }
+
 }

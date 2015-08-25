@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.DbHelper;
@@ -62,11 +63,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             username.setText(patient.getUsername());
             String imgFile = patient.getPhoto();
 
-            if (imgFile != null) {
-                Bitmap yourSelectedImage = BitmapFactory.decodeFile(imgFile);
-                Drawable d = new BitmapDrawable(yourSelectedImage);
-                image_holder.setImageDrawable(d);
+            ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
+
+            if (imgFile != null || !imgFile.equals("")) {
+                helpers.setImage(imgFile, progressBar, image_holder);
             }
+
         } else {
             changePassword.setVisibility(View.GONE);
             password.setVisibility(View.VISIBLE);
