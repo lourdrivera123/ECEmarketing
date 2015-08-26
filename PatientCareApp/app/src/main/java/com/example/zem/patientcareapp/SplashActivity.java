@@ -144,6 +144,19 @@ public class SplashActivity extends Activity {
                     }
                 });
 
+                //request for products
+                GetRequest.getJSONobj(SplashActivity.this, "get_products", "products", "product_id", new RespondListener<JSONObject>() {
+                    @Override
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - products request >", response + "");
+                    }
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                    }
+                });
+
                 //request for dosages request
                 GetRequest.getJSONobj(SplashActivity.this, "get_dosages", "dosage_format_and_strength", "dosage_id", new RespondListener<JSONObject>() {
                     @Override
