@@ -211,7 +211,7 @@ public class LazyAdapter extends BaseAdapter {
                                 hashMap.put("action", "update");
                                 hashMap.put("id", String.valueOf(basket.getBasketId()));
 
-                                PostRequest.send(activity, hashMap, "insert_basket", serverRequest, new RespondListener<JSONObject>() {
+                                PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
                                     @Override
                                     public void getResult(JSONObject response) {
                                         Log.d("response using interface <LazyAdapter.java>", response + "");
@@ -249,7 +249,7 @@ public class LazyAdapter extends BaseAdapter {
                                 serverRequest.setSuccessMessage("New item has been added to your cart!");
                                 serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
 
-                                PostRequest.send(activity, hashMap, "insert_basket", serverRequest, new RespondListener<JSONObject>() {
+                                PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
                                     @Override
                                     public void getResult(JSONObject response) {
                                         Log.d("response using interface <LazyAdapter.java - 2nd row>", response + "");

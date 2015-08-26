@@ -2,25 +2,18 @@ package com.example.zem.patientcareapp.Network;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.CustomRequest;
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.GetterSetter.Basket;
-import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.ServerRequest;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -28,11 +21,11 @@ import java.util.HashMap;
  */
 public class PostRequest {
 
-    public static void send(final Context c, final HashMap<String, String> parameters, final String request, final ServerRequest serverRequest, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener){
+    public static void send(final Context c, final HashMap<String, String> parameters, final ServerRequest serverRequest, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener){
         RequestQueue queue;
 
         queue = VolleySingleton.getInstance().getRequestQueue();
-        String url = "http://192.168.10.1/db/post.php";
+        String url = "http://192.168.177.1/db/post.php";
 
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, parameters,
                 new Response.Listener<JSONObject>() {
@@ -40,7 +33,7 @@ public class PostRequest {
                     public void onResponse(JSONObject response) {
                         System.out.println("response is <PostRequest.java>: " + response);
 
-                        serverRequest.init(c, parameters, request, response);
+                        serverRequest.init(c, parameters, response);
 
                         listener.getResult(response);
                     }

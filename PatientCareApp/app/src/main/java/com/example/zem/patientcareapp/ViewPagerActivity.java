@@ -115,7 +115,7 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                         pdialog.setMessage("Deleting...");
                         pdialog.show();
 
-                        PostRequest.send(getBaseContext(), hashMap, "insert", serverRequest, new RespondListener<JSONObject>() {
+                        PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
                                 Log.d("response using interface <ViewPagerActivity.java>", response + "");

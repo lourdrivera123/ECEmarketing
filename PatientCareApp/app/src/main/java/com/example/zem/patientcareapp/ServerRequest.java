@@ -2,14 +2,9 @@ package com.example.zem.patientcareapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 
@@ -27,12 +22,11 @@ public class ServerRequest {
     RequestQueue queue;
     Helpers helpers;
     HashMap<String, String> params;
-    String url = "http://vinzry.0fees.us/db/post.php";
+    String url = "http://192.168.177.1/db/post.php";
 
     DbHelper dbHelper;
     boolean isSuccessful;
     Context activity;
-    String request;
     ProgressDialog pDialog;
 
     String successMessage = "Success!.",
@@ -42,14 +36,13 @@ public class ServerRequest {
 
     }
 
-    public boolean init(final Context getActivity, HashMap<String, String> parameters, String request, JSONObject response) {
+    public boolean init(final Context getActivity, HashMap<String, String> parameters, JSONObject response) {
         activity = getActivity;
         queue = VolleySingleton.getInstance().getRequestQueue();
         params = parameters;
         dbHelper = new DbHelper(activity);
         helpers = new Helpers();
         isSuccessful = false;
-        this.request = request;
 
         if (pDialog != null) {
             pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
@@ -94,16 +87,20 @@ public class ServerRequest {
                     }
                 }
             } else if (params.get("table").equals("patient_prescriptions")) {
-                Log.d("dapat musulod ko dri <ServerRequest.java>","true");
                 if (params.get("action").equals("delete")) {
                     if (success == 1) {
                         isSuccessful = true;
                     }
                 }
+            } else if (params.get("table").equals("referrals")) {
+                if (params.get("action").equals("insert")) {
+                    if (success == 1)
+                        isSuccessful = true;
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            if (pDialog != null) pDialog.hide();
+            if (pDialog != null) pDialog.dismiss();
         }
 
         return isSuccessful;

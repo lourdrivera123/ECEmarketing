@@ -1,17 +1,14 @@
 package com.example.zem.patientcareapp.Network;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.example.zem.patientcareapp.CustomRequest;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.ServerRequest;
 
 import org.json.JSONObject;
 
@@ -25,8 +22,9 @@ public class ConvertCurrencyRequest {
     public static void send(final HashMap<String, String> parameters, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener){
         RequestQueue queue;
 
+
         queue = VolleySingleton.getInstance().getRequestQueue();
-        String url = "http://192.168.10.1/db/libs/adaptivepayments-sdk-php/samples/convertcurrencyreceipt_mod.php";
+        String url = "http://192.168.177.1/db/libs/adaptivepayments-sdk-php/samples/convertcurrencyreceipt_mod.php";
 
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, parameters,
                 new Response.Listener<JSONObject>() {

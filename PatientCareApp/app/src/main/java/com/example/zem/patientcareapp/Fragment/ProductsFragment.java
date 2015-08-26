@@ -30,7 +30,6 @@ import com.example.zem.patientcareapp.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SelectedProductActivity;
-import com.example.zem.patientcareapp.ServerRequest;
 
 import org.json.JSONObject;
 
@@ -46,7 +45,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     ArrayAdapter category_list_adapter;
     DbHelper dbHelper;
     Helpers helpers;
-    ServerRequest serverRequest;
     List<String> category_list;
     SwipeRefreshLayout refresh_products_list;
 
@@ -68,14 +66,12 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         productQuantity = new HashMap();
 
         dbHelper = new DbHelper(getActivity());
-        serverRequest = new ServerRequest();
         queue = Volley.newRequestQueue(getActivity());
         helpers = new Helpers();
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
 
-//        if (helpers.isNetworkAvailable(getActivity())) {
         products_items = dbHelper.getAllProducts();
 
         for (HashMap<String, String> map : products_items) {
@@ -92,8 +88,8 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         populateProductsListView(rootView, products_items);
         category_list = dbHelper.getAllProductCategoriesArray();
         populateListView(rootView, category_list);
-        pDialog.hide();
-//        }
+        pDialog.dismiss();
+
         return rootView;
     }
 

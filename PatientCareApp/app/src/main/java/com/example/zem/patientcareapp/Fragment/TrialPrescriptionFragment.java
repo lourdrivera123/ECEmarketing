@@ -159,7 +159,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                     pdialog.setMessage("Deleting...");
                     pdialog.show();
 
-                    PostRequest.send(getActivity(), hashMap, "insert", serverRequest, new RespondListener<JSONObject>() {
+                    PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             Log.d("response using interface <TrialPrescriptionFragment.java>", response + "");
@@ -177,9 +177,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
-                            Log.d("Error", "asdasda ");
                             Toast.makeText(getActivity(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
-
                         }
                     });
                 }

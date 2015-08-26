@@ -134,7 +134,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Launching PalPay payment activity to complete the payment
-     * */
+     */
     private void launchPayPalPayment() {
 
         PayPalPayment thingsToBuy = prepareFinalCart();
@@ -160,7 +160,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Receiving the PalPay payment response
-     * */
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_PAYMENT) {
@@ -205,11 +205,11 @@ public class samplepaypal extends Activity {
 
         double price = 0;
         BigDecimal initial_price = null;
-        for(HashMap<String, String> item : items){
+        for (HashMap<String, String> item : items) {
             price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
             initial_price = BigDecimal.valueOf(price);
             double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
-            double total = price*quantity;
+            double total = price * quantity;
             name = item.get(DbHelper.PRODUCT_NAME);
             sku = item.get(DbHelper.PRODUCT_SKU);
 //            TotalAmount+= total;
@@ -228,13 +228,52 @@ public class samplepaypal extends Activity {
 
     /**
      * Preparing final cart amount that needs to be sent to PayPal for payment
-     * */
+     */
     private PayPalPayment prepareFinalCart() {
 
+<<<<<<< HEAD
+        items = new PayPalItem[productsInCart.size()];
+        items = productsInCart.toArray(items);
+
+        // Total amount
+        final BigDecimal subtotal = PayPalItem.getItemTotal(items);
+
+        // If you have shipping cost, add it here
+        final BigDecimal shipping = new BigDecimal("0.0");
+
+        // If you have tax, add it here
+        final BigDecimal tax = new BigDecimal("0.0");
+
+
+//        BigDecimal amount = subtotal.add(shipping).add(tax);
+//        BigDecimal amount = new BigDecimal("0.0");
+
+        HashMap<String, String> hashMap = new HashMap();
+        hashMap.put("amount_in_php", String.valueOf(subtotal.add(shipping).add(tax)));
+
+        ConvertCurrencyRequest.send(hashMap, new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                System.out.print("response using interface <samplepaypal.java>" + response);
+                paymentDetails = new PayPalPaymentDetails(
+                        shipping, subtotal, tax);
+                try {
+                    amount = new BigDecimal(response.getString("amount_converted"));
+                    Log.d("amount converted", amount + "");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                payment = new PayPalPayment(
+                        amount,
+                        Config.DEFAULT_CURRENCY,
+                        "Description about transaction. This will be displayed to the user.",
+                        Config.PAYMENT_INTENT);
+=======
         paymentDetails = new PayPalPaymentDetails(
                 shipping, subtotal, tax);
 
       amount = subtotal.add(shipping).add(tax);
+>>>>>>> 24e2743d907c66514a670f5321e77aebd4a36cd8
 
         payment = new PayPalPayment(
                 amount,
@@ -250,7 +289,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Verifying the mobile payment on the server to avoid fraudulent payment
-     * */
+     */
     private void verifyPaymentOnServer(final String paymentId,
                                        final String payment_client) {
         // Showing progress dialog before making request
@@ -274,9 +313,9 @@ public class samplepaypal extends Activity {
                     Toast.makeText(getApplicationContext(), message,
                             Toast.LENGTH_LONG).show();
 
-                    Log.d("error sa response during verify", ""+message);
+                    Log.d("error sa response during verify", "" + message);
 
-                    Log.d("gikan sa server", ""+res.toString() );
+                    Log.d("gikan sa server", "" + res.toString());
 
                     if (!error) {
                         // empty the cart

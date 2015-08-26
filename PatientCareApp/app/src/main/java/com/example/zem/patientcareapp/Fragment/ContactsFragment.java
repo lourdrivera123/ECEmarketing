@@ -23,7 +23,7 @@ public class ContactsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.patient_contact_info, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_contacts_fragment, container, false);
 
         unit_no = (EditText) rootView.findViewById(R.id.unit_no);
         building = (EditText) rootView.findViewById(R.id.building);

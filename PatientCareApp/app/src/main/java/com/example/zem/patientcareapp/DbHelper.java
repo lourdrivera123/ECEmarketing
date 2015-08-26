@@ -75,7 +75,9 @@ public class DbHelper extends SQLiteOpenHelper {
             PTNT_TEL_NO = "tel_no",
             PTNT_MOBILE_NO = "mobile_no",
             PTNT_EMAIL = "email_address",
-            PTNT_PHOTO = "photo";
+            PTNT_PHOTO = "photo",
+            PTNT_REFERRAL_ID = "referral_id",
+            PTNT_REFERRED_BY = "referred_by";
 
     //Updates Table
     public static final String TBL_UPDATES = "updates",
@@ -321,11 +323,11 @@ public class DbHelper extends SQLiteOpenHelper {
         // SQL to create table "patients"
         String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_PATIENTS, PTNT_ID, PTNT_PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION,
                 PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO,
                 PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_MOBILE_NO,
-                PTNT_EMAIL, PTNT_PHOTO, CREATED_AT, UPDATED_AT, DELETED_AT);
+                PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "product_categories"
         String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -422,7 +424,6 @@ public class DbHelper extends SQLiteOpenHelper {
                         "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)", TBL_PATIENT_CONSULTATIONS, CONSULT_ID, CONSULT_PATIENT_ID,
                 CONSULT_DOCTOR, CONSULT_CLINIC, CONSULT_DATE, CONSULT_PART_OF_DAY, CONSULT_IS_ALARMED, CONSULT_TIME, CONSULT_IS_FINISHED);
 
-
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_specialties);
         db.execSQL(sql_create_tbl_sub_specialties);
@@ -466,121 +467,6 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     /////////////////////////////INSERT METHODS///////////////////////////////////////
-    public boolean insertPatient(JSONObject patient_json_object_mysql, Patient patient) {
-        int patient_id = 0;
-        String created_at = "";
-
-        try {
-            patient_id = patient_json_object_mysql.getInt("id");
-            created_at = patient_json_object_mysql.getString("created_at");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(PTNT_PATIENT_ID, patient_id);
-        values.put(PTNT_FNAME, patient.getFname());
-        values.put(PTNT_MNAME, patient.getMname());
-        values.put(PTNT_LNAME, patient.getLname());
-        values.put(PTNT_USERNAME, patient.getUsername());
-        values.put(PTNT_PASSWORD, patient.getPassword());
-        values.put(PTNT_OCCUPATION, patient.getOccupation());
-        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
-        values.put(PTNT_SEX, patient.getSex());
-        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
-        values.put(PTNT_HEIGHT, patient.getHeight());
-        values.put(PTNT_WEIGHT, patient.getWeight());
-        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
-        values.put(PTNT_BUILDING, patient.getBuilding());
-        values.put(PTNT_LOT_NO, patient.getLot_no());
-        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
-        values.put(PTNT_PHASE_NO, patient.getPhase_no());
-        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
-        values.put(PTNT_STREET, patient.getAddress_street());
-        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
-        values.put(PTNT_CITY, patient.getAddress_city_municipality());
-        values.put(PTNT_PROVINCE, patient.getAddress_province());
-        values.put(PTNT_REGION, patient.getAddress_region());
-        values.put(PTNT_ZIP, patient.getAddress_zip());
-        values.put(PTNT_TEL_NO, patient.getTel_no());
-        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
-        values.put(PTNT_EMAIL, patient.getEmail());
-        values.put(PTNT_PHOTO, patient.getPhoto());
-        values.put(CREATED_AT, created_at);
-
-        long insert_patient = db.insert(TBL_PATIENTS, null, values);
-        db.close();
-        return insert_patient > 0;
-    }
-
-    public boolean savePatient(JSONObject patient_json_object_mysql, Patient patient, String request) {
-        int patient_id = 0;
-        String created_at = "";
-
-        if (request.equals("update")) {
-            patient_id = patient.getServerID();
-        } else {
-            try {
-                patient_id = patient_json_object_mysql.getInt("id");
-                created_at = patient_json_object_mysql.getString("created_at");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(PTNT_PATIENT_ID, patient_id);
-        values.put(PTNT_FNAME, patient.getFname());
-        values.put(PTNT_MNAME, patient.getMname());
-        values.put(PTNT_LNAME, patient.getLname());
-        values.put(PTNT_USERNAME, patient.getUsername());
-        values.put(PTNT_OCCUPATION, patient.getOccupation());
-        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
-        values.put(PTNT_SEX, patient.getSex());
-        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
-        values.put(PTNT_HEIGHT, patient.getHeight());
-        values.put(PTNT_WEIGHT, patient.getWeight());
-        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
-        values.put(PTNT_BUILDING, patient.getBuilding());
-        values.put(PTNT_LOT_NO, patient.getLot_no());
-        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
-        values.put(PTNT_PHASE_NO, patient.getPhase_no());
-        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
-        values.put(PTNT_STREET, patient.getAddress_street());
-        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
-        values.put(PTNT_CITY, patient.getAddress_city_municipality());
-        values.put(PTNT_PROVINCE, patient.getAddress_province());
-        values.put(PTNT_REGION, patient.getAddress_region());
-        values.put(PTNT_ZIP, patient.getAddress_zip());
-        values.put(PTNT_TEL_NO, patient.getTel_no());
-        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
-        values.put(PTNT_EMAIL, patient.getEmail());
-        values.put(PTNT_PHOTO, patient.getPhoto());
-        values.put(CREATED_AT, created_at);
-
-        long rowID = 0;
-
-        if (request.equals("insert")) {
-            values.put(PTNT_PASSWORD, patient.getPassword());
-            rowID = db.insert(TBL_PATIENTS, null, values);
-        } else if (request.equals("update")) {
-            if (AccountFragment.checkIfChangedPass > 0)
-                values.put(PTNT_PASSWORD, patient.getPassword());
-
-            rowID = db.update(TBL_PATIENTS, values, PTNT_PATIENT_ID + "=" + patient_id, null);
-        }
-
-        db.close();
-
-
-        return rowID > 0;
-
-    }
-
     public boolean insertBasket(Basket basket) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
@@ -683,6 +569,74 @@ public class DbHelper extends SQLiteOpenHelper {
     //////////////////////////END OF INSERT METHODS///////////////////////////
 
     /////////////////////////SAVE METHODS (INSERT AND UPDATE)///////////////////////
+    public boolean savePatient(JSONObject patient_json_object_mysql, Patient patient, String request) {
+        int patient_id = 0;
+        String created_at = "";
+
+        if (request.equals("update")) {
+            patient_id = patient.getServerID();
+        } else {
+            try {
+                patient_id = patient_json_object_mysql.getInt("id");
+                created_at = patient_json_object_mysql.getString("created_at");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(PTNT_PATIENT_ID, patient_id);
+        values.put(PTNT_FNAME, patient.getFname());
+        values.put(PTNT_MNAME, patient.getMname());
+        values.put(PTNT_LNAME, patient.getLname());
+        values.put(PTNT_USERNAME, patient.getUsername());
+        values.put(PTNT_OCCUPATION, patient.getOccupation());
+        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
+        values.put(PTNT_SEX, patient.getSex());
+        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
+        values.put(PTNT_HEIGHT, patient.getHeight());
+        values.put(PTNT_WEIGHT, patient.getWeight());
+        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
+        values.put(PTNT_BUILDING, patient.getBuilding());
+        values.put(PTNT_LOT_NO, patient.getLot_no());
+        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
+        values.put(PTNT_PHASE_NO, patient.getPhase_no());
+        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
+        values.put(PTNT_STREET, patient.getAddress_street());
+        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
+        values.put(PTNT_CITY, patient.getAddress_city_municipality());
+        values.put(PTNT_PROVINCE, patient.getAddress_province());
+        values.put(PTNT_REGION, patient.getAddress_region());
+        values.put(PTNT_ZIP, patient.getAddress_zip());
+        values.put(PTNT_TEL_NO, patient.getTel_no());
+        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
+        values.put(PTNT_EMAIL, patient.getEmail());
+        values.put(PTNT_PHOTO, patient.getPhoto());
+        values.put(PTNT_REFERRAL_ID, patient.getReferral_id());
+        values.put(PTNT_REFERRED_BY, patient.getReferred_by());
+        values.put(CREATED_AT, created_at);
+
+        long rowID = 0;
+
+        if (request.equals("insert")) {
+            values.put(PTNT_PASSWORD, patient.getPassword());
+            rowID = db.insert(TBL_PATIENTS, null, values);
+        } else if (request.equals("update")) {
+            if (AccountFragment.checkIfChangedPass > 0)
+                values.put(PTNT_PASSWORD, patient.getPassword());
+
+            rowID = db.update(TBL_PATIENTS, values, PTNT_PATIENT_ID + "=" + patient_id, null);
+        }
+
+        db.close();
+
+
+        return rowID > 0;
+
+    }
+
     public long savePatientRecord(PatientRecord record, String request) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -1833,6 +1787,26 @@ public class DbHelper extends SQLiteOpenHelper {
         String[] arr = new String[list.size()];
         return list.toArray(arr);
     }
+
+//    //for referrals
+//    public ArrayList<HashMap<String, String>> getReferralsByUsername(int userID) {
+//        ArrayList<HashMap<String, String>> listOfReferrals = new ArrayList();
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sql = "SELECT * FROM " + TBL_REFERRALS + " as r INNER JOIN " + TBL_PATIENTS + " as p ON p.patient_id = r.new_userID " +
+//                "WHERE r.referredBy_userID = " + userID;
+//        Cursor cur = db.rawQuery(sql, null);
+//
+//        while (cur.moveToNext()) {
+//            HashMap<String, String> map = new HashMap();
+//            String name = cur.getString(cur.getColumnIndex(PTNT_FNAME)) + " " + cur.getString(cur.getColumnIndex(PTNT_LNAME));
+//            map.put("name", name);
+//        }
+//
+//        db.close();
+//        cur.close();
+//
+//        return listOfReferrals;
+//    }
     /////////////////////////END OF GET METHODS/////////////////////////////////
 
     /////////////////////////UPDATE METHODS////////////////////////////////////

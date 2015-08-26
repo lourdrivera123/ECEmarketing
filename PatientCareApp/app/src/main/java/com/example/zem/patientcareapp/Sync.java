@@ -570,6 +570,8 @@ public class Sync {
             patient.setMobile_no(json.getString(DbHelper.PTNT_MOBILE_NO));
             patient.setEmail(json.getString(DbHelper.PTNT_EMAIL));
             patient.setPhoto(json.getString(DbHelper.PTNT_PHOTO));
+            patient.setReferral_id(json.getString(DbHelper.PTNT_REFERRAL_ID));
+            patient.setReferred_by(json.getString(DbHelper.PTNT_REFERRED_BY));
         } catch (JSONException e) {
             e.printStackTrace();
         }

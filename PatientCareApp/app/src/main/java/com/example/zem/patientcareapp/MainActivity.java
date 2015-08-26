@@ -2,7 +2,6 @@ package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,8 +20,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 
@@ -30,16 +27,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
+    EditText username_txtfield, password_txtfield;
     TextView signup, forgotpw;
     Button login_btn;
-
-    EditText username_txtfield, password_txtfield;
 
     DbHelper dbHelper;
     static Helpers helpers;
@@ -47,10 +42,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public static final String MyPREFERENCES = "MyPrefs";
     public static SharedPreferences sharedpreferences;
-    public static final String name = "nameKey";
-    public static final String pass = "passwordKey";
+    public static final String name = "nameKey", pass = "passwordKey";
     String uname, password;
-    String url = "http://192.168.10.1/db/post.php";
+    String url = "http://192.168.177.1/db/post.php";
 
     ProgressDialog pDialog;
     RequestQueue queue;
@@ -86,12 +80,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         username_txtfield = (EditText) findViewById(R.id.username_txtfield);
         password_txtfield = (EditText) findViewById(R.id.password_txtfield);
 
-        login_btn.setBackgroundColor(0xFF5B9A68);
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -139,7 +130,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d("ifsuccess", response + "");
-                            Log.d("response on jsobjrequest", response + "");
+                            Log.d("response on jrequest", response + "");
 
                             try {
                                 int success = response.getInt("success");
@@ -156,7 +147,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         Patient syncedPatient = sync.setPatient(patient_json_object_mysql);
 
                                         //then save on db
-                                        dbHelper.insertPatient(patient_json_object_mysql, syncedPatient);
+                                        dbHelper.savePatient(patient_json_object_mysql, syncedPatient, "insert");
                                     }
                                     if (dbHelper.LoginUser(uname, password)) {
                                         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -193,17 +184,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     queue.add(jsObjRequest);
                 }
                 break;
+
             case R.id.signup:
-                int signup = 23;
-
-                Dialog dialog = new Dialog(this);
-                dialog.setTitle("How did you hear about us?");
-                dialog.setContentView(R.layout.dialog_referral);
-                dialog.show();
-
-                Intent intent = new Intent(this, EditTabsActivity.class);
-                intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
-                startActivity(intent);
+                startActivity(new Intent(this, ReferralActivity.class));
                 break;
         }
     }
