@@ -198,18 +198,15 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     final Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
                                     basket.setQuantity(new_qty);
 
-                                    HashMap<String, String> hashMap = new HashMap<String, String>();
+                                    HashMap<String, String> hashMap = new HashMap();
                                     hashMap.put("product_id", String.valueOf(basket.getProductId()));
                                     hashMap.put("quantity", String.valueOf(new_qty));
                                     hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
                                     hashMap.put("table", "baskets");
-                                    hashMap.put("request", "crud");
                                     hashMap.put("action", "update");
                                     hashMap.put("id", String.valueOf(basket.getBasketId()));
 
                                   /* We already have that item in our basket, let's update it */
-//                                    serverRequest.init(getActivity(), hashMap, "insert_basket");
-
                                     final ProgressDialog pdialog = new ProgressDialog(getActivity());
                                     pdialog.setCancelable(false);
                                     pdialog.setMessage("Loading...");
@@ -275,7 +272,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             pdialog.setMessage("Loading...");
                             pdialog.show();
 
-                            PostRequest.send(getActivity(), hashMap, "insert", serverRequest, new RespondListener<JSONObject>() {
+                            PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
                                     Log.d("response using interface <ShoppingCartFragment.java>", response + "");
@@ -339,7 +336,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 checkout_btn.setText(basketTotalAmount + "");
                 checkout_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
-            public void onClick(View v) {
+                    public void onClick(View v) {
                         Intent samppaypal = new Intent(getActivity(), samplepaypal.class);
                         startActivity(samppaypal);
 

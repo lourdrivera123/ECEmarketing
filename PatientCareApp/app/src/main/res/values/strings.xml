@@ -13,9 +13,8 @@
         <item>Home</item>
         <item>Find People</item>
         <item>Photos</item>
-        <item>Communities</item>
         <item>Pages</item>
-        <item>What\'s Hot</item>
+        <item>Referrals</item>
     </string-array>
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->

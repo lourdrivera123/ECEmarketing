@@ -2,7 +2,6 @@ package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,14 +11,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +20,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 
@@ -36,18 +27,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
-    EditText username_txtfield, password_txtfield, referredBy, hiddenOthers;
-    ImageView referredPhoto;
+public class MainActivity extends Activity implements View.OnClickListener {
+    EditText username_txtfield, password_txtfield;
     TextView signup, forgotpw;
-    RadioButton referredByFriend, others;
-    LinearLayout hiddenLayout;
-    Button login_btn, continueBtn;
+    Button login_btn;
 
     DbHelper dbHelper;
     static Helpers helpers;
@@ -55,10 +42,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Comp
 
     public static final String MyPREFERENCES = "MyPrefs";
     public static SharedPreferences sharedpreferences;
-    public static final String name = "nameKey";
-    public static final String pass = "passwordKey";
+    public static final String name = "nameKey", pass = "passwordKey";
     String uname, password;
-    String url = "http://192.168.10.1/db/post.php";
+    String url = "http://192.168.177.1/db/post.php";
 
     ProgressDialog pDialog;
     RequestQueue queue;
@@ -161,7 +147,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Comp
                                         Patient syncedPatient = sync.setPatient(patient_json_object_mysql);
 
                                         //then save on db
-                                        dbHelper.insertPatient(patient_json_object_mysql, syncedPatient);
+                                        dbHelper.savePatient(patient_json_object_mysql, syncedPatient, "insert");
                                     }
                                     if (dbHelper.LoginUser(uname, password)) {
                                         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -198,33 +184,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Comp
                     queue.add(jsObjRequest);
                 }
                 break;
+
             case R.id.signup:
-                final int signup = 23;
-
-                Dialog dialog = new Dialog(this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.dialog_referral);
-                dialog.show();
-
-                hiddenLayout = (LinearLayout) dialog.findViewById(R.id.hiddenLayout);
-                referredPhoto = (ImageView) dialog.findViewById(R.id.referredPhoto);
-                referredBy = (EditText) dialog.findViewById(R.id.referredBy);
-                referredByFriend = (RadioButton) dialog.findViewById(R.id.referredByFriend);
-                others = (RadioButton) dialog.findViewById(R.id.others);
-                hiddenOthers = (EditText) dialog.findViewById(R.id.hiddenOthers);
-                continueBtn = (Button) dialog.findViewById(R.id.continueBtn);
-
-                continueBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getBaseContext(), EditTabsActivity.class);
-                        intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
-                        startActivity(intent);
-                    }
-                });
-
-                referredByFriend.setOnCheckedChangeListener(this);
-                others.setOnCheckedChangeListener(this);
+                startActivity(new Intent(this, ReferralActivity.class));
                 break;
         }
     }
@@ -243,17 +205,5 @@ public class MainActivity extends Activity implements View.OnClickListener, Comp
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
         actionbar.setBackgroundDrawable(colorDrawable);
         actionbar.setDisplayShowTitleEnabled(false);
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (referredByFriend.isChecked()) {
-            hiddenLayout.setVisibility(View.VISIBLE);
-            hiddenOthers.setVisibility(View.GONE);
-        }
-        if (others.isChecked()) {
-            hiddenLayout.setVisibility(View.GONE);
-            hiddenOthers.setVisibility(View.VISIBLE);
-        }
     }
 }

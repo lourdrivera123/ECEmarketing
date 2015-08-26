@@ -12,4 +12,16 @@
     <color name="counter_text_bg">#626262</color>
     <color name="list_item_title">#fff</color>
     <color name="counter_text_color">#c5c4c4</color>
+
+    <string-array name="bg_colors">
+        <item>#b8f0fd</item>
+        <item>#f9b4d6</item>
+        <item>#f4d5d6</item>
+        <item>#ffcf9e</item>
+        <item>#FF6961</item>
+        <item>#bbf4ed</item>
+        <item>#f9f9b4</item>
+        <item>#d7b4f9</item>
+        <item>#d6f9b4</item>
+    </string-array>
 </resources>

@@ -26,7 +26,6 @@ import com.example.zem.patientcareapp.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Sync;
 
 import org.json.JSONObject;
 
@@ -49,7 +48,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     LazyAdapter adapter;
     Helpers helpers;
-    Sync sync;
     View root_view;
 
     @Override

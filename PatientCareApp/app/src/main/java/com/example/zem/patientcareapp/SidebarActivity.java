@@ -1,9 +1,5 @@
 package com.example.zem.patientcareapp;
 
-/**
- * Created by Zem on 7/16/2015.
- */
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,9 +25,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
 import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
+
+/**
+ * Created by Zem on 7/16/2015.
+ */
 
 public class SidebarActivity extends FragmentActivity {
 
@@ -96,9 +96,8 @@ public class SidebarActivity extends FragmentActivity {
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(0, 0)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, 0), true, "22"));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, 0)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, 0), true, "50+"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(4, 0)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(5, 0), true, "50+"));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -249,10 +248,7 @@ public class SidebarActivity extends FragmentActivity {
                 fragment = new TrialPrescriptionFragment();
                 break;
             case 4:
-                fragment = new TrialPrescriptionFragment();
-                break;
-            case 5:
-                fragment = new TrialPrescriptionFragment();
+                fragment = new ReferralsFragment();
                 break;
 
             default:

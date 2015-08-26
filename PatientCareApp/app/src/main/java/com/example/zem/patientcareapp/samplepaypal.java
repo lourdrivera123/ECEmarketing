@@ -89,7 +89,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Launching PalPay payment activity to complete the payment
-     * */
+     */
     private void launchPayPalPayment() {
 
         PayPalPayment thingsToBuy = prepareFinalCart();
@@ -115,7 +115,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Receiving the PalPay payment response
-     * */
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_PAYMENT) {
@@ -160,11 +160,11 @@ public class samplepaypal extends Activity {
 
         double price = 0;
         BigDecimal initial_price = null;
-        for(HashMap<String, String> item : items){
+        for (HashMap<String, String> item : items) {
             price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
             initial_price = BigDecimal.valueOf(price);
             double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
-            double total = price*quantity;
+            double total = price * quantity;
             name = item.get(DbHelper.PRODUCT_NAME);
             sku = item.get(DbHelper.PRODUCT_SKU);
 //            TotalAmount+= total;
@@ -183,34 +183,34 @@ public class samplepaypal extends Activity {
 
     /**
      * Preparing final cart amount that needs to be sent to PayPal for payment
-     * */
+     */
     private PayPalPayment prepareFinalCart() {
 
         items = new PayPalItem[productsInCart.size()];
         items = productsInCart.toArray(items);
 
         // Total amount
-        BigDecimal subtotal = PayPalItem.getItemTotal(items);
+        final BigDecimal subtotal = PayPalItem.getItemTotal(items);
 
         // If you have shipping cost, add it here
-        BigDecimal shipping = new BigDecimal("0.0");
+        final BigDecimal shipping = new BigDecimal("0.0");
 
         // If you have tax, add it here
-        BigDecimal tax = new BigDecimal("0.0");
+        final BigDecimal tax = new BigDecimal("0.0");
 
-        paymentDetails = new PayPalPaymentDetails(
-                shipping, subtotal, tax);
 
 //        BigDecimal amount = subtotal.add(shipping).add(tax);
 //        BigDecimal amount = new BigDecimal("0.0");
 
         HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("amount_in_php", String.valueOf(subtotal));
+        hashMap.put("amount_in_php", String.valueOf(subtotal.add(shipping).add(tax)));
 
         ConvertCurrencyRequest.send(hashMap, new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                Log.d("response using interface <samplepaypal.java>", response + "");
+                System.out.print("response using interface <samplepaypal.java>" + response);
+                paymentDetails = new PayPalPaymentDetails(
+                        shipping, subtotal, tax);
                 try {
                     amount = new BigDecimal(response.getString("amount_converted"));
                     Log.d("amount converted", amount + "");
@@ -241,7 +241,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Verifying the mobile payment on the server to avoid fraudulent payment
-     * */
+     */
     private void verifyPaymentOnServer(final String paymentId,
                                        final String payment_client) {
         // Showing progress dialog before making request
@@ -265,9 +265,9 @@ public class samplepaypal extends Activity {
                     Toast.makeText(getApplicationContext(), message,
                             Toast.LENGTH_LONG).show();
 
-                    Log.d("error sa response during verify", ""+message);
+                    Log.d("error sa response during verify", "" + message);
 
-                    Log.d("gikan sa server", ""+res.toString() );
+                    Log.d("gikan sa server", "" + res.toString());
 
                     if (!error) {
                         // empty the cart

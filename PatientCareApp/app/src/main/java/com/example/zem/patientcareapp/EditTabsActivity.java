@@ -44,6 +44,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.Fragment.SignUpFragment;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
 
@@ -53,12 +56,13 @@ import org.json.JSONObject;
 
 public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener, DatePickerDialog.OnDateSetListener, View.OnClickListener {
 
-    int limit = 4, count = 0, unselected;
-
     public static Patient patient;
+    RequestQueue queue;
+    Patient editUser;
     DbHelper dbHelper;
     Helpers helpers;
     SignUpFragment fragment;
+    ServerRequest serverRequest;
 
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
@@ -83,23 +87,15 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     ImageView image_holder;
     Drawable d;
 
-    int check = 0;
-    int int_year, int_month, int_day;
+    public static final String SIGNUP_REQUEST = "signup", EDIT_REQUEST = "edit";
+    public static int signup_int = 0, edit_int = 0;
+    int check = 0, int_year, int_month, int_day, limit = 4, count = 0, unselected;
 
-    public static final String SIGNUP_REQUEST = "signup";
-    public static final String EDIT_REQUEST = "edit";
-    public static int signup_int = 0;
-    public static int edit_int = 0;
-
-    Patient editUser;
-
-    RequestQueue queue;
     String url;
     ProgressDialog pDialog;
 
     JSONObject patient_json_object_mysql = null;
     JSONArray patient_json_array_mysql = null;
-
     public static SharedPreferences sharedpreferences;
 
     @SuppressWarnings("deprecation")
@@ -119,13 +115,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
 
-        Intent intent = getIntent();
-        signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
+        final Intent intent = getIntent();
         signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
         queue = VolleySingleton.getInstance().getRequestQueue();
-        url = "http://vinzry.0fees.us/db/post.php";
+        url = "http://192.168.177.1/db/post.php";
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
@@ -153,11 +148,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                 actionBar.setSelectedNavigationItem(position);
                 if (position == 0) {
                     readFromSignUp();
+
                 } else if (position == 1) {
-                    if (unselected == 0) {
+                    if (unselected == 0)
                         readFromSignUp();
-                    }
                     validateAtPosition2();
+
                 } else if (position == 2) {
                     Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
                     image_holder = (ImageView) findViewById(R.id.image_holder);
@@ -213,90 +209,84 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                             patient.setServerID(editUser.getServerID());
                                             Map<String, String> params = setParams("update");
 
-                                            CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
-                                                    new Response.Listener<JSONObject>() {
-                                                        @Override
-                                                        public void onResponse(JSONObject response) {
-                                                            Log.d("jsonrequest success", response.toString());
-                                                            int success = 0;
-                                                            try {
-                                                                success = response.getInt("success");
+                                            CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+                                                @Override
+                                                public void onResponse(JSONObject response) {
+                                                    int success = 0;
+                                                    try {
+                                                        success = response.getInt("success");
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
 
-                                                            } catch (JSONException e) {
-                                                                e.printStackTrace();
-                                                            }
+                                                    if (success == 1) {
+                                                        if (dbHelper.savePatient(patient_json_object_mysql, patient, "update")) {
+                                                            SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                            editor.putString(MainActivity.name, patient.getUsername());
+                                                            editor.putString(MainActivity.pass, patient.getPassword());
+                                                            editor.commit();
 
-                                                            if (success == 1) {
-                                                                if (dbHelper.savePatient(patient_json_object_mysql, patient, "update")) {
-                                                                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                                                                    editor.putString(MainActivity.name, patient.getUsername());
-                                                                    editor.putString(MainActivity.pass, patient.getPassword());
-                                                                    editor.commit();
-
-                                                                    Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
-                                                                    EditTabsActivity.this.finish();
-                                                                } else {
-                                                                    Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            } else {
-                                                                Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
-                                                            }
+                                                            Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
+                                                            EditTabsActivity.this.finish();
+                                                        } else {
+                                                            Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
                                                         }
-                                                    }, new Response.ErrorListener() {
+                                                    } else {
+                                                        Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            }, new Response.ErrorListener() {
                                                 @Override
                                                 public void onErrorResponse(VolleyError error) {
                                                     Log.d("volley error", error.toString());
                                                 }
                                             });
                                             queue.add(jsObjRequest);
-
-
                                         } else {
                                             pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
                                             pDialog.show();
 
                                             Map<String, String> params = setParams("register");
 
-                                            CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
-                                                    new Response.Listener<JSONObject>() {
-                                                        @Override
-                                                        public void onResponse(JSONObject response) {
-                                                            System.out.println("response is: " + response);
+                                            CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+                                                @Override
+                                                public void onResponse(JSONObject response) {
+                                                    try {
+                                                        int success = response.getInt("success");
 
-                                                            try {
-                                                                int success = response.getInt("success");
-                                                                System.out.println("success is: " + success);
-                                                                if (success == 2) {
-                                                                    pDialog.hide();
-                                                                    Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
-                                                                } else if (success == 1) {
-                                                                    patient_json_array_mysql = response.getJSONArray("patient");
-                                                                    patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
-                                                                    Log.d("response", "" + response.toString());
+                                                        if (success == 2) {
+                                                            pDialog.dismiss();
+                                                            Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
+                                                        } else if (success == 1) {
+                                                            serverRequest = new ServerRequest();
+                                                            patient_json_array_mysql = response.getJSONArray("patient");
+                                                            patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
 
-                                                                    //saving to sqlite database
-                                                                    if (dbHelper.savePatient(patient_json_object_mysql, patient, "insert")) {
-                                                                        SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-                                                                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                                                                        editor.putString(MainActivity.name, patient.getUsername());
-                                                                        editor.putString(MainActivity.pass, patient.getPassword());
-                                                                        editor.commit();
-                                                                        pDialog.hide();
+                                                            //saving to sqlite database
+                                                            if (dbHelper.savePatient(patient_json_object_mysql, patient, "insert")) {
+                                                                boolean responseFromServer = serverRequest.getResponse();
 
-                                                                        startActivity(new Intent(getBaseContext(), SidebarActivity.class));
-                                                                        EditTabsActivity.this.finish();
+                                                                if (responseFromServer) {
+                                                                    SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                                                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                                    editor.putString(MainActivity.name, patient.getUsername());
+                                                                    editor.putString(MainActivity.pass, patient.getPassword());
+                                                                    editor.commit();
+                                                                    pDialog.dismiss();
 
-                                                                    } else {
-                                                                        Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                                                                    }
-                                                                } else {
-                                                                    Toast.makeText(EditTabsActivity.this, "Error occcurred. Please try again later", Toast.LENGTH_SHORT).show();
+                                                                    startActivity(new Intent(getBaseContext(), SidebarActivity.class));
+                                                                    EditTabsActivity.this.finish();
                                                                 }
-                                                            } catch (JSONException e) {
-                                                                Log.d("error on catch", e.toString());
-                                                            }
-                                                        }
-                                                    }, new Response.ErrorListener() {
+                                                                pDialog.dismiss();
+                                                            } else
+                                                                Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                                        } else
+                                                            Toast.makeText(EditTabsActivity.this, "Error occurred. Please try again later", Toast.LENGTH_SHORT).show();
+                                                    } catch (JSONException e) {
+                                                        Log.d("error on catch", e.toString());
+                                                    }
+                                                }
+                                            }, new Response.ErrorListener() {
                                                 @Override
                                                 public void onErrorResponse(VolleyError error) {
                                                     pDialog.dismiss();
@@ -392,6 +382,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("mobile_no", patient.getMobile_no());
         params.put("email_address", patient.getEmail());
         params.put("photo", patient.getPhoto());
+        params.put("referral_id", patient.getReferral_id());
+        params.put("referred_by", patient.getReferred_by());
 
         return params;
     }
@@ -458,11 +450,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-        if (count == limit) {
+        if (count == limit)
             this.hasError = false;
-        } else {
+        else
             this.hasError = true;
-        }
 
         patient.setSex(s_sex);
 
@@ -640,9 +631,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             Bitmap yourSelectedImage = BitmapFactory.decodeFile(path);
             d = new BitmapDrawable(yourSelectedImage);
             image_holder.setImageDrawable(d);
-        } else {
+        } else
             image_holder = (ImageView) findViewById(R.id.image_holder);
-        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -657,21 +647,19 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(projection[0]);
-                    String filePath = cursor.getString(columnIndex);
-                    s_filepath = filePath;
+                    s_filepath = cursor.getString(columnIndex);
                     cursor.close();
 
-                    patient.setPhoto(filePath);
+                    patient.setPhoto(s_filepath);
 
-                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
+                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(s_filepath);
                     d = new BitmapDrawable(yourSelectedImage);
                     image_holder.setImageDrawable(d);
 
                     check = 23;
 
-                } else {
+                } else
                     patient.setPhoto("");
-                }
             } catch (Exception e) {
 
             }
