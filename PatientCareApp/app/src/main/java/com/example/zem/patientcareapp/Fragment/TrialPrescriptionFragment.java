@@ -53,6 +53,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -239,6 +240,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                 int columnIndex = cursor.getColumnIndex(projection[0]);
                 String path = cursor.getString(columnIndex);
 
+
+
                 filePath = path;
                 showProgressbar();
                 new UploadFileToServer().execute();
@@ -321,6 +324,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
                 // Adding file data to http body
                 entity.addPart("image", new FileBody(sourceFile));
+
+                entity.addPart("purpose", new StringBody("prescription_upload"));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

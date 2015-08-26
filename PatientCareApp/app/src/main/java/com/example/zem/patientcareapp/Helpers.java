@@ -9,12 +9,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -24,6 +28,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.json.JSONObject;
 
@@ -193,6 +201,48 @@ public class Helpers {
         }else{
             return noun+"s";
         }
+    }
+
+    public void setImage(String image_url, final ProgressBar progressBar, ImageView image_holder){
+//        image_url = patient.getPhoto();
+        //caching and displaying the image
+        DisplayImageOptions options;
+
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.mipmap.ic_stub)
+                .showImageForEmptyUri(R.mipmap.ic_empty)
+                .showImageOnFail(R.mipmap.ic_error)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
+
+//        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance()
+                .displayImage(image_url, image_holder, options, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String imageUri, View view) {
+                        progressBar.setProgress(0);
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }, new ImageLoadingProgressListener() {
+                    @Override
+                    public void onProgressUpdate(String imageUri, View view, int current, int total) {
+                        progressBar.setProgress(Math.round(100.0f * current / total));
+                    }
+                });
     }
 
     

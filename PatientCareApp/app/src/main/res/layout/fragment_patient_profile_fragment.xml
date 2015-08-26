@@ -32,6 +32,15 @@
                     android:layout_weight="1"
                     android:src="@drawable/img_holder" />
 
+                <ProgressBar
+                    android:id="@+id/progress"
+                    style="@style/ProgressBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:indeterminate="false"
+                    android:max="100" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

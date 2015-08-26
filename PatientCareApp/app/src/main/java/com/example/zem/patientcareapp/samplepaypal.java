@@ -53,11 +53,17 @@ public class samplepaypal extends Activity {
     private List<PayPalItem> productsInCart = new ArrayList<PayPalItem>();
 
     DbHelper dbHelper;
-    BigDecimal amount;
 
     PayPalItem[] items;
     PayPalPaymentDetails paymentDetails;
     PayPalPayment payment;
+    BigDecimal subtotal;
+    BigDecimal shipping = new BigDecimal("0.0");
+
+    // If you have tax, add it here
+    BigDecimal tax = new BigDecimal("0.0");
+    BigDecimal amount;
+
     // PayPal configuration
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration()
             .environment(Config.PAYPAL_ENVIRONMENT).clientId(
@@ -71,15 +77,54 @@ public class samplepaypal extends Activity {
         pDialog = new ProgressDialog(this);
         queue = Volley.newRequestQueue(this);
 
+        PayPalConfiguration object = new PayPalConfiguration();
+        object = object.acceptCreditCards(false);
+
+
         // Starting PayPal service
         Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, paypalConfig);
+
+//        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, object);
         startService(intent);
 
         populateProductsInCart();
 
         if (productsInCart.size() > 0) {
-            launchPayPalPayment();
+            items = new PayPalItem[productsInCart.size()];
+            items = productsInCart.toArray(items);
+
+            subtotal = PayPalItem.getItemTotal(items);
+
+//            amount = subtotal.add(shipping).add(tax);
+            HashMap<String, String> hashMap = new HashMap();
+
+            hashMap.put("amount_in_php", String.valueOf(subtotal));
+                                launchPayPalPayment();
+
+
+//        ConvertCurrencyRequest.send(hashMap, new RespondListener<JSONObject>() {
+//            @Override
+//            public void getResult(JSONObject response) {
+//                Log.d("response using interface <samplepaypal.java>", response + "");
+//                try {
+//                    subtotal = new BigDecimal(response.getString("amount_converted"));
+//                    Log.d("amount converted", subtotal + "");
+//                    launchPayPalPayment();
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }, new ErrorListener<VolleyError>() {
+//            public void getError(VolleyError error) {
+//                Log.d("errror <samplepaypal>", error + "");
+//                Toast.makeText(getBaseContext(), "Cannot proceed to checkout. Please check your Internet connection", Toast.LENGTH_LONG).show();
+//            }
+//        });
+
+//            Log.d("subtotal in oncreate", subtotal+"");
         } else {
             Toast.makeText(getApplicationContext(), "Cart is empty! Please add few products to cart.",
                     Toast.LENGTH_SHORT).show();
@@ -186,6 +231,7 @@ public class samplepaypal extends Activity {
      */
     private PayPalPayment prepareFinalCart() {
 
+<<<<<<< HEAD
         items = new PayPalItem[productsInCart.size()];
         items = productsInCart.toArray(items);
 
@@ -222,18 +268,20 @@ public class samplepaypal extends Activity {
                         Config.DEFAULT_CURRENCY,
                         "Description about transaction. This will be displayed to the user.",
                         Config.PAYMENT_INTENT);
+=======
+        paymentDetails = new PayPalPaymentDetails(
+                shipping, subtotal, tax);
 
-                payment.items(items).paymentDetails(paymentDetails);
+      amount = subtotal.add(shipping).add(tax);
+>>>>>>> 24e2743d907c66514a670f5321e77aebd4a36cd8
 
-                // Custom field like invoice_number etc.,
-                payment.custom("This is text that will be associated with the payment that the app can use.");
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                Log.d("errror <samplepaypal>", error + "");
-                Toast.makeText(getBaseContext(), "Cannot proceed to checkout. Please check your Internet connection", Toast.LENGTH_LONG).show();
-            }
-        });
+        payment = new PayPalPayment(
+                amount,
+                Config.DEFAULT_CURRENCY,
+                "You will be paying - ",
+                Config.PAYMENT_INTENT);
+
+        payment.items(items).paymentDetails(paymentDetails);
 
         return payment;
 
