@@ -231,49 +231,46 @@ public class samplepaypal extends Activity {
      */
     private PayPalPayment prepareFinalCart() {
 
-<<<<<<< HEAD
-        items = new PayPalItem[productsInCart.size()];
-        items = productsInCart.toArray(items);
-
-        // Total amount
-        final BigDecimal subtotal = PayPalItem.getItemTotal(items);
-
-        // If you have shipping cost, add it here
-        final BigDecimal shipping = new BigDecimal("0.0");
-
-        // If you have tax, add it here
-        final BigDecimal tax = new BigDecimal("0.0");
-
-
-//        BigDecimal amount = subtotal.add(shipping).add(tax);
-//        BigDecimal amount = new BigDecimal("0.0");
-
-        HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("amount_in_php", String.valueOf(subtotal.add(shipping).add(tax)));
-
-        ConvertCurrencyRequest.send(hashMap, new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                System.out.print("response using interface <samplepaypal.java>" + response);
-                paymentDetails = new PayPalPaymentDetails(
-                        shipping, subtotal, tax);
-                try {
-                    amount = new BigDecimal(response.getString("amount_converted"));
-                    Log.d("amount converted", amount + "");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                payment = new PayPalPayment(
-                        amount,
-                        Config.DEFAULT_CURRENCY,
-                        "Description about transaction. This will be displayed to the user.",
-                        Config.PAYMENT_INTENT);
-=======
+//        items = new PayPalItem[productsInCart.size()];
+//        items = productsInCart.toArray(items);
+//
+//        // Total amount
+//        final BigDecimal subtotal = PayPalItem.getItemTotal(items);
+//
+//        // If you have shipping cost, add it here
+//        final BigDecimal shipping = new BigDecimal("0.0");
+//
+//        // If you have tax, add it here
+//        final BigDecimal tax = new BigDecimal("0.0");
+//
+//
+////        BigDecimal amount = subtotal.add(shipping).add(tax);
+////        BigDecimal amount = new BigDecimal("0.0");
+//
+//        HashMap<String, String> hashMap = new HashMap();
+//        hashMap.put("amount_in_php", String.valueOf(subtotal.add(shipping).add(tax)));
+//
+//        ConvertCurrencyRequest.send(hashMap, new RespondListener<JSONObject>() {
+//            @Override
+//            public void getResult(JSONObject response) {
+//                System.out.print("response using interface <samplepaypal.java>" + response);
+//                paymentDetails = new PayPalPaymentDetails(
+//                        shipping, subtotal, tax);
+//                try {
+//                    amount = new BigDecimal(response.getString("amount_converted"));
+//                    Log.d("amount converted", amount + "");
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                payment = new PayPalPayment(
+//                        amount,
+//                        Config.DEFAULT_CURRENCY,
+//                        "Description about transaction. This will be displayed to the user.",
+//                        Config.PAYMENT_INTENT);
         paymentDetails = new PayPalPaymentDetails(
                 shipping, subtotal, tax);
 
       amount = subtotal.add(shipping).add(tax);
->>>>>>> 24e2743d907c66514a670f5321e77aebd4a36cd8
 
         payment = new PayPalPayment(
                 amount,
