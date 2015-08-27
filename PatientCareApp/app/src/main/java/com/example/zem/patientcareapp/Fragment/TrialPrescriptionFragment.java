@@ -46,6 +46,7 @@ import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -173,7 +174,6 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                                 }
                             }
                             pdialog.dismiss();
-
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {

@@ -336,7 +336,6 @@ public class Sync {
     public boolean checkDateTime(String str1, String str2) {
         Boolean something = false;
         try {
-
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             /*String str1 = "12/10/2013";*/
@@ -349,12 +348,9 @@ public class Sync {
                 something = true;
                 System.out.println("date2 is Greater than my date1");
             }
-
-
         } catch (ParseException e1) {
             e1.printStackTrace();
         }
-
         return something;
     }
 

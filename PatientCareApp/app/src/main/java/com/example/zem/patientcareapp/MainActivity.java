@@ -156,7 +156,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         editor.commit();
 
                                         startActivity(new Intent(getBaseContext(), SidebarActivity.class));
-
                                     } else {
                                         Toast.makeText(MainActivity.this, "Invalid Username of Password", Toast.LENGTH_SHORT).show();
                                         System.out.print("error on dbHelper.loginUser <source: MainActivity.java>");

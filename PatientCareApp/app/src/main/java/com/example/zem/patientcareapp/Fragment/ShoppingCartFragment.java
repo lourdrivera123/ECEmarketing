@@ -37,6 +37,7 @@ import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.samplepaypal;
+import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONObject;
 
@@ -289,7 +290,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                         }
                                     }
                                     pdialog.dismiss();
-
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
@@ -337,9 +337,8 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 checkout_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent samppaypal = new Intent(getActivity(), samplepaypal.class);
-                        startActivity(samppaypal);
-
+//                        Intent samppaypal = new Intent(getActivity(), samplepaypal.class);
+//                        startActivity(samppaypal);
                     }
                 });
 

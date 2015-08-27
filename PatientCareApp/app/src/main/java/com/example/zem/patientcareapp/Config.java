@@ -16,17 +16,10 @@ public class Config {
 
     // PayPal server urls
 //    public static final String URL_PRODUCTS = "http://192.168.0.103/PayPalServer/v1/products";
-<<<<<<< HEAD
     public static final String URL_VERIFY_PAYMENT = "http://192.168.177.1/db/verifypayment.php";
 
     // File upload url (replace the ip with your server address)
     public static final String FILE_UPLOAD_URL = "http://192.168.177.1/db/fileupload.php";
-=======
-    public static final String URL_VERIFY_PAYMENT = "http://192.168.10.1/db/verifypayment.php";
-
-    // File upload url (replace the ip with your server address)
-    public static final String FILE_UPLOAD_URL = "http://192.168.10.1/db/fileupload.php";
->>>>>>> 24e2743d907c66514a670f5321e77aebd4a36cd8
 
     // Directory name to store captured images and videos
     public static final String IMAGE_DIRECTORY_NAME = "Android File Upload";
