@@ -245,7 +245,7 @@ public class Helpers {
                 });
     }
 
-    public void cacheImage(String url){
+    public void cacheImageOnly(String url){
         com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(url, new SimpleImageLoadingListener(){
 
             @Override
