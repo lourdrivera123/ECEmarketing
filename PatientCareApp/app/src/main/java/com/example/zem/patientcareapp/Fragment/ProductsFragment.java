@@ -187,6 +187,18 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             public void getResult(JSONObject response) {
                 Log.d("response using interface <ProductsFragment.java >", response + "");
                 products_items = dbHelper.getAllProducts();
+
+                for (HashMap<String, String> map : products_items) {
+
+                    HashMap<String, String> tempMap = new HashMap();
+                    tempMap.put("id", map.get("id"));
+                    tempMap.put("product_id", map.get("product_id"));
+                    tempMap.put("qty_per_packing", map.get("qty_per_packing"));
+                    tempMap.put("packing", map.get("packing"));
+                    tempMap.put("temp_basket_qty", "0");
+                    productQuantity.put(map.get("product_id"), tempMap);
+                }
+
                 populateProductsListView(root_view, products_items);
                 refresh_products_list.setRefreshing(false);
             }
