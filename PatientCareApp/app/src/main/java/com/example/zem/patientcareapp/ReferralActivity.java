@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -22,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
+import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +35,7 @@ import java.util.HashMap;
 /**
  * Created by User PC on 8/26/2015.
  */
-public class ReferralActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextWatcher {
+public class ReferralActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextWatcher, AdapterView.OnItemClickListener {
     ArrayList<HashMap<String, String>> hashOfReferrals;
     ArrayList<String> tempReferrals;
     ArrayAdapter referredAdapter;
@@ -70,6 +72,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         radioReferredBy.setOnCheckedChangeListener(this);
         other.setOnCheckedChangeListener(this);
         referredBy.addTextChangedListener(this);
+        listOfNames.setOnItemClickListener(this);
 
         ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_patients", new RespondListener<JSONObject>() {
             @Override
@@ -117,31 +120,33 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        String referredBy_name;
+        String getReferred = null;
+        int pos;
         check = 0;
 
-//        try {
-//            referredBy_name = referredBy.getText().toString();
-//
-//            if (referredBy_name.equals("")) {
-//                referredBy.setError("Field required");
-//                check += 1;
-//            } else {
-//                patient_position = listOfReferrals.indexOf(referredBy_name);
-//                referredBy_serverID = Integer.parseInt(hashOfReferrals.get(patient_position).get("serverID"));
-//                otherOptions = "";
-//            }
-//        } catch (Exception e) {
-//            referredBy_serverID = 0;
-//            check += 1;
-//            Toast.makeText(getBaseContext(), "name is not on the list", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        if (check == 0) {
-//            Intent intent = new Intent(getBaseContext(), EditTabsActivity.class);
-//            intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
-//            startActivity(intent);
-//        }
+        if (radioReferredBy.isChecked()) {
+            try {
+                if (referredBy.getText().toString().equals("")) {
+                    referredBy.setError("Field required");
+                    check += 1;
+                } else {
+                    pos = listOfReferrals.indexOf(referredBy.getText().toString());
+                    getReferred = hashOfReferrals.get(pos).get("referral_id");
+                }
+            } catch (Exception e) {
+                check += 1;
+                Toast.makeText(getBaseContext(), "name is not on the list", Toast.LENGTH_SHORT).show();
+            }
+        } else if (other.isChecked()) {
+            getReferred = null;
+        }
+
+        if (check == 0) {
+            Intent intent = new Intent(getBaseContext(), EditTabsActivity.class);
+            intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
+            intent.putExtra("referred_by", getReferred);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -176,5 +181,11 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                 referredAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String itemClicked = String.valueOf(parent.getItemAtPosition(position));
+        referredBy.setText(itemClicked);
     }
 }

@@ -8,15 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
+import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONObject;
 

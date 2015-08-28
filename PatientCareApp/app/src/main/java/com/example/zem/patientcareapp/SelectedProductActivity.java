@@ -23,6 +23,7 @@ import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
+import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONObject;
 
@@ -236,17 +237,17 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                             serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
 
                             PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
-                                @Override
-                                public void getResult(JSONObject response) {
-                                    Log.d("response using interface <SelectedProductActivity.java>", response + "");
-                                    pdialog.dismiss();
-                                }
-                            }, new ErrorListener<VolleyError>() {
-                                public void getError(VolleyError error) {
-                                    Log.d("Error", "asdasda ");
-                                    Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                    @Override
+                                    public void getResult(JSONObject response) {
+                                        Log.d("response using interface <SelectedProductActivity.java>", response + "");
+                                        pdialog.dismiss();
+                                    }
+                                }, new ErrorListener<VolleyError>() {
+                                    public void getError(VolleyError error) {
+                                        Log.d("Error", "asdasda ");
+                                        Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
 
-                                }
+                                    }
                             });
                         }
                     } catch (Exception e) {

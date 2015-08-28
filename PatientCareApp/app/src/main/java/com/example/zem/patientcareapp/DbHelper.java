@@ -632,15 +632,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.close();
 
-
         return rowID > 0;
-
     }
 
     public long savePatientRecord(PatientRecord record, String request) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         long rowID = 0;
+
         values.put(SERVER_RECORDS_ID, record.getRecordID());
         values.put(RECORDS_PATIENT_ID, record.getPatientID());
         values.put(RECORDS_COMPLAINT, record.getComplaints());
