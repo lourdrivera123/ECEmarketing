@@ -1147,6 +1147,8 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setMobile_no(cur.getString(cur.getColumnIndex(PTNT_MOBILE_NO)));
             patient.setEmail(cur.getString(cur.getColumnIndex(PTNT_EMAIL)));
             patient.setPhoto(cur.getString(cur.getColumnIndex(PTNT_PHOTO)));
+            patient.setReferral_id(cur.getString(cur.getColumnIndex(PTNT_REFERRAL_ID)));
+            patient.setReferred_by(cur.getString(cur.getColumnIndex(PTNT_REFERRED_BY)));
         }
         cur.close();
         db.close();
@@ -1786,26 +1788,6 @@ public class DbHelper extends SQLiteOpenHelper {
         String[] arr = new String[list.size()];
         return list.toArray(arr);
     }
-
-//    //for referrals
-//    public ArrayList<HashMap<String, String>> getReferralsByUsername(int userID) {
-//        ArrayList<HashMap<String, String>> listOfReferrals = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
-//        String sql = "SELECT * FROM " + TBL_REFERRALS + " as r INNER JOIN " + TBL_PATIENTS + " as p ON p.patient_id = r.new_userID " +
-//                "WHERE r.referredBy_userID = " + userID;
-//        Cursor cur = db.rawQuery(sql, null);
-//
-//        while (cur.moveToNext()) {
-//            HashMap<String, String> map = new HashMap();
-//            String name = cur.getString(cur.getColumnIndex(PTNT_FNAME)) + " " + cur.getString(cur.getColumnIndex(PTNT_LNAME));
-//            map.put("name", name);
-//        }
-//
-//        db.close();
-//        cur.close();
-//
-//        return listOfReferrals;
-//    }
     /////////////////////////END OF GET METHODS/////////////////////////////////
 
     /////////////////////////UPDATE METHODS////////////////////////////////////

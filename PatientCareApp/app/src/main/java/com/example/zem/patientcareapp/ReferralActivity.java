@@ -23,7 +23,6 @@ import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
-import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
