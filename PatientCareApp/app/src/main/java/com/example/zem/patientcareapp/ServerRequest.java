@@ -52,8 +52,8 @@ public class ServerRequest {
 
         if (helpers.isNetworkAvailable(activity)) {
             if (pDialog != null) {
-                pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
-                pDialog.show();
+//                pDialog.setMessage("Please wait while we save your information...");
+//                pDialog.show();
             }
             CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
                     new Response.Listener<JSONObject>() {
@@ -79,6 +79,8 @@ public class ServerRequest {
                                             basket.setBasketId(insertedId);
                                             basket.setQuantity(Integer.parseInt(params.get("quantity")));
                                             basket.setProductId(Integer.parseInt(params.get("product_id")));
+                                            basket.setPrescriptionId(Integer.parseInt(params.get("prescription_id")));
+                                            basket.setIsApproved(Integer.parseInt(params.get("is_approved")));
                                             basket.setCreatedAt(sdf.format(now));
 
                                             if (dbHelper.insertBasket(basket)) {
@@ -106,14 +108,14 @@ public class ServerRequest {
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                if (pDialog != null) pDialog.hide();
+                                if (pDialog != null) pDialog.dismiss();
                             }
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("volley error ", "" + error.toString());
-                    if (pDialog != null) pDialog.hide();
+                    if (pDialog != null) pDialog.dismiss();
                 }
             });
             queue.add(jsObjRequest);
@@ -131,5 +133,9 @@ public class ServerRequest {
 
     public void setErrorMessage(String msg) {
         this.errorMessage = msg;
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog){
+        this.pDialog = progressDialog;
     }
 }

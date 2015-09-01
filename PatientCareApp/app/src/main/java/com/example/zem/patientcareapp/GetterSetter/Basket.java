@@ -5,7 +5,7 @@ package com.example.zem.patientcareapp.GetterSetter;
  */
 public class Basket {
     int patienId, productId, basketId, id;
-    int quantity;
+    int quantity, isApproved, prescriptionId;
     String createdAt, updatedAt;
 
 
@@ -37,6 +37,15 @@ public class Basket {
         this.updatedAt = updatedAt;
     }
 
+    public void setIsApproved(int isApproved) {
+        this.isApproved = isApproved;
+    }
+
+    public void setPrescriptionId(int prescriptionId) {
+        this.prescriptionId = prescriptionId;
+    }
+
+
     public int getId() {
         return id;
     }
@@ -47,6 +56,14 @@ public class Basket {
 
     public int getPatienId() {
         return patienId;
+    }
+
+    public int getIsApproved() {
+        return isApproved;
+    }
+
+    public int getPrescriptionId() {
+        return prescriptionId;
     }
 
     public int getProductId() {

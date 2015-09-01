@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -40,6 +41,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.Fragment.SignUpFragment;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
@@ -77,7 +79,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     // ACCOUNT INFO FRAGMENT
     String username = "";
-    String s_password = "";
     String s_filepath = "";
     ImageView image_holder;
     Drawable d;
@@ -176,7 +177,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     btn_submit.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             validateUserAccountInfo();
-                            //DO SOMETHING! {RUN SOME FUNCTION ... DO CHECKS... ETC}
+
                             if (hasError) {
                                 viewPager.setCurrentItem(0);
                             } else if (hasError2) {
@@ -188,7 +189,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                         if (edit_int > 0) {
                                             String edit_uname = SidebarActivity.getUname();
                                             editUser = dbHelper.getloginPatient(edit_uname);
-                                            int userID = editUser.getId();
                                             String chosenPhoto = patient.getPhoto();
                                             String defaultPhoto = editUser.getPhoto();
                                             String photo = "";
@@ -205,70 +205,99 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 photo = editUser.getPhoto();
                                             }
 
-                                            if (dbHelper.updatePatient(patient, userID, photo)) {
-                                                Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(getBaseContext(), MasterTabActivity.class);
-                                                intent.putExtra("selected", 0);
-                                                startActivity(intent);
-                                            } else {
-                                                Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-                                            }
+                                            patient.setServerID(editUser.getServerID());
+                                            Map<String, String> params = setParams("update");
+
+                                            CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
+                                                    new Response.Listener<JSONObject>() {
+                                                        @Override
+                                                        public void onResponse(JSONObject response) {
+                                                            Log.d("jsonrequest success", response.toString());
+                                                            int success = 0;
+                                                            try {
+                                                                success = response.getInt("success");
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                            System.out.println("PATIENT: " + patient.toString());
+
+                                                            if (success == 1) {
+                                                                if (dbHelper.savePatient(patient_json_object_mysql, patient, "update")) {
+                                                                    Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
+                                                                    Intent intent = new Intent(getBaseContext(), MasterTabActivity.class);
+                                                                    intent.putExtra("selected", 0);
+                                                                    startActivity(intent);
+                                                                    EditTabsActivity.this.finish();
+                                                                } else {
+                                                                    Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            } else {
+                                                                Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }, new Response.ErrorListener() {
+                                                @Override
+                                                public void onErrorResponse(VolleyError error) {
+                                                    Log.d("volley error", error.toString());
+                                                }
+                                            });
+                                            queue.add(jsObjRequest);
+
+
                                         } else {
                                             pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
                                             pDialog.show();
-                                            if (helpers.isNetworkAvailable(getBaseContext())) {
 
-                                                Map<String, String> params = setParams();
+                                            Map<String, String> params = setParams("register");
 
-                                                CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
-                                                        new Response.Listener<JSONObject>() {
-                                                            @Override
-                                                            public void onResponse(JSONObject response) {
-                                                                System.out.println("response is: " + response);
+                                            CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params,
+                                                    new Response.Listener<JSONObject>() {
+                                                        @Override
+                                                        public void onResponse(JSONObject response) {
+                                                            System.out.println("response is: " + response);
 
-                                                                try {
-                                                                    int success = response.getInt("success");
-                                                                    System.out.println("success is: " + success);
-                                                                    if (success == 2) {
+                                                            try {
+                                                                int success = response.getInt("success");
+                                                                System.out.println("success is: " + success);
+                                                                if (success == 2) {
+                                                                    pDialog.hide();
+                                                                    Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
+                                                                } else if (success == 1) {
+                                                                    patient_json_array_mysql = response.getJSONArray("patient");
+                                                                    patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
+                                                                    Log.d("response", "" + response.toString());
+
+                                                                    //saving to sqlite database
+                                                                    if (dbHelper.savePatient(patient_json_object_mysql, patient, "insert")) {
+                                                                        SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                                                                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                                        editor.putString("nameKey", patient.getUsername());
+                                                                        editor.commit();
                                                                         pDialog.hide();
-                                                                        Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
-                                                                    } else if (success == 1) {
-                                                                        patient_json_array_mysql = response.getJSONArray("patient");
-                                                                        patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
-                                                                        Log.d("response jsobjrequest", "" + response.toString());
 
-                                                                        //saving to sqlite database
-                                                                        if (dbHelper.insertPatient(patient_json_object_mysql, patient)) {
-                                                                            SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-                                                                            SharedPreferences.Editor editor = sharedpreferences.edit();
-                                                                            editor.putString("nameKey", patient.getUsername());
-                                                                            editor.commit();
-                                                                            pDialog.hide();
+                                                                        Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
+                                                                        helpers.showNotification(getBaseContext(), resultIntent, 001, "Happy Birthday", "Happy Birthday and a Happy New Year", true);
+                                                                        startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
 
-                                                                            Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
-                                                                            helpers.showNotification(getBaseContext(), resultIntent, 001, "Happy Birthday", "Happy Birthday and a Happy New Year", true);
-                                                                            startActivity(new Intent(getBaseContext(), HomeTileActivity.class));
-
-                                                                        } else {
-                                                                            Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                                                                        }
                                                                     } else {
-                                                                        Toast.makeText(EditTabsActivity.this, "Error occcurred. Please try again later", Toast.LENGTH_SHORT).show();
+                                                                        Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                                                                     }
-                                                                } catch (JSONException e) {
+                                                                } else {
+                                                                    Toast.makeText(EditTabsActivity.this, "Error occcurred. Please try again later", Toast.LENGTH_SHORT).show();
                                                                 }
+                                                            } catch (JSONException e) {
                                                             }
-                                                        }, new Response.ErrorListener() {
-                                                    @Override
-                                                    public void onErrorResponse(VolleyError error) {
-                                                        pDialog.dismiss();
-                                                        Log.d("volley error ", "" + error.toString());
-                                                    }
-                                                });
-                                                queue.add(jsObjRequest);
-                                            } else {
-                                                Toast.makeText(EditTabsActivity.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
-                                            }
+                                                        }
+                                                    }, new Response.ErrorListener() {
+                                                @Override
+                                                public void onErrorResponse(VolleyError error) {
+                                                    pDialog.dismiss();
+                                                    Log.d("volley error ", "" + error.toString());
+                                                }
+                                            });
+                                            queue.add(jsObjRequest);
                                         }
                                     }
                                 }
@@ -316,15 +345,25 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
     }
 
-    public Map<String, String> setParams() {
+    public Map<String, String> setParams(String request) {
         Map<String, String> params = new HashMap();
-
-        params.put("request", "register");
+        if (request.equals("update")) {
+            if (AccountFragment.checkIfChangedPass > 0) {
+                params.put("password", AccountFragment.NEW_PASS);
+                patient.setPassword(AccountFragment.NEW_PASS);
+            }
+            params.put("id", String.valueOf(patient.getServerID()));
+            params.put("request", "crud");
+            params.put("action", "update");
+            params.put("table", "patients");
+        } else {
+            params.put("request", request);
+            params.put("password", helpers.md5(patient.getPassword()));
+        }
         params.put("fname", patient.getFname());
         params.put("lname", patient.getLname());
         params.put("mname", patient.getMname());
         params.put("username", patient.getUsername());
-        params.put("password", helpers.md5(patient.getPassword()));
         params.put("occupation", patient.getOccupation());
         params.put("birthdate", patient.getBirthdate());
         params.put("sex", patient.getSex());
@@ -344,8 +383,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("address_region", patient.getAddress_region());
         params.put("address_zip", patient.getAddress_zip());
         params.put("tel_no", patient.getTel_no());
-        params.put("cell_no", patient.getMobile_no());
-        params.put("email", patient.getEmail());
+        params.put("mobile_no", patient.getMobile_no());
+        params.put("email_address", patient.getEmail());
         params.put("photo", patient.getPhoto());
 
         return params;
@@ -504,7 +543,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-
         if (s_cell_no.equals("")) {
             cell_no.setError("Field Required");
         } else {
@@ -556,42 +594,18 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     public void validateUserAccountInfo() {
         EditText et_username = (EditText) findViewById(R.id.username);
-        EditText et_partial_password = (EditText) findViewById(R.id.password);
-        EditText et_confirmed_password = (EditText) findViewById(R.id.confirm_password);
         image_holder = (ImageView) findViewById(R.id.image_holder);
 
         username = et_username.getText().toString();
-        String partial_pword = et_partial_password.getText().toString(), confirmed_pword = et_confirmed_password.getText().toString();
 
         count = 0;
-        limit = 4;
+        limit = 1;
 
         if (username.equals("")) {
             et_username.setError("Field is required");
         } else {
             patient.setUsername(username);
             count++;
-        }
-
-        if (partial_pword.equals("")) {
-            et_partial_password.setError("Field is required");
-        } else {
-            count++;
-        }
-
-        if (et_confirmed_password.equals("")) {
-            et_confirmed_password.setError("Field is required");
-        } else {
-            count++;
-        }
-
-
-        if (partial_pword.equals(confirmed_pword)) {
-            patient.setPassword(confirmed_pword);
-            s_password = confirmed_pword;
-            count++;
-        } else {
-            et_confirmed_password.setError("Passwords do not match. Please try again.");
         }
 
         if (count == limit) {

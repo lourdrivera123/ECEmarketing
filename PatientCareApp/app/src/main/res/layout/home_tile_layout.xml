@@ -171,14 +171,14 @@
                     android:layout_weight="1"
                     android:width="0dp"
                     android:gravity="center"
-                    android:text="Cart" />
+                    android:text="Promos" />
 
                 <TextView
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:width="0dp"
                     android:gravity="center"
-                    android:text="Promos" />
+                    android:text="Cart" />
 
                 <TextView
                     android:layout_width="0dp"

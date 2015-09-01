@@ -84,45 +84,44 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
         btnCheckout.setOnClickListener(this);
 
-        if (helper.isNetworkAvailable(getActivity())) {
-            String url = helper.get_url("get_basket_items") + "&patient_id=" + dbHelper.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
-            JsonObjectRequest basket_items_request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        String url = helper.get_url("get_basket_items") + "&patient_id=" + dbHelper.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
+        JsonObjectRequest basket_items_request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
-                @Override
-                public void onResponse(JSONObject response) {
+            @Override
+            public void onResponse(JSONObject response) {
 
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_basket_items", "baskets", "basket_id", response);
+                sync = new Sync();
+                sync.init(getActivity(), "get_basket_items", "baskets", "basket_id", response);
 
-                    try {
-                        System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                        dbHelper.updateLastUpdatedTable("baskets", response.getString("server_timestamp"));
+                try {
+                    System.out.println("timestamp from server: " + response.getString("server_timestamp"));
+                    dbHelper.updateLastUpdatedTable("baskets", response.getString("server_timestamp"));
 
-                        items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
+                    items = dbHelper.getAllBasketItems(false); // returns all basket items for the currently loggedin patient
 
-                        for (HashMap<String, String> item : items) {
-                            double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
-                            double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
-                            double total = price * quantity;
-                            TotalAmount += total;
-                        }
-
-                        total_amount.setText("\u20B1 " + TotalAmount);
-
-                        adapter = new LazyAdapter(getActivity(), items, "basket_items");
-                        lv_items.setAdapter(adapter);
-                    } catch (Exception e) {
-                        System.out.println("error fetching server timestamp: " + e);
+                    for (HashMap<String, String> item : items) {
+                        double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
+                        double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
+                        double total = price * quantity;
+                        TotalAmount += total;
                     }
+
+                    total_amount.setText("\u20B1 " + TotalAmount);
+
+                    adapter = new LazyAdapter(getActivity(), items, "basket_items");
+                    lv_items.setAdapter(adapter);
+                } catch (Exception e) {
+                    System.out.println("error fetching server timestamp: " + e);
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error on request", Toast.LENGTH_SHORT).show();
-                }
-            });
-            queue.add(basket_items_request);
-        }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+            }
+        });
+        queue.add(basket_items_request);
         lv_items.setOnCreateContextMenuListener(this);
         return rootView;
     }
@@ -293,16 +292,18 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                                     total_amount.setText("\u20B1 " + TotalAmount);
 
                                                     adapter.notifyDataSetChanged();
-                                                    pdialog.dismiss();
                                                 } else {
                                                     Toast.makeText(getActivity(), "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                                 }
+                                                pdialog.dismiss();
                                             }
                                         }
                                     }, 3000);
                                 } catch (Exception e) {
                                     System.out.println("BASKET ERROR: " + e.getMessage());
                                     e.printStackTrace();
+                                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
                                 }
                             } else {
                                 Toast.makeText(getActivity(), "Please connect to the internet", Toast.LENGTH_SHORT).show();
@@ -346,11 +347,11 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                                 total_amount.setText("\u20B1 " + TotalAmount);
                                                 items.remove(pos);
                                                 adapter.notifyDataSetChanged();
-                                                pdialog.dismiss();
                                             } else {
                                                 Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                             }
                                         }
+                                        pdialog.dismiss();
                                     }
                                 }, 3000);
                             } else {
@@ -379,7 +380,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 builder.show();
 
                 ArrayList<HashMap<String, String>> items;
-                items = dbHelper.getAllBasketItems();
+                items = dbHelper.getAllBasketItems(true);
                 LazyAdapter checkOutAdapter = new LazyAdapter(getActivity(), items, "ready_for_checkout_items");
 
                 double basketTotalAmount = 0;
@@ -392,7 +393,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 lv_items.setAdapter(checkOutAdapter);
 
                 Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
-                checkout_btn.setText(basketTotalAmount + "");
+                checkout_btn.setText("\u20B1 "+basketTotalAmount);
                 checkout_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

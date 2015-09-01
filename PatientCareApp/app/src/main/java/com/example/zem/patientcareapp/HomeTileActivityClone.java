@@ -141,12 +141,12 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
                 break;
 
             case R.id.cart_btn:
-                intent.putExtra("selected", 6);
+                intent.putExtra("selected", 7);
                 startActivity(intent);
                 break;
 
             case R.id.promos_btn:
-                intent.putExtra("selected", 7);
+                intent.putExtra("selected", 6);
                 startActivity(intent);
                 break;
 

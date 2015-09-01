@@ -2,13 +2,18 @@ package com.example.zem.patientcareapp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +21,8 @@ import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Fragment.ProductsFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
-import com.example.zem.patientcareapp.GetterSetter.Product;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,6 +48,8 @@ public class LazyAdapter extends BaseAdapter {
     public ImageLoader imageLoader;
     DbHelper dbHelper;
     Helpers helpers;
+
+    int productQty, prescriptionId = 0;
 
     private String list_type;
 
@@ -71,7 +79,7 @@ public class LazyAdapter extends BaseAdapter {
     }
 
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
         View vi = convertView;
 
         if (list_type.equals("list_of_doctors")) {
@@ -103,16 +111,19 @@ public class LazyAdapter extends BaseAdapter {
 
             final String productPacking;
             final String productUnit;
-            final int productId, productQtyPerPacking;
+            final int productId, productQtyPerPacking, isPrescriptionRequired;
 
             HashMap<String, String> map;
             map = data.get(position);
             final Map<String, HashMap<String, String>> productQuantity = ProductsFragment.productQuantity;
 
+            System.out.println("Product: "+map.toString());
+
             productId = Integer.parseInt(map.get("id"));
             productPacking = productQuantity.get(productId + "").get("packing");
             productUnit = map.get("unit");
             productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ? Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
+            isPrescriptionRequired = Integer.parseInt(map.get("prescription_required"));
 
             product_quantity.setText(productQtyPerPacking + "");
 
@@ -120,6 +131,8 @@ public class LazyAdapter extends BaseAdapter {
 
             product_quantity.setId(PID);
             product_description.setTag(PID);
+
+            productQty = productQty > 0 ? productQty : productQtyPerPacking;
 
             final TextView tv_new_product_quantity = (TextView) vi.findViewById(PID);
             final TextView tv_new_product_description = (TextView) vi.findViewWithTag(PID);
@@ -132,8 +145,14 @@ public class LazyAdapter extends BaseAdapter {
                     int productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ?
                             Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
 
+                    if( qty == 0 ){
+                        qty = productQtyPerPacking;
+                    }
+
                     qty += productQtyPerPacking;
                     tv_new_product_quantity.setText(qty + "");
+
+                    productQty = qty;
 
                     productQuantity.get(productId + "").put("temp_basket_qty", qty + "");
                     int totalPacking = (qty / productQtyPerPacking);
@@ -152,10 +171,17 @@ public class LazyAdapter extends BaseAdapter {
                     int productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ?
                             Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
 
+                    if( qty == 0 ){  // check if temp qty is empty
+                        qty = productQtyPerPacking;
+                    }
+
                     qty -= productQtyPerPacking;
                     if (qty < 1) {
                         qty = productQtyPerPacking;
                     }
+
+                    productQty = qty;
+
                     productQuantity.get(productId + "").put("temp_basket_qty", qty + "");
                     tv_new_product_quantity.setText(qty + "");
                     int totalPacking = (qty / productQtyPerPacking);
@@ -174,35 +200,41 @@ public class LazyAdapter extends BaseAdapter {
 
             final View tempVi = vi;
             final int tempPID = PID;
+
             addToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Helpers helpers = new Helpers();
+                    final Helpers helpers = new Helpers();
                     final DbHelper dbhelper = new DbHelper(activity);
                     final ServerRequest serverRequest = new ServerRequest();
-                    int get_productID = tempPID;
+//                    int get_productID = tempPID;
 
                     if (helpers.isNetworkAvailable(activity)) {
                         try {
-                            int new_qty;
-                            new_qty = Integer.parseInt(product_quantity.getText().toString());
-                            final Basket basket = dbhelper.getBasket(get_productID);
+//                            int new_qty;
+                            /*new_qty = Integer.parseInt(product_quantity.getText().toString());*/
+//                            new_qty = productQty;
+                            int q = Integer.parseInt(productQuantity.get(productId + "").get("temp_basket_qty"));
+                            int p = Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing"));
+                            productQty = q != 0 ? q : p;
+                            final Basket basket = dbhelper.getBasket(tempPID);
 
                             final ProgressDialog pdialog = new ProgressDialog(activity);
                             pdialog.setCancelable(false);
-                            pdialog.setMessage("Loading...");
+                            pdialog.setMessage("Please wait...");
                             pdialog.show();
 
                             if (basket.getBasketId() > 0) {
-                                HashMap<String, String> hashMap = new HashMap();
-                                hashMap.put("id", String.valueOf(get_productID));
+                                HashMap<String, String> hashMap = new HashMap<>();
+                                hashMap.put("id", String.valueOf(tempPID));
 
                                 hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
                                 hashMap.put("table", "baskets");
                                 hashMap.put("request", "crud");
 
                                 int old_qty = basket.getQuantity();
-                                basket.setQuantity(new_qty + old_qty);
+                                basket.setQuantity(productQty + old_qty);
+                                hashMap.put("is_approved", basket.getIsApproved()+"");
                                 hashMap.put("quantity", String.valueOf(basket.getQuantity()));
                                 hashMap.put("action", "update");
                                 hashMap.put("id", String.valueOf(basket.getBasketId()));
@@ -215,36 +247,88 @@ public class LazyAdapter extends BaseAdapter {
                                         boolean responseFromServer = serverRequest.getResponse();
                                         if (responseFromServer) {
                                             if (dbhelper.updateBasket(basket)) {
-                                                pdialog.dismiss();
                                                 Toast.makeText(activity, "Your cart has been updated.", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                                Log.d("error on dbhelper", "error");
                                             }
                                         } else {
                                             Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                            Log.d("responseFromServer", "error");
                                         }
+                                        pdialog.dismiss();
                                     }
                                 }, 2500);
                             } else { //INSERT NEW PRODUCT IN BASKETS TABLE//
-                                final HashMap<String, String> hashMap = new HashMap();
-                                hashMap.put("product_id", String.valueOf(get_productID));
-                                hashMap.put("quantity", String.valueOf(new_qty));
+
+                                final HashMap<String, String> hashMap = new HashMap<>();
+                                hashMap.put("product_id", String.valueOf(tempPID));
+                                hashMap.put("quantity", String.valueOf(productQty));
                                 hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
+                                hashMap.put("prescription_id", "0");
+                                hashMap.put("is_approved", "1");
                                 hashMap.put("table", "baskets");
                                 hashMap.put("request", "crud");
                                 hashMap.put("action", "insert");
 
-                                tempVi.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        pdialog.dismiss();
-                                        serverRequest.setSuccessMessage("New item has been added to your cart!");
-                                        serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
-                                        serverRequest.init(activity, hashMap, "insert_basket");
-                                    }
-                                }, 3000);
+
+                                // if prescription required, ask for the prescription
+                                if( isPrescriptionRequired == 1 ){
+                                    /*Intent intent = new Intent(activity, SelectPrescription.class);
+                                    activity.startActivityForResult(intent, 1);*/
+                                    GridView gridView;
+                                    final Dialog builder;
+                                    HashMap<GridView, Dialog> map;
+                                    map = helpers.showPrescriptionDialog(activity);
+
+                                    Map.Entry<GridView, Dialog> entry = map.entrySet().iterator().next();
+                                    gridView = entry.getKey();
+                                    builder = entry.getValue();
+                                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            System.out.println("SELECTED: position: "+position+" id: "+id);
+                                            prescriptionId = (int) id;
+                                            hashMap.put("prescription_id", prescriptionId+"");
+                                            hashMap.put("is_approved", "0");
+                                            tempVi.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    serverRequest.setSuccessMessage("New item has been added to your cart!");
+                                                    serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
+                                                    serverRequest.setProgressDialog(pdialog);
+                                                    serverRequest.init(activity, hashMap, "insert_basket");
+
+                                                }
+                                            }, 2500);
+                                            builder.dismiss();
+                                        }
+                                    });
+
+                                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                        @Override
+                                        public void onCancel(DialogInterface dialog) {
+                                            pdialog.dismiss();
+                                        }
+                                    });
+
+                                }else{
+                                    tempVi.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            serverRequest.setSuccessMessage("New item has been added to your cart!");
+                                            serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
+                                            serverRequest.setProgressDialog(pdialog);
+                                            serverRequest.init(activity, hashMap, "insert_basket");
+                                        }
+                                    }, 2500);
+
+
+                                }
+
                             }
                         } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     } else {
                         Toast.makeText(activity, "Sorry, please connect to the internet.", Toast.LENGTH_SHORT).show();
@@ -258,9 +342,15 @@ public class LazyAdapter extends BaseAdapter {
 
                 HashMap<String, String> basket_items;
                 basket_items = data.get(position);
+                System.out.println("basket_items@position: "+position+" -> "+basket_items.toString());
 
-                TextView productName = (TextView) vi.findViewById(R.id.product_name);
-                TextView productPrice = (TextView) vi.findViewById(R.id.product_price);
+                TextView productName, productPrice, basketIsApproved;
+                String unit, packing;
+                int basketId, qtyPerPacking, isApproved;
+
+                productName = (TextView) vi.findViewById(R.id.product_name);
+                productPrice = (TextView) vi.findViewById(R.id.product_price);
+                basketIsApproved = (TextView) vi.findViewById(R.id.is_approved);
                 qty = (TextView) vi.findViewById(R.id.product_quantity);
                 total = (TextView) vi.findViewById(R.id.total);
 
@@ -268,24 +358,27 @@ public class LazyAdapter extends BaseAdapter {
                 // Do the fucking stuffs here
                 price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
                 quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
-                String unit, packing;
-                int basketId;
-                int qtyPerPacking;
+
+
                 unit = basket_items.get(DbHelper.PRODUCT_UNIT);
                 basketId= Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID));
                 packing = basket_items.get(DbHelper.PRODUCT_PACKING);
                 qtyPerPacking = Integer.parseInt(basket_items.get(DbHelper.PRODUCT_QTY_PER_PACKING));
-
+                isApproved = Integer.parseInt(basket_items.get(DbHelper.BASKET_IS_APPROVED));
 
 
                 // Setting all values in listview
+                basketIsApproved.setText("");
+                if( isApproved == 0 ){
+                    basketIsApproved.setText("Waiting for approval...");
+                }
                 productName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
                 total_amount = price * quantity;
 
                 total.setText("\u20B1 "+total_amount + "");
                 qty.setText(quantity + "");
                 int num = quantity/qtyPerPacking;
-                productPrice.setText("Quantity: " + quantity + " x "+helpers.getPluralForm(unit, quantity)+" ("+num+" "+helpers.getPluralForm(packing, num)+")"+
+                productPrice.setText("Quantity: " + quantity + "  "+helpers.getPluralForm(unit, quantity)+" ("+num+" "+helpers.getPluralForm(packing, num)+")"+
                         "\nPrice: \u20B1 " + price + " / " + (!unit.equals("0") ? unit : "") );
 
                 qty.setId(basketId);
@@ -302,23 +395,42 @@ public class LazyAdapter extends BaseAdapter {
             HashMap<String, String> basket_items;
             basket_items = data.get(position);
 
-            TextView itemName = (TextView) vi.findViewById(R.id.item_name);
-            TextView itemDetails = (TextView) vi.findViewById(R.id.item_details);
-            TextView itemAmount = (TextView) vi.findViewById(R.id.item_amount);
-            TextView itemQuantity = (TextView) vi.findViewById(R.id.item_quantity);
+            TextView itemName, itemDetails, itemAmount, itemQuantity, itemIsApproved;
+
+            itemName = (TextView) vi.findViewById(R.id.item_name);
+            itemDetails = (TextView) vi.findViewById(R.id.item_details);
+            itemAmount = (TextView) vi.findViewById(R.id.item_amount);
+            itemQuantity = (TextView) vi.findViewById(R.id.item_quantity);
+            itemIsApproved = (TextView) vi.findViewById(R.id.item_is_approved);
 
             // Do the fucking stuffs here
-            double price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
-            int quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
+            double price, total_amount;
+            int quantity, qtyPerPacking, packingCount, isApproved;
+            String unit, packing;
 
             // Setting all values in listview
-            itemName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
-            double total_amount = price * quantity;
-            String unit = basket_items.get(DbHelper.PRODUCT_UNIT);
 
+            price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
+            quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
+            unit = basket_items.get(DbHelper.PRODUCT_UNIT);
+            qtyPerPacking = Integer.parseInt(basket_items.get(DbHelper.PRODUCT_QTY_PER_PACKING));
+            packing = basket_items.get(DbHelper.PRODUCT_PACKING);
+            isApproved = Integer.parseInt(basket_items.get(DbHelper.BASKET_IS_APPROVED));
+
+
+            total_amount = price * quantity;
+            unit = !unit.equals("0") ? unit : "";
+            packingCount = quantity/qtyPerPacking;
+
+            itemIsApproved.setText("");
+            if( isApproved == 0 ){
+                itemIsApproved.setText("Waiting for approval...");
+            }
+            itemName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
             itemAmount.setText("\u20B1 " + total_amount + "");
-            itemDetails.setText("Price: \u20B1 " + price + " / " + (!unit.equals("0") ? unit : ""));
-            itemQuantity.setText("Quantity: " + quantity);
+            itemDetails.setText("Price: \u20B1 " + price + " / " + unit );
+            itemQuantity.setText("Quantity: " + quantity +" "+ helpers.getPluralForm(unit, quantity) +
+                    " ("+packingCount+" "+helpers.getPluralForm(packing, packingCount)+")");
 
             itemName.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
             itemAmount.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));

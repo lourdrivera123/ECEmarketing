@@ -54,6 +54,7 @@
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
+            android:id="@+id/gallery"
             android:text="Gallery" />
     </LinearLayout>
 

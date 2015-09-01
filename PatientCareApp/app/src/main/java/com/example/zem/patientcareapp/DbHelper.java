@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.GetterSetter.Clinic;
 import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
@@ -150,7 +152,9 @@ public class DbHelper extends SQLiteOpenHelper {
             SERVER_BASKET_ID = "basket_id",
             BASKET_PATIENT_ID = "patient_id",
             BASKET_PRODUCT_ID = "product_id",
-            BASKET_QUANTITY = "quantity";
+            BASKET_QUANTITY = "quantity",
+            BASKET_PRESCRIPTION_ID = "prescription_id",
+            BASKET_IS_APPROVED = "is_approved";
 
     // PATIENT_RECORDS TABLE
     public static final String TBL_PATIENT_RECORDS = "patient_records",
@@ -351,9 +355,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table "baskets"
         String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s INTEGER, %s INTEGER, %s DOUBLE, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                        "%s INTEGER, %s INTEGER, %s DOUBLE, %s INTEGER, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
                 TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
-                CREATED_AT, UPDATED_AT, DELETED_AT);
+                BASKET_PRESCRIPTION_ID, BASKET_IS_APPROVED, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create PATIENT_RECORDS TABLE
         String sql_create_patient_records = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
@@ -513,6 +517,72 @@ public class DbHelper extends SQLiteOpenHelper {
         return insert_patient > 0;
     }
 
+    public boolean savePatient(JSONObject patient_json_object_mysql, Patient patient, String request) {
+        int patient_id = 0;
+        String created_at = "";
+
+        if (request.equals("update")) {
+            patient_id = patient.getServerID();
+        } else {
+            try {
+                patient_id = patient_json_object_mysql.getInt("id");
+                created_at = patient_json_object_mysql.getString("created_at");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(PTNT_PATIENT_ID, patient_id);
+        values.put(PTNT_FNAME, patient.getFname());
+        values.put(PTNT_MNAME, patient.getMname());
+        values.put(PTNT_LNAME, patient.getLname());
+        values.put(PTNT_USERNAME, patient.getUsername());
+        values.put(PTNT_OCCUPATION, patient.getOccupation());
+        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
+        values.put(PTNT_SEX, patient.getSex());
+        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
+        values.put(PTNT_HEIGHT, patient.getHeight());
+        values.put(PTNT_WEIGHT, patient.getWeight());
+        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
+        values.put(PTNT_BUILDING, patient.getBuilding());
+        values.put(PTNT_LOT_NO, patient.getLot_no());
+        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
+        values.put(PTNT_PHASE_NO, patient.getPhase_no());
+        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
+        values.put(PTNT_STREET, patient.getAddress_street());
+        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
+        values.put(PTNT_CITY, patient.getAddress_city_municipality());
+        values.put(PTNT_PROVINCE, patient.getAddress_province());
+        values.put(PTNT_REGION, patient.getAddress_region());
+        values.put(PTNT_ZIP, patient.getAddress_zip());
+        values.put(PTNT_TEL_NO, patient.getTel_no());
+        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
+        values.put(PTNT_EMAIL, patient.getEmail());
+        values.put(PTNT_PHOTO, patient.getPhoto());
+        values.put(CREATED_AT, created_at);
+
+        long rowID = 0;
+
+        if (request.equals("insert")) {
+            values.put(PTNT_PASSWORD, patient.getPassword());
+            rowID = db.insert(TBL_PATIENTS, null, values);
+        } else if (request.equals("update")) {
+            if (AccountFragment.checkIfChangedPass > 0)
+                values.put(PTNT_PASSWORD, patient.getPassword());
+
+            rowID = db.update(TBL_PATIENTS, values, PTNT_PATIENT_ID + "=" + patient_id, null);
+        }
+
+        db.close();
+
+
+        return rowID > 0;
+
+    }
+
     public boolean insertBasket(Basket basket) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
@@ -527,6 +597,8 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(BASKET_PATIENT_ID, patient_id);
         values.put(BASKET_PRODUCT_ID, basket.getProductId());
         values.put(BASKET_QUANTITY, basket.getQuantity());
+        values.put(BASKET_PRESCRIPTION_ID, basket.getPrescriptionId());
+        values.put(BASKET_IS_APPROVED, basket.getIsApproved());
         values.put(CREATED_AT, datenow);
 
         long row = db.insert(TBL_BASKETS, null, values);
@@ -1094,6 +1166,7 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setId(cur.getInt(cur.getColumnIndex(PTNT_ID)));
             patient.setServerID(cur.getInt(cur.getColumnIndex(PTNT_PATIENT_ID)));
             patient.setFname(cur.getString(cur.getColumnIndex(PTNT_FNAME)));
+            patient.setMname(cur.getString(cur.getColumnIndex(PTNT_MNAME)));
             patient.setLname(cur.getString(cur.getColumnIndex(PTNT_LNAME)));
             patient.setUsername(cur.getString(cur.getColumnIndex(PTNT_USERNAME)));
             patient.setPassword(cur.getString(cur.getColumnIndex(PTNT_PASSWORD)));
@@ -1266,19 +1339,28 @@ public class DbHelper extends SQLiteOpenHelper {
         return basket;
     }
 
-    public ArrayList<HashMap<String, String>> getAllBasketItems() {
-        ArrayList<HashMap<String, String>> items = new ArrayList();
+    public ArrayList<HashMap<String, String>> getAllBasketItems(boolean onlyApprovedItems) {
+        ArrayList<HashMap<String, String>> items = new ArrayList<>();
 
-        String sql = "Select b.id, b.basket_id, p.product_id, p.name, p.price, p.packing, p.qty_per_packing," +
+        String additionalWhere, sql;
+        additionalWhere = "";
+        if( onlyApprovedItems ){
+            additionalWhere = " and b.is_approved=1";
+        }
+
+        sql = "Select b.id, b.basket_id, b.is_approved, b.prescription_id, p.product_id, p.name, p.price, p.packing, p.qty_per_packing," +
                 " p.prescription_required, p.sku, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
-                "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where b.patient_id=" + this.getCurrentLoggedInPatient().getServerID() + "";
+                "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where " +
+                "b.patient_id=" + this.getCurrentLoggedInPatient().getServerID() + additionalWhere;
+
+        System.out.println("basket sql: "+sql);
 
         SQLiteDatabase db = getWritableDatabase();
         Cursor cur = db.rawQuery(sql, null);
 
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
-            HashMap<String, String> map = new HashMap();
+            HashMap<String, String> map = new HashMap<>();
             map.put(BASKET_ID, cur.getString(cur.getColumnIndex(BASKET_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(SERVER_BASKET_ID, cur.getString(cur.getColumnIndex(SERVER_BASKET_ID)));
@@ -1290,6 +1372,8 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
             map.put(PRODUCT_QTY_PER_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_QTY_PER_PACKING)));
             map.put(PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(PRODUCT_PRESCRIPTION_REQUIRED)));
+            map.put(BASKET_PRESCRIPTION_ID, cur.getString(cur.getColumnIndex(BASKET_PRESCRIPTION_ID)));
+            map.put(BASKET_IS_APPROVED, cur.getString(cur.getColumnIndex(BASKET_IS_APPROVED)));
             items.add(map);
             cur.moveToNext();
         }
@@ -1560,6 +1644,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_UNIT, cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
             map.put(PRODUCT_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
             map.put(PRODUCT_QTY_PER_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_QTY_PER_PACKING)));
+            map.put(PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(PRODUCT_PRESCRIPTION_REQUIRED)));
             products.add(map);
         }
         cur.close();

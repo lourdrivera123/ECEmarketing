@@ -32,11 +32,10 @@
         <!-- Product Quantity -->
         <TextView
             android:id="@+id/product_quantity"
-            android:layout_width="60dp"
+            android:layout_width="10dp"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
             android:gravity="bottom"
-            android:padding="10dp"
             android:singleLine="false"
             android:text="67"
             android:textColor="#343434"
@@ -59,15 +58,27 @@
     </LinearLayout>
 
     <!-- Price -->
-    <TextView
-        android:id="@+id/product_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/item_details"
-        android:layout_marginStart="10dp"
-        android:text="Price: 10.00 / pc"
-        android:textSize="12sp"
-        tools:ignore="RtlCompat" />
+        <TextView
+            android:id="@+id/product_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Price: 10.00 / pc"
+            android:layout_below="@+id/item_details"
+            android:textSize="12sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Waiting for Approval"
+            android:id="@+id/is_approved"
+            android:layout_marginStart="10dp"
+            tools:ignore="RtlCompat"
+            android:textColor="#93f70303"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/product_price"/>
 
 </RelativeLayout>

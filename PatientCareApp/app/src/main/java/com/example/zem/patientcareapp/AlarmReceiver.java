@@ -108,6 +108,7 @@ public class AlarmReceiver extends BroadcastReceiver
 
             }
         } catch(Exception e) {
+            e.printStackTrace();
         }
 
 

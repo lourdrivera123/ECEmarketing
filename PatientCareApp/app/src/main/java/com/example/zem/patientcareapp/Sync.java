@@ -609,6 +609,8 @@ public class Sync {
         basket.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
         basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
         basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
+        basket.setPrescriptionId(json.getInt(DbHelper.BASKET_PRESCRIPTION_ID));
+        basket.setIsApproved(json.getInt(DbHelper.BASKET_IS_APPROVED));
         return basket;
     }
 
