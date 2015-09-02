@@ -8,10 +8,10 @@ import java.io.Serializable;
 public class Patient implements Serializable {
 
     private String fname = "", mname = "", lname = "", username = "", password = "",
-            occupation = "", doctor_referred_by = "", doctor_referred_to = "", birthdate = "",
-            sex = "", civil_status = "", height = "", weight = "", address_street = "",
-            address_barangay = "", address_city_municipality = "", address_province = "", address_region = "",
-            country = "", address_zip = "", cell_no = "", tel_no = "", email = "", photo = "", building = "";
+            occupation = "", birthdate = "", sex = "", civil_status = "", height = "",
+            weight = "", address_street = "", address_barangay = "", address_city_municipality = "",
+            address_province = "", address_region = "", country = "", address_zip = "", cell_no = "",
+            tel_no = "", email = "", photo = "", building = "", referral_id = "", referred_by = "";
 
     int id = 0, serverID = 0, unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no;
 
@@ -30,6 +30,14 @@ public class Patient implements Serializable {
     public void setId(int id) {
         this.id = id;
 
+    }
+
+    public void setReferral_id(String referral_id) {
+        this.referral_id = referral_id;
+    }
+
+    public void setReferred_by(String referred_by) {
+        this.referred_by = referred_by;
     }
 
     public int getId() {
@@ -56,13 +64,6 @@ public class Patient implements Serializable {
         return phase_no;
     }
 
-    public String getFullname(boolean middlename_is_full) {
-        if (middlename_is_full == true) {
-            return fname + " " + mname + " " + lname;
-        }
-        return fname + " " + mname.indexOf(0) + ". " + lname;
-    }
-
     public void setFullname(String first_name, String middle_name, String last_name) {
         this.setFname(first_name);
         this.setMname(middle_name);
@@ -85,11 +86,6 @@ public class Patient implements Serializable {
         this.setAddress_zip(zip);
         this.setAddress_region(region);
         this.setCountry(country);
-    }
-
-    public String getFullAddress() {
-        return address_house_no + " " + address_street + " " + address_barangay + "\n"
-                + address_city_municipality + " " + address_province + " " + address_region + " " + country + ", " + address_zip;
     }
 
     public void setUnit_floor_room_no(int unit_floor_room_no) {
@@ -152,40 +148,12 @@ public class Patient implements Serializable {
         this.password = password;
     }
 
-    public String getOccupation() {
-        return occupation;
-    }
-
     public void setOccupation(String occupation) {
         this.occupation = occupation;
     }
 
-    public String getDoctor_referred_by() {
-        return doctor_referred_by;
-    }
-
-    public void setDoctor_referred_by(String doctor_referred_by) {
-        this.doctor_referred_by = doctor_referred_by;
-    }
-
-    public String getDoctor_referred_to() {
-        return doctor_referred_to;
-    }
-
-    public void setDoctor_referred_to(String doctor_referred_to) {
-        this.doctor_referred_to = doctor_referred_to;
-    }
-
-    public String getBirthdate() {
-        return birthdate;
-    }
-
     public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
-    }
-
-    public String getSex() {
-        return sex;
     }
 
     public void setSex(String sex) {
@@ -208,16 +176,8 @@ public class Patient implements Serializable {
         this.height = height;
     }
 
-    public String getWeight() {
-        return weight;
-    }
-
     public void setWeight(String weight) {
         this.weight = weight;
-    }
-
-    public int getAddress_house_no() {
-        return address_house_no;
     }
 
     public void setAddress_house_no(int address_house_no) {
@@ -232,48 +192,24 @@ public class Patient implements Serializable {
         this.address_street = address_street;
     }
 
-    public String getAddress_barangay() {
-        return address_barangay;
-    }
-
     public void setAddress_barangay(String address_barangay) {
         this.address_barangay = address_barangay;
-    }
-
-    public String getAddress_city_municipality() {
-        return address_city_municipality;
     }
 
     public void setAddress_city_municipality(String address_city_municipality) {
         this.address_city_municipality = address_city_municipality;
     }
 
-    public String getAddress_province() {
-        return address_province;
-    }
-
     public void setAddress_province(String address_province) {
         this.address_province = address_province;
-    }
-
-    public String getAddress_region() {
-        return address_region;
     }
 
     public void setAddress_region(String address_region) {
         this.address_region = address_region;
     }
 
-    public String getAddress_zip() {
-        return address_zip;
-    }
-
     public void setAddress_zip(String address_zip) {
         this.address_zip = address_zip;
-    }
-
-    public String getMobile_no() {
-        return cell_no;
     }
 
     public void setMobile_no(String cell_no) {
@@ -288,27 +224,76 @@ public class Patient implements Serializable {
         this.tel_no = tel_no;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPhoto() {
-        return photo;
     }
 
     public void setPhoto(String photo) {
         this.photo = photo;
     }
 
-    public String getCountry() {
-        return country;
-    }
-
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    //GETTER
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public String getBirthdate() {
+        return birthdate;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public String getAddress_barangay() {
+        return address_barangay;
+    }
+
+    public String getAddress_region() {
+        return address_region;
+    }
+
+    public int getAddress_house_no() {
+        return address_house_no;
+    }
+
+    public String getAddress_city_municipality() {
+        return address_city_municipality;
+    }
+
+    public String getAddress_province() {
+        return address_province;
+    }
+
+    public String getAddress_zip() {
+        return address_zip;
+    }
+
+    public String getMobile_no() {
+        return cell_no;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public String getReferral_id() {
+        return referral_id;
+    }
+
+    public String getReferred_by() {
+        return referred_by;
     }
 }

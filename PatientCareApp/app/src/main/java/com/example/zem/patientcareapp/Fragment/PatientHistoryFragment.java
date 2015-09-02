@@ -63,7 +63,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.patient_records_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_patient_history_fragment, container, false);
         dbHelper = new DbHelper(getActivity());
         helpers = new Helpers();
 

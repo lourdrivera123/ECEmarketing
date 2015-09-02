@@ -9,32 +9,25 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.EditTabsActivity;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Helpers;
-import com.example.zem.patientcareapp.MainActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarActivity;
 
-import org.w3c.dom.Text;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class AccountFragment extends Fragment implements View.OnClickListener {
     ImageView image_holder;
-    EditText username, current_pass, new_pass, retype_new_pass;
+    EditText username, current_pass, new_pass, retype_new_pass, password;
     TextView changePassword, show_and_hide_pass;
     Button btn_save, save, cancel;
 
@@ -48,29 +41,37 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.patient_account_info, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_account_fragment, container, false);
 
         image_holder = (ImageView) rootView.findViewById(R.id.image_holder);
         username = (EditText) rootView.findViewById(R.id.username);
         btn_save = (Button) rootView.findViewById(R.id.btn_save);
         changePassword = (TextView) rootView.findViewById(R.id.changePassword);
+        password = (EditText) rootView.findViewById(R.id.password);
 
         int edit = EditTabsActivity.edit_int;
         dbhelper = new DbHelper(getActivity());
         helpers = new Helpers();
 
         if (edit > 0) {
+            changePassword.setVisibility(View.VISIBLE);
+            password.setVisibility(View.GONE);
+
             String edit_uname = SidebarActivity.getUname();
             Patient patient = dbhelper.getloginPatient(edit_uname);
 
             username.setText(patient.getUsername());
             String imgFile = patient.getPhoto();
 
-            if (imgFile != null) {
-                Bitmap yourSelectedImage = BitmapFactory.decodeFile(imgFile);
-                Drawable d = new BitmapDrawable(yourSelectedImage);
-                image_holder.setImageDrawable(d);
+            ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
+
+            if (imgFile != null || !imgFile.equals("")) {
+                helpers.setImage(imgFile, progressBar, image_holder);
             }
+
+        } else {
+            changePassword.setVisibility(View.GONE);
+            password.setVisibility(View.VISIBLE);
         }
 
         changePassword.setOnClickListener(this);

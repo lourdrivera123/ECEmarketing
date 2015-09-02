@@ -21,9 +21,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minWidth="100dp"
+                android:layout_marginBottom="@dimen/d20"
                 android:minHeight="100dp"
-                android:layout_marginBottom="@dimen/d20">
+                android:minWidth="100dp">
 
                 <ImageView
                     android:id="@+id/image_holder"
@@ -32,144 +32,109 @@
                     android:layout_weight="1"
                     android:src="@drawable/img_holder" />
 
-                <TableLayout
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:layout_gravity="center_vertical">
+                    android:orientation="vertical">
 
-                    <TableRow>
+                    <TextView
+                        android:id="@+id/patient_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Rosell Esel Sel Barnes"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                        <TextView
-                            android:id="@+id/patient_name"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="Firstname Lastname" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <TextView
-                            android:id="@+id/username"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="username: eselbarnz" />
-                    </TableRow>
-                </TableLayout>
+                    <TextView
+                        android:id="@+id/username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="username: eselbarnz" />
+                </LinearLayout>
             </LinearLayout>
 
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TableRow>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:text="PERSONAL INFORMATION"
-                        android:textStyle="bold" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
-
-                    <TextView
-                        android:id="@+id/birthdate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Birthdate: January 1, 1994" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
-
-                    <TextView
-                        android:id="@+id/civil_status"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Civil Status: Single" />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
-
-                    <TextView
-                        android:id="@+id/height_weight"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Height: 5'4 ft. / Weight: 60 kg." />
-                </TableRow>
-
-                <TableRow android:gravity="center_horizontal">
-
-                    <TextView
-                        android:id="@+id/occupation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Occupation: Android Developer" />
-                </TableRow>
-            </TableLayout>
-
-            <TableLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
+                android:orientation="vertical">
 
-                <TableRow>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:text="PERSONAL INFORMATION"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:text="CONTACT INFORMATION"
-                        android:textStyle="bold" />
-                </TableRow>
 
-                <TableRow android:gravity="center_horizontal">
+                <TextView
+                    android:id="@+id/birthdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Birthdate: January 1, 1994" />
 
-                    <TextView
-                        android:id="@+id/address_first_line"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="#86 Acacia St., Cabantian" />
-                </TableRow>
+                <TextView
+                    android:id="@+id/civil_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Civil Status: Single" />
 
-                <TableRow android:gravity="center_horizontal">
+                <TextView
+                    android:id="@+id/height_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Height: 5'4 ft. / Weight: 60 kg." />
 
-                    <TextView
-                        android:id="@+id/address_second_line"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Dexter City, Davao del Sur, Philippines, 8000" />
-                </TableRow>
+                <TextView
+                    android:id="@+id/occupation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Occupation: Android Developer" />
 
-                <TableRow android:gravity="center_horizontal">
 
-                    <TextView
-                        android:id="@+id/email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="doctor@email.com" />
-                </TableRow>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="@dimen/d20"
+                    android:text="CONTACT INFORMATION"
+                    android:textStyle="bold" />
 
-                <TableRow android:gravity="center_horizontal">
+                <TextView
+                    android:id="@+id/address_first_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="#86 Acacia St., Cabantian" />
 
-                    <TextView
-                        android:id="@+id/cp_no"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="0956752434 / 8719876" />
-                </TableRow>
-            </TableLayout>
+
+                <TextView
+                    android:id="@+id/address_second_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Dexter City, Davao del Sur, Philippines, 8000" />
+
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="doctor@email.com" />
+
+                <TextView
+                    android:id="@+id/cp_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0956752434 / 8719876" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

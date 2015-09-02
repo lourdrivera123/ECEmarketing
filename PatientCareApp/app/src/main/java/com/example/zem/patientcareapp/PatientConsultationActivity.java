@@ -26,6 +26,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.GetterSetter.Consultation;
+import com.example.zem.patientcareapp.GetterSetter.Doctor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,6 +59,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
 
     int hour, minute, new_hour, new_minute;
     int isAlarm, updateID;
+    int doctorID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +88,34 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         hour = cal.get(Calendar.HOUR_OF_DAY);
         minute = cal.get(Calendar.MINUTE);
 
+        doctorClinicHashmap = dbhelper.getAllActiveClinics();
+        doctorsHashmap = dbhelper.getAllDoctors();
+        listOfDoctors = new ArrayList();
+
+        for (int i = 0; i < doctorsHashmap.size(); i++) {
+            listOfDoctors.add(doctorsHashmap.get(i).get("fullname"));
+        }
+
+        partOfDayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, partOfDay);
+        doctorAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfDoctors);
+
+        search_doctor.setAdapter(doctorAdapter);
+
         if (getIntent.getStringExtra("request").equals("add")) {
+            String doctor = "";
+            if (getIntent.getIntExtra("doctorID", 0) > 0) {
+                doctorID = getIntent.getIntExtra("doctorID", 0);
+
+                for (int i = 0; i < doctorsHashmap.size(); i++) {
+                    if (Integer.parseInt(doctorsHashmap.get(i).get("doc_id")) == doctorID) {
+                        doctor = doctorsHashmap.get(i).get("fullname");
+                        search_doctor.setText(doctor);
+                    }
+                }
+
+                prepareSpinner(doctor);
+            }
+
             request = "add";
             consult = new Consultation();
 
@@ -107,19 +136,6 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
             }
         }
 
-
-        doctorClinicHashmap = dbhelper.getAllDoctorClinic();
-        doctorsHashmap = dbhelper.getAllDoctors();
-        listOfDoctors = new ArrayList();
-
-        for (int i = 0; i < doctorsHashmap.size(); i++) {
-            listOfDoctors.add(doctorsHashmap.get(i).get("fullname"));
-        }
-
-        partOfDayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, partOfDay);
-        doctorAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfDoctors);
-
-        search_doctor.setAdapter(doctorAdapter);
         spin_dayTime.setAdapter(partOfDayAdapter);
         search_doctor.addTextChangedListener(this);
         search_doctor.setOnItemClickListener(this);
@@ -238,16 +254,22 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String item_clicked = parent.getItemAtPosition(position).toString();
+        prepareSpinner(item_clicked);
+
+
+    }
+
+    public void prepareSpinner(String doctor_name) {
         spinner_clinic.setVisibility(View.VISIBLE);
         search_clinic.setVisibility(View.GONE);
 
-        String item_clicked = parent.getItemAtPosition(position).toString();
         listOfClinic = new ArrayList();
         clinicAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfClinic);
         spinner_clinic.setAdapter(clinicAdapter);
 
         for (int x = 0; x < doctorClinicHashmap.size(); x++) {
-            if (item_clicked.equals(doctorClinicHashmap.get(x).get("fullname"))) {
+            if (doctor_name.equals(doctorClinicHashmap.get(x).get("fullname"))) {
                 listOfClinic.add(doctorClinicHashmap.get(x).get("clinic_name"));
                 clinicAdapter.notifyDataSetChanged();
             }

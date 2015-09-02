@@ -20,23 +20,21 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Network.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
+    EditText username_txtfield, password_txtfield;
     TextView signup, forgotpw;
     Button login_btn;
-
-    EditText username_txtfield, password_txtfield;
 
     DbHelper dbHelper;
     static Helpers helpers;
@@ -44,10 +42,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public static final String MyPREFERENCES = "MyPrefs";
     public static SharedPreferences sharedpreferences;
-    public static final String name = "nameKey";
-    public static final String pass = "passwordKey";
+    public static final String name = "nameKey", pass = "passwordKey";
     String uname, password;
-    String url = "http://vinzry.0fees.us/db/post.php";
+//    String url = "http://192.168.177.1/db/post.php";
+    String url = "http://192.168.90.1/db/post.php";
+
 
     ProgressDialog pDialog;
     RequestQueue queue;
@@ -71,7 +70,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         helpers = new Helpers();
         alarmService = new AlarmService(this);
         main = this;
-        queue = Volley.newRequestQueue(this);
+        queue = VolleySingleton.getInstance().getRequestQueue();
         sync = new Sync();
 
         pDialog = new ProgressDialog(this);
@@ -83,12 +82,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         username_txtfield = (EditText) findViewById(R.id.username_txtfield);
         password_txtfield = (EditText) findViewById(R.id.password_txtfield);
 
-        login_btn.setBackgroundColor(0xFF5B9A68);
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
         login_btn.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -129,73 +125,69 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     patient = new Patient();
                     patient.setUsername(uname);
                     patient.setPassword(helpers.md5(password));
-                    if (helpers.isNetworkAvailable(getBaseContext())) {
 
-                        final Map<String, String> params = setParams();
+                    final Map<String, String> params = setParams();
 
-                        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                Log.d("ifsuccess", response + "");
+                    CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("ifsuccess", response + "");
+                            Log.d("response on jrequest", response + "");
 
-                                try {
-                                    int success = response.getInt("success");
-                                    if (success == 1) {
-                                        patient_json_array_mysql = response.getJSONArray("patient");
+                            try {
+                                int success = response.getInt("success");
 
-                                        JSONArray checked_json_array = sync.checkWhatToInsert(patient_json_array_mysql, dbHelper.getAllJSONArrayFrom("patients"), "patient_id");
+                                if (success == 1) {
+                                    patient_json_array_mysql = response.getJSONArray("patient");
 
-                                        if (checked_json_array.length() > 0) {
-                                            patient_json_object_mysql = checked_json_array.getJSONObject(0);
+                                    JSONArray checked_json_array = sync.checkWhatToInsert(patient_json_array_mysql, dbHelper.getAllJSONArrayFrom("patients"), "patient_id");
 
-                                            //sync.setPatient here.
-                                            Patient syncedPatient = sync.setPatient(patient_json_object_mysql);
+                                    if (checked_json_array.length() > 0) {
+                                        patient_json_object_mysql = checked_json_array.getJSONObject(0);
 
-                                            //then save on db
-                                            dbHelper.insertPatient(patient_json_object_mysql, syncedPatient);
-                                        }
-                                        if (dbHelper.LoginUser(uname, password)) {
-                                            SharedPreferences.Editor editor = sharedpreferences.edit();
-                                            editor.putString(name, uname);
-                                            editor.putString(pass, helpers.md5(password));
-                                            editor.commit();
+                                        //sync.setPatient here.
+                                        Patient syncedPatient = sync.setPatient(patient_json_object_mysql);
 
-                                            startActivity(new Intent(getBaseContext(), SidebarActivity.class));
-
-                                        } else {
-                                            Toast.makeText(MainActivity.this, "Invalid Username of Password", Toast.LENGTH_SHORT).show();
-                                            System.out.print("error on dbHelper.loginUser <source: MainActivity.java>");
-                                        }
-                                    } else {
-                                        Toast.makeText(MainActivity.this, "Invalid Username or Password ", Toast.LENGTH_SHORT).show();
+                                        //then save on db
+                                        dbHelper.savePatient(patient_json_object_mysql, syncedPatient, "insert");
                                     }
-                                    pDialog.dismiss();
+                                    if (dbHelper.LoginUser(uname, password)) {
+                                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                                        editor.putString(name, uname);
+                                        editor.putString(pass, helpers.md5(password));
+                                        editor.commit();
 
-                                } catch (JSONException e) {
-                                    Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(getBaseContext(), SidebarActivity.class));
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Invalid Username of Password", Toast.LENGTH_SHORT).show();
+                                        System.out.print("error on dbHelper.loginUser <source: MainActivity.java>");
+                                    }
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Invalid Username or Password ", Toast.LENGTH_SHORT).show();
                                 }
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
                                 pDialog.dismiss();
-                                Toast.makeText(getBaseContext(), "error" + error.toString(), Toast.LENGTH_SHORT).show();
+
+                            } catch (JSONException e) {
+                                Log.d("try catch error", e + "");
+                                Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
                             }
-                        });
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            pDialog.dismiss();
+                            Log.d("custom request error", error + "");
+                            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
 
-                        queue.add(jsObjRequest);
+                        }
+                    });
 
-                    } else {
-                        Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
-                    }
+                    queue.add(jsObjRequest);
                 }
                 break;
-            case R.id.signup:
-                int signup = 23;
 
-                Intent intent = new Intent(this, EditTabsActivity.class);
-                intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
-                startActivity(intent);
+            case R.id.signup:
+                startActivity(new Intent(this, ReferralActivity.class));
                 break;
         }
     }

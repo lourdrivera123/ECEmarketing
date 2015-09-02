@@ -1,6 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Notification;
@@ -10,19 +9,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Environment;
-import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -31,14 +29,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.adapter.ImageAdapter;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-
-import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by User PC on 5/7/2015.
@@ -96,10 +95,7 @@ public class Helpers implements View.OnCreateContextMenuListener {
                 }
             });
             queue.add(website_request);
-//            Log.e("true man ko", "true");
 
-        } else {
-//            Log.e("false lagi ko", "true");
         }
 //        return connection;
     }
@@ -128,8 +124,6 @@ public class Helpers implements View.OnCreateContextMenuListener {
                             .setContentText(body);
         }
 
-//        Intent resultIntent = new Intent(context, MainActivity.class);
-
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.
         PendingIntent resultPendingIntent =
@@ -143,7 +137,7 @@ public class Helpers implements View.OnCreateContextMenuListener {
         mBuilder.setContentIntent(resultPendingIntent);
 
         // Sets an ID for the notification
-//        int mNotificationId = 001;
+        // int mNotificationId = 001;
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -152,7 +146,7 @@ public class Helpers implements View.OnCreateContextMenuListener {
     }
 
     public String get_url(String request){
-        return "http://vinzry.0fees.us/db/get.php?q="+request;
+        return "http://192.168.177.1/db/get.php?q="+request;
     }
 
     public String md5(final String s) {
@@ -265,4 +259,60 @@ public class Helpers implements View.OnCreateContextMenuListener {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 
     }
+    public void setImage(String image_url, final ProgressBar progressBar, ImageView image_holder){
+//        image_url = patient.getPhoto();
+        //caching and displaying the image
+        DisplayImageOptions options;
+
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.mipmap.ic_stub)
+                .showImageForEmptyUri(R.mipmap.ic_empty)
+                .showImageOnFail(R.mipmap.ic_error)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
+
+//        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance()
+                .displayImage(image_url, image_holder, options, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String imageUri, View view) {
+                        progressBar.setProgress(0);
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }, new ImageLoadingProgressListener() {
+                    @Override
+                    public void onProgressUpdate(String imageUri, View view, int current, int total) {
+                        progressBar.setProgress(Math.round(100.0f * current / total));
+                    }
+                });
+    }
+
+    public void cacheImageOnly(String url){
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(url, new SimpleImageLoadingListener(){
+
+            @Override
+            public void onLoadingComplete(String imageUri, View view,
+                                          Bitmap loadedImage) {
+                super.onLoadingComplete(imageUri, view, loadedImage);
+
+                //write your code here to use loadedImage
+            }
+
+        });
+    }
+
 }

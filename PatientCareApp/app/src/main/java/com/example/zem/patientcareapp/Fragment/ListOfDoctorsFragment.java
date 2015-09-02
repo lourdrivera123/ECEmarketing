@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,18 +15,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.DoctorActivity;
 import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.LazyAdapter;
+import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Sync;
 
 import org.json.JSONObject;
 
@@ -46,26 +46,18 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     DbHelper dbHelper;
     RequestQueue queue;
 
-    // XML node keys
-    static final String KEY_FULL_NAME = "fullname"; // parent node
-    static final String KEY_SPECIALTY = "specialty";
-    static final String KEY_PHOTO = "photo";
-    static final String KEY_ID = "id";
-
     LazyAdapter adapter;
     Helpers helpers;
-    Sync sync;
     View root_view;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_list_of_doctors_fragment, container, false);
         root_view = rootView;
 
         helpers = new Helpers();
         dbHelper = new DbHelper(getActivity());
-        queue = Volley.newRequestQueue(getActivity());
+        queue = VolleySingleton.getInstance().getRequestQueue();
 
         arrayOfSearchDoctors = new ArrayList();
         temp_doctors = new ArrayList();
@@ -81,7 +73,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     public void populateDoctorListView(View rootView, ArrayList<HashMap<String, String>> doctor_items) {
         for (int i = 0; i < doctor_items.size(); i++) {
-            arrayOfSearchDoctors.add(doctor_items.get(i).get(KEY_FULL_NAME));
+            arrayOfSearchDoctors.add(doctor_items.get(i).get(dbHelper.DOC_FULLNAME));
         }
         temp_doctors.addAll(doctor_items);
 
@@ -96,9 +88,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        int ID = Integer.parseInt(doctor_items.get(position).get(KEY_ID));
+        int ID = Integer.parseInt(doctor_items.get(position).get(dbHelper.DOC_DOC_ID));
         Intent intent = new Intent(getActivity(), DoctorActivity.class);
-        intent.putExtra(dbHelper.RECORDS_DOCTOR_ID, ID);
+        intent.putExtra(dbHelper.DOC_DOC_ID, ID);
         startActivity(intent);
     }
 
@@ -121,10 +113,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
                 HashMap<String, String> map = new HashMap();
 
-                map.put(KEY_ID, temp_doctors.get(doctorindex).get(KEY_ID));
-                map.put(KEY_FULL_NAME, temp_doctors.get(doctorindex).get(KEY_FULL_NAME));
-                map.put(KEY_SPECIALTY, temp_doctors.get(doctorindex).get(KEY_SPECIALTY));
-                map.put(KEY_PHOTO, temp_doctors.get(doctorindex).get(KEY_PHOTO));
+                map.put(dbHelper.DOC_DOC_ID, temp_doctors.get(doctorindex).get(dbHelper.DOC_DOC_ID));
+                map.put(dbHelper.DOC_FULLNAME, temp_doctors.get(doctorindex).get(dbHelper.DOC_FULLNAME));
+                map.put(dbHelper.DOC_SPECIALTY_NAME, temp_doctors.get(doctorindex).get(dbHelper.DOC_SPECIALTY_NAME));
                 doctor_items.add(map);
                 adapter.notifyDataSetChanged();
             }
@@ -133,35 +124,49 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onRefresh() {
-//        if (helpers.isNetworkAvailable(getActivity())) {
-            // Request a string response from the provided URL.
-            JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_doctors"), null, new Response.Listener<JSONObject>() {
+        //request for doctors
+        GetRequest.getJSONobj(getActivity(), "get_doctors", "doctors", "doc_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                doctor_items = dbHelper.getAllDoctors();
+                populateDoctorListView(root_view, doctor_items);
+                refresh_doctor.setRefreshing(false);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            }
+        });
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    sync = new Sync();
-                    sync.init(getActivity(), "get_doctors", "doctors", "doc_id", response);
-                    try {
-                        dbHelper.updateLastUpdatedTable("doctors", response.getString("server_timestamp"));
+        //request for clinic
+        GetRequest.getJSONobj(getActivity(), "get_clinics", "clinics", "clinics_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                doctor_items = dbHelper.getAllDoctors();
+                populateDoctorListView(root_view, doctor_items);
+                refresh_doctor.setRefreshing(false);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("Error", error + "");
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            }
+        });
 
-                        refresh_doctor.setRefreshing(false);
-                    } catch (Exception e) {
-
-                    }
-                    doctor_items = dbHelper.getAllDoctors();
-                    populateDoctorListView(root_view, doctor_items);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
-                }
-            });
-            queue.add(doctor_request);
-//        } else {
-//            Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
-//            refresh_doctor.setRefreshing(false);
-//        }
+        //request for clinic doctor request
+        GetRequest.getJSONobj(getActivity(), "get_clinic_doctor", "clinic_doctor", "clinic_doctor_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                doctor_items = dbHelper.getAllDoctors();
+                populateDoctorListView(root_view, doctor_items);
+                refresh_doctor.setRefreshing(false);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("Error", error + "");
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
 

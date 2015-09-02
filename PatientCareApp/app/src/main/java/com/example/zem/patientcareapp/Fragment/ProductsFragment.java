@@ -17,21 +17,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
 import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.LazyAdapter;
+import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SelectedProductActivity;
-import com.example.zem.patientcareapp.ServerRequest;
-import com.example.zem.patientcareapp.Sync;
+import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONObject;
 
@@ -47,8 +46,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     ArrayAdapter category_list_adapter;
     DbHelper dbHelper;
     Helpers helpers;
-    Sync sync;
-    ServerRequest serverRequest;
     List<String> category_list;
     SwipeRefreshLayout refresh_products_list;
 
@@ -60,7 +57,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.products_layout, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_products_fragment, container, false);
         root_view = rootView;
 
         lv_categories = (Spinner) rootView.findViewById(R.id.categories);
@@ -70,14 +67,12 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         productQuantity = new HashMap();
 
         dbHelper = new DbHelper(getActivity());
-        serverRequest = new ServerRequest();
         queue = Volley.newRequestQueue(getActivity());
         helpers = new Helpers();
 
         pDialog = new ProgressDialog(getActivity());
         pDialog.setMessage("Loading...");
 
-//        if (helpers.isNetworkAvailable(getActivity())) {
         products_items = dbHelper.getAllProducts();
 
         for (HashMap<String, String> map : products_items) {
@@ -95,8 +90,8 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         populateProductsListView(rootView, products_items);
         category_list = dbHelper.getAllProductCategoriesArray();
         populateListView(rootView, category_list);
-        pDialog.hide();
-//        }
+        pDialog.dismiss();
+
         return rootView;
     }
 
@@ -188,29 +183,32 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onRefresh() {
-        JsonObjectRequest product_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url("get_products"), null, new Response.Listener<JSONObject>() {
-
+        GetRequest.getJSONobj(getActivity(), "get_products", "products", "product_id", new RespondListener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
-                sync = new Sync();
-                sync.init(getActivity(), "get_products", "products", "product_id", response);
-                try {
-                    System.out.println("timestamp from server: " + response.getString("server_timestamp"));
-                    dbHelper.updateLastUpdatedTable("products", response.getString("server_timestamp"));
-                    refresh_products_list.setRefreshing(false);
-                } catch (Exception e) {
-                    System.out.println("error fetching server timestamp: " + e);
+            public void getResult(JSONObject response) {
+                Log.d("response using interface <ProductsFragment.java >", response + "");
+                products_items = dbHelper.getAllProducts();
+
+                for (HashMap<String, String> map : products_items) {
+
+                    HashMap<String, String> tempMap = new HashMap();
+                    tempMap.put("id", map.get("id"));
+                    tempMap.put("product_id", map.get("product_id"));
+                    tempMap.put("qty_per_packing", map.get("qty_per_packing"));
+                    tempMap.put("packing", map.get("packing"));
+                    tempMap.put("temp_basket_qty", "0");
+                    productQuantity.put(map.get("product_id"), tempMap);
                 }
 
-                products_items = dbHelper.getAllProducts();
                 populateProductsListView(root_view, products_items);
+                refresh_products_list.setRefreshing(false);
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("Error", "asdasda ");
                 Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
             }
         });
-        queue.add(product_request);
     }
 }

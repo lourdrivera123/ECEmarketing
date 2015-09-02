@@ -144,25 +144,25 @@ public class Sync {
                                     System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
                                 }
 
-                            }else if ( tableName.equals("discounts_free_products")){
+                            } else if (tableName.equals("discounts_free_products")) {
                                 System.out.print("promo_discounts: I am in sync.java");
-                                if( dbHelper.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert" ) ){
+                                if (dbHelper.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert")) {
                                     System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
-                                }else {
+                                } else {
                                     System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
                                 }
-                            }else if ( tableName.equals("free_products") ){
+                            } else if (tableName.equals("free_products")) {
                                 System.out.print("promo_free_products: I am in sync.java");
-                                if( dbHelper.saveFreeProducts(setFreeProducts(json_object), "insert" ) ){
+                                if (dbHelper.saveFreeProducts(setFreeProducts(json_object), "insert")) {
                                     System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
-                                }else {
+                                } else {
                                     System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
                                 }
-                            }else if( tableName.equals("promo") ){
-                                System.out.println("allPromo Json: "+json_object.toString());
-                                if( dbHelper.savePromo( setPromo(json_object), "insert" ) ){
+                            } else if (tableName.equals("promo")) {
+                                System.out.println("allPromo Json: " + json_object.toString());
+                                if (dbHelper.savePromo(setPromo(json_object), "insert")) {
                                     System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
-                                }else {
+                                } else {
                                     System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
                                 }
 
@@ -336,7 +336,6 @@ public class Sync {
     public boolean checkDateTime(String str1, String str2) {
         Boolean something = false;
         try {
-
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             /*String str1 = "12/10/2013";*/
@@ -349,12 +348,9 @@ public class Sync {
                 something = true;
                 System.out.println("date2 is Greater than my date1");
             }
-
-
         } catch (ParseException e1) {
             e1.printStackTrace();
         }
-
         return something;
     }
 
@@ -429,7 +425,7 @@ public class Sync {
         Doctor doctor = new Doctor();
         try {
 
-            doctor.setDoc_id(json.getInt("id"));
+            doctor.setServer_doc_id(json.getInt("id"));
             doctor.setFullname(json.getString("fname"), json.getString("mname"), json.getString("lname"));
             doctor.setPrc_no(json.getInt("prc_no"));
             doctor.setSub_specialty_id(json.getInt("sub_specialty_id"));
@@ -570,6 +566,8 @@ public class Sync {
             patient.setMobile_no(json.getString(DbHelper.PTNT_MOBILE_NO));
             patient.setEmail(json.getString(DbHelper.PTNT_EMAIL));
             patient.setPhoto(json.getString(DbHelper.PTNT_PHOTO));
+            patient.setReferral_id(json.getString(DbHelper.PTNT_REFERRAL_ID));
+            patient.setReferred_by(json.getString(DbHelper.PTNT_REFERRED_BY));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -630,7 +628,7 @@ public class Sync {
         return discountsFreeProducts;
     }
 
-    public FreeProducts setFreeProducts(JSONObject json) throws JSONException{
+    public FreeProducts setFreeProducts(JSONObject json) throws JSONException {
         FreeProducts freeProducts = new FreeProducts();
 
         freeProducts.setFreeProductsId(json.getInt(DbHelper.FP_ID));
@@ -643,7 +641,7 @@ public class Sync {
         return freeProducts;
     }
 
-    public Promo setPromo(JSONObject json) throws JSONException{
+    public Promo setPromo(JSONObject json) throws JSONException {
         Promo promo = new Promo();
 
         promo.setServerPromoId(json.getInt(DbHelper.PROMO_ID));

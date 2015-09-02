@@ -75,7 +75,9 @@ public class DbHelper extends SQLiteOpenHelper {
             PTNT_TEL_NO = "tel_no",
             PTNT_MOBILE_NO = "mobile_no",
             PTNT_EMAIL = "email_address",
-            PTNT_PHOTO = "photo";
+            PTNT_PHOTO = "photo",
+            PTNT_REFERRAL_ID = "referral_id",
+            PTNT_REFERRED_BY = "referred_by";
 
     //Updates Table
     public static final String TBL_UPDATES = "updates",
@@ -323,11 +325,11 @@ public class DbHelper extends SQLiteOpenHelper {
         // SQL to create table "patients"
         String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
                         "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_PATIENTS, PTNT_ID, PTNT_PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION,
                 PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO,
                 PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_MOBILE_NO,
-                PTNT_EMAIL, PTNT_PHOTO, CREATED_AT, UPDATED_AT, DELETED_AT);
+                PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "product_categories"
         String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -424,7 +426,6 @@ public class DbHelper extends SQLiteOpenHelper {
                         "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)", TBL_PATIENT_CONSULTATIONS, CONSULT_ID, CONSULT_PATIENT_ID,
                 CONSULT_DOCTOR, CONSULT_CLINIC, CONSULT_DATE, CONSULT_PART_OF_DAY, CONSULT_IS_ALARMED, CONSULT_TIME, CONSULT_IS_FINISHED);
 
-
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_specialties);
         db.execSQL(sql_create_tbl_sub_specialties);
@@ -468,121 +469,6 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     /////////////////////////////INSERT METHODS///////////////////////////////////////
-    public boolean insertPatient(JSONObject patient_json_object_mysql, Patient patient) {
-        int patient_id = 0;
-        String created_at = "";
-
-        try {
-            patient_id = patient_json_object_mysql.getInt("id");
-            created_at = patient_json_object_mysql.getString("created_at");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(PTNT_PATIENT_ID, patient_id);
-        values.put(PTNT_FNAME, patient.getFname());
-        values.put(PTNT_MNAME, patient.getMname());
-        values.put(PTNT_LNAME, patient.getLname());
-        values.put(PTNT_USERNAME, patient.getUsername());
-        values.put(PTNT_PASSWORD, patient.getPassword());
-        values.put(PTNT_OCCUPATION, patient.getOccupation());
-        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
-        values.put(PTNT_SEX, patient.getSex());
-        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
-        values.put(PTNT_HEIGHT, patient.getHeight());
-        values.put(PTNT_WEIGHT, patient.getWeight());
-        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
-        values.put(PTNT_BUILDING, patient.getBuilding());
-        values.put(PTNT_LOT_NO, patient.getLot_no());
-        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
-        values.put(PTNT_PHASE_NO, patient.getPhase_no());
-        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
-        values.put(PTNT_STREET, patient.getAddress_street());
-        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
-        values.put(PTNT_CITY, patient.getAddress_city_municipality());
-        values.put(PTNT_PROVINCE, patient.getAddress_province());
-        values.put(PTNT_REGION, patient.getAddress_region());
-        values.put(PTNT_ZIP, patient.getAddress_zip());
-        values.put(PTNT_TEL_NO, patient.getTel_no());
-        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
-        values.put(PTNT_EMAIL, patient.getEmail());
-        values.put(PTNT_PHOTO, patient.getPhoto());
-        values.put(CREATED_AT, created_at);
-
-        long insert_patient = db.insert(TBL_PATIENTS, null, values);
-        db.close();
-        return insert_patient > 0;
-    }
-
-    public boolean savePatient(JSONObject patient_json_object_mysql, Patient patient, String request) {
-        int patient_id = 0;
-        String created_at = "";
-
-        if (request.equals("update")) {
-            patient_id = patient.getServerID();
-        } else {
-            try {
-                patient_id = patient_json_object_mysql.getInt("id");
-                created_at = patient_json_object_mysql.getString("created_at");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(PTNT_PATIENT_ID, patient_id);
-        values.put(PTNT_FNAME, patient.getFname());
-        values.put(PTNT_MNAME, patient.getMname());
-        values.put(PTNT_LNAME, patient.getLname());
-        values.put(PTNT_USERNAME, patient.getUsername());
-        values.put(PTNT_OCCUPATION, patient.getOccupation());
-        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
-        values.put(PTNT_SEX, patient.getSex());
-        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
-        values.put(PTNT_HEIGHT, patient.getHeight());
-        values.put(PTNT_WEIGHT, patient.getWeight());
-        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
-        values.put(PTNT_BUILDING, patient.getBuilding());
-        values.put(PTNT_LOT_NO, patient.getLot_no());
-        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
-        values.put(PTNT_PHASE_NO, patient.getPhase_no());
-        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
-        values.put(PTNT_STREET, patient.getAddress_street());
-        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
-        values.put(PTNT_CITY, patient.getAddress_city_municipality());
-        values.put(PTNT_PROVINCE, patient.getAddress_province());
-        values.put(PTNT_REGION, patient.getAddress_region());
-        values.put(PTNT_ZIP, patient.getAddress_zip());
-        values.put(PTNT_TEL_NO, patient.getTel_no());
-        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
-        values.put(PTNT_EMAIL, patient.getEmail());
-        values.put(PTNT_PHOTO, patient.getPhoto());
-        values.put(CREATED_AT, created_at);
-
-        long rowID = 0;
-
-        if (request.equals("insert")) {
-            values.put(PTNT_PASSWORD, patient.getPassword());
-            rowID = db.insert(TBL_PATIENTS, null, values);
-        } else if (request.equals("update")) {
-            if (AccountFragment.checkIfChangedPass > 0)
-                values.put(PTNT_PASSWORD, patient.getPassword());
-
-            rowID = db.update(TBL_PATIENTS, values, PTNT_PATIENT_ID + "=" + patient_id, null);
-        }
-
-        db.close();
-
-
-        return rowID > 0;
-
-    }
-
     public boolean insertBasket(Basket basket) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
@@ -687,10 +573,77 @@ public class DbHelper extends SQLiteOpenHelper {
     //////////////////////////END OF INSERT METHODS///////////////////////////
 
     /////////////////////////SAVE METHODS (INSERT AND UPDATE)///////////////////////
+    public boolean savePatient(JSONObject patient_json_object_mysql, Patient patient, String request) {
+        int patient_id = 0;
+        String created_at = "";
+
+        if (request.equals("update")) {
+            patient_id = patient.getServerID();
+        } else {
+            try {
+                patient_id = patient_json_object_mysql.getInt("id");
+                created_at = patient_json_object_mysql.getString("created_at");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(PTNT_PATIENT_ID, patient_id);
+        values.put(PTNT_FNAME, patient.getFname());
+        values.put(PTNT_MNAME, patient.getMname());
+        values.put(PTNT_LNAME, patient.getLname());
+        values.put(PTNT_USERNAME, patient.getUsername());
+        values.put(PTNT_OCCUPATION, patient.getOccupation());
+        values.put(PTNT_BIRTHDATE, patient.getBirthdate());
+        values.put(PTNT_SEX, patient.getSex());
+        values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
+        values.put(PTNT_HEIGHT, patient.getHeight());
+        values.put(PTNT_WEIGHT, patient.getWeight());
+        values.put(PTNT_UNIT_NO, patient.getUnit_floor_room_no());
+        values.put(PTNT_BUILDING, patient.getBuilding());
+        values.put(PTNT_LOT_NO, patient.getLot_no());
+        values.put(PTNT_BLOCK_NO, patient.getBlock_no());
+        values.put(PTNT_PHASE_NO, patient.getPhase_no());
+        values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
+        values.put(PTNT_STREET, patient.getAddress_street());
+        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
+        values.put(PTNT_CITY, patient.getAddress_city_municipality());
+        values.put(PTNT_PROVINCE, patient.getAddress_province());
+        values.put(PTNT_REGION, patient.getAddress_region());
+        values.put(PTNT_ZIP, patient.getAddress_zip());
+        values.put(PTNT_TEL_NO, patient.getTel_no());
+        values.put(PTNT_MOBILE_NO, patient.getMobile_no());
+        values.put(PTNT_EMAIL, patient.getEmail());
+        values.put(PTNT_PHOTO, patient.getPhoto());
+        values.put(PTNT_REFERRAL_ID, patient.getReferral_id());
+        values.put(PTNT_REFERRED_BY, patient.getReferred_by());
+        values.put(CREATED_AT, created_at);
+
+        long rowID = 0;
+
+        if (request.equals("insert")) {
+            values.put(PTNT_PASSWORD, patient.getPassword());
+            rowID = db.insert(TBL_PATIENTS, null, values);
+        } else if (request.equals("update")) {
+            if (AccountFragment.checkIfChangedPass > 0)
+                values.put(PTNT_PASSWORD, patient.getPassword());
+
+            rowID = db.update(TBL_PATIENTS, values, PTNT_PATIENT_ID + "=" + patient_id, null);
+        }
+
+        db.close();
+
+        return rowID > 0;
+    }
+
     public long savePatientRecord(PatientRecord record, String request) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         long rowID = 0;
+
         values.put(SERVER_RECORDS_ID, record.getRecordID());
         values.put(RECORDS_PATIENT_ID, record.getPatientID());
         values.put(RECORDS_COMPLAINT, record.getComplaints());
@@ -793,7 +746,7 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(DOC_DOC_ID, doctor.getDoc_id());
+        values.put(DOC_DOC_ID, doctor.getServer_doc_id());
         values.put(DOC_LNAME, doctor.getLname());
         values.put(DOC_MNAME, doctor.getMname());
         values.put(DOC_FNAME, doctor.getFname());
@@ -808,7 +761,7 @@ public class DbHelper extends SQLiteOpenHelper {
             rowID = db.insert(TBL_DOCTORS, null, values);
 
         } else if (request.equals("update")) {
-            rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor.getDoc_id(), null);
+            rowID = db.update(TBL_DOCTORS, values, DOC_DOC_ID + "=" + doctor.getServer_doc_id(), null);
         }
         return rowID > 0;
     }
@@ -1131,6 +1084,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     //////////////////////////////GET METHODS/////////////////////////////
+    //for patients
     public ArrayList<HashMap<String, String>> getPatientRecord(int patientID) {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "select * FROM " + TBL_PATIENT_RECORDS + " WHERE " + RECORDS_PATIENT_ID + " = " + patientID + " ORDER BY " + RECORDS_DATE + " DESC";
@@ -1152,6 +1106,11 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
 
         return arrayOfRecords;
+    }
+
+    public Patient getCurrentLoggedInPatient() {
+        Patient patient = this.getloginPatient(SidebarActivity.getUname());
+        return patient;
     }
 
     public Patient getloginPatient(String username) {
@@ -1192,6 +1151,8 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setMobile_no(cur.getString(cur.getColumnIndex(PTNT_MOBILE_NO)));
             patient.setEmail(cur.getString(cur.getColumnIndex(PTNT_EMAIL)));
             patient.setPhoto(cur.getString(cur.getColumnIndex(PTNT_PHOTO)));
+            patient.setReferral_id(cur.getString(cur.getColumnIndex(PTNT_REFERRAL_ID)));
+            patient.setReferred_by(cur.getString(cur.getColumnIndex(PTNT_REFERRED_BY)));
         }
         cur.close();
         db.close();
@@ -1218,6 +1179,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return record;
     }
 
+    //for treatments
     public ArrayList<HashMap<String, String>> getTreatmentRecord(int recordID) {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_TREATMENTS + " WHERE " + TREATMENTS_RECORD_ID + " = " + recordID;
@@ -1260,6 +1222,35 @@ public class DbHelper extends SQLiteOpenHelper {
         return treatments;
     }
 
+    //for doctors
+    public ArrayList<HashMap<String, String>> getDoctorName() {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_DOCTORS;
+        Cursor cur = db.rawQuery(sql, null);
+        HashMap<String, String> map;
+        ArrayList<HashMap<String, String>> doctors = new ArrayList<HashMap<String, String>>();
+
+        String fullname, fname, lname;
+        while (cur.moveToNext()) {
+            lname = Helpers.curGetStr(cur, DOC_LNAME);
+            fname = Helpers.curGetStr(cur, DOC_FNAME);
+            fullname = fname + " " + lname;
+
+            map = new HashMap();
+            map.put("ID", String.valueOf(cur.getInt(0)));
+            map.put("fullname", fullname);
+            doctors.add(map);
+        }
+        cur.close();
+        db.close();
+
+        return doctors;
+    }
+
+    public String getDoctorsStringXml() {
+        return doctors_string_xml;
+    }
+
     public ArrayList<HashMap<String, String>> getAllDoctors() {
         ArrayList<HashMap<String, String>> doctors = new ArrayList();
 
@@ -1291,7 +1282,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public Doctor getDoctorByID(int doctorID) {
         SQLiteDatabase db = getWritableDatabase();
-        String sqlgetDoctorByID = "SELECT d.*, s.name , ss.name as sub_name FROM " + TBL_DOCTORS + " as d inner join " + TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + TBL_SPECIALTIES + " as s on ss.specialty_id = s.specialty_id where d.id = " + doctorID;
+        String sqlgetDoctorByID = "SELECT d.*, s.name , ss.name as sub_name FROM " + TBL_DOCTORS + " as d inner join " +
+                TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + TBL_SPECIALTIES +
+                " as s on ss.specialty_id = s.specialty_id where d.doc_id = " + doctorID;
         Cursor cur = db.rawQuery(sqlgetDoctorByID, null);
         cur.moveToFirst();
         Doctor doctor = new Doctor();
@@ -1315,6 +1308,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return doctor;
     }
 
+    //for basket
     public Basket getBasket(int productId) {
         Basket basket = new Basket();
 
@@ -1383,6 +1377,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return items;
     }
 
+    //for prescription
     public ArrayList<HashMap<String, String>> getPrescriptionByUserID(int patientID) {
         ArrayList<HashMap<String, String>> listOfFilename = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
@@ -1402,7 +1397,8 @@ public class DbHelper extends SQLiteOpenHelper {
         return listOfFilename;
     }
 
-    public ArrayList<HashMap<String, String>> getAllDoctorClinic() {
+    //for clinics
+    public ArrayList<HashMap<String, String>> getAllActiveClinics() {
         ArrayList<HashMap<String, String>> listOfDoctorClinic = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
 
@@ -1426,6 +1422,37 @@ public class DbHelper extends SQLiteOpenHelper {
         return listOfDoctorClinic;
     }
 
+    public ArrayList<HashMap<String, String>> getClinicByDoctorID(int doctorID) {
+        ArrayList<HashMap<String, String>> listOfClinics = new ArrayList();
+
+        String sql = "SELECT c.*, cd.clinic_sched  FROM " + TBL_CLINICS + " as c INNER JOIN " + TBL_CLINIC_DOCTOR + " as cd ON c." + SERVER_CLINICS_ID +
+                " = cd." + CD_CLINIC_ID + " WHERE cd." + CD_DOCTOR_ID + " = " + doctorID;
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            HashMap<String, String> map = new HashMap();
+
+            map.put(SERVER_CLINICS_ID, cur.getString(cur.getColumnIndex(SERVER_CLINICS_ID)));
+            map.put(CLINIC_NAME, cur.getString(cur.getColumnIndex(CLINIC_NAME)));
+            map.put(CLINIC_CONTACT_NO, cur.getString(cur.getColumnIndex(CLINIC_CONTACT_NO)));
+            map.put(CLINIC_ADDRESSS_UNIT_BUILDING_NO, cur.getString(cur.getColumnIndex(CLINIC_ADDRESSS_UNIT_BUILDING_NO)));
+            map.put(CLINIC_ADDRESS_STREET, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_STREET)));
+            map.put(CLINIC_ADDRESS_BARANGAY, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_BARANGAY)));
+            map.put(CLINIC_ADDRESS_CITY_MUNICIPALITY, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_CITY_MUNICIPALITY)));
+            map.put(CLINIC_ADDRESS_PROVINCE, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_PROVINCE)));
+            map.put(CLINIC_ADDRESS_REGION, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_REGION)));
+            map.put(CLINIC_ADDRESS_ZIP, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_ZIP)));
+            map.put(CD_CLINIC_SCHED, cur.getString(cur.getColumnIndex(CD_CLINIC_SCHED)));
+            listOfClinics.add(map);
+        }
+        cur.close();
+        db.close();
+
+        return listOfClinics;
+    }
+
+    //for consultations
     public ArrayList<HashMap<String, String>> getAllConsultationsByUserId(int userID) {
         ArrayList<HashMap<String, String>> listOfAllConsultations = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
@@ -1474,22 +1501,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return consult;
     }
 
-    public ProductSubCategory getSubCategoryByName(String name, int categoryId) {
-        ProductSubCategory subCategory = new ProductSubCategory();
-        SQLiteDatabase db = getWritableDatabase();
-        name = name.replace("'", "''");
-        String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " where name='" + name + "' and category_id='" + categoryId + "'";
-        Cursor cur = db.rawQuery(sql, null);
-        while (cur.moveToNext()) {
-            subCategory.setId(cur.getInt(cur.getColumnIndex(PRODUCT_SUBCATEGORIES_ID)));
-            subCategory.setName(cur.getString(cur.getColumnIndex(PROD_SUBCAT_NAME)));
-            subCategory.setCategoryId(Integer.parseInt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_CATEGORY_ID))));
-            subCategory.setCreatedAt(cur.getString(cur.getColumnIndex(CREATED_AT)));
-            subCategory.setUpdatedAt(cur.getString(cur.getColumnIndex(UPDATED_AT)));
-            subCategory.setDeletedAt(cur.getString(cur.getColumnIndex(DELETED_AT)));
-        }
-        return subCategory;
-    }
+    //for products
 
     public ArrayList<HashMap<String, String>> getProductsBySubCategory(int subCategoryId) {
         ArrayList<HashMap<String, String>> products = new ArrayList();
@@ -1574,6 +1586,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return pID;
     }
 
+    //for promo
     public ArrayList<HashMap<String, String>> getPromo() {
         String sql = "Select pr.name as promo_name, pr.*, (Select min(dfp.less) from discounts_free_products as dfp " +
                 "where dfp.promo_id = pr.promo_id and dfp.type=0) as min_discount, " +
@@ -1695,39 +1708,6 @@ public class DbHelper extends SQLiteOpenHelper {
         return medicine;
     }
 
-    public Patient getCurrentLoggedInPatient() {
-        Patient patient = this.getloginPatient(SidebarActivity.getUname());
-        return patient;
-    }
-
-    public ArrayList<HashMap<String, String>> getDoctorName() {
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_DOCTORS;
-        Cursor cur = db.rawQuery(sql, null);
-        HashMap<String, String> map;
-        ArrayList<HashMap<String, String>> doctors = new ArrayList<HashMap<String, String>>();
-
-        String fullname, fname, lname;
-        while (cur.moveToNext()) {
-            lname = Helpers.curGetStr(cur, DOC_LNAME);
-            fname = Helpers.curGetStr(cur, DOC_FNAME);
-            fullname = fname + " " + lname;
-
-            map = new HashMap();
-            map.put("ID", String.valueOf(cur.getInt(0)));
-            map.put("fullname", fullname);
-            doctors.add(map);
-        }
-        cur.close();
-        db.close();
-
-        return doctors;
-    }
-
-    public String getDoctorsStringXml() {
-        return doctors_string_xml;
-    }
-
     public JSONArray getAllJSONArrayFrom(String tbl_name) {
         SQLiteDatabase db = getWritableDatabase();
         String sql = "SELECT * FROM " + tbl_name;
@@ -1760,6 +1740,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return resultSet;
     }
 
+    //for category
     public int getCategoryIdByName(String name) {
         int id = 0;
         SQLiteDatabase db = getWritableDatabase();
@@ -1790,6 +1771,24 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.close();
         db.close();
         return list;
+    }
+
+    //for subcategory
+    public ProductSubCategory getSubCategoryByName(String name, int categoryId) {
+        ProductSubCategory subCategory = new ProductSubCategory();
+        SQLiteDatabase db = getWritableDatabase();
+        name = name.replace("'", "''");
+        String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " where name='" + name + "' and category_id='" + categoryId + "'";
+        Cursor cur = db.rawQuery(sql, null);
+        while (cur.moveToNext()) {
+            subCategory.setId(cur.getInt(cur.getColumnIndex(PRODUCT_SUBCATEGORIES_ID)));
+            subCategory.setName(cur.getString(cur.getColumnIndex(PROD_SUBCAT_NAME)));
+            subCategory.setCategoryId(Integer.parseInt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_CATEGORY_ID))));
+            subCategory.setCreatedAt(cur.getString(cur.getColumnIndex(CREATED_AT)));
+            subCategory.setUpdatedAt(cur.getString(cur.getColumnIndex(UPDATED_AT)));
+            subCategory.setDeletedAt(cur.getString(cur.getColumnIndex(DELETED_AT)));
+        }
+        return subCategory;
     }
 
     public String[] getAllProductSubCategoriesArray(int categoryId) {

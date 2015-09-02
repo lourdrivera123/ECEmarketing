@@ -24,7 +24,7 @@
 
     <!-- Permission to start Alarm on device reboot -->
     <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>-->
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -88,11 +88,6 @@
             android:name=".ViewPagerActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
-            android:name=".HomeTileActivity"
-            launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Holo.Light" />
-        <activity
             android:name=".MasterTabActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
@@ -105,6 +100,9 @@
             android:theme="@android:style/Theme.Holo.Light" />
         <activity
             android:name=".SelectedProductActivity"
+            android:theme="@style/Theme.MyFancyTheme" />
+        <activity
+            android:name=".ReferralActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".PatientConsultationActivity"
@@ -154,10 +152,11 @@
 
 
         <!-- Will not be called unless the application explicitly enables it -->
-        <receiver android:name=".DeviceBootReceiver"
+        <receiver
+            android:name=".DeviceBootReceiver"
             android:enabled="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 

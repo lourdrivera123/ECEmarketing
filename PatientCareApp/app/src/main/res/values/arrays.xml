@@ -22,4 +22,15 @@
         <item>Bangsamoro</item>
     </string-array>
 
+    <string-array name="hometileIcons">
+        <item>@mipmap/profile_tile</item>
+        <item>@mipmap/history_tile</item>
+        <item>@mipmap/results_tile</item>
+        <item>@mipmap/doctors_tile</item>
+        <item>@mipmap/consultation_tile</item>
+        <item>@mipmap/product_tile</item>
+        <item>@mipmap/cart_tile</item>
+        <item>@mipmap/discounts_tile</item>
+        <item>@mipmap/news_tile</item>
+    </string-array>
 </resources>

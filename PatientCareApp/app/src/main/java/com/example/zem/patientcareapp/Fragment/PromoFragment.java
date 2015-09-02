@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.android.volley.RequestQueue;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.LazyAdapter;
@@ -25,14 +24,13 @@ public class PromoFragment extends Fragment {
     ListView promoItems;
     Helpers helpers;
     DbHelper dbHelper;
-    RequestQueue queue;
     LazyAdapter adapter;
     ArrayList<HashMap<String, String>> promoDiscounts;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.patient_home_layout, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_list_of_doctors_fragment, container, false);
         root_view = rootView;
         promoItems = (ListView) root_view.findViewById(R.id.list_of_doctors);
 

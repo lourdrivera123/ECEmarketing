@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,10 +31,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.AndroidMultipartEntity;
 import com.example.zem.patientcareapp.Config;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ViewPagerActivity;
 import com.example.zem.patientcareapp.ServerRequest;
@@ -41,6 +46,7 @@ import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -48,6 +54,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -83,7 +90,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.prescriptions_layout, container, false);
+        rootView = inflater.inflate(R.layout.fragment_trial_prescription_fragment, container, false);
 
         dbhelper = new DbHelper(getActivity());
         helper = new Helpers();
@@ -117,6 +124,13 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     }
 
     @Override
+    public void onResume() {
+        arrayOfPrescriptions = refreshPrescriptionList();
+        gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
+        super.onResume();
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.delete_context_menu, menu);
@@ -140,17 +154,17 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                     hashMap.put("request", "crud");
                     hashMap.put("action", "delete");
                     hashMap.put("id", String.valueOf(serverID));
-                    serverRequest.init(getActivity(), hashMap, "insert");
 
                     final ProgressDialog pdialog = new ProgressDialog(getActivity());
                     pdialog.setCancelable(false);
                     pdialog.setMessage("Deleting...");
                     pdialog.show();
 
-                    rootView.postDelayed(new Runnable() {
-                        public void run() {
+                    PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                        @Override
+                        public void getResult(JSONObject response) {
+                            Log.d("response using interface <TrialPrescriptionFragment.java>", response + "");
                             boolean responseFromServer = serverRequest.getResponse();
-
                             if (responseFromServer) {
                                 if (dbhelper.deletePrescriptionByServerID(serverID)) {
                                     arrayOfPrescriptions = refreshPrescriptionList();
@@ -161,7 +175,11 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                             }
                             pdialog.dismiss();
                         }
-                    }, 3000);
+                    }, new ErrorListener<VolleyError>() {
+                        public void getError(VolleyError error) {
+                            Toast.makeText(getActivity(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             });
             delete.show();
@@ -173,20 +191,16 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_pres:
-//                if (helper.isNetworkAvailable(getActivity())) {
-                    dialog1 = new Dialog(getActivity());
-                    dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog1.setContentView(R.layout.dialog_gallery_camera);
-                    dialog1.show();
+                dialog1 = new Dialog(getActivity());
+                dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog1.setContentView(R.layout.dialog_gallery_camera);
+                dialog1.show();
 
-                    pick_camera_layout = (LinearLayout) dialog1.findViewById(R.id.pick_camera_layout);
-                    pick_gallery_layout = (LinearLayout) dialog1.findViewById(R.id.pick_gallery_layout);
+                pick_camera_layout = (LinearLayout) dialog1.findViewById(R.id.pick_camera_layout);
+                pick_gallery_layout = (LinearLayout) dialog1.findViewById(R.id.pick_gallery_layout);
 
-                    pick_camera_layout.setOnClickListener(this);
-                    pick_gallery_layout.setOnClickListener(this);
-//                } else {
-//                    Toast.makeText(getActivity(), "Network unavailable", Toast.LENGTH_SHORT).show();
-//                }
+                pick_camera_layout.setOnClickListener(this);
+                pick_gallery_layout.setOnClickListener(this);
                 break;
 
             case R.id.pick_camera_layout:
@@ -225,6 +239,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
                 int columnIndex = cursor.getColumnIndex(projection[0]);
                 String path = cursor.getString(columnIndex);
+
+
 
                 filePath = path;
                 showProgressbar();
@@ -308,6 +324,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
                 // Adding file data to http body
                 entity.addPart("image", new FileBody(sourceFile));
+
+                entity.addPart("purpose", new StringBody("prescription_upload"));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

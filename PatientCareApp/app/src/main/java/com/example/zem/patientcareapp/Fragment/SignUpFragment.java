@@ -42,7 +42,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.patient_general_info_layout, container, false);
+        rootView = inflater.inflate(R.layout.fragment_signup_fragment, container, false);
 
         dbhelper = new DbHelper(getActivity());
         int edit = EditTabsActivity.edit_int;

@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -23,12 +22,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
+import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.paypal.android.sdk.payments.PayPalPayment;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,16 +108,16 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                         hashMap.put("request", "crud");
                         hashMap.put("action", "delete");
                         hashMap.put("id", String.valueOf(serverID));
-                        serverRequest.init(getBaseContext(), hashMap, "insert");
 
                         final ProgressDialog pdialog = new ProgressDialog(ViewPagerActivity.this);
                         pdialog.setCancelable(false);
                         pdialog.setMessage("Deleting...");
                         pdialog.show();
 
-                        new Handler().postDelayed(new Runnable() {
+                        PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                             @Override
-                            public void run() {
+                            public void getResult(JSONObject response) {
+                                System.out.print("response using interface <ViewPagerActivity.java>" + response);
                                 boolean responseFromServer = serverRequest.getResponse();
 
                                 if (responseFromServer) {
@@ -124,7 +129,13 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                                     }
                                 }
                             }
-                        }, 2000);
+                        }, new ErrorListener<VolleyError>() {
+                            public void getError(VolleyError error) {
+                                Log.d("Error", "asdasda ");
+                                Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+
+                            }
+                        });
                     }
                 });
                 delete.show();
@@ -236,6 +247,10 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
         public int removeView(ViewPager pager, int position) {
             uploadsByUser.remove(position);
             hashPrescriptions.remove(position);
+
+            if (hashPrescriptions.size() == 0 && uploadsByUser.size() == 0)
+                ViewPagerActivity.this.finish();
+
             pagerAdapter = new MyPagerAdapter(ViewPagerActivity.this, uploadsByUser);
             pager.setAdapter(pagerAdapter);
             pager.setCurrentItem(position);

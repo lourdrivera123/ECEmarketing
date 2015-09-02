@@ -42,7 +42,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.patient_consultation_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_patient_consultation_fragment, container, false);
 
         listOfConsultations = (ListView) rootView.findViewById(R.id.consultation_schedules);
         add_consultation = (ImageButton) rootView.findViewById(R.id.add_consultation);
@@ -65,9 +65,16 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
     }
 
     @Override
+    public void onResume() {
+
+        super.onResume();
+    }
+
+    @Override
     public void onClick(View v) {
         Intent intent = new Intent(getActivity(), PatientConsultationActivity.class);
         intent.putExtra("request", "add");
+        intent.putExtra("doctorID", 0);
         startActivity(intent);
     }
 
@@ -128,7 +135,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
+            View v = super.getView(position, convertView, parent);
             Drawable d = getResources().getDrawable(R.drawable.list_selector);
             v.setBackgroundDrawable(d);
 
