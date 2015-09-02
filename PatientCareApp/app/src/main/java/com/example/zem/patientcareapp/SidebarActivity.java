@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
+import com.example.zem.patientcareapp.Fragment.MessagesFragment;
 import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
 import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 
@@ -94,10 +95,8 @@ public class SidebarActivity extends FragmentActivity {
 
         // adding nav drawer items to array
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], 0));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], 0));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(0, 0)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(4, 0)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(5, 0), true, "50+"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(5, 0), true, "50+"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], 0));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -239,15 +238,9 @@ public class SidebarActivity extends FragmentActivity {
                 fragment = new HomeTileActivityClone();
                 break;
             case 1:
-                fragment = new TrialPrescriptionFragment();
+                fragment = new MessagesFragment();
                 break;
             case 2:
-                fragment = new TrialPrescriptionFragment();
-                break;
-            case 3:
-                fragment = new TrialPrescriptionFragment();
-                break;
-            case 4:
                 fragment = new ReferralsFragment();
                 break;
 
@@ -265,7 +258,7 @@ public class SidebarActivity extends FragmentActivity {
             setTitle(navMenuTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
-            Log.e("MainActivity", "Error in creating fragment");
+            Log.e("SidebarActivity", "Error in creating fragment");
         }
     }
 

@@ -89,7 +89,7 @@ public class ReferralsFragment extends Fragment implements TextWatcher {
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
                 Log.d("Error in ReferralsFragment", error + "");
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Couldn't refresh list. Plealise check your Internet connection", Toast.LENGTH_LONG).show();
             }
         });
 

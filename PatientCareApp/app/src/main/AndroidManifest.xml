@@ -36,49 +36,12 @@
         android:icon="@drawable/ic_app"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        <!--Activities-->
         <activity
             android:name=".MainActivity"
             launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Holo.Light" />
-        <activity
-            android:name=".Fragment.SignUpFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.AccountFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.ContactsFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.ListOfDoctorsFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.PatientProfileFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.PatientHistoryFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.TrialPrescriptionFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.ShoppingCartFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.ProductsFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.PatientConsultationFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".ProductCategoriesFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
-            android:name=".Fragment.PromoFragment"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-
-        <!--Activities-->
         <activity
             android:name=".DoctorActivity"
             launchMode="singleInstance"
@@ -131,11 +94,8 @@
         <activity
             android:name=".SidebarActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Holo.Light">
-
-        </activity>
+            android:theme="@android:style/Theme.Holo.Light" />
         <activity android:name=".HomeTileActivityClone" />
-
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"
