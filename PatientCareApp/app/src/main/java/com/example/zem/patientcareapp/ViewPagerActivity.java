@@ -117,7 +117,7 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                         PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
-                                Log.d("response using interface <ViewPagerActivity.java>", response + "");
+                                System.out.print("response using interface <ViewPagerActivity.java>" + response);
                                 boolean responseFromServer = serverRequest.getResponse();
 
                                 if (responseFromServer) {

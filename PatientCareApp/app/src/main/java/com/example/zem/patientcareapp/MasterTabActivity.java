@@ -17,7 +17,7 @@ import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
 public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
     private MasterTabsAdapter mAdapter;
-    private String[] tabs = {"Profile", "My Records", "Prescription", "Doctors", "Consultation", "Products", "Cart", "Promos", "News"};
+    private String[] tabs = {"Profile", "My Records", "Prescription", "Doctors", "Consultation", "Products", "Promos", "Cart", "News"};
     private ViewPager viewPager;
     private ActionBar actionBar;
 

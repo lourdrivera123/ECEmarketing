@@ -120,10 +120,8 @@
             </intent-filter>
         </receiver>
 
-        <!--<activity android:name=".AlarmService" />-->
-        <receiver
-            android:name="com.example.zem.patientcareapp.AlarmReceiver"
-            android:enabled="true" />
+        <activity android:name=".SelectPrescription" />
+        <receiver  android:name="com.example.zem.patientcareapp.AlarmReceiver" android:enabled="true"/>
 
     </application>
 </manifest>

@@ -39,9 +39,9 @@ public class MasterTabsAdapter extends FragmentStatePagerAdapter{
             case 5:
                 return new ProductsFragment();
             case 6:
-                return new ShoppingCartFragment();
-            case 7:
                 return new PromoFragment();
+            case 7:
+                return new ShoppingCartFragment();
             case 8:
                 return new PatientHistoryFragment();
         }

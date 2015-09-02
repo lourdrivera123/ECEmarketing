@@ -83,6 +83,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             tempMap.put("qty_per_packing", map.get("qty_per_packing"));
             tempMap.put("packing", map.get("packing"));
             tempMap.put("temp_basket_qty", "0");
+            tempMap.put("prescription_required", map.get("prescription_required"));
             productQuantity.put(map.get("product_id"), tempMap);
         }
 

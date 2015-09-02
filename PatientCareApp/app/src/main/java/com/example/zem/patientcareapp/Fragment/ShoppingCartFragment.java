@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -40,9 +42,11 @@ import com.example.zem.patientcareapp.samplepaypal;
 import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Dexter B. on 5/6/2015.
@@ -57,11 +61,14 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     HashMap<String, String> row;
 
     public Double TotalAmount = 0.00, oldTotal = 0.00, newTotal = 0.00;
-    int gbl_pos = 0, old_qty = 0, newQty = 0;
+
+//    EditText et_qty;
+    TextView p_description;
+    int gbl_pos = 0, old_qty = 0, newQty = 0, basktQty;
 
     TextView tv_amount, p_name, p_total, p_price;
     public static TextView total_amount;
-    EditText et_qty;
+    TextView et_qty;
     ListView lv_items;
     Button btnCheckout;
 
@@ -88,9 +95,9 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
         GetRequest.getJSONobj(getActivity(), url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                Log.d("response using interface <ShoppingCartFragment.java >", response + "");
+                System.out.println("response using interface <ShoppingCartFragment.java > "+ response.toString() + "");
 
-                items = dbHelper.getAllBasketItems(); // returns all basket items for the currently loggedin patient
+                items = dbHelper.getAllBasketItems(true); // returns all basket items for the currently loggedin patient
 
                 for (HashMap<String, String> item : items) {
                     double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
@@ -99,7 +106,9 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     TotalAmount += total;
                 }
 
-                total_amount.setText("\u20B1 " + TotalAmount);
+                    items = dbHelper.getAllBasketItems(false); // returns all basket items for the currently loggedin patient
+
+                //total_amount.setText("\u20B1 " + TotalAmount);
 
                 adapter = new LazyAdapter(getActivity(), items, "basket_items");
                 lv_items.setAdapter(adapter);
@@ -138,48 +147,95 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                     LayoutInflater inflater = getActivity().getLayoutInflater();
 
-                    @SuppressLint("InflateParams") View layout = inflater.inflate(R.layout._partials_update_cart, null);
+                    @SuppressLint("InflateParams") final View layout = inflater.inflate(R.layout._partials_update_cart, null);
                     alert.setView(layout);
                     alert.setTitle("Update quantity");
                     alert.setCancelable(true);
                     alert.setNegativeButton("Cancel", null);
 
-                    et_qty = (EditText) layout.findViewById(R.id.update_qty);
+                    et_qty = (TextView) layout.findViewById(R.id.update_qty);
                     tv_amount = (TextView) layout.findViewById(R.id.new_total);
                     et_qty.setText(row.get(DbHelper.BASKET_QUANTITY));
                     p_name = (TextView) layout.findViewById(R.id.product_name);
                     p_total = (TextView) layout.findViewById(R.id.new_total);
                     p_price = (TextView) layout.findViewById(R.id.product_price);
+                    p_description = (TextView) layout.findViewById(R.id.product_description);
 
                     final double price = Double.parseDouble(row.get(DbHelper.PRODUCT_PRICE));
 
-                    p_name.setText(row.get(DbHelper.PRODUCT_NAME));
-                    p_total.setText("\u20B1 " + (old_qty * price));
-                    p_price.setText("\u20B1 " + price + "/" + row.get(DbHelper.PRODUCT_UNIT));
+                    // --------------------------------------------------------------------
 
-                    et_qty.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        }
 
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            try {
-                                String cs = s.toString();
-                                if (cs.equals("") || cs.equals("0")) {
-                                    cs = "1";
-                                }
-                                int new_qty = Integer.parseInt(cs);
-                                p_total.setText("\u20B1 " + (price * new_qty));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
+                    ImageButton btnMinusQty = (ImageButton) layout.findViewById(R.id.minus_qty);
+                    ImageButton btnAddQty = (ImageButton) layout.findViewById(R.id.add_qty);
 
+                    final String productPacking, productUnit, productName;
+                    final int productQtyPerPacking, productId, basketId;
+
+                    productPacking = row.get(DbHelper.PRODUCT_PACKING);
+                    productQtyPerPacking = Integer.parseInt(row.get(DbHelper.PRODUCT_QTY_PER_PACKING));
+                    productUnit = row.get(DbHelper.PRODUCT_UNIT);
+                    productName = row.get(DbHelper.PRODUCT_NAME);
+                    productId = Integer.parseInt(row.get(DbHelper.SERVER_PRODUCT_ID));
+                    basketId = Integer.parseInt(row.get(DbHelper.SERVER_BASKET_ID));
+                    et_qty.setText(productQtyPerPacking + "");
+                    basktQty = Integer.parseInt(row.get(DbHelper.BASKET_QUANTITY));
+
+
+                    btnAddQty.setOnClickListener(new View.OnClickListener() {
+                        @SuppressLint("NewApi")
                         @Override
-                        public void afterTextChanged(Editable s) {
+                        public void onClick(View v) {
+                            int lastQty = Integer.parseInt(et_qty.getText().toString());
+                            lastQty += productQtyPerPacking;
+                            et_qty.setText(lastQty + "");
+
+                            System.out.println("ADD: productPacking: "+ productPacking+" productQtyPerPacking: "+productQtyPerPacking+" productUnit: "+productUnit);
+
+                            int totalPacking = (lastQty / productQtyPerPacking);
+                            String fiProductPacking =  helper.getPluralForm(productPacking, totalPacking);
+                            p_description.setText("1 " + productUnit + " x " + lastQty + "(" + totalPacking + " " + fiProductPacking + ")");
+
+                            basktQty = lastQty;
+                            p_total.setText("\u20B1 " + (basktQty * price));
                         }
                     });
+
+                    btnMinusQty.setOnClickListener(new View.OnClickListener() {
+                        @SuppressLint("NewApi")
+                        @Override
+                        public void onClick(View v) {
+
+                            System.out.println("MINUS: productPacking: "+ productPacking+" productQtyPerPacking: "+productQtyPerPacking+" productUnit: "+productUnit);
+                            int lastQty = Integer.parseInt(et_qty.getText().toString());
+                            lastQty -= productQtyPerPacking;
+
+                            if (lastQty < 1) {
+                                lastQty = productQtyPerPacking;
+                            }
+
+                            et_qty.setText(lastQty + "");
+
+                            int totalPacking = (lastQty / productQtyPerPacking);
+                            String fiProductPacking =  helper.getPluralForm(productPacking, totalPacking);
+
+                            p_description.setText("1 " + productUnit + " x " + lastQty + "(" + totalPacking + " " + fiProductPacking + ")");
+
+                            basktQty = lastQty;
+                            p_total.setText("\u20B1 " + (basktQty * price));
+                        }
+                    });
+
+
+                //------------------------------------------------------------------------
+
+                    // Setting all values in listview
+                    p_name.setText(productName);
+                    int num = basktQty/productQtyPerPacking;
+                    p_description.setText("1 " + productUnit + " x " + basktQty + "("+ num +" "+ helper.getPluralForm(productPacking, num) + ")");
+                    p_price.setText("\u20B1 " + price);
+                    p_total.setText("\u20B1 " + (basktQty * price));
+                    et_qty.setText(basktQty+"");
 
                     alert.setCancelable(true);
                     alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -198,14 +254,17 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     serverRequest = new ServerRequest();
                                     final Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
                                     basket.setQuantity(new_qty);
+//                                    basktQty = new_qty;
 
-                                    HashMap<String, String> hashMap = new HashMap();
-                                    hashMap.put("product_id", String.valueOf(basket.getProductId()));
+                                    HashMap<String, String> hashMap = new HashMap<String, String>();
+                                    hashMap.put("product_id", String.valueOf(productId));
+
                                     hashMap.put("quantity", String.valueOf(new_qty));
                                     hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
                                     hashMap.put("table", "baskets");
                                     hashMap.put("action", "update");
-                                    hashMap.put("id", String.valueOf(basket.getBasketId()));
+                                    hashMap.put("is_direct_update", "true");
+                                    hashMap.put("id", String.valueOf(basketId));
 
                                   /* We already have that item in our basket, let's update it */
                                     final ProgressDialog pdialog = new ProgressDialog(getActivity());
@@ -276,7 +335,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
-                                    Log.d("response using interface <ShoppingCartFragment.java>", response + "");
+                                    System.out.println("response using interface <ShoppingCartFragment.java>" + response.toString() + "");
                                     boolean responseFromServer = serverRequest.getResponse();
                                     System.out.println("RESPONSE FROM SERVER: " + responseFromServer);
                                     if (responseFromServer) {
@@ -320,7 +379,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 builder.show();
 
                 ArrayList<HashMap<String, String>> items;
-                items = dbHelper.getAllBasketItems();
+                items = dbHelper.getAllBasketItems(true);
                 LazyAdapter checkOutAdapter = new LazyAdapter(getActivity(), items, "ready_for_checkout_items");
 
                 double basketTotalAmount = 0;
@@ -333,7 +392,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 lv_items.setAdapter(checkOutAdapter);
 
                 Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
-                checkout_btn.setText(basketTotalAmount + "");
+                checkout_btn.setText("\u20B1 "+basketTotalAmount);
                 checkout_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
