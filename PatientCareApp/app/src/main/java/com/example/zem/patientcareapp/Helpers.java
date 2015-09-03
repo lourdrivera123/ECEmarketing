@@ -1,6 +1,7 @@
 package com.example.zem.patientcareapp;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,10 +16,11 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.View;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.adapter.ImageAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -33,26 +36,22 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by User PC on 5/7/2015.
  */
-public class Helpers {
+public class Helpers implements View.OnCreateContextMenuListener {
 
     RequestQueue queue;
     boolean connection;
     Context contextc;
+    Dialog presDialog;
+    String imageFileUri;
 
-    public void Helpers(){
+    public Helpers(){
 
-    }
-
-    public static float dpFromPx(final int px, final Context context) {
-        return px / context.getResources().getDisplayMetrics().density;
-    }
-
-    public static float pxFromDp(final int dp, final Context context) {
-        return dp * context.getResources().getDisplayMetrics().density;
     }
 
     public boolean isNetworkAvailable(Context context) {
@@ -175,8 +174,10 @@ public class Helpers {
         return "";
     }
 
-    public String getPluralForm(String noun){
+    public String getPluralForm(String noun, int qty){
         String lastChar = "";
+
+        if(qty < 2) return  noun;
 
         lastChar = noun.substring(noun.length() -2);
         if( lastChar.equals("um") ) return noun.replace("um", "a");
@@ -196,6 +197,68 @@ public class Helpers {
         }
     }
 
+
+    public HashMap<GridView, Dialog> showPrescriptionDialog(Context context) {
+
+        // Prepare grid view
+        GridView gridView = new GridView(context);
+        gridView.setNumColumns(2);
+        gridView.setPadding(2, 4, 4, 2);
+
+        ArrayList<HashMap<String, String>> arrayOfPrescriptions;
+        int patientID;
+        DbHelper dbHelper = new DbHelper(context);
+        final Dialog builder = new Dialog(context);
+
+        patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
+        arrayOfPrescriptions = refreshPrescriptionList(context, patientID);
+
+        System.out.println("Array of Prescriptions: "+arrayOfPrescriptions.toString());
+
+        ImageAdapter imgAdapter = new ImageAdapter(context, R.layout.item_grid_image, arrayOfPrescriptions);
+        gridView.setAdapter(imgAdapter);
+        gridView.setOnCreateContextMenuListener(this);
+
+
+        // Set grid view to alertDialog
+
+        builder.setContentView(gridView);
+        builder.setTitle("Select Prescription");
+        builder.setCancelable(true);
+        builder.setCanceledOnTouchOutside(true);
+        builder.show();
+
+        /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println("SELECTED: position: "+position+" id: "+id);
+                builder.dismiss();
+            }
+        });*/
+        HashMap<GridView, Dialog> map = new HashMap<>();
+        map.put(gridView, builder);
+        return map;
+    }
+
+    public ArrayList<HashMap<String, String>> refreshPrescriptionList(Context context, int patientID) {
+        DbHelper dbHelper = new DbHelper(context);
+        ArrayList<HashMap<String, String>> uploadsByUser = dbHelper.getPrescriptionByUserID(patientID);
+        ArrayList<HashMap<String, String>> prescriptionArray = new ArrayList<>();
+
+        for (int x = 0; x < uploadsByUser.size(); x++) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("id", uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_SERVER_ID));
+            map.put("filename", uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_FILENAME));
+            /*prescriptionArray.add(uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_FILENAME));*/
+            prescriptionArray.add(map);
+        }
+        return prescriptionArray;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+    }
     public void setImage(String image_url, final ProgressBar progressBar, ImageView image_holder){
 //        image_url = patient.getPhoto();
         //caching and displaying the image
@@ -254,5 +317,4 @@ public class Helpers {
 
         });
     }
-
 }

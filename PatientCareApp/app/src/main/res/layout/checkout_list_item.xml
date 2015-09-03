@@ -16,13 +16,18 @@
             android:layout_height="wrap_content"
             android:id="@+id/item_name"
             android:singleLine="false"
+            android:textSize="16sp"
+            android:text="Ambrolex"
             android:layout_weight="0.6"
             android:textStyle="bold" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/item_amount"
-            android:textSize="15sp"
+            android:text="P 282.0"
+            android:gravity="end"
+            android:layout_gravity="end"
+            android:textSize="16sp"
             android:layout_weight="0.4"
             android:textStyle="bold" />
     </LinearLayout>
@@ -30,12 +35,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/item_details"
-        android:textSize="10sp"
+        android:text="Price: P 11.75 / tablet"
+        android:textSize="14sp"
         android:layout_below="@+id/item_head" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/item_quantity"
-        android:textSize="10sp"
+        android:text="Quantity: 24"
+        android:textSize="14sp"
         android:layout_below="@+id/item_details"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_is_approved"
+        android:text="Waiting for approval..."
+        android:textColor="#93f70303"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_below="@+id/item_quantity"/>
 </RelativeLayout>

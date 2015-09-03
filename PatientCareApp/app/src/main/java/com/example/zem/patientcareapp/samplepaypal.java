@@ -199,7 +199,7 @@ public class samplepaypal extends Activity {
 
     public void populateProductsInCart() {
 
-        ArrayList<HashMap<String, String>> items = dbHelper.getAllBasketItems();
+        ArrayList<HashMap<String, String>> items = dbHelper.getAllBasketItems(false);
 
         String name = "", sku = "";
 
@@ -274,7 +274,7 @@ public class samplepaypal extends Activity {
                     Toast.makeText(getApplicationContext(), message,
                             Toast.LENGTH_LONG).show();
 
-                    Log.d("error sa response during verify", ""+message);
+                    System.out.println("error sa response during verify: "+message);
 
                     Log.d("gikan sa server", ""+res.toString() );
 

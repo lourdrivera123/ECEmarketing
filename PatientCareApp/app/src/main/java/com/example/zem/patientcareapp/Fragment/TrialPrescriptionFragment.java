@@ -149,9 +149,9 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(dbhelper.PRESCRIPTIONS_SERVER_ID));
+                    final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(DbHelper.PRESCRIPTIONS_SERVER_ID));
                     serverRequest = new ServerRequest();
-                    HashMap<String, String> hashMap = new HashMap();
+                    HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("table", "patient_prescriptions");
                     hashMap.put("request", "crud");
                     hashMap.put("action", "delete");
@@ -462,7 +462,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
         ArrayList<String> prescriptionArray = new ArrayList();
 
         for (int x = 0; x < uploadsByUser.size(); x++) {
-            prescriptionArray.add(uploadsByUser.get(x).get(dbhelper.PRESCRIPTIONS_FILENAME));
+            prescriptionArray.add(uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_FILENAME));
         }
         return prescriptionArray;
     }

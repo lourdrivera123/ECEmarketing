@@ -26,7 +26,6 @@ import com.example.zem.patientcareapp.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;
-import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONObject;
 
@@ -129,7 +128,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         GetRequest.getJSONobj(getActivity(), "get_doctors", "doctors", "doc_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                Log.d("response using interface <ListOfDoctorsFragment.java>", response + "");
                 doctor_items = dbHelper.getAllDoctors();
                 populateDoctorListView(root_view, doctor_items);
                 refresh_doctor.setRefreshing(false);
@@ -144,7 +142,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         GetRequest.getJSONobj(getActivity(), "get_clinics", "clinics", "clinics_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                Log.d("response using interface <SplashActivity.java - clinic request >", response + "");
                 doctor_items = dbHelper.getAllDoctors();
                 populateDoctorListView(root_view, doctor_items);
                 refresh_doctor.setRefreshing(false);
@@ -160,7 +157,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         GetRequest.getJSONobj(getActivity(), "get_clinic_doctor", "clinic_doctor", "clinic_doctor_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                Log.d("response using interface <SplashActivity.java - clinic_doctor request >", response + "");
                 doctor_items = dbHelper.getAllDoctors();
                 populateDoctorListView(root_view, doctor_items);
                 refresh_doctor.setRefreshing(false);
@@ -171,7 +167,6 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                 Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
             }
         });
-        
     }
 }
 

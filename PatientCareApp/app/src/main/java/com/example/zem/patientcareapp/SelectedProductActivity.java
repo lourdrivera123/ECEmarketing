@@ -172,8 +172,8 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
             case R.id.add_cart_btn:
                 if (helpers.isNetworkAvailable(this)) {
                     try {
-                        double new_qty;
-                        new_qty = Double.parseDouble(String.valueOf(temp_qty));
+                        int new_qty;
+                        new_qty = Integer.parseInt(String.valueOf(temp_qty));
 
                         final Basket basket = dbhelper.getBasket(get_productID);
 
@@ -185,7 +185,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                             hashMap.put("table", "baskets");
                             hashMap.put("request", "crud");
 
-                            double old_qty = basket.getQuantity();
+                            int old_qty = basket.getQuantity();
                             basket.setQuantity(new_qty + old_qty);
                             hashMap.put("quantity", String.valueOf(basket.getQuantity()));
                             hashMap.put("action", "update");
