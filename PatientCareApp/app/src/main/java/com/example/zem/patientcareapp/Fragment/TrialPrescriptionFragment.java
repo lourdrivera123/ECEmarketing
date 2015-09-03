@@ -34,12 +34,14 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.AndroidMultipartEntity;
 import com.example.zem.patientcareapp.Config;
+import com.example.zem.patientcareapp.Constants;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarActivity;
 import com.example.zem.patientcareapp.ViewPagerActivity;
 import com.example.zem.patientcareapp.ServerRequest;
 import com.nostra13.universalimageloader.core.*;
@@ -308,7 +310,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL + "?patient_id=" + patientID);
+            HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL + "?patient_id=" + patientID);
 
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
@@ -355,7 +357,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             int serverID = 0;
             try {
                 jObject = new JSONObject(result);
-                image_url = jObject.getString("file_path");
+                image_url = jObject.getString("file_name");
                 serverID = jObject.getInt("server_id");
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -421,7 +423,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             progressBar.setTag(position);
 
             com.nostra13.universalimageloader.core.ImageLoader.getInstance()
-                    .displayImage(image_urls[position], imageView, options, new SimpleImageLoadingListener() {
+                    .displayImage(Constants.UPLOAD_PATH_URL + "user_" + SidebarActivity.getUserID() + "/"+image_urls[position], imageView, options, new SimpleImageLoadingListener() {
                         @Override
                         public void onLoadingStarted(String imageUri, View view) {
                             progressBar.setProgress(0);

@@ -44,8 +44,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public static SharedPreferences sharedpreferences;
     public static final String name = "nameKey", pass = "passwordKey";
     String uname, password;
-    String url = "http://192.168.177.1/db/post.php";
-
+    String url = Constants.POST_URL;
 
     ProgressDialog pDialog;
     RequestQueue queue;
@@ -156,6 +155,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         editor.putString(pass, helpers.md5(password));
                                         editor.commit();
 
+//                                        Log.d("patient login details", patient_json_array_mysql.getJSONObject(0).getString("photo")+"");
+                                        String patient_image_name = patient_json_array_mysql.getJSONObject(0).getString("photo");
+                                        if(!patient_image_name.equals("")) {
+                                            Log.d("patient image status", "naa ko sulod");
+                                            helpers.cacheImageOnly(patient_image_name, patient_json_array_mysql.getJSONObject(0).getInt("id"));
+                                        }
                                         startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                     } else {
                                         Toast.makeText(MainActivity.this, "Invalid Username of Password", Toast.LENGTH_SHORT).show();

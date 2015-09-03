@@ -39,8 +39,7 @@ public class Sync {
     JSONArray json_array_final = null;
     JSONArray json_array_final_update = null;
 
-    RequestQueue queue;
-    String url, tableName, tableId;
+    String tableName, tableId;
     DbHelper dbHelper;
     Context context;
 
@@ -50,8 +49,6 @@ public class Sync {
         context = c;
 
         dbHelper = new DbHelper(context);
-        queue = Volley.newRequestQueue(context);
-        url = "http://192.168.177.1/db/get.php?q=" + request;
 
         try {
             int success = response.getInt("success");

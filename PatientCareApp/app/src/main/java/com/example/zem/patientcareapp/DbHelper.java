@@ -998,39 +998,6 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
-//    public boolean updateDoctor(Doctor doctor_object) {
-//        SQLiteDatabase db = getWritableDatabase();
-//
-//        ContentValues values = new ContentValues();
-//        values.put(DOC_DOC_ID, doctor_object.getDoc_id());
-//        values.put(DOC_LNAME, doctor_object.getLname());
-//        values.put(DOC_MNAME, doctor_object.getMname());
-//        values.put(DOC_FNAME, doctor_object.getFname());
-//        values.put(DOC_PRC_NO, doctor_object.getPrc_no());
-//        values.put(DOC_ADDRESS_HOUSE_NO, doctor_object.getAddress_house_no());
-//        values.put(DOC_ADDRESS_STREET, doctor_object.getAddress_street());
-//        values.put(DOC_ADDRESS_BARANGAY, doctor_object.getAddress_barangay());
-//        values.put(DOC_ADDRESS_CITY, doctor_object.getAddress_city_municipality());
-//        values.put(DOC_ADDRESS_PROVINCE, doctor_object.getAddress_province());
-//        values.put(DOC_ADDRESS_REGION, doctor_object.getAddress_region());
-//        values.put(DOC_ADDRESS_COUNTRY, doctor_object.getCountry());
-//        values.put(DOC_ZIP, doctor_object.getAddress_zip());
-//        values.put(DOC_SPECIALTY, doctor_object.getSpecialty());
-//        values.put(DOC_SUB_SPECIALTY, doctor_object.getSub_specialty());
-//        values.put(DOC_CELL_NO, doctor_object.getCell_no());
-//        values.put(DOC_TEL_NO, doctor_object.getTel_no());
-//        values.put(DOC_PHOTO, doctor_object.getPhoto());
-//        values.put(DOC_CLINIC_SCHED, doctor_object.getClinic_sched());
-//        values.put(DOC_AFFILIATIONS, doctor_object.getAffiliation());
-//        values.put(DOC_CLINIC_ID, doctor_object.getClinic_id());
-//        values.put(DOC_EMAIL, doctor_object.getEmail());
-//        values.put(DOC_SEC_ID, doctor_object.getSecretary_id());
-//
-//        int rowID = db.update(TBL_DOCTORS, values, DOC_ID + "=" + doctor_object.getDoc_id(), null);
-//
-//        return rowID > 0;
-//    }
-
     public boolean insertProductSubCategory(ProductSubCategory subCategory) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -1245,10 +1212,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
 
         return doctors;
-    }
-
-    public String getDoctorsStringXml() {
-        return doctors_string_xml;
     }
 
     public ArrayList<HashMap<String, String>> getAllDoctors() {
@@ -1921,6 +1884,18 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
 
         return deletedPrescriptionID > 0;
+    }
+
+    public boolean updatePatientImage(String patient_image, int id){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(PTNT_PHOTO, patient_image);
+
+        long row = db.update(TBL_PATIENTS, values, PTNT_PATIENT_ID + "=" + id, null);
+
+        db.close();
+        return row > 0;
     }
     ////////////////////////////END OF DELETE METHODS/////////////////////////////
 }

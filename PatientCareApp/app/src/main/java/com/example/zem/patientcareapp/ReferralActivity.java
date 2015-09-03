@@ -137,7 +137,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                 Toast.makeText(getBaseContext(), "name is not on the list", Toast.LENGTH_SHORT).show();
             }
         } else if (other.isChecked()) {
-            getReferred = null;
+            getReferred = "";
         }
 
         if (check == 0) {
