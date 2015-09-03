@@ -119,9 +119,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <activity android:name=".SelectPrescription" />
-        <receiver  android:name="com.example.zem.patientcareapp.AlarmReceiver" android:enabled="true"/>
-
+        <receiver
+            android:name="com.example.zem.patientcareapp.AlarmReceiver"
+            android:enabled="true" />
     </application>
 </manifest>

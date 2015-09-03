@@ -44,8 +44,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public static SharedPreferences sharedpreferences;
     public static final String name = "nameKey", pass = "passwordKey";
     String uname, password;
-//    String url = "http://192.168.177.1/db/post.php";
-    String url = "http://192.168.90.1/db/post.php";
+    String url = "http://192.168.177.1/db/post.php";
 
 
     ProgressDialog pDialog;

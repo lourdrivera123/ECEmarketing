@@ -50,7 +50,7 @@ public class Helpers implements View.OnCreateContextMenuListener {
     Dialog presDialog;
     String imageFileUri;
 
-    public Helpers(){
+    public Helpers() {
 
     }
 
@@ -72,14 +72,12 @@ public class Helpers implements View.OnCreateContextMenuListener {
                 @Override
                 public void onResponse(String response) {
                     System.out.println("internet status: there is internet connection");
-                    System.out.println("response internet status: "+response + "");
-
-//                    connection = true;
+                    System.out.println("response internet status: " + response + "");
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e("internet status", "there is no internet connection");
+                    Log.e("internet status", "no internet connection");
                     AlertDialog alertDialog = new AlertDialog.Builder(contextc).create();
                     alertDialog.setTitle("Alert");
                     alertDialog.setMessage("Alert message to be shown");
@@ -90,14 +88,10 @@ public class Helpers implements View.OnCreateContextMenuListener {
                                 }
                             });
                     alertDialog.show();
-//                    Toast.makeText(context, "Error on request", Toast.LENGTH_SHORT).show();
-//                    connection = false;
                 }
             });
             queue.add(website_request);
-
         }
-//        return connection;
     }
 
 
@@ -109,19 +103,19 @@ public class Helpers implements View.OnCreateContextMenuListener {
     public void showNotification(Context context, Intent resultIntent, int mNotificationId, String title, String body, boolean playRingTone) {
         NotificationCompat.Builder mBuilder;
 
-        if( playRingTone ) {
+        if (playRingTone) {
             Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             mBuilder = new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.ic_app)
-                            .setContentTitle(title)
-                            .setSound(uri)
-                            .setDefaults(Notification.DEFAULT_SOUND)
-                            .setContentText(body);
-        }else{
+                    .setSmallIcon(R.drawable.ic_app)
+                    .setContentTitle(title)
+                    .setSound(uri)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setContentText(body);
+        } else {
             mBuilder = new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.ic_app)
-                            .setContentTitle(title)
-                            .setContentText(body);
+                    .setSmallIcon(R.drawable.ic_app)
+                    .setContentTitle(title)
+                    .setContentText(body);
         }
 
         // Because clicking the notification opens a new ("special") activity, there's
@@ -145,8 +139,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
-    public String get_url(String request){
-        return "http://192.168.177.1/db/get.php?q="+request;
+    public String get_url(String request) {
+        return "http://192.168.177.1/db/get.php?q=" + request;
     }
 
     public String md5(final String s) {
@@ -174,38 +168,38 @@ public class Helpers implements View.OnCreateContextMenuListener {
         return "";
     }
 
-    public String getPluralForm(String noun, int qty){
+    public String getPluralForm(String noun, int qty) {
         String lastChar = "";
 
-        if(qty < 2) return  noun;
+        if (qty < 2) return noun;
 
-        lastChar = noun.substring(noun.length() -2);
-        if( lastChar.equals("um") ) return noun.replace("um", "a");
-        if( lastChar.equals("fe") ) return noun.replace("fe", "ves");
+        lastChar = noun.substring(noun.length() - 2);
+        if (lastChar.equals("um")) return noun.replace("um", "a");
+        if (lastChar.equals("fe")) return noun.replace("fe", "ves");
 
 
         lastChar = noun.substring(noun.length() - 1);
 
-        if( lastChar.equals("f") ) return noun.replace("f", "ves");
+        if (lastChar.equals("f")) return noun.replace("f", "ves");
 
-        if( lastChar.equals("y") ){
+        if (lastChar.equals("y")) {
             return noun.replace("y", "ies");
-        }else if( lastChar.equals("s") || lastChar.equals("x") || lastChar.equals("ch") ){
-            return noun+"es";
-        }else{
-            return noun+"s";
+        } else if (lastChar.equals("s") || lastChar.equals("x") || lastChar.equals("ch")) {
+            return noun + "es";
+        } else {
+            return noun + "s";
         }
     }
 
 
     public HashMap<GridView, Dialog> showPrescriptionDialog(Context context) {
-
         // Prepare grid view
         GridView gridView = new GridView(context);
         gridView.setNumColumns(2);
         gridView.setPadding(2, 4, 4, 2);
 
         ArrayList<HashMap<String, String>> arrayOfPrescriptions;
+        HashMap<GridView, Dialog> map = new HashMap();
         int patientID;
         DbHelper dbHelper = new DbHelper(context);
         final Dialog builder = new Dialog(context);
@@ -213,20 +207,17 @@ public class Helpers implements View.OnCreateContextMenuListener {
         patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
         arrayOfPrescriptions = refreshPrescriptionList(context, patientID);
 
-        System.out.println("Array of Prescriptions: "+arrayOfPrescriptions.toString());
+        if (arrayOfPrescriptions.size() > 0) {
+            ImageAdapter imgAdapter = new ImageAdapter(context, R.layout.item_grid_image, arrayOfPrescriptions);
+            gridView.setAdapter(imgAdapter);
+            gridView.setOnCreateContextMenuListener(this);
 
-        ImageAdapter imgAdapter = new ImageAdapter(context, R.layout.item_grid_image, arrayOfPrescriptions);
-        gridView.setAdapter(imgAdapter);
-        gridView.setOnCreateContextMenuListener(this);
-
-
-        // Set grid view to alertDialog
-
-        builder.setContentView(gridView);
-        builder.setTitle("Select Prescription");
-        builder.setCancelable(true);
-        builder.setCanceledOnTouchOutside(true);
-        builder.show();
+            // Set grid view to alertDialog
+            builder.setContentView(gridView);
+            builder.setTitle("Select Prescription");
+            builder.setCancelable(true);
+            builder.setCanceledOnTouchOutside(true);
+            builder.show();
 
         /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -235,21 +226,22 @@ public class Helpers implements View.OnCreateContextMenuListener {
                 builder.dismiss();
             }
         });*/
-        HashMap<GridView, Dialog> map = new HashMap<>();
-        map.put(gridView, builder);
+
+            map.put(gridView, builder);
+        }
+
         return map;
     }
 
     public ArrayList<HashMap<String, String>> refreshPrescriptionList(Context context, int patientID) {
         DbHelper dbHelper = new DbHelper(context);
         ArrayList<HashMap<String, String>> uploadsByUser = dbHelper.getPrescriptionByUserID(patientID);
-        ArrayList<HashMap<String, String>> prescriptionArray = new ArrayList<>();
+        ArrayList<HashMap<String, String>> prescriptionArray = new ArrayList();
 
         for (int x = 0; x < uploadsByUser.size(); x++) {
-            HashMap<String, String> map = new HashMap<>();
+            HashMap<String, String> map = new HashMap();
             map.put("id", uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_SERVER_ID));
             map.put("filename", uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_FILENAME));
-            /*prescriptionArray.add(uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_FILENAME));*/
             prescriptionArray.add(map);
         }
         return prescriptionArray;
@@ -259,7 +251,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 
     }
-    public void setImage(String image_url, final ProgressBar progressBar, ImageView image_holder){
+
+    public void setImage(String image_url, final ProgressBar progressBar, ImageView image_holder) {
 //        image_url = patient.getPhoto();
         //caching and displaying the image
         DisplayImageOptions options;
@@ -301,8 +294,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
                 });
     }
 
-    public void cacheImageOnly(String url){
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(url, new SimpleImageLoadingListener(){
+    public void cacheImageOnly(String url) {
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(url, new SimpleImageLoadingListener() {
 
             @Override
             public void onLoadingComplete(String imageUri, View view,

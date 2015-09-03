@@ -23,8 +23,8 @@ import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.paypal.android.sdk.payments.PayPalPayment;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -140,10 +140,8 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                 if (temp_qty < 1) {
                     qty_cart.setText("" + qtyPerPacking);
                     temp_qty = qtyPerPacking;
-
-                } else {
+                } else
                     qty_cart.setText("" + temp_qty);
-                }
 
                 prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "(" + (temp_qty / qtyPerPacking) + " " + productPacking + ")");
 
@@ -170,90 +168,93 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                 break;
 
             case R.id.add_cart_btn:
-                if (helpers.isNetworkAvailable(this)) {
-                    try {
-                        int new_qty;
-                        new_qty = Integer.parseInt(String.valueOf(temp_qty));
+                try {
+                    int new_qty;
+                    new_qty = Integer.parseInt(String.valueOf(temp_qty));
 
-                        final Basket basket = dbhelper.getBasket(get_productID);
+                    final Basket basket = dbhelper.getBasket(get_productID);
 
-                        if (basket.getBasketId() > 0) {
-                            HashMap<String, String> hashMap = new HashMap();
-                            hashMap.put("product_id", String.valueOf(get_productID));
+                    if (basket.getBasketId() > 0) {
+                        HashMap<String, String> hashMap = new HashMap();
+                        hashMap.put("product_id", String.valueOf(get_productID));
 
-                            hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
-                            hashMap.put("table", "baskets");
-                            hashMap.put("request", "crud");
+                        hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
+                        hashMap.put("table", "baskets");
+                        hashMap.put("request", "crud");
 
-                            int old_qty = basket.getQuantity();
-                            basket.setQuantity(new_qty + old_qty);
-                            hashMap.put("quantity", String.valueOf(basket.getQuantity()));
-                            hashMap.put("action", "update");
-                            hashMap.put("id", String.valueOf(basket.getBasketId()));
+                        int old_qty = basket.getQuantity();
+                        basket.setQuantity(new_qty + old_qty);
+                        hashMap.put("quantity", String.valueOf(basket.getQuantity()));
+                        hashMap.put("action", "update");
+                        hashMap.put("id", String.valueOf(basket.getBasketId()));
 
-                            final ProgressDialog pdialog = new ProgressDialog(this);
-                            pdialog.setCancelable(false);
-                            pdialog.setMessage("Loading...");
-                            pdialog.show();
+                        final ProgressDialog pdialog = new ProgressDialog(this);
+                        pdialog.setCancelable(false);
+                        pdialog.setMessage("Loading...");
+                        pdialog.show();
 
-                            PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
-                                @Override
-                                public void getResult(JSONObject response) {
-                                    Log.d("response using interface <SelectedProductActivity.java>", response + "");
-                                    boolean responseFromServer = serverRequest.getResponse();
-                                    if (responseFromServer) {
-                                        if (dbhelper.updateBasket(basket)) {
-                                            Toast.makeText(getBaseContext(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
-                                        }
+                        PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                            @Override
+                            public void getResult(JSONObject response) {
+                                Log.d("response <SelectedProductActivity>", response + "");
+                                int success = 0;
+
+                                try {
+                                    success = response.getInt("success");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (success == 1) {
+                                    if (dbhelper.updateBasket(basket)) {
+                                        Toast.makeText(getBaseContext(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
                                     } else {
                                         Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                        System.out.print("src: <SelectedProductActivity - dbHelper>");
                                     }
-                                    pdialog.dismiss();
+                                } else {
+                                    Toast.makeText(getBaseContext(), "Server error occurred.", Toast.LENGTH_SHORT).show();
+                                    System.out.print("src: <SelectedProductActivity>");
                                 }
-                            }, new ErrorListener<VolleyError>() {
-                                public void getError(VolleyError error) {
-                                    Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                pdialog.dismiss();
+                            }
+                        }, new ErrorListener<VolleyError>() {
+                            public void getError(VolleyError error) {
+                                Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-                                }
-                            });
+                    } else {
+                        final HashMap<String, String> hashMap = new HashMap();
+                        hashMap.put("product_id", String.valueOf(get_productID));
+                        hashMap.put("quantity", String.valueOf(new_qty));
+                        hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
+                        hashMap.put("table", "baskets");
+                        hashMap.put("request", "crud");
+                        hashMap.put("action", "insert");
 
-                        } else {
-                            final HashMap<String, String> hashMap = new HashMap();
-                            hashMap.put("product_id", String.valueOf(get_productID));
-                            hashMap.put("quantity", String.valueOf(new_qty));
-                            hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
-                            hashMap.put("table", "baskets");
-                            hashMap.put("request", "crud");
-                            hashMap.put("action", "insert");
+                        final ProgressDialog pdialog = new ProgressDialog(this);
+                        pdialog.setCancelable(false);
+                        pdialog.setMessage("Loading...");
+                        pdialog.show();
 
-                            final ProgressDialog pdialog = new ProgressDialog(this);
-                            pdialog.setCancelable(false);
-                            pdialog.setMessage("Loading...");
-                            pdialog.show();
+                        serverRequest.setSuccessMessage("New item has been added to your cart!");
+                        serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
 
-                            serverRequest.setSuccessMessage("New item has been added to your cart!");
-                            serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
-
-                            PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
-                                    @Override
-                                    public void getResult(JSONObject response) {
-                                        Log.d("response using interface <SelectedProductActivity.java>", response + "");
-                                        pdialog.dismiss();
-                                    }
-                                }, new ErrorListener<VolleyError>() {
-                                    public void getError(VolleyError error) {
-                                        Log.d("Error", "asdasda ");
-                                        Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
-
-                                    }
-                            });
-                        }
-                    } catch (Exception e) {
+                        PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                            @Override
+                            public void getResult(JSONObject response) {
+                                Log.d("response using interface <SelectedProductActivity.java>", response + "");
+                            }
+                        }, new ErrorListener<VolleyError>() {
+                            public void getError(VolleyError error) {
+                                Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        pdialog.dismiss();
                     }
-                } else {
-                    Toast.makeText(this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    System.out.print("src: <SelectedProductActivity> " + e.toString());
                 }
                 break;
         }

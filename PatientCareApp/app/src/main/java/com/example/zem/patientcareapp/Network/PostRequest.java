@@ -27,8 +27,11 @@ public class PostRequest {
         queue = VolleySingleton.getInstance().getRequestQueue();
         String url = "http://192.168.177.1/db/post.php";
 
+        Log.d("hashmap", parameters+"");
+
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, parameters,
                 new Response.Listener<JSONObject>() {
+
                     @Override
                     public void onResponse(JSONObject response) {
                         System.out.println("response is <PostRequest.java>: " + response);

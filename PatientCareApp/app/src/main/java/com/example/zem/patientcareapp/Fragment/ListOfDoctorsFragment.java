@@ -134,7 +134,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -149,7 +149,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
                 Log.d("Error", error + "");
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -164,7 +164,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
                 Log.d("Error", error + "");
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }

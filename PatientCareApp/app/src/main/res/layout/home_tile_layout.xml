@@ -172,28 +172,6 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/cartLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:src="@mipmap/cart_tile" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/d10"
-                        android:gravity="center"
-                        android:text="Cart" />
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/promosLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -213,6 +191,28 @@
                         android:layout_marginTop="@dimen/d10"
                         android:gravity="center"
                         android:text="Promos" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cartLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/cart_tile" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d10"
+                        android:gravity="center"
+                        android:text="Cart" />
                 </LinearLayout>
 
                 <LinearLayout

@@ -238,14 +238,10 @@ public class SplashActivity extends Activity {
                 finish();
 
                 settings.edit().putBoolean("my_first_time", false).commit();
-
-
             } else {
-                Log.d("Connected to internet", "no");
-
+                Log.d("<SplashActivity>", "no internet");
                 Toast.makeText(this, "You must have Internet to be able to use the App properly", Toast.LENGTH_LONG).show();
             }
-
             // record the fact that the app has been started at least once
         } else {
             Intent mainactivity = new Intent(getBaseContext(), MainActivity.class);

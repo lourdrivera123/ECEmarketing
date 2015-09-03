@@ -51,7 +51,7 @@ public class Sync {
 
         dbHelper = new DbHelper(context);
         queue = Volley.newRequestQueue(context);
-        url = "http://vinzry.0fees.us/db/get.php?q=" + request;
+        url = "http://192.168.177.1/db/get.php?q=" + request;
 
         try {
             int success = response.getInt("success");
@@ -59,26 +59,19 @@ public class Sync {
                 json_array_mysql = response.getJSONArray(tableName);
                 json_array_sqlite = dbHelper.getAllJSONArrayFrom(tableName);
 
-                Log.d("jsonarraymysql", "" + json_array_mysql);
-                Log.d("jsonarraysqlite", "" + json_array_sqlite);
-
                 json_array_final = checkWhatToInsert(json_array_mysql, json_array_sqlite, tableId);
-
                 json_array_final_update = checkWhatToUpdate(json_array_mysql, tableName);
 
                 if (json_array_final != null) {
                     for (int i = 0; i < json_array_final.length(); i++) {
                         JSONObject json_object = json_array_final.getJSONObject(i);
-                        System.out.println(json_object);
 
                         if (json_object != null) {
                             if (tableName.equals("products")) {
-                                System.out.println("FUCKING JSON for PRODUCTS: " + json_object.toString());
                                 if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
-                                } else {
-                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                }
 
+                                } else
+                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                             } else if (tableName.equals("doctors")) {
                                 if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
                                 } else {
@@ -121,71 +114,56 @@ public class Sync {
 
                             } else if (tableName.equals("baskets")) {
                                 if (dbHelper.insertBasket(setBasket(json_object))) {
-                                    System.out.println("FUCKING BASKET SUCCESSFULLY SAVED. <source: Sync.java>");
-                                } else {
-                                    System.out.println("FUCKING BASKET FAILED TO SAVE. <source: Sync.java>");
-                                }
+                                } else
+                                    System.out.println("BASKET FAILED TO SAVE. <source: Sync.java>");
 
                             } else if (tableName.equals("patient_records")) {
-                                System.out.print("patient records: I am in sync.java");
-
                                 if (dbHelper.savePatientRecord(setPatientRecord(json_object), "insert") > 0) {
-                                    System.out.println("patient record saved. <source: Sync.java>");
-                                } else {
+
+                                } else
                                     System.out.println("patient record failed to save. <source: Sync.java>");
-                                }
 
                             } else if (tableName.equals("treatments")) {
-                                System.out.print("treatments: I am in sync.java");
-
                                 if (dbHelper.saveTreatments(setTreatments(json_object), "insert")) {
-                                    System.out.println("Treatments SUCCESSFULLY SAVED. <source: Sync.java>");
-                                } else {
+
+                                } else
                                     System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
-                                }
 
                             } else if (tableName.equals("discounts_free_products")) {
-                                System.out.print("promo_discounts: I am in sync.java");
                                 if (dbHelper.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert")) {
-                                    System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
-                                } else {
+
+                                } else
                                     System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
-                                }
+
                             } else if (tableName.equals("free_products")) {
-                                System.out.print("promo_free_products: I am in sync.java");
                                 if (dbHelper.saveFreeProducts(setFreeProducts(json_object), "insert")) {
-                                    System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
-                                } else {
+
+                                } else
                                     System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
-                                }
+
                             } else if (tableName.equals("promo")) {
-                                System.out.println("allPromo Json: " + json_object.toString());
                                 if (dbHelper.savePromo(setPromo(json_object), "insert")) {
-                                    System.out.println("Promo SUCCESSFULLY SAVED. <source: Sync.java>");
-                                } else {
+
+                                } else
                                     System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
-                                }
 
                             } else if (tableName.equals("clinics")) {
                                 if (dbHelper.saveClinic(setClinic(json_object), "insert")) {
-                                    System.out.println("Clinics SUCCESSFULLY SAVED. <source: Sync.java>");
-                                } else {
+
+                                } else
                                     System.out.println("Clinics FAILED TO SAVE. <source: Sync.java>");
-                                }
+
                             } else if (tableName.equals("clinic_doctor")) {
                                 if (dbHelper.saveClinicDoctor(setClinicDoctor(json_object), "insert")) {
-                                    System.out.println("ClinicDoctor SUCCESSFULLY SAVED. <source: Sync.java>");
-                                } else {
+
+                                } else
                                     System.out.println("ClinicDoctor FAILED TO SAVE. <source: Sync.java>");
-                                }
                             }
                         }
                     }
-
                     json_array_final = null;
-                } else {
+                } else
                     Toast.makeText(context, "the final list is empty", Toast.LENGTH_SHORT).show();
-                }
 
                 if (json_array_final_update != null) {
                     for (int i = 0; i < json_array_final_update.length(); i++) {
@@ -391,9 +369,7 @@ public class Sync {
     public JSONArray checkWhatToUpdateInMysql(JSONArray json_array_mysql, String tblname) {
         JSONArray doctors_json_array_final_storage = new JSONArray();
         try {
-
             for (int i = 0; i < json_array_mysql.length(); i++) {
-
                 JSONObject json_object_mysql = json_array_mysql.getJSONObject(i);
 
                 if (!json_object_mysql.getString("updated_at").equals("null")) {
@@ -404,13 +380,10 @@ public class Sync {
 
                         doctors_json_array_final_storage.put(json_object_mysql);
                         Log.d("Updated at Compare", "the updated_at column in mysql is greater than in sqlite");
-
                     } else {
                         Log.d("Updated at Compare", "the updated_at column in sqlite is greater than in mysql");
-
                     }
                 }
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -420,7 +393,6 @@ public class Sync {
     }
 
     // SETTERS
-
     public Doctor setDoctor(JSONObject json) {
         Doctor doctor = new Doctor();
         try {

@@ -24,11 +24,9 @@ import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.paypal.android.sdk.payments.PayPalPayment;
 
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -120,8 +118,6 @@ public class LazyAdapter extends BaseAdapter {
             map = data.get(position);
             final Map<String, HashMap<String, String>> productQuantity = ProductsFragment.productQuantity;
 
-            System.out.println("Product: " + map.toString());
-
             productId = Integer.parseInt(map.get("id"));
             productPacking = productQuantity.get(productId + "").get("packing");
             productUnit = map.get("unit");
@@ -201,7 +197,6 @@ public class LazyAdapter extends BaseAdapter {
             product_description.setText("1 " + productUnit + " x " + productQtyPerPacking + "(1 " + productPacking + ")");
             product_price.setText("\u20B1 " + map.get(DbHelper.PRODUCT_PRICE));
 
-            final View tempVi = vi;
             final int tempPID = PID;
 
             addToCart.setOnClickListener(new View.OnClickListener() {
@@ -210,12 +205,8 @@ public class LazyAdapter extends BaseAdapter {
                     final Helpers helpers = new Helpers();
                     final DbHelper dbhelper = new DbHelper(activity);
                     final ServerRequest serverRequest = new ServerRequest();
-//                    int get_productID = tempPID;
 
                     try {
-//                            int new_qty;
-                            /*new_qty = Integer.parseInt(product_quantity.getText().toString());*/
-//                            new_qty = productQty;
                         int q = Integer.parseInt(productQuantity.get(productId + "").get("temp_basket_qty"));
                         int p = Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing"));
                         productQty = q != 0 ? q : p;
@@ -226,8 +217,8 @@ public class LazyAdapter extends BaseAdapter {
                         pdialog.setMessage("Please wait...");
                         pdialog.show();
 
-                        if (basket.getBasketId() > 0) {
-                            HashMap<String, String> hashMap = new HashMap<>();
+                        if (basket.getBasketId() > 0) { //EXISTING ITEM IN YOUR BASKET (UPDATE ONLY)
+                            HashMap<String, String> hashMap = new HashMap();
                             hashMap.put("id", String.valueOf(tempPID));
 
                             hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
@@ -236,7 +227,6 @@ public class LazyAdapter extends BaseAdapter {
 
                             int old_qty = basket.getQuantity();
                             basket.setQuantity(productQty + old_qty);
-                            hashMap.put("is_approved", basket.getIsApproved() + "");
                             hashMap.put("quantity", String.valueOf(basket.getQuantity()));
                             hashMap.put("action", "update");
                             hashMap.put("id", String.valueOf(basket.getBasketId()));
@@ -245,8 +235,15 @@ public class LazyAdapter extends BaseAdapter {
                                 @Override
                                 public void getResult(JSONObject response) {
                                     System.out.print("response using interface <LazyAdapter.java>" + response);
-                                    boolean responseFromServer = serverRequest.getResponse();
-                                    if (responseFromServer) {
+                                    int success = 0;
+
+                                    try {
+                                        success = response.getInt("success");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    if (success == 1) {
                                         if (dbhelper.updateBasket(basket)) {
                                             Toast.makeText(activity, "Your cart has been updated.", Toast.LENGTH_SHORT).show();
                                         } else {
@@ -254,8 +251,8 @@ public class LazyAdapter extends BaseAdapter {
                                             Log.d("error on dbhelper", "error");
                                         }
                                     } else {
-                                        Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
-                                        Log.d("responseFromServer", "error");
+                                        Toast.makeText(activity, "Server error occurred", Toast.LENGTH_SHORT).show();
+                                        System.out.print("src: <LazyAdapter - product_lists>");
                                     }
                                     pdialog.dismiss();
                                 }
@@ -268,8 +265,7 @@ public class LazyAdapter extends BaseAdapter {
                             });
 
                         } else { //INSERT NEW PRODUCT IN BASKETS TABLE//
-
-                            final HashMap<String, String> hashMap = new HashMap<>();
+                            final HashMap<String, String> hashMap = new HashMap();
                             hashMap.put("product_id", String.valueOf(tempPID));
                             hashMap.put("quantity", String.valueOf(productQty));
                             hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
@@ -279,72 +275,64 @@ public class LazyAdapter extends BaseAdapter {
                             hashMap.put("request", "crud");
                             hashMap.put("action", "insert");
 
-
                             // if prescription required, ask for the prescription
                             if (isPrescriptionRequired == 1) {
-                                    /*Intent intent = new Intent(activity, SelectPrescription.class);
-                                    activity.startActivityForResult(intent, 1);*/
                                 GridView gridView;
                                 final Dialog builder;
                                 HashMap<GridView, Dialog> map;
                                 map = helpers.showPrescriptionDialog(activity);
 
-                                Map.Entry<GridView, Dialog> entry = map.entrySet().iterator().next();
-                                gridView = entry.getKey();
-                                builder = entry.getValue();
-                                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        System.out.println("SELECTED: position: " + position + " id: " + id);
-                                        prescriptionId = (int) id;
-                                        hashMap.put("prescription_id", prescriptionId + "");
-                                        hashMap.put("is_approved", "0");
+                                if (map.size() > 0) {
+                                    Map.Entry<GridView, Dialog> entry = map.entrySet().iterator().next();
+                                    gridView = entry.getKey();
+                                    builder = entry.getValue();
 
-                                        serverRequest.setSuccessMessage("New item has been added to your cart!");
-                                        serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
+                                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            prescriptionId = (int) id;
+                                            hashMap.put("prescription_id", prescriptionId + "");
+                                            hashMap.put("is_approved", "0");
 
-                                        PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
-                                            @Override
-                                            public void getResult(JSONObject response) {
-                                                System.out.print("response using interface <LazyAdapter.java - 2nd row>" + response);
-                                                pdialog.dismiss();
-                                            }
-                                        }, new ErrorListener<VolleyError>() {
-                                            public void getError(VolleyError error) {
-                                                Log.d("Error", "asdasda ");
-                                                Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                            serverRequest.setErrorMessage("Sorry, we can't update your cart this time.");
 
-                                            }
-                                        });
-
-                                        builder.dismiss();
-                                    }
-                                });
-
-                                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        pdialog.dismiss();
-                                    }
-                                });
-
+                                            PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                                                @Override
+                                                public void getResult(JSONObject response) {
+                                                    Toast.makeText(activity, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
+                                                    pdialog.dismiss();
+                                                }
+                                            }, new ErrorListener<VolleyError>() {
+                                                public void getError(VolleyError error) {
+                                                    Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                            builder.dismiss();
+                                        }
+                                    });
+                                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                        @Override
+                                        public void onCancel(DialogInterface dialog) {
+                                            pdialog.dismiss();
+                                        }
+                                    });
+                                } else {
+                                    pdialog.dismiss();
+                                    Toast.makeText(activity, "Please upload prescription", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-
-
-                                serverRequest.setSuccessMessage("New item has been added to your cart!");
-                                serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
+                                serverRequest.setErrorMessage("Sorry, we can't update your cart this time.");
 
                                 PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
                                     @Override
                                     public void getResult(JSONObject response) {
-                                        System.out.print("response using interface <LazyAdapter.java - 2nd row>" + response);
+                                        Toast.makeText(activity, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
                                         pdialog.dismiss();
                                     }
                                 }, new ErrorListener<VolleyError>() {
                                     public void getError(VolleyError error) {
-                                        Log.d("Error", "asdasda ");
+                                        System.out.print("<LazyAdapter, product_lists>" + error.toString());
                                         Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
-
                                     }
                                 });
                             }
@@ -361,7 +349,6 @@ public class LazyAdapter extends BaseAdapter {
 
                 HashMap<String, String> basket_items;
                 basket_items = data.get(position);
-                System.out.println("basket_items@position: " + position + " -> " + basket_items.toString());
 
                 TextView productName, productPrice, basketIsApproved;
                 String unit, packing;
@@ -373,12 +360,9 @@ public class LazyAdapter extends BaseAdapter {
                 qty = (TextView) vi.findViewById(R.id.product_quantity);
                 total = (TextView) vi.findViewById(R.id.total);
 
-                System.out.println("BASKET ITEMS: " + basket_items.toString());
-                // Do the fucking stuffs here
                 // Do stuffs here
                 price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
                 quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
-
 
                 unit = basket_items.get(DbHelper.PRODUCT_UNIT);
                 basketId = Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID));
@@ -386,12 +370,11 @@ public class LazyAdapter extends BaseAdapter {
                 qtyPerPacking = Integer.parseInt(basket_items.get(DbHelper.PRODUCT_QTY_PER_PACKING));
                 isApproved = Integer.parseInt(basket_items.get(DbHelper.BASKET_IS_APPROVED));
 
-
                 // Setting all values in listview
                 basketIsApproved.setText("");
-                if (isApproved == 0) {
+                if (isApproved == 0)
                     basketIsApproved.setText("Waiting for approval...");
-                }
+
                 productName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
                 total_amount = price * quantity;
 
@@ -429,7 +412,6 @@ public class LazyAdapter extends BaseAdapter {
             String unit, packing;
 
             // Setting all values in listview
-
             price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
             quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
             unit = basket_items.get(DbHelper.PRODUCT_UNIT);
@@ -437,15 +419,14 @@ public class LazyAdapter extends BaseAdapter {
             packing = basket_items.get(DbHelper.PRODUCT_PACKING);
             isApproved = Integer.parseInt(basket_items.get(DbHelper.BASKET_IS_APPROVED));
 
-
             total_amount = price * quantity;
             unit = !unit.equals("0") ? unit : "";
             packingCount = quantity / qtyPerPacking;
 
             itemIsApproved.setText("");
-            if (isApproved == 0) {
+            if (isApproved == 0)
                 itemIsApproved.setText("Waiting for approval...");
-            }
+
             itemName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
             itemAmount.setText("\u20B1 " + total_amount + "");
             itemDetails.setText("Price: \u20B1 " + price + " / " + unit);
@@ -472,18 +453,17 @@ public class LazyAdapter extends BaseAdapter {
 
             promoName.setText(promo_item.get("promo_name"));
             less.setText("LESS:");
-            if (promo_item.get("max_discount") != null) {
+            if (promo_item.get("max_discount") != null)
                 lessAmount.setText("Upto " + promo_item.get("min_discount") + " - " + promo_item.get("max_discount") + "% DISCOUNT");
-            } else {
+            else
                 lessAmount.setText("Free items available on selected products.");
-            }
 
             try {
                 Date dateStart = fmt.parse(promo_item.get("start_date"));
                 Date dateEnd = fmt.parse(promo_item.get("end_date"));
                 duration.setText("Starting " + df.format(dateStart) + " to " + df.format(dateEnd));
             } catch (Exception e) {
-                System.out.println("Oh snap! We got some error <source: LazyAdapter@promo_items." + e.getMessage());
+                System.out.println("<source: LazyAdapter@promo_items." + e.getMessage());
             }
         }
         return vi;

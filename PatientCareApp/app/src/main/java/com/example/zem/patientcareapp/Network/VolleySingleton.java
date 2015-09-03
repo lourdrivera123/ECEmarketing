@@ -9,23 +9,23 @@ import com.example.zem.patientcareapp.PatientCareApplication;
  */
 public class VolleySingleton {
 
-    private static VolleySingleton sInstance=null;
+    private static VolleySingleton sInstance = null;
 
     private RequestQueue mRequestQueue;
 
-    private VolleySingleton(){
+    private VolleySingleton() {
         mRequestQueue = Volley.newRequestQueue(PatientCareApplication.getAppContext());
     }
 
-    public static VolleySingleton getInstance(){
-        if(sInstance==null){
+    public static VolleySingleton getInstance() {
+        if (sInstance == null) {
             sInstance = new VolleySingleton();
         }
 
         return sInstance;
     }
 
-    public RequestQueue getRequestQueue(){
+    public RequestQueue getRequestQueue() {
         return mRequestQueue;
     }
 

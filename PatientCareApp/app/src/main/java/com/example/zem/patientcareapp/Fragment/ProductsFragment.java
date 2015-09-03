@@ -30,7 +30,6 @@ import com.example.zem.patientcareapp.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SelectedProductActivity;
-import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONObject;
 
@@ -76,7 +75,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         products_items = dbHelper.getAllProducts();
 
         for (HashMap<String, String> map : products_items) {
-
             HashMap<String, String> tempMap = new HashMap();
             tempMap.put("id", map.get("id"));
             tempMap.put("product_id", map.get("product_id"));
@@ -157,8 +155,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
                     ArrayList<HashMap<String, String>> list = dbHelper.getProductsBySubCategory(subCategory.getId());
 
-                    Toast.makeText(getActivity(), subCategoryName + " : " + subCategory.getName() + " : " + list.size()
-                            , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), subCategoryName + " : " + subCategory.getName() + " : " + list.size(), Toast.LENGTH_SHORT).show();
                     // Getting adapter by passing xml data ArrayList
                     if (list.size() > 0) {
                         products_items.clear();
@@ -186,11 +183,9 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         GetRequest.getJSONobj(getActivity(), "get_products", "products", "product_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                Log.d("response using interface <ProductsFragment.java >", response + "");
                 products_items = dbHelper.getAllProducts();
 
                 for (HashMap<String, String> map : products_items) {
-
                     HashMap<String, String> tempMap = new HashMap();
                     tempMap.put("id", map.get("id"));
                     tempMap.put("product_id", map.get("product_id"));
@@ -199,15 +194,13 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                     tempMap.put("temp_basket_qty", "0");
                     productQuantity.put(map.get("product_id"), tempMap);
                 }
-
                 populateProductsListView(root_view, products_items);
                 refresh_products_list.setRefreshing(false);
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Log.d("Error", "asdasda ");
+                Log.d("<ProductsFragment>", error.toString());
                 Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
-
             }
         });
     }

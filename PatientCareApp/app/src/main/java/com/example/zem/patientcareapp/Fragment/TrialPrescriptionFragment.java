@@ -46,7 +46,6 @@ import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -149,7 +148,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                 public void onClick(DialogInterface dialog, int which) {
                     final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(DbHelper.PRESCRIPTIONS_SERVER_ID));
                     serverRequest = new ServerRequest();
-                    HashMap<String, String> hashMap = new HashMap<>();
+                    HashMap<String, String> hashMap = new HashMap();
                     hashMap.put("table", "patient_prescriptions");
                     hashMap.put("request", "crud");
                     hashMap.put("action", "delete");
