@@ -141,7 +141,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
 
         queue = VolleySingleton.getInstance().getRequestQueue();
-        url = "http://192.168.177.1/db/post.php";
+        url = Constants.POST_URL;
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
@@ -374,6 +374,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             params.put("password", patient.getPassword());
             params.put("action", "insert");
             params.put("table", "patients");
+            params.put("photo", patient.getPhoto());
 
             params.put("referral_id", patient.getReferral_id());
             params.put("referred_by", patient.getReferred_by());
@@ -403,7 +404,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("tel_no", patient.getTel_no());
         params.put("mobile_no", patient.getMobile_no());
         params.put("email_address", patient.getEmail());
-        params.put("photo", patient.getPhoto());
 
         return params;
     }
@@ -762,7 +762,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL + "?patient_id=" + patientID);
+            HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL + "?patient_id=" + patientID);
 
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
@@ -810,10 +810,18 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             int serverID = 0;
             try {
                 jObject = new JSONObject(result);
-                image_url = jObject.getString("file_path");
+                image_url = jObject.getString("file_name");
                 patient.setPhoto(image_url);
 
                 ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+
+                Log.d("patient server id", SidebarActivity.getUserID()+"");
+
+                if(dbHelper.updatePatientImage(image_url, SidebarActivity.getUserID())){
+                    Log.d("updated photo", "true");
+                } else {
+                    Log.d("updated photo", "false");
+                }
 
                 helpers.setImage(image_url, progressBar, image_holder);
 

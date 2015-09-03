@@ -1,6 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -25,7 +24,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -33,11 +31,6 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -154,7 +147,7 @@ public class Helpers {
     }
 
     public String get_url(String request){
-        return "http://192.168.177.1/db/get.php?q="+request;
+        return Constants.GET_REQUEST_URL+request;
     }
 
     public String md5(final String s) {
@@ -206,11 +199,16 @@ public class Helpers {
     public void setImage(String image_url, final ProgressBar progressBar, ImageView image_holder){
 //        image_url = patient.getPhoto();
         //caching and displaying the image
+        String image_url_local = "";
+        if(!image_url.equals("")){
+            image_url_local = Constants.UPLOAD_PATH_URL+"user_"+SidebarActivity.getUserID()+"/"+image_url;
+        }
+
         DisplayImageOptions options;
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.mipmap.ic_stub)
-                .showImageForEmptyUri(R.mipmap.ic_empty)
+                .showImageForEmptyUri(R.drawable.img_holder)
                 .showImageOnFail(R.mipmap.ic_error)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
@@ -221,7 +219,7 @@ public class Helpers {
 //        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
         com.nostra13.universalimageloader.core.ImageLoader.getInstance()
-                .displayImage(image_url, image_holder, options, new SimpleImageLoadingListener() {
+                .displayImage(image_url_local, image_holder, options, new SimpleImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
                         progressBar.setProgress(0);
@@ -245,19 +243,16 @@ public class Helpers {
                 });
     }
 
-    public void cacheImageOnly(String url){
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(url, new SimpleImageLoadingListener(){
-
+    public void cacheImageOnly(String url, int user_id){
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(Constants.UPLOAD_PATH_URL + "user_" + user_id + "/"+url, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view,
                                           Bitmap loadedImage) {
                 super.onLoadingComplete(imageUri, view, loadedImage);
-
-                //write your code here to use loadedImage
+                Log.d("image cached", imageUri);
             }
 
         });
     }
 
-    
 }

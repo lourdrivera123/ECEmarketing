@@ -258,7 +258,7 @@ public class samplepaypal extends Activity {
         showpDialog();
 
         StringRequest verifyReq = new StringRequest(Request.Method.POST,
-                Config.URL_VERIFY_PAYMENT, new Response.Listener<String>() {
+                Constants.URL_VERIFY_PAYMENT, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {

@@ -99,6 +99,7 @@ public class SidebarActivity extends FragmentActivity {
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(4, 0)));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(5, 0), true, "50+"));
 
+
         // Recycle the typed array
         navMenuIcons.recycle();
 

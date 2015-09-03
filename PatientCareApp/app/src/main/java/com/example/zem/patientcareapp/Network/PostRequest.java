@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Constants;
 import com.example.zem.patientcareapp.CustomRequest;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -25,7 +26,7 @@ public class PostRequest {
         RequestQueue queue;
 
         queue = VolleySingleton.getInstance().getRequestQueue();
-        String url = "http://192.168.177.1/db/post.php";
+        String url = Constants.POST_URL;
 
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, parameters,
                 new Response.Listener<JSONObject>() {

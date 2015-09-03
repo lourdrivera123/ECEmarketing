@@ -188,7 +188,7 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
             ImageView imageView = (ImageView) v.findViewById(R.id.imgDisplay);
             final ProgressBar spinner = (ProgressBar) v.findViewById(R.id.loading);
 
-            com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_urls[position], imageView, options, new SimpleImageLoadingListener() {
+            com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(Constants.UPLOAD_PATH_URL + "user_" + SidebarActivity.getUserID() + "/"+image_urls[position], imageView, options, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
                     spinner.setVisibility(View.VISIBLE);

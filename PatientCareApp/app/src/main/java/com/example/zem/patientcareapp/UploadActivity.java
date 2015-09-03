@@ -88,7 +88,7 @@ public class UploadActivity extends Activity {
             String responseString = null;
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Config.FILE_UPLOAD_URL);
+            HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL);
 
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
