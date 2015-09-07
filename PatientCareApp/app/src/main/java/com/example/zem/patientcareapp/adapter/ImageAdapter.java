@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.example.zem.patientcareapp.Constants;
 import com.example.zem.patientcareapp.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -24,7 +25,6 @@ import java.util.HashMap;
 
 public class ImageAdapter extends ArrayAdapter {
     String[] image_urls;
-//    ArrayList<String> image_urls_list;
     private LayoutInflater inflater;
     private DisplayImageOptions options;
     ArrayList<HashMap<String, String>> uploadsByUser;
@@ -36,17 +36,11 @@ public class ImageAdapter extends ArrayAdapter {
         inflater = LayoutInflater.from(context);
         this.uploadsByUser = uploadsByUser;
         image_urls = new String[uploadsByUser.size()];
-//        image_urls = uploadsByUser.toArray(new String[uploadsByUser.size()]);
-//        for(HashMap<String, String> map : uploadsByUser){
-//            image_urls
-//        }
+
         for(int x = 0; x < uploadsByUser.size(); x++){
             image_urls[x] = uploadsByUser.get(x).get("filename");
-//            image_urls_list.add(x, uploadsByUser.get(x).get("filename"));
             System.out.println("image_urls["+x+"]: "+image_urls[x]);
         }
-
-
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.mipmap.ic_stub)
@@ -83,7 +77,7 @@ public class ImageAdapter extends ArrayAdapter {
         progressBar.setTag(position);
 
         com.nostra13.universalimageloader.core.ImageLoader.getInstance()
-                .displayImage(image_urls[position], imageView, options, new SimpleImageLoadingListener() {
+                .displayImage(Constants.+image_urls[position], imageView, options, new SimpleImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
                         progressBar.setProgress(0);

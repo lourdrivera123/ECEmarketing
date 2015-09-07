@@ -6,9 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class HomeTileActivityClone extends Fragment implements View.OnClickListener {
     LinearLayout profileLayout, patientHistoryLayout, prescriptionLayout, doctorsLayout, consultationLayout, productsLayout, cartLayout, promosLayout, newsLayout;

@@ -30,19 +30,13 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class MainActivity extends Activity implements View.OnClickListener {
     EditText username_txtfield, password_txtfield;
     TextView signup, forgotpw;
     Button login_btn;
 
-    DbHelper dbHelper;
-    static Helpers helpers;
-    public static Activity main;
-
-    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String MyPREFERENCES = "MyPrefs", name = "nameKey", pass = "passwordKey";
     public static SharedPreferences sharedpreferences;
-    public static final String name = "nameKey", pass = "passwordKey";
     String uname, password;
     String url = Constants.POST_URL;
 
@@ -50,6 +44,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     RequestQueue queue;
 
     static Patient patient;
+    DbHelper dbHelper;
+    static Helpers helpers;
+    public static Activity main;
     Sync sync;
 
     JSONArray patient_json_array_mysql = null;
@@ -130,7 +127,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d("ifsuccess", response + "");
-                            Log.d("response on jrequest", response + "");
 
                             try {
                                 int success = response.getInt("success");
@@ -143,11 +139,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                     if (checked_json_array.length() > 0) {
                                         patient_json_object_mysql = checked_json_array.getJSONObject(0);
 
-                                        //sync.setPatient here.
-                                        Patient syncedPatient = sync.setPatient(patient_json_object_mysql);
-
-                                        //then save on db
-                                        dbHelper.savePatient(patient_json_object_mysql, syncedPatient, "insert");
+                                        Patient syncedPatient = sync.setPatient(patient_json_object_mysql); //sync.setPatient here.
+                                        dbHelper.savePatient(patient_json_object_mysql, syncedPatient, "insert"); //then save on db
                                     }
                                     if (dbHelper.LoginUser(uname, password)) {
                                         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -155,37 +148,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         editor.putString(pass, helpers.md5(password));
                                         editor.commit();
 
-//                                        Log.d("patient login details", patient_json_array_mysql.getJSONObject(0).getString("photo")+"");
                                         String patient_image_name = patient_json_array_mysql.getJSONObject(0).getString("photo");
-                                        if(!patient_image_name.equals("")) {
-                                            Log.d("patient image status", "naa ko sulod");
+                                        if (!patient_image_name.equals(""))
                                             helpers.cacheImageOnly(patient_image_name, patient_json_array_mysql.getJSONObject(0).getInt("id"));
-                                        }
+
                                         startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                     } else {
                                         Toast.makeText(MainActivity.this, "Invalid Username of Password", Toast.LENGTH_SHORT).show();
-                                        System.out.print("error on dbHelper.loginUser <source: MainActivity.java>");
+                                        System.out.print("error on dbHelper.loginUser <source: MainActivity>");
                                     }
-                                } else {
-                                    Toast.makeText(MainActivity.this, "Invalid Username or Password ", Toast.LENGTH_SHORT).show();
-                                }
-                                pDialog.dismiss();
-
+                                } else
+                                    Toast.makeText(MainActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 Log.d("try catch error", e + "");
-                                Toast.makeText(MainActivity.this, "error: " + e.toString(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            pDialog.dismiss();
-                            Log.d("custom request error", error + "");
+                            System.out.print("src: <MainActivity>: " + error.toString());
                             Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
-
                         }
                     });
 
+                    pDialog.dismiss();
                     queue.add(jsObjRequest);
                 }
                 break;

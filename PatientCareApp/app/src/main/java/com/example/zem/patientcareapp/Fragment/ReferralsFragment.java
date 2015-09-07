@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,9 +36,11 @@ import java.util.HashMap;
  * Created by User PC on 8/25/2015.
  */
 
-public class ReferralsFragment extends Fragment implements TextWatcher {
+public class ReferralsFragment extends Fragment implements TextWatcher, View.OnClickListener {
     ListView listOfReferrals;
     EditText searchReferral;
+    ImageView refreshList;
+    LinearLayout noReferralsLayout;
     TextView textNumber, referralName, referralDate;
 
     ArrayList<HashMap<String, String>> hashOfReferrals;
@@ -54,6 +58,8 @@ public class ReferralsFragment extends Fragment implements TextWatcher {
 
         listOfReferrals = (ListView) root.findViewById(R.id.listOfReferrals);
         searchReferral = (EditText) root.findViewById(R.id.searchReferral);
+        noReferralsLayout = (LinearLayout) root.findViewById(R.id.noReferralsLayout);
+        refreshList = (ImageView) root.findViewById(R.id.refreshList);
 
         db = new DbHelper(getActivity());
         patient = db.getCurrentLoggedInPatient();
@@ -65,25 +71,36 @@ public class ReferralsFragment extends Fragment implements TextWatcher {
             @Override
             public void getResult(JSONObject response) {
                 try {
-                    JSONArray json_array_mysql = response.getJSONArray("patients");
-                    for (int x = 0; x < json_array_mysql.length(); x++) {
-                        try {
-                            JSONObject json_obj = json_array_mysql.getJSONObject(x);
-                            HashMap<String, String> map = new HashMap();
-                            map.put("fullname", json_obj.getString("fname") + " " + json_obj.getString("lname"));
-                            map.put("created_at", json_obj.getString("created_at"));
-                            hashOfReferrals.add(map);
-                            arrayOfReferrals.add(hashOfReferrals.get(x).get("fullname"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    int success = response.getInt("success");
 
-                    adapter = new ReferralAdapter(getActivity(), R.layout.list_item_referrals_fragment, hashOfReferrals);
-                    listOfReferrals.setAdapter(adapter);
-                    tempHashOfReferrals.addAll(hashOfReferrals);
+                    if (success == 1) {
+                        listOfReferrals.setVisibility(View.VISIBLE);
+                        noReferralsLayout.setVisibility(View.GONE);
+
+                        JSONArray json_array_mysql = response.getJSONArray("patients");
+                        for (int x = 0; x < json_array_mysql.length(); x++) {
+                            try {
+                                JSONObject json_obj = json_array_mysql.getJSONObject(x);
+                                HashMap<String, String> map = new HashMap();
+                                map.put("fullname", json_obj.getString("fname") + " " + json_obj.getString("lname"));
+                                map.put("created_at", json_obj.getString("created_at"));
+                                hashOfReferrals.add(map);
+                                arrayOfReferrals.add(hashOfReferrals.get(x).get("fullname"));
+                            } catch (JSONException e) {
+                                System.out.print("<ReferralsFragment>: " + e.toString());
+                            }
+                        }
+
+                        adapter = new ReferralAdapter(getActivity(), R.layout.list_item_referrals_fragment, hashOfReferrals);
+                        listOfReferrals.setAdapter(adapter);
+                        tempHashOfReferrals.addAll(hashOfReferrals);
+                    } else {
+                        listOfReferrals.setVisibility(View.GONE);
+                        noReferralsLayout.setVisibility(View.VISIBLE);
+                    }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                    System.out.print("src: <ReferralsFragment>: " + e.toString());
                 }
             }
         }, new ErrorListener<VolleyError>() {
@@ -95,6 +112,7 @@ public class ReferralsFragment extends Fragment implements TextWatcher {
 
         listOfReferrals.setAdapter(adapter);
         searchReferral.addTextChangedListener(this);
+        refreshList.setOnClickListener(this);
 
         return root;
     }
@@ -124,6 +142,11 @@ public class ReferralsFragment extends Fragment implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 
     private class ReferralAdapter extends ArrayAdapter {

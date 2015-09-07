@@ -241,8 +241,6 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                 int columnIndex = cursor.getColumnIndex(projection[0]);
                 String path = cursor.getString(columnIndex);
 
-
-
                 filePath = path;
                 showProgressbar();
                 new UploadFileToServer().execute();
