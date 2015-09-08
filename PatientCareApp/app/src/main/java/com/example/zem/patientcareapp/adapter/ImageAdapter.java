@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 
 import com.example.zem.patientcareapp.Constants;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -37,9 +38,9 @@ public class ImageAdapter extends ArrayAdapter {
         this.uploadsByUser = uploadsByUser;
         image_urls = new String[uploadsByUser.size()];
 
-        for(int x = 0; x < uploadsByUser.size(); x++){
+        for (int x = 0; x < uploadsByUser.size(); x++) {
             image_urls[x] = uploadsByUser.get(x).get("filename");
-            System.out.println("image_urls["+x+"]: "+image_urls[x]);
+            System.out.println("image_urls[" + x + "]: " + image_urls[x]);
         }
 
         options = new DisplayImageOptions.Builder()
@@ -60,7 +61,6 @@ public class ImageAdapter extends ArrayAdapter {
 
     @Override
     public long getItemId(int position) {
-//        return position;
         return Long.parseLong(uploadsByUser.get(position).get("id"));
     }
 
@@ -70,14 +70,12 @@ public class ImageAdapter extends ArrayAdapter {
         assert view != null;
 
         ImageView imageView = (ImageView) view.findViewById(R.id.image);
-//        imageView.setTag(position);
-        System.out.println("position: "+position);
-//        imageView.setTag(uploadsByUser.get(position).get("id"));
+
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.setTag(position);
 
         com.nostra13.universalimageloader.core.ImageLoader.getInstance()
-                .displayImage(Constants.+image_urls[position], imageView, options, new SimpleImageLoadingListener() {
+                .displayImage(Constants.UPLOAD_PATH_URL + "user_" + SidebarActivity.getUserID() + "/" + image_urls[position], imageView, options, new SimpleImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
                         progressBar.setProgress(0);
@@ -92,8 +90,8 @@ public class ImageAdapter extends ArrayAdapter {
                     @Override
                     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                         progressBar.setVisibility(View.GONE);
-                        System.out.println("onLoadingComplete position: "+position+" id: "+uploadsByUser.get(position).get("id"));
-                                view.setTag(uploadsByUser.get(position).get("id"));
+                        System.out.println("onLoadingComplete position: " + position + " id: " + uploadsByUser.get(position).get("id"));
+                        view.setTag(uploadsByUser.get(position).get("id"));
                     }
                 }, new ImageLoadingProgressListener() {
                     @Override

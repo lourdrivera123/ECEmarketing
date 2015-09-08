@@ -210,32 +210,16 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                     if (!hasError3) {
                                         if (edit_int > 0) {
                                             editUser = dbHelper.getloginPatient(SidebarActivity.getUname());
-                                            String chosenPhoto = patient.getPhoto();
-                                            String defaultPhoto = editUser.getPhoto();
-                                            String photo = "";
-
-                                            if (chosenPhoto.equals("")) {
-                                                photo = editUser.getPhoto();
-                                            } else {
-                                                photo = patient.getPhoto();
-                                            }
-
-                                            if (defaultPhoto.equals("")) {
-                                                photo = patient.getPhoto();
-                                            } else {
-                                                photo = editUser.getPhoto();
-                                            }
 
                                             patient.setServerID(editUser.getServerID());
                                             HashMap<String, String> params = setParams("update");
-
-                                            Log.d("parameters for update", params + "");
 
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
                                                 public void getResult(JSONObject response) {
                                                     Log.d("response using interface <EditTabsActivity.java - update patient>", response + "");
                                                     int success = 0;
+
                                                     try {
                                                         success = response.getInt("success");
                                                     } catch (JSONException e) {
@@ -815,9 +799,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                 ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
-                Log.d("patient server id", SidebarActivity.getUserID()+"");
+                Log.d("patient server id", SidebarActivity.getUserID() + "");
 
-                if(dbHelper.updatePatientImage(image_url, SidebarActivity.getUserID())){
+                if (dbHelper.updatePatientImage(image_url, SidebarActivity.getUserID())) {
                     Log.d("updated photo", "true");
                 } else {
                     Log.d("updated photo", "false");

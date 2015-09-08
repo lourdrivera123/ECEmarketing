@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <!--Profile-->
                 <LinearLayout
                     android:id="@+id/profileLayout"
                     android:layout_width="0dp"
@@ -47,6 +48,7 @@
                         android:text="Profile" />
                 </LinearLayout>
 
+                <!--Patient History-->
                 <LinearLayout
                     android:id="@+id/patientHistoryLayout"
                     android:layout_width="0dp"
@@ -69,7 +71,8 @@
                         android:text="Patient History" />
                 </LinearLayout>
 
-                <LinearLayout
+                <!-- Prescription -->
+                <RelativeLayout
                     android:id="@+id/prescriptionLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -77,7 +80,18 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:orientation="vertical">
 
+                    <TextView
+                        android:id="@+id/newNotif"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/notif_bg"
+                        android:gravity="center"
+                        android:text="1"
+                        android:visibility="invisible" />
+
                     <ImageView
+                        android:id="@+id/imgPrescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -86,10 +100,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/imgPrescription"
                         android:layout_marginTop="@dimen/d10"
                         android:gravity="center"
                         android:text="Prescription" />
-                </LinearLayout>
+                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -98,6 +113,7 @@
                 android:layout_marginTop="@dimen/d40"
                 android:orientation="horizontal">
 
+                <!--Doctors-->
                 <LinearLayout
                     android:id="@+id/doctorsLayout"
                     android:layout_width="0dp"
@@ -120,6 +136,7 @@
                         android:text="Doctors" />
                 </LinearLayout>
 
+                <!-- Consultation -->
                 <LinearLayout
                     android:id="@+id/consultationLayout"
                     android:layout_width="0dp"
@@ -142,6 +159,7 @@
                         android:text="Consultation" />
                 </LinearLayout>
 
+                <!-- Product -->
                 <LinearLayout
                     android:id="@+id/productsLayout"
                     android:layout_width="0dp"
@@ -171,6 +189,7 @@
                 android:layout_marginTop="@dimen/d40"
                 android:orientation="horizontal">
 
+                <!-- Promos -->
                 <LinearLayout
                     android:id="@+id/promosLayout"
                     android:layout_width="0dp"
@@ -193,6 +212,7 @@
                         android:text="Promos" />
                 </LinearLayout>
 
+                <!-- Cart -->
                 <LinearLayout
                     android:id="@+id/cartLayout"
                     android:layout_width="0dp"
@@ -215,6 +235,7 @@
                         android:text="Cart" />
                 </LinearLayout>
 
+                <!-- News -->
                 <LinearLayout
                     android:id="@+id/newsLayout"
                     android:layout_width="0dp"
@@ -239,4 +260,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+</RelativeLayout>

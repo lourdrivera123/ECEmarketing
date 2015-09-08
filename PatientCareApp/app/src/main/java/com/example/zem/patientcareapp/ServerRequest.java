@@ -49,10 +49,6 @@ public class ServerRequest {
         isSuccessful = false;
 
         if (helpers.isNetworkAvailable(activity)) {
-            if (pDialog != null) {
-//                pDialog.setMessage("Please wait while we save your information...");
-//                pDialog.show();
-            }
             CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {

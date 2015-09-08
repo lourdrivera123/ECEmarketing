@@ -45,10 +45,7 @@ import java.util.HashMap;
 public class Helpers implements View.OnCreateContextMenuListener {
 
     RequestQueue queue;
-    boolean connection;
     Context contextc;
-    Dialog presDialog;
-    String imageFileUri;
 
     public Helpers() {
 
@@ -60,40 +57,6 @@ public class Helpers implements View.OnCreateContextMenuListener {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
-    public void hasActiveInternetConnection(Context context) {
-        contextc = context;
-        queue = Volley.newRequestQueue(contextc);
-
-        if (isNetworkAvailable(context)) {
-
-            StringRequest website_request = new StringRequest(Request.Method.GET, "http://vinzry.0fees.us", new Response.Listener<String>() {
-
-                @Override
-                public void onResponse(String response) {
-                    System.out.println("internet status: there is internet connection");
-                    System.out.println("response internet status: " + response + "");
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("internet status", "no internet connection");
-                    AlertDialog alertDialog = new AlertDialog.Builder(contextc).create();
-                    alertDialog.setTitle("Alert");
-                    alertDialog.setMessage("Alert message to be shown");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
-                }
-            });
-            queue.add(website_request);
-        }
-    }
-
 
     /* Returns db row column value */
     public static String curGetStr(Cursor cursor, String columnName) {
@@ -139,8 +102,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
-    public String get_url(String request){
-        return Constants.GET_REQUEST_URL+request;
+    public String get_url(String request) {
+        return Constants.GET_REQUEST_URL + request;
     }
 
     public String md5(final String s) {
@@ -191,7 +154,6 @@ public class Helpers implements View.OnCreateContextMenuListener {
         }
     }
 
-
     public HashMap<GridView, Dialog> showPrescriptionDialog(Context context) {
         // Prepare grid view
         GridView gridView = new GridView(context);
@@ -219,17 +181,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
             builder.setCanceledOnTouchOutside(true);
             builder.show();
 
-        /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println("SELECTED: position: "+position+" id: "+id);
-                builder.dismiss();
-            }
-        });*/
-
             map.put(gridView, builder);
         }
-
         return map;
     }
 
@@ -256,8 +209,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
 //        image_url = patient.getPhoto();
         //caching and displaying the image
         String image_url_local = "";
-        if(!image_url.equals("")){
-            image_url_local = Constants.UPLOAD_PATH_URL+"user_"+SidebarActivity.getUserID()+"/"+image_url;
+        if (!image_url.equals("")) {
+            image_url_local = Constants.UPLOAD_PATH_URL + "user_" + SidebarActivity.getUserID() + "/" + image_url;
         }
 
         DisplayImageOptions options;
@@ -299,8 +252,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
                 });
     }
 
-    public void cacheImageOnly(String url, int user_id){
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(Constants.UPLOAD_PATH_URL + "user_" + user_id + "/"+url, new SimpleImageLoadingListener() {
+    public void cacheImageOnly(String url, int user_id) {
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(Constants.UPLOAD_PATH_URL + "user_" + user_id + "/" + url, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view,
                                           Bitmap loadedImage) {

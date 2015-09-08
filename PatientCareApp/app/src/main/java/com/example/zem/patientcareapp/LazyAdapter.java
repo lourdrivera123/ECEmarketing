@@ -258,9 +258,8 @@ public class LazyAdapter extends BaseAdapter {
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
-                                    Log.d("Error", "asdasda ");
-                                    Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
-
+                                    System.out.print("src: <LazyAdapter - product_lists>: " + error.toString());
+                                    Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                 }
                             });
 
