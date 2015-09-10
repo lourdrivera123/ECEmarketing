@@ -295,8 +295,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at";
 
-    public static String doctors_string_xml = "";
-
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -460,6 +458,7 @@ public class DbHelper extends SQLiteOpenHelper {
         insertTableNamesToUpdates(TBL_PATIENT_RECORDS, db);
         insertTableNamesToUpdates(TBL_TREATMENTS, db);
         insertTableNamesToUpdates(TBL_CLINICS, db);
+        insertTableNamesToUpdates(TBL_PATIENT_PRESCRIPTIONS, db);
     }
 
     @Override
@@ -693,6 +692,27 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.close();
         return row > 0;
+    }
+
+    public boolean savePrescription(JSONObject object) {
+        long rowID = 0;
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        try {
+            values.put(PRESCRIPTIONS_SERVER_ID, object.getInt("id"));
+            values.put(PRESCRIPTIONS_APPROVED, object.getInt("is_approved"));
+            values.put(PRESCRIPTIONS_PATIENT_ID, object.getInt("patient_id"));
+            values.put(CREATED_AT, object.getString("created_at"));
+            values.put(PRESCRIPTIONS_FILENAME, object.getString("filename"));
+
+            rowID = db.insert(TBL_PATIENT_PRESCRIPTIONS, null, values);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        db.close();
+        return rowID > 0;
     }
 
     public boolean saveClinicDoctor(ClinicDoctor cd, String request) {
@@ -1301,7 +1321,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         String additionalWhere, sql;
         additionalWhere = "";
-        if( onlyApprovedItems ){
+        if (onlyApprovedItems) {
             additionalWhere = " and b.is_approved=1";
         }
 
@@ -1310,7 +1330,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where " +
                 "b.patient_id=" + this.getCurrentLoggedInPatient().getServerID() + additionalWhere;
 
-        System.out.println("basket sql: "+sql);
+        System.out.println("basket sql: " + sql);
 
         SQLiteDatabase db = getWritableDatabase();
         Cursor cur = db.rawQuery(sql, null);
@@ -1686,13 +1706,12 @@ public class DbHelper extends SQLiteOpenHelper {
                 if (cursor.getColumnName(i) != null) {
                     try {
                         if (cursor.getString(i) != null) {
-                            System.out.print("json array of all doctors: " + cursor.getString(i));
                             rowObject.put(cursor.getColumnName(i), cursor.getString(i));
                         } else {
                             rowObject.put(cursor.getColumnName(i), "");
                         }
                     } catch (Exception e) {
-                        System.out.print("error in doctors: " + e.getMessage());
+                        System.out.print("src: <DbHelper - getAllJSONArrayFrom>: " + e.toString());
                     }
                 }
             }
@@ -1886,7 +1905,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return deletedPrescriptionID > 0;
     }
 
-    public boolean updatePatientImage(String patient_image, int id){
+    public boolean updatePatientImage(String patient_image, int id) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 

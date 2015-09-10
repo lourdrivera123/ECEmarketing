@@ -95,9 +95,7 @@ public class SidebarActivity extends FragmentActivity {
 
         // adding nav drawer items to array
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], 0));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(5, 0), true, "50+"));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], 0));
-
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], 0));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -239,9 +237,6 @@ public class SidebarActivity extends FragmentActivity {
                 fragment = new HomeTileActivityClone();
                 break;
             case 1:
-                fragment = new MessagesFragment();
-                break;
-            case 2:
                 fragment = new ReferralsFragment();
                 break;
 

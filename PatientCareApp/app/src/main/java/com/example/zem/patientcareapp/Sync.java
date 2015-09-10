@@ -155,6 +155,11 @@ public class Sync {
 
                                 } else
                                     System.out.println("ClinicDoctor FAILED TO SAVE. <source: Sync.java>");
+                            } else if (tableName.equals("patient_prescriptions")) {
+                                if (dbHelper.savePrescription(json_object)) {
+
+                                } else
+                                    System.out.print("patient_prescriptions FAILED TO SAVE <src: Sync.java>");
                             }
                         }
                     }

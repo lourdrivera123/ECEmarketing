@@ -21,6 +21,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 
 import org.json.JSONArray;
@@ -126,14 +129,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Log.d("ifsuccess", response + "");
-
                             try {
                                 int success = response.getInt("success");
 
                                 if (success == 1) {
                                     patient_json_array_mysql = response.getJSONArray("patient");
-
                                     JSONArray checked_json_array = sync.checkWhatToInsert(patient_json_array_mysql, dbHelper.getAllJSONArrayFrom("patients"), "patient_id");
 
                                     if (checked_json_array.length() > 0) {
@@ -141,21 +141,35 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                                         Patient syncedPatient = sync.setPatient(patient_json_object_mysql); //sync.setPatient here.
                                         dbHelper.savePatient(patient_json_object_mysql, syncedPatient, "insert"); //then save on db
-                                    }
-                                    if (dbHelper.LoginUser(uname, password)) {
-                                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                                        editor.putString(name, uname);
-                                        editor.putString(pass, helpers.md5(password));
-                                        editor.commit();
 
-                                        String patient_image_name = patient_json_array_mysql.getJSONObject(0).getString("photo");
-                                        if (!patient_image_name.equals(""))
-                                            helpers.cacheImageOnly(patient_image_name, patient_json_array_mysql.getJSONObject(0).getInt("id"));
+                                        if (dbHelper.LoginUser(uname, password)) {
+                                            //request for patient_prescriptions
+                                            GetRequest.getJSONobj(getBaseContext(), "get_prescriptions&patient_id=" + syncedPatient.getServerID(), "patient_prescriptions", "prescriptions_id", new RespondListener<JSONObject>() {
+                                                @Override
+                                                public void getResult(JSONObject response) {
+                                                    Log.d("response <MainActivity - prescriptions request >", response + "");
+                                                }
+                                            }, new ErrorListener<VolleyError>() {
+                                                public void getError(VolleyError error) {
+                                                    Log.d("Error", error + "");
+                                                    Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
 
-                                        startActivity(new Intent(getBaseContext(), SidebarActivity.class));
-                                    } else {
-                                        Toast.makeText(MainActivity.this, "Invalid Username of Password", Toast.LENGTH_SHORT).show();
-                                        System.out.print("error on dbHelper.loginUser <source: MainActivity>");
+                                            SharedPreferences.Editor editor = sharedpreferences.edit();
+                                            editor.putString(name, uname);
+                                            editor.putString(pass, helpers.md5(password));
+                                            editor.commit();
+
+                                            String patient_image_name = patient_json_array_mysql.getJSONObject(0).getString("photo");
+                                            if (!patient_image_name.equals(""))
+                                                helpers.cacheImageOnly(patient_image_name, patient_json_array_mysql.getJSONObject(0).getInt("id"));
+
+                                            startActivity(new Intent(getBaseContext(), SidebarActivity.class));
+                                        } else {
+                                            Toast.makeText(MainActivity.this, "Invalid Username of Password", Toast.LENGTH_SHORT).show();
+                                            System.out.print("error on dbHelper.loginUser <source: MainActivity>");
+                                        }
                                     }
                                 } else
                                     Toast.makeText(MainActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
@@ -190,7 +204,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         params.put("password", patient.getPassword());
         return params;
     }
-
 
     public static void setCustomActionBar(ActionBar actionbar) {
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));

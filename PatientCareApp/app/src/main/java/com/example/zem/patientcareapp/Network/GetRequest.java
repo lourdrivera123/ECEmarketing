@@ -27,7 +27,6 @@ public class GetRequest {
         Helpers helpers;
         final DbHelper dbHelper;
 
-
         queue = VolleySingleton.getInstance().getRequestQueue();
         helpers = new Helpers();
         dbHelper = new DbHelper(c);
@@ -55,6 +54,4 @@ public class GetRequest {
         });
         queue.add(doctor_request);
     }
-
-
 }

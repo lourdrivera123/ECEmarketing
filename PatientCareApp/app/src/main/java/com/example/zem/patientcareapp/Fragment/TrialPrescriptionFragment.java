@@ -37,7 +37,6 @@ import com.example.zem.patientcareapp.Config;
 import com.example.zem.patientcareapp.Constants;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Helpers;
-import com.example.zem.patientcareapp.HomeTileActivityClone;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
@@ -166,14 +165,20 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                         @Override
                         public void getResult(JSONObject response) {
                             Log.d("response using interface <TrialPrescriptionFragment.java>", response + "");
-                            boolean responseFromServer = serverRequest.getResponse();
-                            if (responseFromServer) {
-                                if (dbhelper.deletePrescriptionByServerID(serverID)) {
-                                    arrayOfPrescriptions = refreshPrescriptionList();
-                                    gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
-                                } else {
-                                    Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                            try {
+                                int success = response.getInt("success");
+
+                                if (success == 1) {
+                                    if (dbhelper.deletePrescriptionByServerID(serverID)) {
+                                        arrayOfPrescriptions = refreshPrescriptionList();
+                                        gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
+                                    } else {
+                                        Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
+                            } catch (Exception e) {
+                                System.out.print("src: <TrialPrescriptionFragment>");
+                                Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
                             }
                             pdialog.dismiss();
                         }
@@ -422,7 +427,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             progressBar.setTag(position);
 
             com.nostra13.universalimageloader.core.ImageLoader.getInstance()
-                    .displayImage(Constants.UPLOAD_PATH_URL + "user_" + SidebarActivity.getUserID() + "/"+image_urls[position], imageView, options, new SimpleImageLoadingListener() {
+                    .displayImage(Constants.UPLOAD_PATH_URL + "user_" + SidebarActivity.getUserID() + "/" + image_urls[position], imageView, options, new SimpleImageLoadingListener() {
                         @Override
                         public void onLoadingStarted(String imageUri, View view) {
                             progressBar.setProgress(0);

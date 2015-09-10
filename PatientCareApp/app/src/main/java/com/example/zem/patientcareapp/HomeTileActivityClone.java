@@ -35,7 +35,6 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
     ServerRequest serverRequest;
 
     static int patientID;
-    public boolean notification = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

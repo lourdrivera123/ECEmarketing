@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +30,6 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.paypal.android.sdk.payments.PayPalPayment;
 
 import org.json.JSONObject;
 
@@ -118,22 +116,27 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                             @Override
                             public void getResult(JSONObject response) {
                                 System.out.print("response using interface <ViewPagerActivity.java>" + response);
-                                boolean responseFromServer = serverRequest.getResponse();
 
-                                if (responseFromServer) {
-                                    if (dbhelper.deletePrescriptionByServerID(serverID)) {
-                                        pagerAdapter.removeView(viewPager, selectedPosition);
-                                        pdialog.dismiss();
-                                    } else {
-                                        Toast.makeText(getBaseContext(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                try {
+                                    int success = response.getInt("success");
+
+                                    if (success == 1) {
+                                        if (dbhelper.deletePrescriptionByServerID(serverID)) {
+                                            pagerAdapter.removeView(viewPager, selectedPosition);
+                                            pdialog.dismiss();
+                                        } else {
+                                            Toast.makeText(getBaseContext(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
+                                } catch (Exception e) {
+                                    System.out.print("src: <ViewPagerActivity>");
+                                    Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }, new ErrorListener<VolleyError>() {
                             public void getError(VolleyError error) {
-                                Log.d("Error", "asdasda ");
+                                System.out.print("src <ViewPagerActivity>: " + error.toString());
                                 Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
-
                             }
                         });
                     }
@@ -188,7 +191,7 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
             ImageView imageView = (ImageView) v.findViewById(R.id.imgDisplay);
             final ProgressBar spinner = (ProgressBar) v.findViewById(R.id.loading);
 
-            com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(Constants.UPLOAD_PATH_URL + "user_" + SidebarActivity.getUserID() + "/"+image_urls[position], imageView, options, new SimpleImageLoadingListener() {
+            com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(Constants.UPLOAD_PATH_URL + "user_" + SidebarActivity.getUserID() + "/" + image_urls[position], imageView, options, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
                     spinner.setVisibility(View.VISIBLE);

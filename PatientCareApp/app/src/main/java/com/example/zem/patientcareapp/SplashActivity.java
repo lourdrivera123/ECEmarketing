@@ -60,7 +60,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -73,7 +73,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -86,7 +86,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -99,7 +99,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -112,7 +112,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -125,7 +125,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -138,7 +138,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -151,7 +151,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -164,7 +164,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -177,7 +177,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -190,7 +190,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -203,7 +203,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -216,7 +216,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -229,7 +229,7 @@ public class SplashActivity extends Activity {
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -240,7 +240,7 @@ public class SplashActivity extends Activity {
                 settings.edit().putBoolean("my_first_time", false).commit();
             } else {
                 Log.d("<SplashActivity>", "no internet");
-                Toast.makeText(this, "You must have Internet to be able to use the App properly", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "You must have Internet to be able to use the App properly", Toast.LENGTH_SHORT).show();
             }
             // record the fact that the app has been started at least once
         } else {
