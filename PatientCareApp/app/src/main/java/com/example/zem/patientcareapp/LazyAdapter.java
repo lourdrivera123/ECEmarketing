@@ -2,10 +2,12 @@ package com.example.zem.patientcareapp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -317,7 +319,20 @@ public class LazyAdapter extends BaseAdapter {
                                     });
                                 } else {
                                     pdialog.dismiss();
-                                    Toast.makeText(activity, "Please upload prescription", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(activity, "Please upload prescription", Toast.LENGTH_SHORT).show();
+                                    AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(activity);
+                                    confirmationDialog.setTitle("Attention!");
+                                    confirmationDialog.setMessage("This product requires you to upload a prescription, do you wish to continue ?");
+                                    confirmationDialog.setNegativeButton("No", null);
+                                    confirmationDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent mastertab_activity_intent = new Intent(activity, MasterTabActivity.class);
+                                            mastertab_activity_intent.putExtra("selected", 2);
+                                            activity.startActivity(mastertab_activity_intent);
+                                        }
+                                    });
+                                    confirmationDialog.show();
                                 }
                             } else {
                                 serverRequest.setErrorMessage("Sorry, we can't update your cart this time.");
