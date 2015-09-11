@@ -94,15 +94,15 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
             contact_number = (TextView) v.findViewById(R.id.contact_number);
             String firstLine, secondLine, building = "", barangay = "";
 
-            if (!hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ADDRESSS_UNIT_BUILDING_NO).equals(""))
-                building = "#" + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ADDRESSS_UNIT_BUILDING_NO);
-            if (!hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ADDRESS_BARANGAY).equals(""))
-                barangay = ", " + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ADDRESS_BARANGAY);
+            if (!hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_BUILDING).equals(""))
+                building = "#" + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_BUILDING);
+            if (!hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_BARANGAY).equals(""))
+                barangay = ", " + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_BARANGAY);
 
-            firstLine = (building + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ADDRESS_STREET) + barangay).trim();
-            secondLine = hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ADDRESS_CITY_MUNICIPALITY) +
-                    ", " + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ADDRESS_REGION) +
-                    ", Philippines, " + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ADDRESS_ZIP);
+            firstLine = (building + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_STREET) + barangay).trim();
+            secondLine = hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_CITY) +
+                    ", " + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_REGION) +
+                    ", Philippines, " + hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_ZIP);
 
             clinic_name.setText(hashClinicsByDoctorID.get(position).get(dbHelper.CLINIC_NAME));
             clinic_address_first_line.setText(firstLine);
