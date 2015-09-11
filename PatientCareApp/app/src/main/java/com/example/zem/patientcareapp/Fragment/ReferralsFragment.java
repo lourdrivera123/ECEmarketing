@@ -1,5 +1,6 @@
 package com.example.zem.patientcareapp.Fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -50,6 +51,8 @@ public class ReferralsFragment extends Fragment implements TextWatcher, View.OnC
     ReferralAdapter adapter;
     Patient patient;
     DbHelper db;
+
+    ProgressDialog dialog;
     View root;
 
     @Override
@@ -66,6 +69,9 @@ public class ReferralsFragment extends Fragment implements TextWatcher, View.OnC
         hashOfReferrals = new ArrayList();
         arrayOfReferrals = new ArrayList();
         tempHashOfReferrals = new ArrayList();
+
+        dialog = new ProgressDialog(getActivity());
+        dialog.setMessage("Loading...");
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_referrals_by_user&referred_by=" + patient.getReferral_id(), new RespondListener<JSONObject>() {
             @Override
@@ -109,6 +115,7 @@ public class ReferralsFragment extends Fragment implements TextWatcher, View.OnC
                 Toast.makeText(getActivity(), "Couldn't refresh list. Plealise check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
+        dialog.dismiss();
 
         listOfReferrals.setAdapter(adapter);
         searchReferral.addTextChangedListener(this);

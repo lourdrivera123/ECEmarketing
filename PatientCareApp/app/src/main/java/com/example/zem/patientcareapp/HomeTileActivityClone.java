@@ -1,5 +1,6 @@
 package com.example.zem.patientcareapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,10 +36,13 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
     ServerRequest serverRequest;
 
     static int patientID;
+    Context context;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.home_tile_layout, container, false);
+
+        context = getActivity();
 
         profileLayout = (LinearLayout) rootView.findViewById(R.id.profileLayout);
         patientHistoryLayout = (LinearLayout) rootView.findViewById(R.id.patientHistoryLayout);
@@ -98,7 +102,7 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
             @Override
             public void getError(VolleyError error) {
                 Log.d("Error in HomeTileActivityClone", error + "");
-                Toast.makeText(getActivity(), "Plealise check your Internet connection", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
         super.onResume();
