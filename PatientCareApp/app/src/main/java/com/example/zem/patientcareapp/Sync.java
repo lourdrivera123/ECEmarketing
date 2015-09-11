@@ -420,13 +420,12 @@ public class Sync {
             clinic.setName(json.getString("name"));
             clinic.setClinicsId(json.getInt("id"));
             clinic.setContactNumber(json.getString("contact_no"));
-            clinic.setAddressUnitBuildingNo(json.getString("address_unit_building_no"));
-            clinic.setAddressStreet(json.getString("address_street"));
-            clinic.setAddressBarangay(json.getString("address_barangay"));
-            clinic.setAddressCityMunicipality(json.getString("address_city_municipality"));
-            clinic.setAddressProvince(json.getString("address_province"));
-            clinic.setAddressRegion(json.getString("address_region"));
-            clinic.setAddressZip(json.getString("address_zip"));
+            clinic.setFullAddress(json.getString(DbHelper.CLINIC_UNIT_NO), json.getString(DbHelper.CLINIC_BUILDING),
+                    json.getString(DbHelper.CLINIC_LOT_NO), json.getString(DbHelper.CLINIC_BLOCK_NO), json.getString(DbHelper.CLINIC_PHASE_NO),
+                    json.getString(DbHelper.CLINIC_HOUSE_NO), json.getString(DbHelper.CLINIC_STREET),
+                    json.getString(DbHelper.CLINIC_BARANGAY), json.getString(DbHelper.CLINIC_CITY),
+                    json.getString(DbHelper.CLINIC_PROVINCE), json.getString(DbHelper.CLINIC_REGION),
+                    json.getString(DbHelper.CLINIC_ZIP));
             clinic.setCreatedAt(json.getString("created_at"));
             clinic.setUpdatedAt(json.getString("updated_at"));
             clinic.setDeletedAt(json.getString("deleted_at"));

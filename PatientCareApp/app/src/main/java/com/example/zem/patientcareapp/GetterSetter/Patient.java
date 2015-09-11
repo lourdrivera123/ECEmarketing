@@ -44,25 +44,6 @@ public class Patient implements Serializable {
         return id;
     }
 
-    public int getUnit_floor_room_no() {
-        return unit_floor_room_no;
-    }
-
-    public String getBuilding() {
-        return building;
-    }
-
-    public int getLot_no() {
-        return lot_no;
-    }
-
-    public int getBlock_no() {
-        return block_no;
-    }
-
-    public int getPhase_no() {
-        return phase_no;
-    }
 
     public void setFullname(String first_name, String middle_name, String last_name) {
         this.setFname(first_name);
@@ -252,6 +233,47 @@ public class Patient implements Serializable {
     public String getWeight() {
         return weight;
     }
+    public String getMobile_no() {
+        return cell_no;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public String getReferral_id() {
+        return referral_id;
+    }
+
+    public String getReferred_by() {
+        return referred_by;
+    }
+    //address
+
+    public int getUnit_floor_room_no() {
+        return unit_floor_room_no;
+    }
+
+    public String getBuilding() {
+        return building;
+    }
+
+    public int getLot_no() {
+        return lot_no;
+    }
+
+    public int getBlock_no() {
+        return block_no;
+    }
+
+    public int getPhase_no() {
+        return phase_no;
+    }
+
 
     public String getAddress_barangay() {
         return address_barangay;
@@ -277,23 +299,4 @@ public class Patient implements Serializable {
         return address_zip;
     }
 
-    public String getMobile_no() {
-        return cell_no;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public String getReferral_id() {
-        return referral_id;
-    }
-
-    public String getReferred_by() {
-        return referred_by;
-    }
 }

@@ -185,13 +185,18 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String TBL_CLINICS = "clinics",
             CLINIC_NAME = "name",
             CLINIC_CONTACT_NO = "contact_no",
-            CLINIC_ADDRESSS_UNIT_BUILDING_NO = "address_unit_building_no",
-            CLINIC_ADDRESS_STREET = "address_street",
-            CLINIC_ADDRESS_BARANGAY = "address_barangay",
-            CLINIC_ADDRESS_CITY_MUNICIPALITY = "address_city_municipality",
-            CLINIC_ADDRESS_PROVINCE = "address_province",
-            CLINIC_ADDRESS_REGION = "address_region",
-            CLINIC_ADDRESS_ZIP = "address_zip",
+            CLINIC_UNIT_NO = "unit_floor_room_no",
+            CLINIC_BUILDING = "building",
+            CLINIC_LOT_NO = "lot_no",
+            CLINIC_BLOCK_NO = "block_no",
+            CLINIC_PHASE_NO = "phase_no",
+            CLINIC_HOUSE_NO = "address_house_no",
+            CLINIC_STREET = "address_street",
+            CLINIC_BARANGAY = "address_barangay",
+            CLINIC_CITY = "address_city_municipality",
+            CLINIC_PROVINCE = "address_province",
+            CLINIC_REGION = "address_region",
+            CLINIC_ZIP = "address_zip",
             CLINICS_ID = "id",
             SERVER_CLINICS_ID = "clinics_id";
 
@@ -370,10 +375,10 @@ public class DbHelper extends SQLiteOpenHelper {
                 TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "clinics"
-        String sql_create_clinics_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT," +
-                        " %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_CLINICS, CLINICS_ID, SERVER_CLINICS_ID, CLINIC_NAME, CLINIC_CONTACT_NO, CLINIC_ADDRESSS_UNIT_BUILDING_NO, CLINIC_ADDRESS_STREET, CLINIC_ADDRESS_BARANGAY, CLINIC_ADDRESS_CITY_MUNICIPALITY,
-                CLINIC_ADDRESS_PROVINCE, CLINIC_ADDRESS_REGION, CLINIC_ADDRESS_ZIP, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_clinics_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT," +
+                        " %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT  )",
+                TBL_CLINICS, CLINICS_ID, SERVER_CLINICS_ID, CLINIC_NAME, CLINIC_CONTACT_NO, CLINIC_UNIT_NO, CLINIC_BUILDING, CLINIC_LOT_NO, CLINIC_BLOCK_NO,
+                CLINIC_PHASE_NO, CLINIC_HOUSE_NO, CLINIC_STREET, CLINIC_BARANGAY, CLINIC_CITY, CLINIC_PROVINCE, CLINIC_REGION, CLINIC_ZIP, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "clinic_doctor"
         String sql_create_clinic_doctor_table = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INT )",
@@ -671,16 +676,25 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(SERVER_CLINICS_ID, clinic.getClinicsId());
         values.put(CLINIC_NAME, clinic.getName());
         values.put(CLINIC_CONTACT_NO, clinic.getContactNumber());
-        values.put(CLINIC_ADDRESSS_UNIT_BUILDING_NO, clinic.getAddressUnitBuildingNo());
-        values.put(CLINIC_ADDRESS_STREET, clinic.getAddressStreet());
-        values.put(CLINIC_ADDRESS_BARANGAY, clinic.getAddressBarangay());
-        values.put(CLINIC_ADDRESS_CITY_MUNICIPALITY, clinic.getAddressCityMunicipality());
-        values.put(CLINIC_ADDRESS_PROVINCE, clinic.getAddressProvince());
-        values.put(CLINIC_ADDRESS_REGION, clinic.getAddressRegion());
-        values.put(CLINIC_ADDRESS_ZIP, clinic.getAddressZip());
+        values.put(CLINIC_UNIT_NO, clinic.getUnit_floor_room_no());
+        values.put(CLINIC_BUILDING, clinic.getBuilding());
+        values.put(CLINIC_LOT_NO, clinic.getLot_no());
+        values.put(CLINIC_BLOCK_NO, clinic.getBlock_no());
+        values.put(CLINIC_PHASE_NO, clinic.getPhase_no());
+        values.put(CLINIC_HOUSE_NO, clinic.getAddress_house_no());
+        values.put(CLINIC_STREET, clinic.getAddress_street());
+        values.put(CLINIC_BARANGAY, clinic.getAddress_barangay());
+        values.put(CLINIC_CITY, clinic.getAddress_city_municipality());
+        values.put(CLINIC_PROVINCE, clinic.getAddress_province());
+        values.put(CLINIC_REGION, clinic.getAddress_region());
+        values.put(CLINIC_ZIP, clinic.getAddress_zip());
         values.put(CREATED_AT, clinic.getCreatedAt());
         values.put(UPDATED_AT, clinic.getUpdatedAt());
         values.put(DELETED_AT, clinic.getDeletedAt());
+
+        Log.d("nname in dbhelpr", clinic.getName());
+
+        Log.d("address_street in dbhelpr", clinic.getAddress_street());
 
         long row = 0;
 
@@ -1419,13 +1433,13 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(SERVER_CLINICS_ID, cur.getString(cur.getColumnIndex(SERVER_CLINICS_ID)));
             map.put(CLINIC_NAME, cur.getString(cur.getColumnIndex(CLINIC_NAME)));
             map.put(CLINIC_CONTACT_NO, cur.getString(cur.getColumnIndex(CLINIC_CONTACT_NO)));
-            map.put(CLINIC_ADDRESSS_UNIT_BUILDING_NO, cur.getString(cur.getColumnIndex(CLINIC_ADDRESSS_UNIT_BUILDING_NO)));
-            map.put(CLINIC_ADDRESS_STREET, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_STREET)));
-            map.put(CLINIC_ADDRESS_BARANGAY, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_BARANGAY)));
-            map.put(CLINIC_ADDRESS_CITY_MUNICIPALITY, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_CITY_MUNICIPALITY)));
-            map.put(CLINIC_ADDRESS_PROVINCE, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_PROVINCE)));
-            map.put(CLINIC_ADDRESS_REGION, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_REGION)));
-            map.put(CLINIC_ADDRESS_ZIP, cur.getString(cur.getColumnIndex(CLINIC_ADDRESS_ZIP)));
+            map.put(CLINIC_BUILDING, cur.getString(cur.getColumnIndex(CLINIC_BUILDING)));
+            map.put(CLINIC_STREET, cur.getString(cur.getColumnIndex(CLINIC_STREET)));
+            map.put(CLINIC_BARANGAY, cur.getString(cur.getColumnIndex(CLINIC_BARANGAY)));
+            map.put(CLINIC_CITY, cur.getString(cur.getColumnIndex(CLINIC_CITY)));
+            map.put(CLINIC_PROVINCE, cur.getString(cur.getColumnIndex(CLINIC_PROVINCE)));
+            map.put(CLINIC_REGION, cur.getString(cur.getColumnIndex(CLINIC_REGION)));
+            map.put(CLINIC_ZIP, cur.getString(cur.getColumnIndex(CLINIC_ZIP)));
             map.put(CD_CLINIC_SCHED, cur.getString(cur.getColumnIndex(CD_CLINIC_SCHED)));
             listOfClinics.add(map);
         }
