@@ -321,6 +321,8 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             hashMap.put("action", "delete");
                             hashMap.put("id", String.valueOf(row.get("basket_id")));
 
+//                            Log.d("is_approved id", );
+
                             final ProgressDialog pdialog = new ProgressDialog(getActivity());
                             pdialog.setCancelable(false);
                             pdialog.setMessage("Loading...");
