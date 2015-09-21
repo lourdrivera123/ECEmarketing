@@ -68,6 +68,9 @@
             android:name=".ReferralActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
+            android:name=".CheckoutActivity"
+            android:theme="@style/Theme.MyFancyTheme" />
+        <activity
             android:name=".PatientConsultationActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity android:name=".SplashActivity">
@@ -95,7 +98,7 @@
             android:name=".SidebarActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Holo.Light" />
-        <activity android:name=".HomeTileActivityClone" />
+        <activity android:name=".Fragment.HomeTileFragment" />
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"

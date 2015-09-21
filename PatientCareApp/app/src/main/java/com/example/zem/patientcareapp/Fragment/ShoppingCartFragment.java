@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.CheckoutActivity;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.Helpers;
@@ -53,17 +56,15 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     HashMap<String, String> row;
 
     public Double TotalAmount = 0.00, oldTotal = 0.00, newTotal = 0.00;
-
-    TextView p_description;
     int gbl_pos = 0, old_qty = 0, newQty = 0, basktQty;
 
-    TextView tv_amount, p_name, p_total, p_price;
+    TextView tv_amount, p_name, p_total, p_price, p_description, et_qty;
     public static TextView total_amount;
-    TextView et_qty;
     ListView lv_items;
     Button btnCheckout;
 
     View root_view;
+    Context context;
     RequestQueue queue;
 
     @SuppressLint("NewApi")
@@ -76,6 +77,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
         dbHelper = new DbHelper(getActivity());
         helper = new Helpers();
         serverRequest = new ServerRequest();
+        context = getActivity();
 
         btnCheckout = (Button) root_view.findViewById(R.id.btn_checkout_ready);
         lv_items = (ListView) rootView.findViewById(R.id.lv_items);
@@ -107,7 +109,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
                 System.out.print("error on <ShoppingCartFragment>: " + error.toString());
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -212,8 +214,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                         }
                     });
 
-                    //------------------------------------------------------------------------
-
                     // Setting all values in listview
                     p_name.setText(productName);
                     int num = basktQty / productQtyPerPacking;
@@ -280,20 +280,19 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
 
                                                     adapter.notifyDataSetChanged();
                                                 } else {
-                                                    Toast.makeText(getActivity(), "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                                 }
                                             } else {
                                                 Toast.makeText(getActivity(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
                                             }
-                                            pdialog.dismiss();
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         public void getError(VolleyError error) {
                                             Log.d("Error", error.toString());
-                                            Toast.makeText(getActivity(), "Couldn't update item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                            pdialog.dismiss();
+                                            Toast.makeText(context, "Couldn't update item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                         }
                                     });
+                                    pdialog.dismiss();
                                 } catch (Exception e) {
                                     System.out.println("BASKET ERROR: " + e.getMessage());
                                     Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
@@ -303,8 +302,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                         }
                     });
                     alert.show();
-
-                    return true;
+                    break;
 
                 case R.id.delete_context:
                     AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(getActivity());
@@ -351,7 +349,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                         Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
                                         System.out.print("src: <ShoppingCartFragment>");
                                     }
-                                    pdialog.dismiss();
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
@@ -359,16 +356,14 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     Toast.makeText(getActivity(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
                                 }
                             });
+                            pdialog.dismiss();
                         }
                     });
                     confirmationDialog.show();
-
-                    return true;
-                default:
-                    return super.onContextItemSelected(item);
+                    break;
             }
         }
-        return false;
+        return super.onContextItemSelected(item);
     }
 
     @SuppressLint("NewApi")
@@ -399,11 +394,10 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 checkout_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        Intent samppaypal = new Intent(getActivity(), samplepaypal.class);
-//                        startActivity(samppaypal);
+                        Intent intent = new Intent(getActivity(), CheckoutActivity.class);
+                        startActivity(intent);
                     }
                 });
-
                 break;
         }
     }

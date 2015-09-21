@@ -26,9 +26,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
-import com.example.zem.patientcareapp.Fragment.MessagesFragment;
+import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
-import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 
 /**
  * Created by Zem on 7/16/2015.
@@ -234,7 +233,7 @@ public class SidebarActivity extends FragmentActivity {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new HomeTileActivityClone();
+                fragment = new HomeTileFragment();
                 break;
             case 1:
                 fragment = new ReferralsFragment();

@@ -1,11 +1,7 @@
 package com.example.zem.patientcareapp.Fragment;
 
 import android.app.Dialog;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
