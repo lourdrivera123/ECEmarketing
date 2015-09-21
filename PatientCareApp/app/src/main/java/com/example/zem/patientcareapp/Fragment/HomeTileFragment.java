@@ -1,5 +1,6 @@
-package com.example.zem.patientcareapp;
+package com.example.zem.patientcareapp.Fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,16 +9,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.ServerRequest;
+import com.example.zem.patientcareapp.SidebarActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,15 +32,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class HomeTileActivityClone extends Fragment implements View.OnClickListener {
+public class HomeTileFragment extends Fragment implements View.OnClickListener {
     LinearLayout profileLayout, patientHistoryLayout, doctorsLayout, consultationLayout, productsLayout, cartLayout, promosLayout, newsLayout;
     RelativeLayout prescriptionLayout;
+    ImageView sideBar_overlay, quickSearch_overlay;
     TextView newNotif;
 
     ArrayList<Integer> arrayOfIDs;
 
-    static DbHelper dbHelper;
     ServerRequest serverRequest;
+    DbHelper db;
 
     static int patientID;
     Context context;
@@ -43,6 +51,8 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
         View rootView = inflater.inflate(R.layout.home_tile_layout, container, false);
 
         context = getActivity();
+        db = new DbHelper(context);
+        showOverLay();
 
         profileLayout = (LinearLayout) rootView.findViewById(R.id.profileLayout);
         patientHistoryLayout = (LinearLayout) rootView.findViewById(R.id.patientHistoryLayout);
@@ -182,6 +192,37 @@ public class HomeTileActivityClone extends Fragment implements View.OnClickListe
             case R.id.newsLayout:
                 intent.putExtra("selected", 8);
                 break;
+        }
+    }
+
+    private void showOverLay() {
+        if (db.checkOverlay(SidebarActivity.getUserID(), "HomeTile", "check")) {
+
+        } else {
+            final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
+            dialog.setContentView(R.layout.overlay_hometile);
+
+            sideBar_overlay = (ImageView) dialog.findViewById(R.id.sideBar_overlay);
+            quickSearch_overlay = (ImageView) dialog.findViewById(R.id.quickSearch_overlay);
+            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.overLayHometile);
+            layout.setAlpha((float) 0.8);
+
+            sideBar_overlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    sideBar_overlay.setVisibility(View.GONE);
+                    quickSearch_overlay.setVisibility(View.VISIBLE);
+                }
+            });
+
+            quickSearch_overlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (db.checkOverlay(SidebarActivity.getUserID(), "HomeTile", "insert"))
+                        dialog.dismiss();
+                }
+            });
+            dialog.show();
         }
     }
 }

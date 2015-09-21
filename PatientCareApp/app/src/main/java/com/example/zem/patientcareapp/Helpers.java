@@ -1,12 +1,10 @@
 package com.example.zem.patientcareapp;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,12 +20,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.adapter.ImageAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -43,9 +35,6 @@ import java.util.HashMap;
  * Created by User PC on 5/7/2015.
  */
 public class Helpers implements View.OnCreateContextMenuListener {
-
-    RequestQueue queue;
-    Context contextc;
 
     public Helpers() {
 
@@ -206,7 +195,6 @@ public class Helpers implements View.OnCreateContextMenuListener {
     }
 
     public void setImage(String image_url, final ProgressBar progressBar, ImageView image_holder) {
-//        image_url = patient.getPhoto();
         //caching and displaying the image
         String image_url_local = "";
         if (!image_url.equals("")) {

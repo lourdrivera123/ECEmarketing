@@ -262,6 +262,7 @@ public class LazyAdapter extends BaseAdapter {
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
+                                    pdialog.dismiss();
                                     System.out.print("src: <LazyAdapter - product_lists>: " + error.toString());
                                     Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                 }
@@ -302,11 +303,12 @@ public class LazyAdapter extends BaseAdapter {
                                             PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
                                                 public void getResult(JSONObject response) {
-                                                    Toast.makeText(activity, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
                                                     pdialog.dismiss();
+                                                    Toast.makeText(activity, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
                                                 }
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
+                                                    pdialog.dismiss();
                                                     Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
                                                 }
                                             });
@@ -342,13 +344,14 @@ public class LazyAdapter extends BaseAdapter {
                                 PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
                                     @Override
                                     public void getResult(JSONObject response) {
-                                        Toast.makeText(activity, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
                                         pdialog.dismiss();
+                                        Toast.makeText(activity, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
                                     }
                                 }, new ErrorListener<VolleyError>() {
                                     public void getError(VolleyError error) {
+                                        pdialog.dismiss();
                                         System.out.print("<LazyAdapter, product_lists>" + error.toString());
-                                        Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(activity, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }

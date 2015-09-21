@@ -1,6 +1,7 @@
 package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +11,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
-import com.example.zem.patientcareapp.Fragment.ShoppingCartFragment;
+import com.example.zem.patientcareapp.Fragment.ProductsFragment;
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
 
@@ -21,9 +25,12 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     private ViewPager viewPager;
     private ActionBar actionBar;
 
+    ImageView profileSetting_coachMark, swipeLeftRight;
+
     DbHelper dbHelper;
     Intent intent;
     int unselected = 0;
+    int pos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         actionBar = getActionBar();
         MainActivity.setCustomActionBar(actionBar);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        showOverLay();
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new MasterTabsAdapter(getSupportFragmentManager());
@@ -96,10 +104,13 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        if (tab.getPosition() == 6) {
-            new ShoppingCartFragment();
+    public void onTabSelected(final ActionBar.Tab tab, FragmentTransaction ft) {
+        pos = tab.getPosition();
+
+        if (pos == 5) {
+            ProductsFragment.showOverLay(this);
         }
+
         mAdapter.notifyDataSetChanged();
         viewPager.setCurrentItem(tab.getPosition());
     }
@@ -107,13 +118,60 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
         unselected = tab.getPosition();
-        new ShoppingCartFragment();
     }
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        if (tab.getPosition() == 6) {
-            new ShoppingCartFragment();
+    }
+
+    private void showOverLay() {
+        if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "MasterTabs", "check")) {
+
+        } else {
+            final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+            dialog.setContentView(R.layout.mastertabs_overlay);
+
+            profileSetting_coachMark = (ImageView) dialog.findViewById(R.id.profileSetting_coachMark);
+            swipeLeftRight = (ImageView) dialog.findViewById(R.id.swipeLeftRight);
+            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.masterTabsLayout);
+            layout.setAlpha((float) 0.8);
+
+            profileSetting_coachMark.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    profileSetting_coachMark.setVisibility(View.GONE);
+                    swipeLeftRight.setVisibility(View.VISIBLE);
+                }
+            });
+
+            swipeLeftRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "MasterTabs", "insert")) {
+                        if (pos == 5) {
+                            if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "Products", "check")) {
+
+                            } else {
+                                dialog.setContentView(R.layout.products_overlay);
+
+                                LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.productsLayout);
+                                layout.setAlpha((float) 0.8);
+
+                                layout.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "Products", "insert"))
+                                            dialog.dismiss();
+                                    }
+                                });
+                            }
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
+                }
+            });
+            dialog.show();
         }
     }
 }

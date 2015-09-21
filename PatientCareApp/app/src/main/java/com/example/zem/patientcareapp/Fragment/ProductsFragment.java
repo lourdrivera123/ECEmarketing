@@ -1,7 +1,7 @@
 package com.example.zem.patientcareapp.Fragment;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import com.example.zem.patientcareapp.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SelectedProductActivity;
+import com.example.zem.patientcareapp.SidebarActivity;
 
 import org.json.JSONObject;
 
@@ -43,13 +45,12 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     Spinner lv_categories;
     LazyAdapter adapter;
     ArrayAdapter category_list_adapter;
-    DbHelper dbHelper;
+    static DbHelper dbHelper;
     Helpers helpers;
     List<String> category_list;
     SwipeRefreshLayout refresh_products_list;
 
     RequestQueue queue;
-    ProgressDialog pDialog;
     View root_view;
     public static Map<String, HashMap<String, String>> productQuantity;
     public static ArrayList<HashMap<String, String>> products_items;
@@ -69,9 +70,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         queue = Volley.newRequestQueue(getActivity());
         helpers = new Helpers();
 
-        pDialog = new ProgressDialog(getActivity());
-        pDialog.setMessage("Loading...");
-
         products_items = dbHelper.getAllProducts();
 
         for (HashMap<String, String> map : products_items) {
@@ -88,7 +86,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         populateProductsListView(rootView, products_items);
         category_list = dbHelper.getAllProductCategoriesArray();
         populateListView(rootView, category_list);
-        pDialog.dismiss();
 
         return rootView;
     }
@@ -155,7 +152,8 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
                     ArrayList<HashMap<String, String>> list = dbHelper.getProductsBySubCategory(subCategory.getId());
 
-                    Toast.makeText(getActivity(), subCategoryName + " : " + subCategory.getName() + " : " + list.size(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), subCategoryName + " : " + list.size() + " item/s found", Toast.LENGTH_SHORT).show();
+
                     // Getting adapter by passing xml data ArrayList
                     if (list.size() > 0) {
                         products_items.clear();
@@ -203,5 +201,28 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                 Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public static void showOverLay(Context context) {
+        dbHelper = new DbHelper(context);
+
+        if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "Products", "check")) {
+
+        } else {
+            final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
+            dialog.setContentView(R.layout.products_overlay);
+
+            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.productsLayout);
+            layout.setAlpha((float) 0.8);
+
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "Products", "insert"))
+                        dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
     }
 }

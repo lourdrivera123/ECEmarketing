@@ -54,6 +54,7 @@ public class ReferralsFragment extends Fragment implements TextWatcher, View.OnC
 
     ProgressDialog dialog;
     View root;
+    Context context;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,9 +70,11 @@ public class ReferralsFragment extends Fragment implements TextWatcher, View.OnC
         hashOfReferrals = new ArrayList();
         arrayOfReferrals = new ArrayList();
         tempHashOfReferrals = new ArrayList();
+        context = getActivity();
 
         dialog = new ProgressDialog(getActivity());
-        dialog.setMessage("Loading...");
+        dialog.setMessage("Please wait...");
+        dialog.show();
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_referrals_by_user&referred_by=" + patient.getReferral_id(), new RespondListener<JSONObject>() {
             @Override
@@ -108,14 +111,15 @@ public class ReferralsFragment extends Fragment implements TextWatcher, View.OnC
                     Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
                     System.out.print("src: <ReferralsFragment>: " + e.toString());
                 }
+                dialog.dismiss();
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
+                dialog.dismiss();
                 Log.d("Error in ReferralsFragment", error + "");
-                Toast.makeText(getActivity(), "Couldn't refresh list. Plealise check your Internet connection", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Couldn't refresh list. Plealise check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
-        dialog.dismiss();
 
         listOfReferrals.setAdapter(adapter);
         searchReferral.addTextChangedListener(this);

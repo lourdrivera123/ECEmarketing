@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -96,21 +97,21 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     Drawable d;
 
     public static final String SIGNUP_REQUEST = "signup", EDIT_REQUEST = "edit";
+    String purpose = "", image_url = "", url;
     static String referredBy = "";
     public static int signup_int = 0, edit_int = 0;
     int check = 0, int_year, int_month, int_day, limit = 4, count = 0, unselected;
-
-    ProgressDialog pDialog;
+    long totalSize = 0;
 
     JSONObject patient_json_object_mysql = null;
     JSONArray patient_json_array_mysql = null;
     public static SharedPreferences sharedpreferences;
 
-    ProgressBar progressBar;
     private TextView txtPercentage;
+
+    ProgressBar progressBar;
+    ProgressDialog pDialog;
     Dialog upload_dialog;
-    long totalSize = 0;
-    String purpose = "", image_url = "", url;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -127,11 +128,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         ActionBar actionbar = getActionBar();
         MainActivity.setCustomActionBar(actionbar);
+        showOverLay();
 
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
 
         final Intent intent = getIntent();
-
         signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
@@ -144,7 +145,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         url = Constants.POST_URL;
 
         pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
+        pDialog.setMessage("Please wait...");
 
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -209,6 +210,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                     validateUserAccountInfo();
                                     if (!hasError3) {
                                         if (edit_int > 0) {
+                                            pDialog.show();
                                             editUser = dbHelper.getloginPatient(SidebarActivity.getUname());
 
                                             patient.setServerID(editUser.getServerID());
@@ -241,20 +243,20 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                     } else {
                                                         Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
                                                     }
+                                                    pDialog.dismiss();
                                                 }
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
-                                                    Log.d("volley error", error.toString());
+                                                    pDialog.dismiss();
+                                                    Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                                                    Log.d("src <EditTabsActivity>: ", error.toString());
                                                 }
                                             });
                                         } else {
                                             generateCode();
-                                            pDialog.setMessage("Remember: Patience is a Virtue. So please wait while we save your information");
                                             pDialog.show();
 
                                             HashMap<String, String> params = setParams("register");
-
-                                            Log.d("register params", params + "");
 
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
@@ -264,7 +266,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                         int success = response.getInt("success");
 
                                                         if (success == 2) {
-                                                            pDialog.dismiss();
                                                             Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
                                                         } else if (success == 1) {
                                                             patient_json_array_mysql = response.getJSONArray("patient");
@@ -277,22 +278,25 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                 editor.putString(MainActivity.name, patient.getUsername());
                                                                 editor.putString(MainActivity.pass, patient.getPassword());
                                                                 editor.commit();
-                                                                pDialog.dismiss();
 
                                                                 startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                                                 EditTabsActivity.this.finish();
-                                                            } else
+                                                            } else {
                                                                 Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                                            }
                                                         } else
                                                             Toast.makeText(EditTabsActivity.this, "Error occurred. Please try again later", Toast.LENGTH_SHORT).show();
                                                     } catch (JSONException e) {
-                                                        Log.d("error on catch", e + "");
+                                                        Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                                                        Log.d("src <EditTabsActivity - catch>: ", e + "");
                                                     }
-
+                                                    pDialog.dismiss();
                                                 }
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
-                                                    Log.d("volley error", error.toString());
+                                                    pDialog.dismiss();
+                                                    Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                                                    Log.d("src <EditTabsActivity>: ", error.toString());
                                                 }
                                             });
                                         }
@@ -845,5 +849,21 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
         finalCode = (finalLetter + finalNumber).trim();
         patient.setReferral_id(finalCode);
+    }
+
+    private void showOverLay() {
+        final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+        dialog.setContentView(R.layout.edittabs_overlay);
+
+        LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.editTabsLayout);
+        layout.setAlpha((float) 0.8);
+
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

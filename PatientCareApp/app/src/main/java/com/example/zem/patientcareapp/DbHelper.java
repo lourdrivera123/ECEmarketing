@@ -240,7 +240,6 @@ public class DbHelper extends SQLiteOpenHelper {
             DS_DOCTOR_ID = "doctor_id",
             DS_IS_ACTIVE = "is_active";
 
-
     // PROMOS TABLE
     public static final String TBL_PROMO = "promo",
             PROMO_ID = "id",
@@ -251,7 +250,6 @@ public class DbHelper extends SQLiteOpenHelper {
             PROMO_CREATED_AT = "created_at",
             PROMO_UPDATED_AT = "updated_at",
             PROMO_DELETED_AT = "deleted_at";
-
 
     // DISCOUNTS or FREE PRODUCTS PROMOTION TABLE
     public static final String TBL_DISCOUNTS_FREE_PRODUCTS = "discounts_free_products",
@@ -277,7 +275,6 @@ public class DbHelper extends SQLiteOpenHelper {
             FP_UPDATED_AT = "updated_at",
             FP_DELETED_AT = "deleted_at";
 
-
     // UPLOADS ON PRESCRIPTIONS
     public static final String TBL_PATIENT_PRESCRIPTIONS = "patient_prescriptions",
             PRESCRIPTIONS_ID = "id",
@@ -297,6 +294,13 @@ public class DbHelper extends SQLiteOpenHelper {
             CONSULT_IS_ALARMED = "isAlarm",
             CONSULT_TIME = "alarmedTime",
             CONSULT_IS_FINISHED = "finished";
+
+    //OVERLAY
+    public static final String TBL_OVERLAYS = "overlays",
+            OVERLAY_ID = "id",
+            OVERLAY_USERID = "userID",
+            OVERLAY_TITLE = "title",
+            OVERLAY_ISREAD = "isRead";
 
     public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at";
 
@@ -353,7 +357,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 PRODUCT_DESCRIPTION, PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PACKING, PRODUCT_QTY_PER_PACKING,
                 PRODUCT_SKU, PRODUCT_PHOTO, CREATED_AT, UPDATED_AT, DELETED_AT);
 
-
         // SQL TO CREATE TABLE "TBL_DOSAGE"
         String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_DOSAGE, DOSAGE_ID, SERVER_DOSAGE_ID, DOSAGE_PROD_ID, DOSAGE_NAME, CREATED_AT, UPDATED_AT);
@@ -399,7 +402,6 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_create_doctor_secretary_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
                 TBL_DOCTOR_SECRETARY, DS_DOCTOR_ID, DS_SECRETARY_ID, DS_IS_ACTIVE);
 
-
         // SQL to create table "promo"
         String sql_create_promo_table = String.format("CREATE TABLE %s( %s INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "%s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
@@ -429,6 +431,9 @@ public class DbHelper extends SQLiteOpenHelper {
                         "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)", TBL_PATIENT_CONSULTATIONS, CONSULT_ID, CONSULT_PATIENT_ID,
                 CONSULT_DOCTOR, CONSULT_CLINIC, CONSULT_DATE, CONSULT_PART_OF_DAY, CONSULT_IS_ALARMED, CONSULT_TIME, CONSULT_IS_FINISHED);
 
+        String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s INTEGER)",
+                TBL_OVERLAYS, OVERLAY_ID, OVERLAY_USERID, OVERLAY_TITLE, OVERLAY_ISREAD);
+
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_specialties);
         db.execSQL(sql_create_tbl_sub_specialties);
@@ -451,6 +456,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_free_products_table);
         db.execSQL(sql_create_prescriptions_upload);
         db.execSQL(sql_create_consultations);
+        db.execSQL(sql_overlay);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
         insertTableNamesToUpdates(TBL_SPECIALTIES, db);
@@ -1822,60 +1828,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
         return row > 0;
     }
-
-    public boolean updateProduct(Product product) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        System.out.println(dateFormat.format(date));
-
-        values.put(PRODUCT_NAME, product.getName());
-        values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
-        values.put(PRODUCT_DESCRIPTION, product.getDescription());
-        values.put(PRODUCT_PHOTO, product.getPhoto());
-        values.put(PRODUCT_PRICE, product.getPrice());
-        values.put(PRODUCT_UNIT, product.getUnit());
-
-        values.put(CREATED_AT, product.getCreatedAt());
-        values.put(UPDATED_AT, product.getUpdatedAt());
-
-        long rowID = db.update(TBL_PRODUCTS, values, PRODUCT_ID + "=" + product.getId(), null);
-        db.close();
-        return rowID > 0;
-    }
-
-    /* Updates product category */
-    public boolean updateProductCategory(ProductCategory category) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(PROD_CAT_NAME, category.getName());
-        values.put(CREATED_AT, category.getCreatedAt());
-        values.put(UPDATED_AT, category.getUpdatedAt());
-        values.put(DELETED_AT, category.getDeletedAt());
-
-        long rowID = db.update(TBL_PRODUCTS, values, PRODUCT_CATEGORIES_ID + "=" + category.getCategoryId(), null);
-        db.close();
-        return rowID > 0;
-    }
-
-    /* Updates product subcategory */
-    public boolean updateProductSubCategory(ProductSubCategory subCategory) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(PROD_CAT_NAME, subCategory.getName());
-        values.put(PROD_SUBCAT_CATEGORY_ID, subCategory.getCategoryId());
-        values.put(CREATED_AT, subCategory.getCreatedAt());
-        values.put(UPDATED_AT, subCategory.getUpdatedAt());
-        values.put(DELETED_AT, subCategory.getDeletedAt());
-
-        long rowID = db.update(TBL_PRODUCT_SUBCATEGORIES, values, PRODUCT_SUBCATEGORIES_ID + "=" + subCategory.getId(), null);
-        db.close();
-        return rowID > 0;
-    }
     ////////////////////////END OF UPDATE METHODS//////////////////////////////////
 
     /////////////////////////DELETE METHODS///////////////////////////////////////
@@ -1931,4 +1883,35 @@ public class DbHelper extends SQLiteOpenHelper {
         return row > 0;
     }
     ////////////////////////////END OF DELETE METHODS/////////////////////////////
+
+    ////////////////////////////CHECK METHODS////////////////////////////////////
+    public boolean checkOverlay(int userID, String title, String request) {
+        SQLiteDatabase db = getWritableDatabase();
+        long check = 0;
+
+        if (request.equals("check")) {
+            String sql = "SELECT * FROM " + TBL_OVERLAYS + " WHERE " + OVERLAY_TITLE + " = '" + title + "' AND " + OVERLAY_USERID + " = " + userID +
+                    " AND " + OVERLAY_ISREAD + " = 1";
+            Cursor cur = db.rawQuery(sql, null);
+
+            while (cur.moveToNext()) {
+                check += 1;
+            }
+
+            cur.close();
+        } else {
+            ContentValues val = new ContentValues();
+
+            val.put(OVERLAY_USERID, userID);
+            val.put(OVERLAY_TITLE, title);
+            val.put(OVERLAY_ISREAD, 1);
+
+            check = db.insert(TBL_OVERLAYS, null, val);
+        }
+
+        db.close();
+
+        return check > 0;
+    }
+    //////////////////////////END OF CHECK METHODS//////////////////////////////
 }

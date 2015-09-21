@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +39,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
     TextView prod_name, prod_generic, prod_unit, prod_price, qty_cart, prod_description;
     ImageButton minus_qty, add_qty;
     Button add_cart_btn;
-    ImageView prod_unit_type;
 
     Handler handler;
     DbHelper dbhelper;
@@ -79,7 +77,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         minus_qty = (ImageButton) findViewById(R.id.minus_qty);
         add_qty = (ImageButton) findViewById(R.id.add_qty);
         add_cart_btn = (Button) findViewById(R.id.add_cart_btn);
-        prod_unit_type = (ImageView) findViewById(R.id.prod_unit_type);
         prod_description = (TextView) findViewById(R.id.prod_description);
 
         minus_qty.setOnClickListener(this);
@@ -116,7 +113,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
 
             case R.id.go_to_cart:
                 Intent intent = new Intent(this, MasterTabActivity.class);
-                intent.putExtra("selected", 6);
+                intent.putExtra("selected", 7);
                 startActivity(intent);
                 break;
         }
