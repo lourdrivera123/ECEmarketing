@@ -27,6 +27,7 @@ import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,6 +54,7 @@ public class LazyAdapter extends BaseAdapter {
     public ImageLoader imageLoader;
     DbHelper dbHelper;
     Helpers helpers;
+    int basket_id = 0;
 
     int productQty, prescriptionId = 0;
 
