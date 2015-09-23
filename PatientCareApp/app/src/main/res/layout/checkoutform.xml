@@ -106,7 +106,7 @@
             android:layout_marginTop="@dimen/d10"
             android:background="@color/ColorPrimary"
             android:padding="3dp"
-            android:text="Select ECE branch :"
+            android:text="Select ECE branch to serve you:"
             android:textColor="@color/white"
             android:textStyle="bold" />
 

@@ -319,8 +319,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             hashMap.put("action", "delete");
                             hashMap.put("id", String.valueOf(row.get("basket_id")));
 
-//                            Log.d("is_approved id", );
-
                             final ProgressDialog pdialog = new ProgressDialog(getActivity());
                             pdialog.setCancelable(false);
                             pdialog.setMessage("Loading...");
@@ -373,33 +371,38 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_checkout_ready:
-                Dialog builder = new Dialog(getActivity());
-                builder.setTitle("Checkout");
-                builder.setContentView(R.layout.checkout_layout);
-                builder.show();
-
-                ArrayList<HashMap<String, String>> items;
-                items = dbHelper.getAllBasketItems(true);
-                LazyAdapter checkOutAdapter = new LazyAdapter(getActivity(), items, "ready_for_checkout_items");
-
                 double basketTotalAmount = 0;
 
                 for (HashMap<String, String> map : items) {
                     basketTotalAmount += (Double.parseDouble(map.get("quantity")) * Double.parseDouble(map.get("price")));
                 }
 
-                ListView lv_items = (ListView) builder.findViewById(R.id.lv_items);
-                lv_items.setAdapter(checkOutAdapter);
+                if (basketTotalAmount > 0) {
+                    Dialog builder = new Dialog(getActivity());
+                    builder.setTitle("Checkout");
+                    builder.setContentView(R.layout.checkout_layout);
+                    builder.show();
 
-                Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
-                checkout_btn.setText("\u20B1 " + basketTotalAmount);
-                checkout_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), CheckoutActivity.class);
-                        startActivity(intent);
-                    }
-                });
+                    ArrayList<HashMap<String, String>> items;
+                    items = dbHelper.getAllBasketItems(true);
+                    LazyAdapter checkOutAdapter = new LazyAdapter(getActivity(), items, "ready_for_checkout_items");
+
+                    ListView lv_items = (ListView) builder.findViewById(R.id.lv_items);
+                    lv_items.setAdapter(checkOutAdapter);
+
+                    Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
+                    checkout_btn.setText("\u20B1 " + basketTotalAmount);
+
+                    checkout_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), CheckoutActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                } else {
+                    Toast.makeText(getActivity(), "Your cart is empty", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
