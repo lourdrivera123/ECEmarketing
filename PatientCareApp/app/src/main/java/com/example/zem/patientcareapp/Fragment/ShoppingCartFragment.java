@@ -36,10 +36,13 @@ import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
+import com.example.zem.patientcareapp.SidebarActivity;
+import com.example.zem.patientcareapp.samplepaypal;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -56,7 +59,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     HashMap<String, String> row;
 
     public Double TotalAmount = 0.00, oldTotal = 0.00, newTotal = 0.00;
-    int gbl_pos = 0, old_qty = 0, newQty = 0, basktQty;
+    int gbl_pos = 0, old_qty = 0, newQty = 0, basktQty, billing_id = 0;
 
     TextView tv_amount, p_name, p_total, p_price, p_description, et_qty;
     public static TextView total_amount;
@@ -392,12 +395,38 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                 lv_items.setAdapter(checkOutAdapter);
 
                 Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
-                checkout_btn.setText("\u20B1 " + basketTotalAmount);
+//                DecimalFormat df = new DecimalFormat("#.00");
+                checkout_btn.setText("\u20B1 " + String.format( "%.2f", basketTotalAmount ));
                 checkout_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), CheckoutActivity.class);
-                        startActivity(intent);
+
+                        HashMap<String, String> map = new HashMap();
+                        map.put("request", "save_orders");
+                        map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
+
+                        PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
+                            @Override
+                            public void getResult(JSONObject response) {
+                                try {
+                                    billing_id = response.getInt("billing_id");
+                                    Toast.makeText(getActivity(), "Order has been saved", Toast.LENGTH_SHORT).show();
+                                    Log.d("notification", "order has been saved");
+                                    Intent intent = new Intent(getActivity(), samplepaypal.class);
+                                    intent.putExtra("billing_id", billing_id);
+                                    startActivity(intent);
+                                } catch (Exception e) {
+                                    System.out.print("src: <ShoppingCartFragment > " + e.toString());
+                                }
+                            }
+                        }, new ErrorListener<VolleyError>() {
+                            @Override
+                            public void getError(VolleyError error) {
+                                System.out.print("src: <HomeTileActivityClone>: " + error.toString());
+                                Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
                 });
                 break;
