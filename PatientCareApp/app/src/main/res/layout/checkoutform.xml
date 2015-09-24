@@ -22,7 +22,7 @@
             android:textColor="@color/white"
             android:textStyle="bold" />
 
-        <EditText
+        <TextView
             android:id="@+id/customerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,34 +30,21 @@
             android:hint="Firstname Lastname"
             android:textSize="13sp" />
 
-        <EditText
+        <TextView
             android:id="@+id/customerAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:gravity="top|left"
             android:hint="Complete Mailing Address"
-            android:inputType="textMultiLine"
-            android:lines="2"
-            android:maxLines="5"
-            android:minLines="2"
-            android:scrollbars="vertical"
             android:textSize="13sp" />
 
-        <EditText
+        <TextView
             android:id="@+id/customerContactNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:hint="Contact Number"
-            android:textSize="13sp" />
-
-        <EditText
-            android:id="@+id/customerEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d10"
-            android:hint="Email Address"
+            android:layout_marginTop="10dp"
+            android:hint="Contact Contact Number"
             android:textSize="13sp" />
 
         <TextView
@@ -70,35 +57,51 @@
             android:textColor="@color/white"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/recipientName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d10"
-            android:hint="Name of Recipient"
-            android:textSize="13sp" />
-
-        <EditText
-            android:id="@+id/recipientAddress"
+        <CheckBox
+            android:id="@+id/check"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:gravity="top|left"
-            android:hint="Complete Address of Recepient"
-            android:inputType="textMultiLine"
-            android:lines="2"
-            android:maxLines="5"
-            android:minLines="2"
-            android:scrollbars="vertical"
+            android:text="same recipient"
             android:textSize="13sp" />
 
-        <EditText
-            android:id="@+id/recipientContactNumber"
+        <LinearLayout
+            android:id="@+id/hideLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:hint="Contact Number"
-            android:textSize="13sp" />
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/recipientName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="Name of Recipient"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/recipientAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="top|left"
+                android:hint="Complete Address of Recepient"
+                android:inputType="textMultiLine"
+                android:lines="2"
+                android:maxLines="5"
+                android:minLines="2"
+                android:scrollbars="vertical"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/recipientContactNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="Contact Number"
+                android:textSize="13sp" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -106,7 +109,7 @@
             android:layout_marginTop="@dimen/d10"
             android:background="@color/ColorPrimary"
             android:padding="3dp"
-            android:text="Select ECE branch :"
+            android:text="Select ECE branch to serve you:"
             android:textColor="@color/white"
             android:textStyle="bold" />
 
@@ -114,13 +117,44 @@
             android:id="@+id/listOfECEBranches"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d10" />
+            android:layout_marginTop="5dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d10"
+            android:background="@color/ColorPrimary"
+            android:padding="3dp"
+            android:text="Delivery Options:"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <RadioButton
+                android:id="@+id/pickup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Pick-up"
+                android:textSize="13sp" />
+
+            <RadioButton
+                android:id="@+id/deliver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Deliver"
+                android:textSize="13sp" />
+        </RadioGroup>
 
         <Button
             android:id="@+id/proceed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d10"
+            android:layout_marginTop="20dp"
             android:background="@color/ColorPrimary"
             android:text="Proceed"
             android:textColor="@color/white" />

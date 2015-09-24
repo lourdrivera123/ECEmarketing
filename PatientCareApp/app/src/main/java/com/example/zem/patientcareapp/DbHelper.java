@@ -302,6 +302,19 @@ public class DbHelper extends SQLiteOpenHelper {
             OVERLAY_TITLE = "title",
             OVERLAY_ISREAD = "isRead";
 
+    //ORDERS TABLE
+    public static final String TBL_ORDERS = "orders",
+            ORDERS_ID = "id",
+            SERVER_ORDERS_ID = "serverID",
+            ORDERS_PATIENT_ID = "patient_id",
+            ORDERS_RECIPIENT_NAME = "recipient_name",
+            ORDERS_RECIPIENT_ADDRESS = "recipient_address",
+            ORDERS_RECIPIENT_NUMBER = "recipient_contactNumber",
+            ORDERS_DELIVERY_SCHED = "delivery_sched",
+            ORDERS_ECE_BRANCH = "ECE_branch",
+            ORDERS_MODE_OF_DELIVERY = "modeOfDelivery",
+            ORDERS_STATUS = "status";
+
     public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at";
 
     public DbHelper(Context context) {
@@ -434,6 +447,12 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s INTEGER)",
                 TBL_OVERLAYS, OVERLAY_ID, OVERLAY_USERID, OVERLAY_TITLE, OVERLAY_ISREAD);
 
+        String sql_create_orders = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT," +
+                        " %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_ORDERS, ORDERS_ID, SERVER_ORDERS_ID, ORDERS_PATIENT_ID, ORDERS_RECIPIENT_NAME, ORDERS_RECIPIENT_ADDRESS,
+                ORDERS_RECIPIENT_NUMBER, ORDERS_DELIVERY_SCHED, ORDERS_ECE_BRANCH, ORDERS_MODE_OF_DELIVERY, ORDERS_STATUS, CREATED_AT,
+                UPDATED_AT, DELETED_AT);
+
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_specialties);
         db.execSQL(sql_create_tbl_sub_specialties);
@@ -457,6 +476,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_prescriptions_upload);
         db.execSQL(sql_create_consultations);
         db.execSQL(sql_overlay);
+        db.execSQL(sql_create_orders);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
         insertTableNamesToUpdates(TBL_SPECIALTIES, db);
