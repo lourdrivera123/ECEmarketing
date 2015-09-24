@@ -22,6 +22,20 @@
         <item>Bangsamoro</item>
     </string-array>
 
+    <string-array name="ECEbranches">
+        <item>ECE - Bacolod</item>
+        <item>ECE - Cagayan de Oro</item>
+        <item>ECE - Cebu</item>
+        <item>ECE - Davao</item>
+        <item>ECE - General Santos</item>
+        <item>ECE - Iloilo</item>
+        <item>ECE - Naga</item>
+        <item>ECE - Pampanga</item>
+        <item>ECE - Quezon</item>
+        <item>ECE - Tacloban</item>
+        <item>ECE - Zamboanga</item>
+    </string-array>
+
     <string-array name="hometileIcons">
         <item>@mipmap/profile_tile</item>
         <item>@mipmap/history_tile</item>
