@@ -412,7 +412,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     billing_id = response.getInt("billing_id");
                                     Toast.makeText(getActivity(), "Order has been saved", Toast.LENGTH_SHORT).show();
                                     Log.d("notification", "order has been saved");
-                                    Intent intent = new Intent(getActivity(), samplepaypal.class);
+                                    Intent intent = new Intent(getActivity(), CheckoutActivity.class);
                                     intent.putExtra("billing_id", billing_id);
                                     startActivity(intent);
                                 } catch (Exception e) {
