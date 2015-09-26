@@ -376,59 +376,64 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_checkout_ready:
-                Dialog builder = new Dialog(getActivity());
-                builder.setTitle("Checkout");
-                builder.setContentView(R.layout.checkout_layout);
-                builder.show();
-
-                ArrayList<HashMap<String, String>> items;
-                items = dbHelper.getAllBasketItems(true);
-                LazyAdapter checkOutAdapter = new LazyAdapter(getActivity(), items, "ready_for_checkout_items");
-
                 double basketTotalAmount = 0;
 
                 for (HashMap<String, String> map : items) {
                     basketTotalAmount += (Double.parseDouble(map.get("quantity")) * Double.parseDouble(map.get("price")));
                 }
 
-                ListView lv_items = (ListView) builder.findViewById(R.id.lv_items);
-                lv_items.setAdapter(checkOutAdapter);
+                if (basketTotalAmount > 0) {
+                    Dialog builder = new Dialog(getActivity());
+                    builder.setTitle("Checkout");
+                    builder.setContentView(R.layout.checkout_layout);
+                    builder.show();
 
-                Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
+                    ArrayList<HashMap<String, String>> items;
+                    items = dbHelper.getAllBasketItems(true);
+                    LazyAdapter checkOutAdapter = new LazyAdapter(getActivity(), items, "ready_for_checkout_items");
+
+                    ListView lv_items = (ListView) builder.findViewById(R.id.lv_items);
+                    lv_items.setAdapter(checkOutAdapter);
+
+                    Button checkout_btn = (Button) builder.findViewById(R.id.button_checkout);
 //                DecimalFormat df = new DecimalFormat("#.00");
-                checkout_btn.setText("\u20B1 " + String.format( "%.2f", basketTotalAmount ));
-                checkout_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    checkout_btn.setText("\u20B1 " + String.format("%.2f", basketTotalAmount));
+                    checkout_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                        HashMap<String, String> map = new HashMap();
-                        map.put("request", "save_orders");
-                        map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
+                            HashMap<String, String> map = new HashMap();
+                            map.put("request", "save_orders");
+                            map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
 
-                        PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
-                            @Override
-                            public void getResult(JSONObject response) {
-                                try {
-                                    billing_id = response.getInt("billing_id");
-                                    Toast.makeText(getActivity(), "Order has been saved", Toast.LENGTH_SHORT).show();
-                                    Log.d("notification", "order has been saved");
-                                    Intent intent = new Intent(getActivity(), samplepaypal.class);
-                                    intent.putExtra("billing_id", billing_id);
-                                    startActivity(intent);
-                                } catch (Exception e) {
-                                    System.out.print("src: <ShoppingCartFragment > " + e.toString());
+                            PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
+                                @Override
+                                public void getResult(JSONObject response) {
+                                    try {
+                                        billing_id = response.getInt("billing_id");
+                                        Toast.makeText(getActivity(), "Order has been saved", Toast.LENGTH_SHORT).show();
+                                        Log.d("notification", "order has been saved");
+                                        Intent intent = new Intent(getActivity(), samplepaypal.class); //CheckoutActivity.class
+                                        intent.putExtra("billing_id", billing_id);
+                                        startActivity(intent);
+                                    } catch (Exception e) {
+                                        System.out.print("src: <ShoppingCartFragment > " + e.toString());
+                                    }
                                 }
-                            }
-                        }, new ErrorListener<VolleyError>() {
-                            @Override
-                            public void getError(VolleyError error) {
-                                System.out.print("src: <HomeTileActivityClone>: " + error.toString());
-                                Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                            }, new ErrorListener<VolleyError>() {
+                                @Override
+                                public void getError(VolleyError error) {
+                                    System.out.print("src: <HomeTileActivityClone>: " + error.toString());
+                                    Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
-                    }
-                });
+                        }
+                    });
+                } else {
+                    Toast.makeText(getActivity(), "Shopping cart is empty", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
         }
     }
