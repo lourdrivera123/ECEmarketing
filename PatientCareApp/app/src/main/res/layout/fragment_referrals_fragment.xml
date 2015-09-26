@@ -8,17 +8,11 @@
     android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/searchReferral"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/d20"
-        android:hint="Search..." />
-
-    <ListView
+    <ExpandableListView
         android:id="@+id/listOfReferrals"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:cacheColorHint="#00000000" />
 
     <LinearLayout
         android:id="@+id/noReferralsLayout"

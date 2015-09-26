@@ -28,6 +28,7 @@ import android.widget.ListView;
 
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
+import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
 
 /**
  * Created by Zem on 7/16/2015.
