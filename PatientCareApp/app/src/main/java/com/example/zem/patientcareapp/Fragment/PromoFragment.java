@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Helpers;
-import com.example.zem.patientcareapp.LazyAdapter;
+import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.R;
 
 import java.util.ArrayList;

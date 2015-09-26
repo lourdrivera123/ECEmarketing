@@ -1,4 +1,4 @@
-package com.example.zem.patientcareapp;
+package com.example.zem.patientcareapp.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -21,11 +21,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Fragment.ProductsFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.ImageLoader;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.ServerRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;

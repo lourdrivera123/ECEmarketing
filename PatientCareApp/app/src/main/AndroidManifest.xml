@@ -83,7 +83,7 @@
         <activity android:name=".FileCache" />
         <activity android:name=".Utils" />
         <activity android:name=".MemoryCache" />
-        <activity android:name=".LazyAdapter" />
+        <activity android:name=".adapter.LazyAdapter" />
         <activity android:name=".ImageLoader" />
         <activity android:name=".DbHelper" />
         <activity android:name=".AppController" />
