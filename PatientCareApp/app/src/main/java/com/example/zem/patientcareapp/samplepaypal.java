@@ -15,6 +15,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ConvertCurrencyRequest;
@@ -63,6 +64,7 @@ public class samplepaypal extends Activity {
     // If you have tax, add it here
     BigDecimal tax = new BigDecimal("0.0");
     BigDecimal amount;
+    int billing_id = 0;
 
     // PayPal configuration
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration()
@@ -77,6 +79,8 @@ public class samplepaypal extends Activity {
         pDialog = new ProgressDialog(this);
         queue = Volley.newRequestQueue(this);
 
+        billing_id = getIntent().getIntExtra("billing_id", 0);
+
         PayPalConfiguration object = new PayPalConfiguration();
         object = object.acceptCreditCards(false);
 
@@ -85,7 +89,6 @@ public class samplepaypal extends Activity {
         Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, paypalConfig);
 
-//        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, object);
         startService(intent);
 
         populateProductsInCart();
@@ -96,10 +99,10 @@ public class samplepaypal extends Activity {
 
             subtotal = PayPalItem.getItemTotal(items);
 
-//            amount = subtotal.add(shipping).add(tax);
             HashMap<String, String> hashMap = new HashMap();
 
             hashMap.put("amount_in_php", String.valueOf(subtotal));
+
             launchPayPalPayment();
 
 
@@ -199,31 +202,28 @@ public class samplepaypal extends Activity {
 
     public void populateProductsInCart() {
 
-        ArrayList<HashMap<String, String>> items = dbHelper.getAllBasketItems(false);
+        ArrayList<HashMap<String, String>> items = dbHelper.getAllBasketItems(true);
 
         String name = "", sku = "";
 
         double price = 0;
         BigDecimal initial_price = null;
+
         for(HashMap<String, String> item : items){
             price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
-            initial_price = BigDecimal.valueOf(price);
             double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
             double total = price*quantity;
             name = item.get(DbHelper.PRODUCT_NAME);
             sku = item.get(DbHelper.PRODUCT_SKU);
 //            TotalAmount+= total;
 
-            PayPalItem paypal_item = new PayPalItem(name, 1, new BigDecimal(total), Config.DEFAULT_CURRENCY, sku);
+            PayPalItem paypal_item = new PayPalItem(name, 1, new BigDecimal(String.format("%.2f", total)), Config.DEFAULT_CURRENCY, sku);
 
             productsInCart.add(paypal_item);
 
             Toast.makeText(getApplicationContext(),
                     paypal_item.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
-
         }
-
-
     }
 
     /**
@@ -307,10 +307,16 @@ public class samplepaypal extends Activity {
 
             @Override
             protected Map<String, String> getParams() {
+                Patient patient = dbHelper.getloginPatient(SidebarActivity.getUname());
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("paymentId", paymentId);
                 params.put("paymentClientJson", payment_client);
+                params.put("patient_id", String.valueOf(patient.getServerID()));
+                params.put("user_id", String.valueOf(SidebarActivity.getUserID()));
+                params.put("billing_id", String.valueOf(billing_id));
+
+                Log.d("billing_id", String.valueOf(billing_id));
 
                 return params;
             }

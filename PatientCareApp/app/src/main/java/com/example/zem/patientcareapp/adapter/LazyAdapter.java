@@ -407,7 +407,7 @@ public class LazyAdapter extends BaseAdapter {
                 qty.setText(quantity + "");
                 int num = quantity / qtyPerPacking;
                 productPrice.setText("Quantity: " + quantity + "  " + helpers.getPluralForm(unit, quantity) + " (" + num + " " + helpers.getPluralForm(packing, num) + ")" +
-                        "\nPrice: \u20B1 " + price + " / " + (!unit.equals("0") ? unit : ""));
+                        "\nPrice: \u20B1 " + String.format("%.2f", price) + " / " + (!unit.equals("0") ? unit : ""));
 
                 qty.setId(basketId);
                 total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
