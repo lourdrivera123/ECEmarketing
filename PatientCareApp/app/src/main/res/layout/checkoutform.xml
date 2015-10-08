@@ -150,6 +150,44 @@
                 android:textSize="13sp" />
         </RadioGroup>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d10"
+            android:background="@color/ColorPrimary"
+            android:padding="3dp"
+            android:text="Payment Options:"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <RadioButton
+                android:id="@+id/paypal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="PayPal"
+                android:textSize="13sp" />
+
+            <RadioButton
+                android:id="@+id/visa_or_mastercard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Visa/Mastercard"
+                android:textSize="13sp" />
+
+            <RadioButton
+                android:id="@+id/cod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cash On Delivery"
+                android:textSize="13sp" />
+        </RadioGroup>
+
         <Button
             android:id="@+id/proceed"
             android:layout_width="match_parent"

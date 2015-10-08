@@ -73,6 +73,9 @@
         <activity
             android:name=".PatientConsultationActivity"
             android:theme="@style/Theme.MyFancyTheme" />
+        <activity
+            android:name=".OrdersActivity"
+            android:theme="@style/Theme.MyFancyTheme" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

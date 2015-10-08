@@ -96,6 +96,7 @@ public class SidebarActivity extends FragmentActivity {
         // adding nav drawer items to array
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], 0));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], 0));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -239,7 +240,10 @@ public class SidebarActivity extends FragmentActivity {
             case 1:
                 fragment = new ReferralsFragment();
                 break;
-
+            case 2:
+//                fragment  = new OrdersFragment();
+                    Intent orders_intent = new Intent(getBaseContext(), OrdersActivity.class);
+                    startActivity(orders_intent);
             default:
                 break;
         }
