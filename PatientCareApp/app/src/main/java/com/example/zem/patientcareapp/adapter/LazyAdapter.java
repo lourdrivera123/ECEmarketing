@@ -37,11 +37,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by Dexter B. on 5/4/2015.
@@ -490,6 +494,59 @@ public class LazyAdapter extends BaseAdapter {
             } catch (Exception e) {
                 System.out.println("<source: LazyAdapter@promo_items." + e.getMessage());
             }
+        } else if (list_type.equals("order_items")) {
+            vi = inflater.inflate(R.layout.list_row_order_item, null);
+            TextView product_name, product_qty_price, ordered_on, status, time_status;
+            String unit, packing;
+            int qtyPerPacking;
+
+            HashMap<String, String> order_item;
+            order_item = data.get(position);
+
+            product_name = (TextView) vi.findViewById(R.id.product_name);
+            product_qty_price = (TextView) vi.findViewById(R.id.product_qty_price);
+            ordered_on = (TextView) vi.findViewById(R.id.ordered_on);
+            status = (TextView) vi.findViewById(R.id.status);
+            time_status = (TextView) vi.findViewById(R.id.time_status);
+
+            unit = order_item.get(DbHelper.PRODUCT_UNIT);
+            packing = order_item.get(DbHelper.PRODUCT_PACKING);
+            quantity = Integer.parseInt(order_item.get(DbHelper.ORDER_DETAILS_QUANTITY));
+            qtyPerPacking = Integer.parseInt(order_item.get(DbHelper.PRODUCT_QTY_PER_PACKING));
+            price = Double.parseDouble(order_item.get(DbHelper.PRODUCT_PRICE));
+            total_amount = price * quantity;
+
+            int num = quantity / qtyPerPacking;
+
+
+            product_name.setText(order_item.get(DbHelper.PRODUCT_NAME));
+//            product_qty_price.setText(order_item.get(DbHelper.PRODUCT_PRICE) + " - " + order_item.get(DbHelper.ORDER_DETAILS_QUANTITY));
+//            ordered_on.setText(order_item.get(DbHelper.CREATED_AT));
+            status.setText(order_item.get(DbHelper.ORDERS_STATUS));
+
+            product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount) + " \nQuantity: " + quantity + "  (" + helpers.getPluralForm(unit, quantity) + ") (" + num + " " + helpers.getPluralForm(packing, num) + ")" +
+                    "\nPrice: \u20B1 " + String.format("%.2f", price) + " / " + (!unit.equals("0") ? unit : ""));
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            /*String str1 = "12/10/2013";*/
+            try {
+                Date date1 = formatter.parse(order_item.get(DbHelper.ORDERS_CREATED_AT));
+
+                //format to date only
+                SimpleDateFormat fd = new SimpleDateFormat("MMM d");
+                String formatted_date = fd.format(date1);
+                ordered_on.setText("Orderred on " + formatted_date);
+
+                //format to time only
+                SimpleDateFormat ft = new SimpleDateFormat("HH:mm a");
+                String formatted_time = ft.format(date1);
+                time_status.setText(formatted_time);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
         }
         return vi;
     }

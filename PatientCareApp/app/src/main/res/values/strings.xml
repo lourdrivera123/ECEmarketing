@@ -11,6 +11,7 @@
     <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Referrals</item>
+        <item>Orders</item>
     </string-array>
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->

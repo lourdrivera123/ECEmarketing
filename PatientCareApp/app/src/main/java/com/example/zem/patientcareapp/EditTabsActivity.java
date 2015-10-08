@@ -258,6 +258,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                                             HashMap<String, String> params = setParams("register");
 
+                                            Log.d("register parmas", params+"");
+
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
                                                 public void getResult(JSONObject response) {

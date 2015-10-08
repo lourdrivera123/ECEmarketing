@@ -201,6 +201,19 @@ public class SplashActivity extends Activity {
                     }
                 });
 
+                //request for branches request
+                GetRequest.getJSONobj(SplashActivity.this, "get_branches", "branches", "branches_id", new RespondListener<JSONObject>() {
+                    @Override
+                    public void getResult(JSONObject response) {
+                        Log.d("response using interface <SplashActivity.java - branches request >", response + "");
+                    }
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("Error", error + "");
+                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 //request for free_products request
                 GetRequest.getJSONobj(SplashActivity.this, "get_free_products", "free_products", "free_products_id", new RespondListener<JSONObject>() {
                     @Override

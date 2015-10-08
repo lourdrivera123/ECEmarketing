@@ -17,6 +17,6 @@ public class Constants {
     public static final String GET_REQUEST_URL = "http://192.168.56.1/db/get.php?q=";
 
     //uploads path url
-    public static final String UPLOAD_PATH_URL = "http://192.168.1.19/db/uploads/";
+    public static final String UPLOAD_PATH_URL = "http://192.168.56.1/db/uploads/";
 
 }

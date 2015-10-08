@@ -19,6 +19,7 @@ import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ConvertCurrencyRequest;
+import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalItem;
@@ -64,7 +65,8 @@ public class samplepaypal extends Activity {
     // If you have tax, add it here
     BigDecimal tax = new BigDecimal("0.0");
     BigDecimal amount;
-    int billing_id = 0;
+    int billing_id = 0, branch_server_id = 0;
+    String basket_ids = "", recipient_name="", recipient_address = "", recipient_contactNumber = "", modeOfDelivery = "";
 
     // PayPal configuration
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration()
@@ -79,7 +81,12 @@ public class samplepaypal extends Activity {
         pDialog = new ProgressDialog(this);
         queue = Volley.newRequestQueue(this);
 
-        billing_id = getIntent().getIntExtra("billing_id", 0);
+        Intent ckintent = getIntent();
+        branch_server_id = ckintent.getIntExtra("branch_server_id", 0);
+        recipient_name = ckintent.getStringExtra("recipient_name");
+        recipient_address = ckintent.getStringExtra("recipient_address");
+        recipient_contactNumber = ckintent.getStringExtra("recipient_contactNumber");
+        modeOfDelivery = ckintent.getStringExtra("modeOfDelivery");
 
         PayPalConfiguration object = new PayPalConfiguration();
         object = object.acceptCreditCards(false);
@@ -104,30 +111,6 @@ public class samplepaypal extends Activity {
             hashMap.put("amount_in_php", String.valueOf(subtotal));
 
             launchPayPalPayment();
-
-
-//        ConvertCurrencyRequest.send(hashMap, new RespondListener<JSONObject>() {
-//            @Override
-//            public void getResult(JSONObject response) {
-//                Log.d("response using interface <samplepaypal.java>", response + "");
-//                try {
-//                    subtotal = new BigDecimal(response.getString("amount_converted"));
-//                    Log.d("amount converted", subtotal + "");
-//                    launchPayPalPayment();
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        }, new ErrorListener<VolleyError>() {
-//            public void getError(VolleyError error) {
-//                Log.d("errror <samplepaypal>", error + "");
-//                Toast.makeText(getBaseContext(), "Cannot proceed to checkout. Please check your Internet connection", Toast.LENGTH_LONG).show();
-//            }
-//        });
-
-//            Log.d("subtotal in oncreate", subtotal+"");
         } else {
             Toast.makeText(getApplicationContext(), "Cart is empty! Please add few products to cart.",
                     Toast.LENGTH_SHORT).show();
@@ -137,7 +120,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Launching PalPay payment activity to complete the payment
-     * */
+     */
     private void launchPayPalPayment() {
 
         PayPalPayment thingsToBuy = prepareFinalCart();
@@ -163,7 +146,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Receiving the PalPay payment response
-     * */
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_PAYMENT) {
@@ -209,10 +192,10 @@ public class samplepaypal extends Activity {
         double price = 0;
         BigDecimal initial_price = null;
 
-        for(HashMap<String, String> item : items){
+        for (HashMap<String, String> item : items) {
             price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
             double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
-            double total = price*quantity;
+            double total = price * quantity;
             name = item.get(DbHelper.PRODUCT_NAME);
             sku = item.get(DbHelper.PRODUCT_SKU);
 //            TotalAmount+= total;
@@ -228,7 +211,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Preparing final cart amount that needs to be sent to PayPal for payment
-     * */
+     */
     private PayPalPayment prepareFinalCart() {
 
         paymentDetails = new PayPalPaymentDetails(
@@ -250,7 +233,7 @@ public class samplepaypal extends Activity {
 
     /**
      * Verifying the mobile payment on the server to avoid fraudulent payment
-     * */
+     */
     private void verifyPaymentOnServer(final String paymentId,
                                        final String payment_client) {
         // Showing progress dialog before making request
@@ -269,14 +252,42 @@ public class samplepaypal extends Activity {
                     boolean error = res.getBoolean("error");
                     String message = res.getString("message");
 
-                    // user error boolean flag to check for errors
 
-                    Toast.makeText(getApplicationContext(), message,
-                            Toast.LENGTH_LONG).show();
+                    if(dbHelper.emptyBasket(SidebarActivity.getUserID())){
+                        //request for orders request
+                        GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
+                            @Override
+                            public void getResult(JSONObject response) {
+                                Log.d("response using interface <samplepaypal.java - orders request >", response + "");
 
-                    System.out.println("error sa response during verify: "+message);
+                                //request for order_details request
+                                GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
+                                    @Override
+                                    public void getResult(JSONObject response) {
+                                        Log.d("response using interface <samplepaypal.java - order_details request >", response + "");
 
-                    Log.d("gikan sa server", ""+res.toString() );
+                                        Toast.makeText(getApplicationContext(), "Thank you !",
+                                                Toast.LENGTH_LONG).show();
+
+                                        Intent orders_intent = new Intent(samplepaypal.this, OrdersActivity.class);
+                                        startActivity(orders_intent);
+
+                                    }
+                                }, new ErrorListener<VolleyError>() {
+                                    public void getError(VolleyError error) {
+                                        Log.d("Error", error + "");
+                                        Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        }, new ErrorListener<VolleyError>() {
+                            public void getError(VolleyError error) {
+                                Log.d("Error", error + "");
+                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
                     if (!error) {
                         // empty the cart
@@ -314,9 +325,14 @@ public class samplepaypal extends Activity {
                 params.put("paymentClientJson", payment_client);
                 params.put("patient_id", String.valueOf(patient.getServerID()));
                 params.put("user_id", String.valueOf(SidebarActivity.getUserID()));
-                params.put("billing_id", String.valueOf(billing_id));
+                params.put("branch_server_id", String.valueOf(branch_server_id));
+                params.put("recipient_name", recipient_name);
+                params.put("recipient_address", recipient_address);
+                params.put("recipient_contactNumber", recipient_contactNumber);
+                params.put("modeOfDelivery", modeOfDelivery);
+                params.put("status", "pending");
 
-                Log.d("billing_id", String.valueOf(billing_id));
+                Log.d("params shit", params+"");
 
                 return params;
             }

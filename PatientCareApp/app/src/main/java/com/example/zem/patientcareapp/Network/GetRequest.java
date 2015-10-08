@@ -31,17 +31,16 @@ public class GetRequest {
         helpers = new Helpers();
         dbHelper = new DbHelper(c);
 
-        JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Sync sync = new Sync();
                 sync.init(c, q, table_name, table_id, response);
-
                 try {
-                    dbHelper.updateLastUpdatedTable(table_name, response.getString("server_timestamp"));
+                    dbHelper.updateLastUpdatedTable(table_name, response.getString("latest_updated_at"));
                     Log.d("saving timestamp status", "success");
                 } catch (Exception e) {
-                    Log.d("saving timestamp status", "failed");
+                    Log.d("something wrong with json", "" + e);
                 }
                 listener.getResult(response);
             }
@@ -52,6 +51,6 @@ public class GetRequest {
                 Log.d("error <GetRequest> ", error + "");
             }
         });
-        queue.add(doctor_request);
+        queue.add(jsonrequest);
     }
 }

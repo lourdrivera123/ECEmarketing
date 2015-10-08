@@ -161,6 +161,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                             }
                                         });
 
+                                        //request for orders request
+                                        GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + syncedPatient.getServerID(), "orders", "orders_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+                                                Log.d("response using interface <SplashActivity.java - orders request >", response + "");
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                Log.d("Error", error + "");
+                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                        //request for order_details request
+                                        GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + syncedPatient.getServerID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+                                                Log.d("response using interface <SplashActivity.java - order_details request >", response + "");
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                Log.d("Error", error + "");
+                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
                                         SharedPreferences.Editor editor = sharedpreferences.edit();
                                         editor.putString(name, uname);
                                         editor.putString(pass, helpers.md5(password));
@@ -213,5 +239,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
         actionbar.setBackgroundDrawable(colorDrawable);
         actionbar.setDisplayShowTitleEnabled(false);
+    }
+
+    public static void setCustomActionBarWithTitle(ActionBar actionbar) {
+        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
+        actionbar.setBackgroundDrawable(colorDrawable);
     }
 }
