@@ -23,6 +23,7 @@ import com.example.zem.patientcareapp.GetterSetter.PatientRecord;
 import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.GetterSetter.ProductCategory;
 import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
+import com.example.zem.patientcareapp.GetterSetter.Settings;
 import com.example.zem.patientcareapp.GetterSetter.Specialty;
 import com.example.zem.patientcareapp.GetterSetter.SubSpecialty;
 import com.example.zem.patientcareapp.GetterSetter.Treatments;
@@ -47,7 +48,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //PATIENTS_TABLE
     public static final String TBL_PATIENTS = "patients",
-            PTNT_ID = "id",
             PTNT_PATIENT_ID = "patient_id",
             PTNT_FNAME = "fname",
             PTNT_MNAME = "mname",
@@ -81,14 +81,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //Updates Table
     public static final String TBL_UPDATES = "updates",
-            UPDATE_ID = "id",
             UPDATE_TBL_NAME = "tbl_name",
             UPDATE_TIMESTAMP = "timestamp",
             UPDATE_SEEN = "seen";
 
     //DOCTORS_TABLE
     public static final String TBL_DOCTORS = "doctors",
-            DOC_ID = "id",
             DOC_DOC_ID = "doc_id",
             DOC_LNAME = "lname",
             DOC_MNAME = "mname",
@@ -101,13 +99,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //SPECIALTIES_TABLE
     public static final String TBL_SPECIALTIES = "specialties",
-            SPECIALTY_ID = "id",
             SERVER_SPECIALTY_ID = "specialty_id",
             SPECIALTY_NAME = "name";
 
     //SPECIALTIES_TABLE
     public static final String TBL_SUB_SPECIALTIES = "sub_specialties",
-            SUB_SPECIALTY_ID = "id",
             SERVER_SUB_SPECIALTY_ID = "sub_specialty_id",
             SUB_SPECIALTY_FOREIGN_ID = "specialty_id",
             SUB_SPECIALTY_NAME = "name";
@@ -115,19 +111,16 @@ public class DbHelper extends SQLiteOpenHelper {
     // PRODUCT_CATEGORIES TABLE
     public static final String PROD_CAT_NAME = "name",
             TBL_PRODUCT_CATEGORIES = "product_categories",
-            PRODUCT_CATEGORIES_ID = "id",
             SERVER_PRODUCT_CATEGORY_ID = "product_category_id";
 
     // PRODUCT_SUBCATEGORIES TABLE
     public static final String TBL_PRODUCT_SUBCATEGORIES = "product_subcategories",
             PROD_SUBCAT_NAME = "name",
             PROD_SUBCAT_CATEGORY_ID = "category_id",
-            PRODUCT_SUBCATEGORIES_ID = "id",
             SERVER_PRODUCT_SUBCATEGORY_ID = "product_subcategory_id";
 
     // PRODUCTS TABLE
     public static final String TBL_PRODUCTS = "products",
-            PRODUCT_ID = "id",
             PRODUCT_SUBCATEGORY_ID = "subcategory_id",
             SERVER_PRODUCT_ID = "product_id",
             PRODUCT_NAME = "name",
@@ -143,14 +136,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //DOSAGE_FORMAT_AND_STRENGTH TABLE
     public static final String TBL_DOSAGE = "dosage_format_and_strength",
-            DOSAGE_ID = "id",
             SERVER_DOSAGE_ID = "dosage_id",
             DOSAGE_PROD_ID = "product_id",
             DOSAGE_NAME = "name";
 
     // BASKET TABLE
     public static final String TBL_BASKETS = "baskets",
-            BASKET_ID = "id",
             SERVER_BASKET_ID = "basket_id",
             BASKET_PATIENT_ID = "patient_id",
             BASKET_PRODUCT_ID = "product_id",
@@ -160,7 +151,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     // PATIENT_RECORDS TABLE
     public static final String TBL_PATIENT_RECORDS = "patient_records",
-            RECORDS_ID = "id",
             SERVER_RECORDS_ID = "record_id",
             RECORDS_DOCTOR_ID = "doctor_id",
             RECORDS_DOCTOR_NAME = "doctor_name",
@@ -172,7 +162,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     // TREATMENTS TABLE
     public static final String TBL_TREATMENTS = "treatments",
-            TREATMENTS_ID = "id",
             TREATMENTS_RECORD_ID = "patient_record_id",
             SERVER_TREATMENTS_ID = "treatments_id",
             TREATMENTS_MEDICINE_NAME = "medicine_name",
@@ -197,12 +186,10 @@ public class DbHelper extends SQLiteOpenHelper {
             CLINIC_PROVINCE = "address_province",
             CLINIC_REGION = "address_region",
             CLINIC_ZIP = "address_zip",
-            CLINICS_ID = "id",
             SERVER_CLINICS_ID = "clinics_id";
 
     // CLINIC_DOCTOR TABLE
     public static final String TBL_CLINIC_DOCTOR = "clinic_doctor",
-            CD_ID = "id",
             CD_SERVER_ID = "clinic_doctor_id",
             CD_CLINIC_ID = "clinic_id",
             CD_DOCTOR_ID = "doctor_id",
@@ -225,7 +212,6 @@ public class DbHelper extends SQLiteOpenHelper {
             SEC_EMAIL = "email",
             SEC_PHOTO = "photo",
             TBL_SECRETARIES = "secretaries",
-            SECRETARIES_ID = "id",
             SERVER_SECRETARIES_ID = "secretaries_id";
 
     // CLINIC_SECRETARY TABLE
@@ -242,7 +228,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     // PROMOS TABLE
     public static final String TBL_PROMO = "promo",
-            PROMO_ID = "id",
             SERVER_PROMO_ID = "promo_id",
             PROMO_NAME = "name",
             PROMO_START_DATE = "start_date",
@@ -253,7 +238,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     // DISCOUNTS or FREE PRODUCTS PROMOTION TABLE
     public static final String TBL_DISCOUNTS_FREE_PRODUCTS = "discounts_free_products",
-            DFP_ID = "id",
             SERVER_DFP_ID = "dfp_id",
             DFP_PROMO_ID = "promo_id",
             DFP_PRODUCT_ID = "product_id",
@@ -266,7 +250,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     // FREE PRODUCTS TABLE
     public static final String TBL_FREE_PRODUCTS = "free_products",
-            FP_ID = "id",
             SERVER_FP_ID = "free_products_id",
             FP_DFP_ID = "dfp_id",               // foreign key ID from discounts_free_products table
             FP_PRODUCT_ID = "product_id",       // the ID of the free item
@@ -277,7 +260,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     // UPLOADS ON PRESCRIPTIONS
     public static final String TBL_PATIENT_PRESCRIPTIONS = "patient_prescriptions",
-            PRESCRIPTIONS_ID = "id",
             PRESCRIPTIONS_SERVER_ID = "prescriptions_id",
             PRESCRIPTIONS_PATIENT_ID = "patient_id",
             PRESCRIPTIONS_FILENAME = "filename",
@@ -285,7 +267,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //CONSULTATION
     public static final String TBL_PATIENT_CONSULTATIONS = "consultations",
-            CONSULT_ID = "id",
             CONSULT_PATIENT_ID = "patientID",
             CONSULT_DOCTOR = "doctor",
             CONSULT_CLINIC = "clinic",
@@ -297,7 +278,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //OVERLAY
     public static final String TBL_OVERLAYS = "overlays",
-            OVERLAY_ID = "id",
             OVERLAY_USERID = "userID",
             OVERLAY_TITLE = "title",
             OVERLAY_ISREAD = "isRead";
@@ -333,7 +313,19 @@ public class DbHelper extends SQLiteOpenHelper {
             BRANCHES_FULL_ADDRESS = "full_address",
             BRANCHES_STATUS = "status";
 
-    public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at";
+    //REFERRAL_SETTINGS TABLES
+    public static final String TBL_SETTINGS = "settings",
+            SETTINGS_SERVER_ID = "serverID",
+            SETTINGS_POINTS = "points",
+            SETTINGS_POINTS_TO_PESO = "points_to_peso",
+            SETTINGS_LVL_LIMIT = "level_limit",
+            SETTINGS_REFERRAL_COMM = "referral_commission",
+            SETTINGS_COMM_VARIATION = "commission_variation",
+            SETTINGS_DELIVERY_CHARGE = "delivery_charge",
+            SETTINGS_SAFETY_STOCK = "safety_stock",
+            SETTINGS_CRITICAL_STOCK = "critical_stock";
+
+    public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at", AI_ID = "id";
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -342,88 +334,62 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // SQL to create table "doctors"
-        String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, " +
-                        "%s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_DOCTORS, DOC_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO,
-                DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_DOCTORS, AI_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, CREATED_AT, UPDATED_AT, DELETED_AT);
 
-        String sql_create_tbl_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_SPECIALTIES, SPECIALTY_ID, SERVER_SPECIALTY_ID, SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_SPECIALTIES, AI_ID, SERVER_SPECIALTY_ID, SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
-        String sql_create_tbl_sub_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_SUB_SPECIALTIES, SUB_SPECIALTY_ID, SERVER_SUB_SPECIALTY_ID, SUB_SPECIALTY_FOREIGN_ID, SUB_SPECIALTY_NAME,
-                CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_sub_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_SUB_SPECIALTIES, AI_ID, SERVER_SUB_SPECIALTY_ID, SUB_SPECIALTY_FOREIGN_ID, SUB_SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "tbl_updates"
         String sql_create_tbl_updates = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER)",
-                TBL_UPDATES, UPDATE_ID, UPDATE_TBL_NAME, UPDATE_TIMESTAMP, UPDATE_SEEN);
+                TBL_UPDATES, AI_ID, UPDATE_TBL_NAME, UPDATE_TIMESTAMP, UPDATE_SEEN);
 
         // SQL to create table "patients"
-        String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_PATIENTS, PTNT_ID, PTNT_PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION,
-                PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO,
-                PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_MOBILE_NO,
-                PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_PATIENTS, AI_ID, PTNT_PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION, PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO, PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_MOBILE_NO, PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "product_categories"
-        String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        " %s INTEGER UNIQUE, %s TEXT, %s  TEXT , %s  TEXT , %s TEXT  )",
-                TBL_PRODUCT_CATEGORIES, PRODUCT_CATEGORIES_ID, SERVER_PRODUCT_CATEGORY_ID, PROD_CAT_NAME, CREATED_AT,
-                UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s  TEXT , %s  TEXT , %s TEXT  )",
+                TBL_PRODUCT_CATEGORIES, AI_ID, SERVER_PRODUCT_CATEGORY_ID, PROD_CAT_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "product_subcategories"
-        String sql_create_tbl_product_subcategories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        " %s INTEGER UNIQUE, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCT_SUBCATEGORIES, PRODUCT_SUBCATEGORIES_ID, SERVER_PRODUCT_SUBCATEGORY_ID, PROD_SUBCAT_NAME,
-                PROD_SUBCAT_CATEGORY_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_product_subcategories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCT_SUBCATEGORIES, AI_ID, SERVER_PRODUCT_SUBCATEGORY_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "products"
-        String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCTS, PRODUCT_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME,
-                PRODUCT_DESCRIPTION, PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PACKING, PRODUCT_QTY_PER_PACKING,
-                PRODUCT_SKU, PRODUCT_PHOTO, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCTS, AI_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION, PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PACKING, PRODUCT_QTY_PER_PACKING, PRODUCT_SKU, PRODUCT_PHOTO, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL TO CREATE TABLE "TBL_DOSAGE"
         String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_DOSAGE, DOSAGE_ID, SERVER_DOSAGE_ID, DOSAGE_PROD_ID, DOSAGE_NAME, CREATED_AT, UPDATED_AT);
+                TBL_DOSAGE, AI_ID, SERVER_DOSAGE_ID, DOSAGE_PROD_ID, DOSAGE_NAME, CREATED_AT, UPDATED_AT);
 
         // SQL to create table "baskets"
-        String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, " +
-                        "%s INTEGER, %s INTEGER, %s DOUBLE, %s INTEGER, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_BASKETS, BASKET_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY,
-                BASKET_PRESCRIPTION_ID, BASKET_IS_APPROVED, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_baskets = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s INTEGER, %s DOUBLE, %s INTEGER, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_BASKETS, AI_ID, SERVER_BASKET_ID, BASKET_PATIENT_ID, BASKET_PRODUCT_ID, BASKET_QUANTITY, BASKET_PRESCRIPTION_ID, BASKET_IS_APPROVED, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create PATIENT_RECORDS TABLE
         String sql_create_patient_records = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
-                TBL_PATIENT_RECORDS, RECORDS_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_DOCTOR_NAME, RECORDS_PATIENT_ID,
-                RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, RECORDS_NOTE, CREATED_AT, UPDATED_AT, DELETED_AT);
+                TBL_PATIENT_RECORDS, AI_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_DOCTOR_NAME, RECORDS_PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, RECORDS_NOTE, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL TO create TREATMENTS TABLE
         String sql_create_treatments_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
-                TBL_TREATMENTS, TREATMENTS_ID, TREATMENTS_RECORD_ID, SERVER_TREATMENTS_ID, TREATMENTS_MEDICINE_NAME,
-                TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, CREATED_AT, UPDATED_AT, DELETED_AT);
+                TBL_TREATMENTS, AI_ID, TREATMENTS_RECORD_ID, SERVER_TREATMENTS_ID, TREATMENTS_MEDICINE_NAME, TREATMENTS_GENERIC_NAME, TREATMENTS_QUANITY, TREATMENTS_PRESCRIPTION, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "clinics"
-        String sql_create_clinics_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT," +
-                        " %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT  )",
-                TBL_CLINICS, CLINICS_ID, SERVER_CLINICS_ID, CLINIC_NAME, CLINIC_CONTACT_NO, CLINIC_UNIT_NO, CLINIC_BUILDING, CLINIC_LOT_NO, CLINIC_BLOCK_NO,
-                CLINIC_PHASE_NO, CLINIC_HOUSE_NO, CLINIC_STREET, CLINIC_BARANGAY, CLINIC_CITY, CLINIC_PROVINCE, CLINIC_REGION, CLINIC_ZIP, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_clinics_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT  )",
+                TBL_CLINICS, AI_ID, SERVER_CLINICS_ID, CLINIC_NAME, CLINIC_CONTACT_NO, CLINIC_UNIT_NO, CLINIC_BUILDING, CLINIC_LOT_NO, CLINIC_BLOCK_NO, CLINIC_PHASE_NO, CLINIC_HOUSE_NO, CLINIC_STREET, CLINIC_BARANGAY, CLINIC_CITY, CLINIC_PROVINCE, CLINIC_REGION, CLINIC_ZIP, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "clinic_doctor"
         String sql_create_clinic_doctor_table = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INT )",
-                TBL_CLINIC_DOCTOR, CD_ID, CD_SERVER_ID, CD_CLINIC_ID, CD_DOCTOR_ID, CD_CLINIC_SCHED, CD_IS_ACTIVE);
+                TBL_CLINIC_DOCTOR, AI_ID, CD_SERVER_ID, CD_CLINIC_ID, CD_DOCTOR_ID, CD_CLINIC_SCHED, CD_IS_ACTIVE);
 
         // SQL to create table "secretaries"
-        String sql_create_secretaries_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_SECRETARIES, SECRETARIES_ID, SERVER_SECRETARIES_ID, SEC_FNAME, SEC_MNAME, SEC_LNAME, SEC_ADDRESS_HOUSE_NO,
-                SEC_ADDRESS_STREET, SEC_ADDRESS_BARANGAY, SEC_ADDRESS_CITY_MUNICIPALITY, SEC_ADDRESS_PROVINCE, SEC_ADDRESS_REGION, SEC_ADDRESS_ZIP,
-                SEC_CELL_NO, SEC_TEL_NO, SEC_EMAIL, SEC_PHOTO, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_secretaries_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s  TEXT , %s  TEXT , %s  TEXT  )",
+                TBL_SECRETARIES, AI_ID, SERVER_SECRETARIES_ID, SEC_FNAME, SEC_MNAME, SEC_LNAME, SEC_ADDRESS_HOUSE_NO, SEC_ADDRESS_STREET, SEC_ADDRESS_BARANGAY, SEC_ADDRESS_CITY_MUNICIPALITY, SEC_ADDRESS_PROVINCE, SEC_ADDRESS_REGION, SEC_ADDRESS_ZIP, SEC_CELL_NO, SEC_TEL_NO, SEC_EMAIL, SEC_PHOTO, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "clinic_secretary"
         String sql_create_clinic_secretary_table = String.format("CREATE TABLE %s ( %s INTEGER, %s INTEGER, %s INT )",
@@ -434,36 +400,29 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_DOCTOR_SECRETARY, DS_DOCTOR_ID, DS_SECRETARY_ID, DS_IS_ACTIVE);
 
         // SQL to create table "promo"
-        String sql_create_promo_table = String.format("CREATE TABLE %s( %s INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "%s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
-                TBL_PROMO, PROMO_ID, SERVER_PROMO_ID, PROMO_NAME, PROMO_START_DATE,
-                PROMO_END_DATE, PROMO_CREATED_AT, PROMO_UPDATED_AT, PROMO_DELETED_AT);
+        String sql_create_promo_table = String.format("CREATE TABLE %s( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
+                TBL_PROMO, AI_ID, SERVER_PROMO_ID, PROMO_NAME, PROMO_START_DATE, PROMO_END_DATE, PROMO_CREATED_AT, PROMO_UPDATED_AT, PROMO_DELETED_AT);
 
         // SQL to create table discounts_free_products
-        String sql_create_discounts_free_products_table = String.format(
-                "CREATE TABLE %s(" +
-                        "%s INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "%s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT" +
-                        ")", TBL_DISCOUNTS_FREE_PRODUCTS, DFP_ID, SERVER_DFP_ID, DFP_PROMO_ID, DFP_PRODUCT_ID, DFP_TYPE,
-                DFP_QUANTITY_REQUIRED, DFP_LESS, DFP_CREATED_AT, DFP_UPDATED_AT, DFP_DELETED_AT);
+        String sql_create_discounts_products = String.format("CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_DISCOUNTS_FREE_PRODUCTS, AI_ID, SERVER_DFP_ID, DFP_PROMO_ID, DFP_PRODUCT_ID, DFP_TYPE, DFP_QUANTITY_REQUIRED, DFP_LESS, DFP_CREATED_AT, DFP_UPDATED_AT, DFP_DELETED_AT);
 
         // SQL to create tale "free_products"
-        String sql_create_free_products_table = String.format(
-                "CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "%s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_FREE_PRODUCTS, FP_ID, SERVER_FP_ID, FP_DFP_ID, FP_PRODUCT_ID, FP_QTY_FREE,
-                FP_CREATED_AT, FP_UPDATED_AT, FP_DELETED_AT);
+        String sql_create_free_products_table = String.format("CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_FREE_PRODUCTS, AI_ID, SERVER_FP_ID, FP_DFP_ID, FP_PRODUCT_ID, FP_QTY_FREE, FP_CREATED_AT, FP_UPDATED_AT, FP_DELETED_AT);
 
         String sql_create_prescriptions_upload = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT)",
-                TBL_PATIENT_PRESCRIPTIONS, PRESCRIPTIONS_ID, PRESCRIPTIONS_SERVER_ID, PRESCRIPTIONS_PATIENT_ID, PRESCRIPTIONS_FILENAME, PRESCRIPTIONS_APPROVED, CREATED_AT, DELETED_AT);
+                TBL_PATIENT_PRESCRIPTIONS, AI_ID, PRESCRIPTIONS_SERVER_ID, PRESCRIPTIONS_PATIENT_ID, PRESCRIPTIONS_FILENAME, PRESCRIPTIONS_APPROVED, CREATED_AT, DELETED_AT);
 
         //SQL to create PATIENT CONSULTATIONS
-        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, " +
-                        "%s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)", TBL_PATIENT_CONSULTATIONS, CONSULT_ID, CONSULT_PATIENT_ID,
+        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)", TBL_PATIENT_CONSULTATIONS, AI_ID, CONSULT_PATIENT_ID,
                 CONSULT_DOCTOR, CONSULT_CLINIC, CONSULT_DATE, CONSULT_PART_OF_DAY, CONSULT_IS_ALARMED, CONSULT_TIME, CONSULT_IS_FINISHED);
 
         String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s INTEGER)",
-                TBL_OVERLAYS, OVERLAY_ID, OVERLAY_USERID, OVERLAY_TITLE, OVERLAY_ISREAD);
+                TBL_OVERLAYS, AI_ID, OVERLAY_USERID, OVERLAY_TITLE, OVERLAY_ISREAD);
+
+        String settings = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s DOUBLE, %s DOUBLE, %s INTEGER, %s DOUBLE, %s DOUBLE, %s DOUBLE, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_SETTINGS, AI_ID, SETTINGS_SERVER_ID, SETTINGS_POINTS, SETTINGS_POINTS_TO_PESO, SETTINGS_LVL_LIMIT, SETTINGS_REFERRAL_COMM, SETTINGS_COMM_VARIATION, SETTINGS_DELIVERY_CHARGE, SETTINGS_SAFETY_STOCK, SETTINGS_CRITICAL_STOCK, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         String sql_create_orders = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT," +
                         " %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
@@ -497,12 +456,13 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_clinic_secretary_table);
         db.execSQL(sql_create_doctor_secretary_table);
         db.execSQL(sql_create_promo_table);
-        db.execSQL(sql_create_discounts_free_products_table);
+        db.execSQL(sql_create_discounts_products);
         db.execSQL(sql_create_free_products_table);
         db.execSQL(sql_create_prescriptions_upload);
         db.execSQL(sql_create_consultations);
         db.execSQL(sql_overlay);
         db.execSQL(sql_create_orders);
+        db.execSQL(settings);
         db.execSQL(sql_create_branches);
         db.execSQL(sql_create_order_details);
 
@@ -518,9 +478,9 @@ public class DbHelper extends SQLiteOpenHelper {
         insertTableNamesToUpdates(TBL_TREATMENTS, db);
         insertTableNamesToUpdates(TBL_CLINICS, db);
         insertTableNamesToUpdates(TBL_PATIENT_PRESCRIPTIONS, db);
+        insertTableNamesToUpdates(TBL_SETTINGS, db);
         insertTableNamesToUpdates(TBL_BRANCHES, db);
         insertTableNamesToUpdates(TBL_ORDERS, db);
-
     }
 
     @Override
@@ -721,7 +681,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (request.equals("insert")) {
             rowID = db.insert(TBL_PATIENT_RECORDS, null, values);
         } else if (request.equals("update")) {
-            rowID = db.update(TBL_PATIENT_RECORDS, values, RECORDS_ID + "=" + record.getRecordID(), null);
+            rowID = db.update(TBL_PATIENT_RECORDS, values, AI_ID + "=" + record.getRecordID(), null);
         }
         db.close();
         return rowID;
@@ -750,10 +710,6 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(UPDATED_AT, clinic.getUpdatedAt());
         values.put(DELETED_AT, clinic.getDeletedAt());
 
-        Log.d("nname in dbhelpr", clinic.getName());
-
-        Log.d("address_street in dbhelpr", clinic.getAddress_street());
-
         long row = 0;
 
         if (type.equals("insert")) {
@@ -780,6 +736,40 @@ public class DbHelper extends SQLiteOpenHelper {
 
             rowID = db.insert(TBL_PATIENT_PRESCRIPTIONS, null, values);
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        db.close();
+        return rowID > 0;
+    }
+
+    //REFERRAL SETTINGS
+    public boolean saveSettings(JSONObject json, String request) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues val = new ContentValues();
+        long rowID = 0;
+
+        try {
+            val.put(SETTINGS_SERVER_ID, json.getInt("id"));
+            val.put(SETTINGS_POINTS, json.getDouble(SETTINGS_POINTS));
+            val.put(SETTINGS_POINTS_TO_PESO, json.getDouble(SETTINGS_POINTS_TO_PESO));
+            val.put(SETTINGS_LVL_LIMIT, json.getInt(SETTINGS_LVL_LIMIT));
+            val.put(SETTINGS_REFERRAL_COMM, json.getDouble(SETTINGS_REFERRAL_COMM));
+            val.put(SETTINGS_COMM_VARIATION, json.getDouble(SETTINGS_COMM_VARIATION));
+            val.put(SETTINGS_DELIVERY_CHARGE, json.getDouble(SETTINGS_DELIVERY_CHARGE));
+            val.put(SETTINGS_SAFETY_STOCK, json.getInt(SETTINGS_SAFETY_STOCK));
+            val.put(SETTINGS_CRITICAL_STOCK, json.getInt(SETTINGS_CRITICAL_STOCK));
+            val.put(CREATED_AT, json.getString(CREATED_AT));
+            val.put(UPDATED_AT, json.getString(UPDATED_AT));
+            val.put(DELETED_AT, json.getString(DELETED_AT));
+
+            if (request.equals("insert")) {
+                rowID = db.insert(TBL_SETTINGS, null, val);
+            } else if (request.equals("update")) {
+                rowID = db.update(TBL_SETTINGS, val, SETTINGS_SERVER_ID + " = " + json.getInt("id"), null);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -946,7 +936,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (request.equals("insert")) {
             rowID = db.insert(TBL_SPECIALTIES, null, values);
         } else if (request.equals("update")) {
-            rowID = db.update(TBL_SPECIALTIES, values, SPECIALTY_ID + "=" + specialty.getSpecialty_id(), null);
+            rowID = db.update(TBL_SPECIALTIES, values, AI_ID + "=" + specialty.getSpecialty_id(), null);
         }
 
         db.close();
@@ -968,7 +958,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (request.equals("insert")) {
             rowID = db.insert(TBL_SUB_SPECIALTIES, null, values);
         } else if (request.equals("update")) {
-            rowID = db.update(TBL_SUB_SPECIALTIES, values, SUB_SPECIALTY_ID + "=" + sub_specialty.getSpecialty_id(), null);
+            rowID = db.update(TBL_SUB_SPECIALTIES, values, AI_ID + "=" + sub_specialty.getSpecialty_id(), null);
         }
 
         db.close();
@@ -996,7 +986,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (request.equals("add")) {
             rowID = db.insert(TBL_PATIENT_CONSULTATIONS, null, values);
         } else if (request.equals("update")) {
-            rowID = db.update(TBL_PATIENT_CONSULTATIONS, values, CONSULT_ID + "=" + consult.getId(), null);
+            rowID = db.update(TBL_PATIENT_CONSULTATIONS, values, AI_ID + "=" + consult.getId(), null);
         }
         db.close();
 
@@ -1166,7 +1156,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_EMAIL, patient.getEmail());
         values.put(PTNT_PHOTO, photo);
 
-        int rowID = db.update(TBL_PATIENTS, values, PTNT_ID + "=" + ID, null);
+        int rowID = db.update(TBL_PATIENTS, values, AI_ID + "=" + ID, null);
 
         db.close();
         return rowID > 0;
@@ -1217,7 +1207,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (request.equals("insert")) {
             rowID = db.insert(TBL_PRODUCTS, null, values);
         } else if (request.equals("update")) {
-            rowID = db.update(TBL_PRODUCTS, values, PRODUCT_ID + "=" + product.getProductId(), null);
+            rowID = db.update(TBL_PRODUCTS, values, AI_ID + "=" + product.getProductId(), null);
         }
 
         db.close();
@@ -1235,7 +1225,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             map = new HashMap();
-            map.put(RECORDS_ID, String.valueOf(cur.getInt(cur.getColumnIndex(RECORDS_ID))));
+            map.put(AI_ID, String.valueOf(cur.getInt(cur.getColumnIndex(AI_ID))));
             map.put(RECORDS_COMPLAINT, cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
             map.put(RECORDS_FINDINGS, cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
             map.put(RECORDS_DATE, cur.getString(cur.getColumnIndex(RECORDS_DATE)));
@@ -1263,7 +1253,7 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.moveToFirst();
 
         if (cur.getCount() > 0) {
-            patient.setId(cur.getInt(cur.getColumnIndex(PTNT_ID)));
+            patient.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
             patient.setServerID(cur.getInt(cur.getColumnIndex(PTNT_PATIENT_ID)));
             patient.setFname(cur.getString(cur.getColumnIndex(PTNT_FNAME)));
             patient.setMname(cur.getString(cur.getColumnIndex(PTNT_MNAME)));
@@ -1303,7 +1293,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public PatientRecord getPatientRecordByRecordID(int recordID, int userID) {
         SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PATIENT_RECORDS + " WHERE " + RECORDS_PATIENT_ID + " = " + userID + " AND " + RECORDS_ID + " = " + recordID;
+        String sql = "SELECT * FROM " + TBL_PATIENT_RECORDS + " WHERE " + RECORDS_PATIENT_ID + " = " + userID + " AND " + AI_ID + " = " + recordID;
         Cursor cur = db.rawQuery(sql, null);
         cur.moveToFirst();
         PatientRecord record = new PatientRecord();
@@ -1350,7 +1340,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
-            map.put(TREATMENTS_ID, String.valueOf(cur.getInt(cur.getColumnIndex(TREATMENTS_ID))));
+            map.put(AI_ID, String.valueOf(cur.getInt(cur.getColumnIndex(AI_ID))));
             map.put(TREATMENTS_MEDICINE_NAME, cur.getString(cur.getColumnIndex(TREATMENTS_MEDICINE_NAME)));
             map.put(TREATMENTS_GENERIC_NAME, cur.getString(cur.getColumnIndex(TREATMENTS_GENERIC_NAME)));
             map.put(TREATMENTS_QUANITY, cur.getString(cur.getColumnIndex(TREATMENTS_QUANITY)));
@@ -1398,7 +1388,7 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
             HashMap<String, String> map = new HashMap();
-            map.put(DOC_ID, cur.getString(cur.getColumnIndex(DOC_ID)));
+            map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(DOC_DOC_ID, cur.getString(cur.getColumnIndex(DOC_DOC_ID)));
             map.put(DOC_FNAME, cur.getString(cur.getColumnIndex(DOC_FNAME)));
             map.put(DOC_LNAME, cur.getString(cur.getColumnIndex(DOC_LNAME)));
@@ -1492,7 +1482,7 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
             HashMap<String, String> map = new HashMap<>();
-            map.put(BASKET_ID, cur.getString(cur.getColumnIndex(BASKET_ID)));
+            map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(SERVER_BASKET_ID, cur.getString(cur.getColumnIndex(SERVER_BASKET_ID)));
             map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
@@ -1624,7 +1614,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
-            map.put(CONSULT_ID, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_ID))));
+            map.put(AI_ID, String.valueOf(cur.getInt(cur.getColumnIndex(AI_ID))));
             map.put(CONSULT_DOCTOR, cur.getString(cur.getColumnIndex(CONSULT_DOCTOR)));
             map.put(CONSULT_CLINIC, cur.getString(cur.getColumnIndex(CONSULT_CLINIC)));
             map.put(CONSULT_DATE, cur.getString(cur.getColumnIndex(CONSULT_DATE)));
@@ -1643,12 +1633,12 @@ public class DbHelper extends SQLiteOpenHelper {
     public Consultation getConsultationById(int ID, int patientID) {
         SQLiteDatabase db = getWritableDatabase();
         Consultation consult = new Consultation();
-        String sql = "SELECT * FROM " + TBL_PATIENT_CONSULTATIONS + " WHERE " + CONSULT_ID + " = " + ID + " AND " +
+        String sql = "SELECT * FROM " + TBL_PATIENT_CONSULTATIONS + " WHERE " + AI_ID + " = " + ID + " AND " +
                 CONSULT_PATIENT_ID + " = " + patientID;
         Cursor cur = db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
-            consult.setId(cur.getInt(cur.getColumnIndex(CONSULT_ID)));
+            consult.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
             consult.setPatientID(cur.getInt(cur.getColumnIndex(CONSULT_PATIENT_ID)));
             consult.setIsAlarmed(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED)));
             consult.setIsFinished(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED)));
@@ -1682,7 +1672,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (!cur.isAfterLast()) {
             HashMap<String, String> map = new HashMap();
-            map.put(PRODUCT_ID, cur.getString(cur.getColumnIndex(PRODUCT_ID)));
+            map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(PRODUCT_SUBCATEGORY_ID, cur.getString(cur.getColumnIndex(PRODUCT_SUBCATEGORY_ID)));
             map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
             map.put(PRODUCT_GENERIC_NAME, cur.getString(cur.getColumnIndex(PRODUCT_GENERIC_NAME)));
@@ -1711,9 +1701,9 @@ public class DbHelper extends SQLiteOpenHelper {
         Cursor cur = db.rawQuery(sql, null);
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
-            prod.setId(cur.getInt(cur.getColumnIndex(PRODUCT_ID)));
+            prod.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
             prod.setProductId(cur.getInt(cur.getColumnIndex(SERVER_PRODUCT_ID)));
-            prod.setSubCategoryId(cur.getInt(cur.getColumnIndex(PRODUCT_SUBCATEGORIES_ID)));
+            prod.setSubCategoryId(cur.getInt(cur.getColumnIndex(AI_ID)));
             prod.setName(cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
             prod.setGenericName(cur.getString(cur.getColumnIndex(PRODUCT_GENERIC_NAME)));
             prod.setDescription(cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
@@ -1741,7 +1731,7 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.moveToFirst();
         int pID = 0;
         while (!cur.isAfterLast()) {
-            pID = cur.getInt(cur.getColumnIndex(PRODUCT_ID));
+            pID = cur.getInt(cur.getColumnIndex(AI_ID));
             cur.moveToNext();
         }
         cur.close();
@@ -1810,7 +1800,7 @@ public class DbHelper extends SQLiteOpenHelper {
         while (cur.moveToNext()) {
 
             HashMap<String, String> map = new HashMap();
-            map.put(PRODUCT_ID, cur.getString(cur.getColumnIndex(PRODUCT_ID)));
+            map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
             map.put(PRODUCT_DESCRIPTION, cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
@@ -1856,7 +1846,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Cursor cur = db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
-            medicine.setId(cur.getInt(cur.getColumnIndex(PRODUCT_ID)));
+            medicine.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
             medicine.setServerID(cur.getInt(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             medicine.setMedicine_name(cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
             medicine.setGeneric_name(cur.getString(cur.getColumnIndex(PRODUCT_GENERIC_NAME)));
@@ -1944,8 +1934,9 @@ public class DbHelper extends SQLiteOpenHelper {
         name = name.replace("'", "''");
         String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " where name='" + name + "' and category_id='" + categoryId + "'";
         Cursor cur = db.rawQuery(sql, null);
+
         while (cur.moveToNext()) {
-            subCategory.setId(cur.getInt(cur.getColumnIndex(PRODUCT_SUBCATEGORIES_ID)));
+            subCategory.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
             subCategory.setName(cur.getString(cur.getColumnIndex(PROD_SUBCAT_NAME)));
             subCategory.setCategoryId(Integer.parseInt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_CATEGORY_ID))));
             subCategory.setCreatedAt(cur.getString(cur.getColumnIndex(CREATED_AT)));
@@ -1975,6 +1966,30 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.close();
         String[] arr = new String[list.size()];
         return list.toArray(arr);
+    }
+
+    public Settings getAllSettings() {
+        Settings settings = new Settings();
+
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_SETTINGS;
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            settings.setServerID(cur.getInt(cur.getColumnIndex(SETTINGS_SERVER_ID)));
+            settings.setPoints(cur.getDouble(cur.getColumnIndex(SETTINGS_POINTS)));
+            settings.setPoints_to_peso(cur.getDouble(cur.getColumnIndex(SETTINGS_POINTS_TO_PESO)));
+            settings.setLvl_limit(cur.getInt(cur.getColumnIndex(SETTINGS_LVL_LIMIT)));
+            settings.setReferral_comm(cur.getDouble(cur.getColumnIndex(SETTINGS_REFERRAL_COMM)));
+            settings.setComm_variation(cur.getDouble(cur.getColumnIndex(SETTINGS_COMM_VARIATION)));
+            settings.setDelivery_charge(cur.getDouble(cur.getColumnIndex(SETTINGS_DELIVERY_CHARGE)));
+            settings.setSafety_stock(cur.getInt(cur.getColumnIndex(SETTINGS_SAFETY_STOCK)));
+            settings.setCritical_stock(cur.getInt(cur.getColumnIndex(SETTINGS_CRITICAL_STOCK)));
+            settings.setCreated_at(cur.getString(cur.getColumnIndex(CREATED_AT)));
+            settings.setUpdated_at(cur.getString(cur.getColumnIndex(UPDATED_AT)));
+            settings.setDeleted_at(cur.getString(cur.getColumnIndex(DELETED_AT)));
+        }
+        return settings;
     }
     /////////////////////////END OF GET METHODS/////////////////////////////////
 
@@ -2015,7 +2030,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public boolean deleteConsultation(int consultationID) {
         SQLiteDatabase db = getWritableDatabase();
-        long rowID = db.delete(TBL_PATIENT_CONSULTATIONS, CONSULT_ID + "=" + consultationID, null);
+        long rowID = db.delete(TBL_PATIENT_CONSULTATIONS, AI_ID + "=" + consultationID, null);
         db.close();
 
         return rowID > 0;
@@ -2023,7 +2038,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public long deletePatientRecord(int recordID) {
         SQLiteDatabase db = getWritableDatabase();
-        long deleted_record_ID = db.delete(TBL_PATIENT_RECORDS, RECORDS_ID + " = " + recordID, null);
+        long deleted_record_ID = db.delete(TBL_PATIENT_RECORDS, AI_ID + " = " + recordID, null);
         db.close();
 
         return deleted_record_ID;

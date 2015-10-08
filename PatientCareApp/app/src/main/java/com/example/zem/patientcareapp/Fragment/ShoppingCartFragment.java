@@ -378,6 +378,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
             case R.id.btn_checkout_ready:
                 Intent intent = new Intent(getActivity(), CheckoutActivity.class); //CheckoutActivity.class
                 startActivity(intent);
+                break;
         }
     }
 }

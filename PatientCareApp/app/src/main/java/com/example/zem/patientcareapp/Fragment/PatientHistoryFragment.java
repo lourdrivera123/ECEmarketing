@@ -199,7 +199,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         treatments = (EditText) dialog.findViewById(R.id.treatments);
         update_record = (ImageButton) dialog.findViewById(R.id.update_record);
 
-        update_recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_ID));
+        update_recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
         date.setText(hashHistory.get(position).get(dbHelper.RECORDS_DATE));
         complaints.setText(hashHistory.get(position).get(dbHelper.RECORDS_COMPLAINT));
         findings.setText(hashHistory.get(position).get(dbHelper.RECORDS_FINDINGS));
@@ -211,7 +211,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             view_doctor_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_button_bg));
         }
 
-        hashTreatments = dbHelper.getTreatmentRecord(Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_ID)));
+        hashTreatments = dbHelper.getTreatmentRecord(Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID)));
 
         if (hashTreatments.size() > 0) {
             for (int x = 0; x < hashTreatments.size(); x++) {
@@ -276,7 +276,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         }
 
         public void remove(int position) {
-            int recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_ID));
+            int recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
             if (dbHelper.deletePatientRecord(recordID) > 0) {
                 if (dbHelper.deleteTreatmentByRecordID(recordID) > 0) {
                     medRecords.remove(position);
