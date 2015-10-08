@@ -217,7 +217,6 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                             for (int inner = 0; inner < hash_AllUsers.size(); inner++) {
                                 if (referredBy.equals(hash_AllUsers.get(inner).get("referred_by"))) {
                                     if (lvl != temp_lvl) {
-                                        Log.d("hash outer/o", outer + " / " + o);
                                         padding += 15;
                                         TableRow child_row = new TableRow(getActivity());
                                         TextView child_view = new TextView(getActivity());
@@ -234,7 +233,6 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                                         hash.put("referred_by", hash_AllUsers.get(inner).get("referred_by"));
                                         hash_hash.add(hash);
 
-                                        Log.d("hash hash", hash_hash + "");
                                         abc++;
                                     }
                                 }
