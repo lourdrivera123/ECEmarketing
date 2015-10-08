@@ -151,6 +151,17 @@ switch ($request) {
     $tbl = "order_details";
     break;
 
+    case 'get_notifications' :
+    $result = mysql_query("SELECT * FROM notifications WHERE patient_ID = ".$_GET['patient_ID'].
+        " AND table_name = '".$_GET['table_name']."' AND isRead = 0") or returnError(mysql_error());
+    $tbl = "notifications";
+    break;
+
+    case 'get_settings' :
+    $result = mysql_query("SELECT * FROM settings") or returnError(mysql_error());
+    $tbl = "settings";
+    break;
+
     default:
         # code...
     break;
@@ -188,13 +199,11 @@ if ($db_result > 0) {
     $response["success"]          = 1;
     $response["server_timestamp"] = "$server_timestamp";
     $response["latest_updated_at"] = "$latest_updated_at";
-
 } else {
     // no products found
     $response["success"] = 0;
     $response["message"] = "No $tbl data found.";
 }
-
 
 // echo no users JSON
 echo json_encode($response);
@@ -208,9 +217,9 @@ function returnError($msg) {
 }
 
 function pre($str){
- echo "<pre>";
- print_r($str);
- echo "</pre>";
+   echo "<pre>";
+   print_r($str);
+   echo "</pre>";
 }
 
 function fetchRows($result, $tbl){
