@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.GetterSetter.Clinic;
 import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
@@ -160,6 +158,11 @@ public class Sync {
 
                                 } else
                                     System.out.print("patient_prescriptions FAILED TO SAVE <src: Sync.java>");
+                            } else if (tableName.equals("settings")) {
+                                if (dbHelper.saveSettings(json_object, "insert")) {
+
+                                } else
+                                    System.out.print("referral_settings FAILED TO SAVE <src: Sync.java>");
                             }
                         }
                     }
@@ -183,6 +186,11 @@ public class Sync {
                                 } else {
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                                 }
+                            } else if(tableName.equals("settings")) {
+                                if (dbHelper.saveSettings(json_object, "update")) {
+
+                                } else
+                                    System.out.print("referral_settings FAILED TO SAVE <src: Sync.java>");
                             }
                         }
                     }
@@ -551,7 +559,7 @@ public class Sync {
         Product product = new Product();
 
         try {
-            product.setProductId(json.getInt(DbHelper.PRODUCT_ID));
+            product.setProductId(json.getInt("id"));
             product.setName(json.getString(DbHelper.PRODUCT_NAME));
             product.setSubCategoryId(Integer.parseInt(json.getString(DbHelper.PRODUCT_SUBCATEGORY_ID)));
             product.setGenericName(json.getString(DbHelper.PRODUCT_GENERIC_NAME));
@@ -575,7 +583,7 @@ public class Sync {
 
     public Basket setBasket(JSONObject json) throws JSONException {
         Basket basket = new Basket();
-        basket.setBasketId(json.getInt(DbHelper.BASKET_ID));
+        basket.setBasketId(json.getInt("id"));
         basket.setQuantity(Integer.parseInt(json.getString(DbHelper.BASKET_QUANTITY)));
         basket.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
         basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
@@ -588,7 +596,7 @@ public class Sync {
     public DiscountsFreeProducts setDiscountsFreeProducts(JSONObject json) throws JSONException {
         DiscountsFreeProducts discountsFreeProducts = new DiscountsFreeProducts();
 
-        discountsFreeProducts.setDfpId(json.getInt(DbHelper.DFP_ID));
+        discountsFreeProducts.setDfpId(json.getInt("id"));
         discountsFreeProducts.setProductId(json.getInt(DbHelper.DFP_PRODUCT_ID));
         discountsFreeProducts.setPromoId(json.getInt(DbHelper.DFP_PROMO_ID));
         discountsFreeProducts.setLess(json.getDouble(DbHelper.DFP_LESS));
@@ -604,7 +612,7 @@ public class Sync {
     public FreeProducts setFreeProducts(JSONObject json) throws JSONException {
         FreeProducts freeProducts = new FreeProducts();
 
-        freeProducts.setFreeProductsId(json.getInt(DbHelper.FP_ID));
+        freeProducts.setFreeProductsId(json.getInt("id"));
         freeProducts.setDfpId(json.getInt(DbHelper.FP_DFP_ID));
         freeProducts.setQuantityFree(json.getInt(DbHelper.FP_QTY_FREE));
         freeProducts.setCreatedAt(json.getString(DbHelper.FP_CREATED_AT));
@@ -617,7 +625,7 @@ public class Sync {
     public Promo setPromo(JSONObject json) throws JSONException {
         Promo promo = new Promo();
 
-        promo.setServerPromoId(json.getInt(DbHelper.PROMO_ID));
+        promo.setServerPromoId(json.getInt("id"));
         promo.setName(json.getString(DbHelper.PROMO_NAME));
         promo.setStartDate(json.getString(DbHelper.PROMO_START_DATE));
         promo.setEndDate(json.getString(DbHelper.PROMO_END_DATE));

@@ -68,6 +68,9 @@
             android:name=".ReferralActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
+            android:name=".SampleActivity"
+            android:theme="@style/Theme.MyFancyTheme" />
+        <activity
             android:name=".CheckoutActivity"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity

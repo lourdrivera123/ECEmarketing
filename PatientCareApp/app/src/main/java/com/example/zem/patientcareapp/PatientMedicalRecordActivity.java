@@ -113,7 +113,7 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
 
             for (int x = 0; x < update_treatments.size(); x++) {
                 map = new HashMap();
-                map.put(TREATMENTS_ID, update_treatments.get(x).get(dbhelper.TREATMENTS_ID));
+                map.put(TREATMENTS_ID, update_treatments.get(x).get(dbhelper.AI_ID));
                 map.put(MEDICINE_NAME, update_treatments.get(x).get(dbhelper.TREATMENTS_MEDICINE_NAME));
                 map.put(GENERIC_NAME, update_treatments.get(x).get(dbhelper.TREATMENTS_GENERIC_NAME));
                 map.put(QUANITY, update_treatments.get(x).get(dbhelper.TREATMENTS_QUANITY));

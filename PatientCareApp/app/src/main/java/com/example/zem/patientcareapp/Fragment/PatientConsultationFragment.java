@@ -91,7 +91,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         switch (item.getItemId()) {
             case R.id.update_cart:
                 Intent intent = new Intent(getActivity(), PatientConsultationActivity.class);
-                intent.putExtra("updateID", listOfAllConsultations.get(menuinfo.position).get(DbHelper.CONSULT_ID));
+                intent.putExtra("updateID", listOfAllConsultations.get(menuinfo.position).get(DbHelper.AI_ID));
                 intent.putExtra("request", "update");
                 startActivity(intent);
                 break;

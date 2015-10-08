@@ -49,7 +49,7 @@ public class GetRequest {
             @Override
             public void onErrorResponse(VolleyError error) {
                 errorlistener.getError(error);
-                Log.d("error on interface gaming", error + "");
+                Log.d("error <GetRequest> ", error + "");
             }
         });
         queue.add(doctor_request);
