@@ -111,7 +111,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 nr = 0;
                 MenuInflater inflater = getActivity().getMenuInflater();
-                inflater.inflate(R.menu.delete_menu, menu);
+                inflater.inflate(R.menu.multiple_delete_menu, menu);
                 return true;
             }
 
@@ -319,7 +319,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             findings.setTag(position);
 
             if (mSelection.get(position) != null) {
-                v.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));// this is a selected position so make it red
+                v.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
             }
             return v;
         }

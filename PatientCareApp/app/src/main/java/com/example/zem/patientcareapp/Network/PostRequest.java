@@ -43,7 +43,7 @@ public class PostRequest {
             @Override
             public void onErrorResponse(VolleyError error) {
                 errorlistener.getError(error);
-                Log.d("error on interface <PostRequest.java>", error + "");
+                System.out.print("error on interface <PostRequest.java>" + error);
             }
         });
         queue.add(jsObjRequest);

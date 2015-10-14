@@ -274,7 +274,7 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getMenuInflater().inflate(R.menu.delete_menu, menu);
+        getMenuInflater().inflate(R.menu.multiple_delete_menu, menu);
     }
 
     @Override

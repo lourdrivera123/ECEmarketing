@@ -27,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
+import com.example.zem.patientcareapp.Fragment.MessagesFragment;
 import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
 import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
 
@@ -97,6 +98,7 @@ public class SidebarActivity extends FragmentActivity {
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], 0));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], 0));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -238,12 +240,14 @@ public class SidebarActivity extends FragmentActivity {
                 fragment = new HomeTileFragment();
                 break;
             case 1:
-                fragment = new ReferralsFragment();
+                fragment = new MessagesFragment();
                 break;
             case 2:
-//                fragment  = new OrdersFragment();
-                    Intent orders_intent = new Intent(getBaseContext(), OrdersActivity.class);
-                    startActivity(orders_intent);
+                fragment = new ReferralsFragment();
+                break;
+            case 3:
+                Intent orders_intent = new Intent(getBaseContext(), OrdersActivity.class);
+                startActivity(orders_intent);
             default:
                 break;
         }
@@ -257,9 +261,8 @@ public class SidebarActivity extends FragmentActivity {
             mDrawerList.setSelection(position);
             setTitle(navMenuTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
-        } else {
+        } else
             Log.e("SidebarActivity", "Error in creating fragment");
-        }
     }
 
     @Override

@@ -174,6 +174,12 @@ public class Sync {
                             } else if (tableName.equals("order_details")) {
                                 if (!dbHelper.saveOrderDetails(json_object))
                                     System.out.print("order_details FAILED TO SAVE <src: Sync.java>");
+                            } else if (tableName.equals("messages")) {
+                                if (dbHelper.saveMessages(json_object, "insert")) {
+
+                                } else {
+                                    System.out.print("messages FAILED TO SAVE <src: Sync.java>");
+                                }
                             }
                         }
                     }
@@ -202,19 +208,20 @@ public class Sync {
 
                                 } else
                                     System.out.print("referral_settings FAILED TO SAVE <src: Sync.java>");
+                            } else if (tableName.equals("messages")) {
+                                if (dbHelper.saveMessages(json_object, "update")) {
+
+                                } else
+                                    System.out.print("messages FAILED TO SAVE <src: Sync.java>");
                             }
                         }
                     }
                 }
-
-
             }
-
         } catch (JSONException e) {
             Toast.makeText(context, "general error" + e, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-
     }
 
     public Dosage setDosage(JSONObject json_object) {
@@ -541,7 +548,7 @@ public class Sync {
         basket.setBasketId(json.getInt("id"));
         basket.setQuantity(Integer.parseInt(json.getString(DbHelper.BASKET_QUANTITY)));
         basket.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
-        basket.setPatienId(json.getInt(DbHelper.BASKET_PATIENT_ID));
+        basket.setPatienId(json.getInt(DbHelper.PATIENT_ID));
         basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
         basket.setPrescriptionId(json.getInt(DbHelper.BASKET_PRESCRIPTION_ID));
         basket.setIsApproved(json.getInt(DbHelper.BASKET_IS_APPROVED));

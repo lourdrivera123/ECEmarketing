@@ -219,7 +219,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
                                                 public void getResult(JSONObject response) {
-                                                    Log.d("response using interface <EditTabsActivity.java - update patient>", response + "");
                                                     int success = 0;
 
                                                     try {
@@ -249,7 +248,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 public void getError(VolleyError error) {
                                                     pDialog.dismiss();
                                                     Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
-                                                    Log.d("src <EditTabsActivity>: ", error.toString());
+                                                    System.out.print("src <EditTabsActivity>: " + error);
                                                 }
                                             });
                                         } else {
@@ -258,7 +257,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                                             HashMap<String, String> params = setParams("register");
 
-                                            Log.d("register parmas", params+"");
+                                            Log.d("register parmas", params + "");
 
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override

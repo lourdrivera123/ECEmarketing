@@ -11,5 +11,17 @@
     <ListView
         android:id="@+id/listOfMessages"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:choiceMode="multipleChoice"
+        android:divider="#333333"
+        android:dividerHeight="1dip" />
+
+    <TextView
+        android:id="@+id/noMsgs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No messages"
+        android:textSize="20sp"
+        android:visibility="gone" />
 </LinearLayout>

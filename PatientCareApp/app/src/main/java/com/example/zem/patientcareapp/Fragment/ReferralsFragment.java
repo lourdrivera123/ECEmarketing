@@ -76,8 +76,6 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
 
         db = new DbHelper(getActivity());
         patient = db.getCurrentLoggedInPatient();
-        settings = db.getAllSettings();
-        lvl = settings.getLvl_limit();
 
         list_myReferrals = new ArrayList();
         hash_myReferrals = new ArrayList();
@@ -93,7 +91,6 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
         dialog.show();
 
         checkForSettingsUpdate();
-        referralsLvlLimit.setText("Referrals Level Limit: " + lvl + " level/s");
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_referrals_by_user", new RespondListener<JSONObject>() {
             @Override
@@ -162,13 +159,20 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
             public void getResult(JSONObject response) {
                 settings = db.getAllSettings();
                 lvl = settings.getLvl_limit();
+                referralsLvlLimit.setText("Referrals Level Limit: " + lvl + " level/s");
+
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
+                settings = db.getAllSettings();
+                lvl = settings.getLvl_limit();
+                referralsLvlLimit.setText("Referrals Level Limit: " + lvl + " level/s");
+
                 Log.d("Error", error + "");
                 Toast.makeText(getActivity(), "Couldn't update settings. Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     @Override
@@ -254,7 +258,7 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                     if (a + 1 < hash_hash.size() && Integer.parseInt(hash_hash.get(a).get("count")) == Integer.parseInt(hash_hash.get(a + 1).get("count"))) {
 
                     } else {
-                        padding += 20;
+                        padding += 30;
                     }
                 }
 
