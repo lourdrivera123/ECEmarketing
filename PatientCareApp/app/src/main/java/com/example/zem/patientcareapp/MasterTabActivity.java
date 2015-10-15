@@ -109,7 +109,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         pos = tab.getPosition();
 
         if (pos == 5) {
-            if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "MasterTabs", "check"))
+            if (dbHelper.checkOverlay("MasterTabs", "check"))
                 ProductsFragment.showOverLay(this);
         }
 
@@ -130,7 +130,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
         dialog.setContentView(R.layout.mastertabs_overlay);
 
-        if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "MasterTabs", "check") == false) {
+        if (dbHelper.checkOverlay("MasterTabs", "check") == false) {
             profileSetting_coachMark = (ImageView) dialog.findViewById(R.id.profileSetting_coachMark);
             swipeLeftRight = (ImageView) dialog.findViewById(R.id.swipeLeftRight);
             LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.masterTabsLayout);
@@ -147,7 +147,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             swipeLeftRight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "MasterTabs", "insert")) {
+                    if (dbHelper.checkOverlay("MasterTabs", "insert")) {
                         if (pos == 5) {
                             ProductsFragment.showOverLay(MasterTabActivity.this);
                         }

@@ -8,7 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,6 +34,7 @@ import java.util.HashMap;
 /**
  * Created by User PC on 8/26/2015.
  */
+
 public class ReferralActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextWatcher, AdapterView.OnItemClickListener {
     ArrayList<HashMap<String, String>> hashOfReferrals;
     ArrayList<String> tempReferrals;
@@ -45,7 +46,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
     int check;
 
     RadioButton other, radioReferredBy;
-    EditText referredBy;
+    EditText referredBy, specifyOthers;
     ListView listOfNames;
     Button continueBtn;
 
@@ -56,6 +57,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
 
         ActionBar actionbar = getActionBar();
         setCustomActionBar(actionbar);
+        actionbar.setDisplayHomeAsUpEnabled(true);
 
         hashOfReferrals = new ArrayList();
         listOfReferrals = new ArrayList();
@@ -64,6 +66,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         other = (RadioButton) findViewById(R.id.other);
         radioReferredBy = (RadioButton) findViewById(R.id.radioReferredBy);
         referredBy = (EditText) findViewById(R.id.referredBy);
+        specifyOthers = (EditText) findViewById(R.id.specifyOthers);
         listOfNames = (ListView) findViewById(R.id.listOfNames);
         continueBtn = (Button) findViewById(R.id.continueBtn);
 
@@ -76,8 +79,6 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_patients", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                Log.d("response using interface <MainActivity.java >", response + "");
-
                 try {
                     JSONArray json_array_mysql = response.getJSONArray("patients");
                     for (int x = 0; x < json_array_mysql.length(); x++) {
@@ -105,8 +106,8 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Log.d("Error in ReferralActivity", error + "");
-                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                System.out.print("Error in ReferralActivity" + error);
+                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -151,9 +152,11 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (radioReferredBy.isChecked()) {
+            specifyOthers.setVisibility(View.GONE);
             referredBy.setVisibility(View.VISIBLE);
             listOfNames.setVisibility(View.VISIBLE);
         } else if (other.isChecked()) {
+            specifyOthers.setVisibility(View.VISIBLE);
             referredBy.setVisibility(View.INVISIBLE);
             listOfNames.setVisibility(View.INVISIBLE);
         }
@@ -186,5 +189,11 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String itemClicked = String.valueOf(parent.getItemAtPosition(position));
         referredBy.setText(itemClicked);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        this.finish();
+        return super.onOptionsItemSelected(item);
     }
 }

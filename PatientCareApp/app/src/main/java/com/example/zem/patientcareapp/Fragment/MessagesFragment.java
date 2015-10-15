@@ -1,6 +1,7 @@
 package com.example.zem.patientcareapp.Fragment;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -67,6 +69,14 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_messages_fragment, container, false);
 
+        hashOfMessages = new ArrayList();
+        listOfCheckedPositions = new ArrayList();
+        patient_id = SidebarActivity.getUserID();
+        serverRequest = new ServerRequest();
+        db = new DbHelper(getActivity());
+
+        showOverLay();
+
         listOfMessages = (ListView) v.findViewById(R.id.listOfMessages);
         noMsgs = (TextView) v.findViewById(R.id.noMsgs);
 
@@ -74,18 +84,33 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         dialog.setMessage("Please wait...");
         dialog.show();
 
-        hashOfMessages = new ArrayList();
-        listOfCheckedPositions = new ArrayList();
-        patient_id = SidebarActivity.getUserID();
-        serverRequest = new ServerRequest();
-        db = new DbHelper(getActivity());
-
         listOfMessages.setOnItemClickListener(this);
         listOfMessages.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listOfMessages.setMultiChoiceModeListener(this);
         listOfMessages.setOnItemLongClickListener(this);
 
         return v;
+    }
+
+    private void showOverLay() {
+        if (db.checkOverlay("Messages", "check")) {
+
+        } else {
+            final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
+            dialog.setContentView(R.layout.overlay_messages);
+
+            final LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.linearMsgs);
+            layout.setAlpha((float) 0.8);
+
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    if (db.checkOverlay("Messages", "insert"))
+                        dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
     }
 
     @Override
@@ -133,7 +158,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
 
                 dialog.dismiss();
                 System.out.print("VolleyError <ReferralsFragment>: " + error);
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
 

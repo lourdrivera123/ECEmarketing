@@ -206,7 +206,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     public static void showOverLay(Context context) {
         dbHelper = new DbHelper(context);
 
-        if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "Products", "check")) {
+        if (dbHelper.checkOverlay("Products", "check")) {
 
         } else {
             final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
@@ -218,7 +218,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (dbHelper.checkOverlay(SidebarActivity.getUserID(), "Products", "insert"))
+                    if (dbHelper.checkOverlay("Products", "insert"))
                         dialog.dismiss();
                 }
             });

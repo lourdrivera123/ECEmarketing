@@ -172,13 +172,11 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
                             GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
-                                    Log.d("response using interface <checkoutactivity.java - orders request >", response + "");
 
                                     //request for order_details request
                                     GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
-                                            Log.d("response using interface <checkoutactivity.java - order_details request >", response + "");
 
                                             Toast.makeText(getApplicationContext(), "Thank you !",
                                                     Toast.LENGTH_LONG).show();

@@ -48,7 +48,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     ArrayList<HashMap<String, String>> hashHistory;
     ArrayList<HashMap<String, String>> hashTreatments;
     ArrayList<String> medRecords;
-    ArrayList<Integer> temp_deleted;
     ArrayList<Integer> selectedList;
     ArrayList<String> arrayOfRecords;
 
@@ -71,7 +70,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         medRecords = new ArrayList();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
-        temp_deleted = new ArrayList();
 
         for (int x = 0; x < hashHistory.size(); x++) {
             medRecords.add(hashHistory.get(x).get(DbHelper.RECORDS_DOCTOR_NAME));
@@ -120,7 +118,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 switch (item.getItemId()) {
                     case R.id.item_delete:
                         selectedList.addAll(mAdapter.getCurrentCheckedPosition());
-                        temp_deleted.addAll(selectedList);
                         final int no_of_records = selectedList.size();
                         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
                         dialog.setTitle("Delete?");

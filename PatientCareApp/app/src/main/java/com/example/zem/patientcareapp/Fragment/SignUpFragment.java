@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.example.zem.patientcareapp.DbHelper;
@@ -28,7 +27,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
 
     public static EditText birthdate, fname, lname, mname, height, weight, occupation;
     public static Spinner civil_status_spinner;
-    public static RadioGroup sex;
     public static RadioButton male_rb, female_rb;
     public static View rootView;
 
@@ -116,9 +114,16 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
     public void onDateSet(DatePicker view, int year, int month, int day) {
         String dateStr = String.format("%d/%d/%d", (month + 1), day, year);
         birthdate.setText(dateStr);
+
         int_year = year;
         int_month = month;
         int_day = day;
+
+        Calendar calendar = Calendar.getInstance();
+        int current_year = calendar.get(Calendar.YEAR);
+
+        if ((current_year - year) < 18)
+            birthdate.setError("Must be 18 years old and above");
     }
 
     public void updateDate(int year, int monthOfYear, int dayOfMonth) {

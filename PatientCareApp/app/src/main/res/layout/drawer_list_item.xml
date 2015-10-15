@@ -8,8 +8,9 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight=".9"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:text="Communities"
@@ -18,9 +19,10 @@
 
     <TextView
         android:id="@+id/counter"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/d30"
+        android:layout_marginRight="20dp"
+        android:layout_weight=".1"
         android:background="@drawable/counter_bg"
         android:text="55"
         android:textColor="@color/counter_text_color" />

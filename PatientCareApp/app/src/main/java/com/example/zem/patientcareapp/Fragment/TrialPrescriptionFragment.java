@@ -164,7 +164,6 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                     PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
-                            Log.d("response using interface <TrialPrescriptionFragment.java>", response + "");
                             try {
                                 int success = response.getInt("success");
 

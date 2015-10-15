@@ -274,7 +274,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //OVERLAY
     public static final String TBL_OVERLAYS = "overlays",
-            OVERLAY_USERID = "userID",
             OVERLAY_TITLE = "title";
 
     //ORDERS TABLE
@@ -417,8 +416,8 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)", TBL_PATIENT_CONSULTATIONS, AI_ID, PATIENT_ID,
                 CONSULT_DOCTOR, CONSULT_CLINIC, CONSULT_DATE, CONSULT_PART_OF_DAY, CONSULT_IS_ALARMED, CONSULT_TIME, CONSULT_IS_FINISHED);
 
-        String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s INTEGER)",
-                TBL_OVERLAYS, AI_ID, OVERLAY_USERID, OVERLAY_TITLE, IS_READ);
+        String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER)",
+                TBL_OVERLAYS, AI_ID, OVERLAY_TITLE, IS_READ);
 
         String settings = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s DOUBLE, %s DOUBLE, %s INTEGER, %s DOUBLE, %s DOUBLE, %s DOUBLE, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_SETTINGS, AI_ID, SETTINGS_SERVER_ID, SETTINGS_POINTS, SETTINGS_POINTS_TO_PESO, SETTINGS_LVL_LIMIT, SETTINGS_REFERRAL_COMM, SETTINGS_COMM_VARIATION, SETTINGS_DELIVERY_CHARGE, SETTINGS_SAFETY_STOCK, SETTINGS_CRITICAL_STOCK, CREATED_AT, UPDATED_AT, DELETED_AT);
@@ -2131,13 +2130,12 @@ public class DbHelper extends SQLiteOpenHelper {
     ////////////////////////////END OF DELETE METHODS/////////////////////////////
 
     ////////////////////////////CHECK METHODS////////////////////////////////////
-    public boolean checkOverlay(int userID, String title, String request) {
+    public boolean checkOverlay(String title, String request) {
         SQLiteDatabase db = getWritableDatabase();
         long check = 0;
 
         if (request.equals("check")) {
-            String sql = "SELECT * FROM " + TBL_OVERLAYS + " WHERE " + OVERLAY_TITLE + " = '" + title + "' AND " + OVERLAY_USERID + " = " + userID +
-                    " AND " + IS_READ + " = 1";
+            String sql = "SELECT * FROM " + TBL_OVERLAYS + " WHERE " + OVERLAY_TITLE + " = '" + title + "' AND " + IS_READ + " = 1";
             Cursor cur = db.rawQuery(sql, null);
 
             while (cur.moveToNext()) {
@@ -2148,7 +2146,6 @@ public class DbHelper extends SQLiteOpenHelper {
         } else {
             ContentValues val = new ContentValues();
 
-            val.put(OVERLAY_USERID, userID);
             val.put(OVERLAY_TITLE, title);
             val.put(IS_READ, 1);
 
