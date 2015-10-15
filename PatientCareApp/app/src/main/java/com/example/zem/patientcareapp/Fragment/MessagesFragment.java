@@ -161,7 +161,6 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
-
         super.onResume();
     }
 

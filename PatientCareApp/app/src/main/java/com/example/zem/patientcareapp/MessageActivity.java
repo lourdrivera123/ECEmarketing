@@ -23,6 +23,7 @@ import java.util.HashMap;
 /**
  * Created by User PC on 10/13/2015.
  */
+
 public class MessageActivity extends Activity {
     TextView date, subject, message;
 
@@ -92,7 +93,7 @@ public class MessageActivity extends Activity {
         }
 
         date.setText(msg.getDate());
-        subject.setText(msg.getSubject());
+        subject.setText("Subject: " + msg.getSubject());
         message.setText(msg.getContent());
     }
 
