@@ -66,7 +66,7 @@ public class samplepaypal extends Activity {
     BigDecimal tax = new BigDecimal("0.0");
     BigDecimal amount;
     int billing_id = 0, branch_server_id = 0;
-    String basket_ids = "", recipient_name="", recipient_address = "", recipient_contactNumber = "", modeOfDelivery = "";
+    String basket_ids = "", recipient_name="", recipient_address = "", recipient_contactNumber = "", modeOfDelivery = "", payment_method = "";
 
     // PayPal configuration
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration()
@@ -87,6 +87,7 @@ public class samplepaypal extends Activity {
         recipient_address = ckintent.getStringExtra("recipient_address");
         recipient_contactNumber = ckintent.getStringExtra("recipient_contactNumber");
         modeOfDelivery = ckintent.getStringExtra("modeOfDelivery");
+        payment_method = ckintent.getStringExtra("payment_method");
 
         PayPalConfiguration object = new PayPalConfiguration();
         object = object.acceptCreditCards(false);
@@ -330,7 +331,8 @@ public class samplepaypal extends Activity {
                 params.put("recipient_address", recipient_address);
                 params.put("recipient_contactNumber", recipient_contactNumber);
                 params.put("modeOfDelivery", modeOfDelivery);
-                params.put("status", "pending");
+                params.put("payment_method", payment_method);
+                params.put("status", "open");
 
                 Log.d("params shit", params+"");
 
