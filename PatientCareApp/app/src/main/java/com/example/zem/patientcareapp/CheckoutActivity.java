@@ -158,6 +158,7 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
             map.put("recipient_contactNumber", receiverContactNumber);
             map.put("branch_id", String.valueOf(1)); //needs to be the id of the selected combobox
             map.put("modeOfDelivery", modeOfDelivery);
+            map.put("payment_method", "cod");
             map.put("status", "pending");
 
             Log.d("paramshit", map + "");
@@ -224,6 +225,7 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
             intent.putExtra("recipient_contactNumber", receiverContactNumber);
             intent.putExtra("branch_server_id", branch_server_id);
             intent.putExtra("modeOfDelivery", modeOfDelivery);
+            intent.putExtra("payment_method", "paypal");
             intent.putExtra("status", "pending");
             startActivity(intent);
 
@@ -236,6 +238,7 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
             intent.putExtra("recipient_contactNumber", receiverContactNumber);
             intent.putExtra("branch_server_id", branch_server_id);
             intent.putExtra("modeOfDelivery", modeOfDelivery);
+            intent.putExtra("payment_method", "visa_or_mastercard");
             intent.putExtra("status", "pending");
             startActivity(intent);
         }

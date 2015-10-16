@@ -302,8 +302,10 @@ public class DbHelper extends SQLiteOpenHelper {
             SERVER_ORDER_DETAILS_ID = "order_details_id",
             ORDER_DETAILS_ORDER_ID = "order_id",
             ORDER_DETAILS_PRODUCT_ID = "product_id",
+            ORDER_DETAILS_PRESCRIPTION_ID = "prescription_id",
             ORDER_DETAILS_QUANTITY = "quantity",
-            ORDER_DETAILS_TYPE = "type";
+            ORDER_DETAILS_TYPE = "type",
+            ORDER_DETAILS_QTY_FULFILLED = "qty_fulfilled";
 
     //BRANCHES TABLE
     public static final String TBL_BRANCHES = "branches",
@@ -434,8 +436,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_BRANCHES, BRANCHES_ID, SERVER_BRANCHES_ID, BRANCHES_NAME, BRANCHES_FULL_ADDRESS, BRANCHES_STATUS, CREATED_AT,
                 UPDATED_AT, DELETED_AT);
 
-        String sql_create_order_details = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_ORDER_DETAILS, ORDER_DETAILS_ID, SERVER_ORDER_DETAILS_ID, ORDER_DETAILS_ORDER_ID, ORDER_DETAILS_PRODUCT_ID, ORDER_DETAILS_QUANTITY, ORDER_DETAILS_TYPE, CREATED_AT,
+        String sql_create_order_details = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_ORDER_DETAILS, ORDER_DETAILS_ID, SERVER_ORDER_DETAILS_ID, ORDER_DETAILS_ORDER_ID, ORDER_DETAILS_PRODUCT_ID, ORDER_DETAILS_PRESCRIPTION_ID, ORDER_DETAILS_QUANTITY, ORDER_DETAILS_TYPE, ORDER_DETAILS_QTY_FULFILLED, CREATED_AT,
                 UPDATED_AT, DELETED_AT);
 
         db.execSQL(sql_create_tbl_doctors);
@@ -834,8 +836,10 @@ public class DbHelper extends SQLiteOpenHelper {
             values.put(SERVER_ORDER_DETAILS_ID, object.getInt("id"));
             values.put(ORDER_DETAILS_ORDER_ID, object.getInt(ORDER_DETAILS_ORDER_ID));
             values.put(ORDER_DETAILS_PRODUCT_ID, object.getInt(ORDER_DETAILS_PRODUCT_ID));
+            values.put(ORDER_DETAILS_PRESCRIPTION_ID, object.getInt(ORDER_DETAILS_PRESCRIPTION_ID));
             values.put(ORDER_DETAILS_QUANTITY, object.getInt(ORDER_DETAILS_QUANTITY));
             values.put(ORDER_DETAILS_TYPE, object.getString(ORDER_DETAILS_TYPE));
+            values.put(ORDER_DETAILS_QTY_FULFILLED, object.getInt(ORDER_DETAILS_QTY_FULFILLED));
             values.put(CREATED_AT, object.getString(CREATED_AT));
             values.put(UPDATED_AT, object.getString(UPDATED_AT));
             values.put(DELETED_AT, object.getString(DELETED_AT));
