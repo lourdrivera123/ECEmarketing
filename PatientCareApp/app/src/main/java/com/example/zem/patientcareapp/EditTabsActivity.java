@@ -810,7 +810,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     public void showProgressbar() {
-        //for upload
         upload_dialog = new Dialog(this);
         upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         upload_dialog.setContentView(R.layout.activity_upload);

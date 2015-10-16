@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -65,8 +64,7 @@ public class SidebarActivity extends FragmentActivity {
     static com.example.zem.patientcareapp.GetterSetter.Patient patient;
     static DbHelper dbHelper;
 
-    public static String uname;
-    static String pass;
+    public static String uname, pass;
     public static int userID;
 
     @Override
@@ -173,8 +171,7 @@ public class SidebarActivity extends FragmentActivity {
             ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            // display view for selected nav drawer item
-            displayView(position);
+            displayView(position); // display view for selected nav drawer item
         }
     }
 
