@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
+import com.example.zem.patientcareapp.Fragment.MessagesFragment;
 import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
 import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
 
@@ -35,36 +37,28 @@ import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
  */
 
 public class SidebarActivity extends FragmentActivity {
-
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    // nav drawer title
-    private CharSequence mDrawerTitle;
+    private CharSequence mDrawerTitle, mTitle;
 
-    // used to store app title
-    private CharSequence mTitle;
-
-    // slide menu items
-    private String[] navMenuTitles;
+    private String[] navMenuTitles; // slide menu items
     private TypedArray navMenuIcons;
-
     private ArrayList<NavDrawerItem> navDrawerItems;
-    private NavDrawerListAdapter adapter;
-
-    //from hometile
-    public static SharedPreferences sharedpreferences;
-    SharedPreferences.Editor editor;
-
-    ArrayAdapter search_adapter;
     ArrayList<HashMap<String, String>> hash_allProducts;
     ArrayList<String> products;
+    ArrayAdapter search_adapter;
+
+    private NavDrawerListAdapter adapter;
+    AlarmService alarmService;
+
+    public static SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
 
     FragmentTransaction fragmentTransaction;
 
     AutoCompleteTextView search_product;
-    AlarmService alarmService;
+    private ListView mDrawerList;
 
     int productID = 0;
 
@@ -80,26 +74,39 @@ public class SidebarActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sidebar_layout);
 
+        sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
+        editor = sharedpreferences.edit();
+
+        dbHelper = new DbHelper(this);
+        hash_allProducts = dbHelper.getAllProducts();
+        products = new ArrayList();
+
+        for (int x = 0; x < hash_allProducts.size(); x++)
+            products.add(hash_allProducts.get(x).get(dbHelper.PRODUCT_NAME));
+
+        ActionBar actionbar = getActionBar();
+        MainActivity.setCustomActionBar(actionbar);
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeButtonEnabled(true);
+
+        createCustomSearchBar(actionbar);
+
+        //////////////FOR THE SIDEBAR///////////////////////////////
         mTitle = mDrawerTitle = getTitle();
+        navDrawerItems = new ArrayList();
 
-        // load slide menu items
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
-
-        // nav drawer icons from resources
-        navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
+        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items); // load slide menu items
+        navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons); // nav drawer icons from resources
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-        navDrawerItems = new ArrayList();
-
-        // adding nav drawer items to array
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], 0));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], 0));
 
-        // Recycle the typed array
-        navMenuIcons.recycle();
+        navMenuIcons.recycle(); // Recycle the typed array
 
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
 
@@ -127,27 +134,8 @@ public class SidebarActivity extends FragmentActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            // on first time display view for first nav item
-            displayView(0);
+            displayView(0); // on first time display view for first nav item
         }
-
-        dbHelper = new DbHelper(this);
-        hash_allProducts = dbHelper.getAllProducts();
-        products = new ArrayList();
-
-        for (int x = 0; x < hash_allProducts.size(); x++) {
-            products.add(hash_allProducts.get(x).get(dbHelper.PRODUCT_NAME));
-        }
-
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBar(actionbar);
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeButtonEnabled(true);
-
-        sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
-        editor = sharedpreferences.edit();
-
-        createCustomSearchBar(actionbar);
 
         android.app.FragmentManager fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -238,12 +226,14 @@ public class SidebarActivity extends FragmentActivity {
                 fragment = new HomeTileFragment();
                 break;
             case 1:
-                fragment = new ReferralsFragment();
+                fragment = new MessagesFragment();
                 break;
             case 2:
-//                fragment  = new OrdersFragment();
-                    Intent orders_intent = new Intent(getBaseContext(), OrdersActivity.class);
-                    startActivity(orders_intent);
+                fragment = new ReferralsFragment();
+                break;
+            case 3:
+                Intent orders_intent = new Intent(getBaseContext(), OrdersActivity.class);
+                startActivity(orders_intent);
             default:
                 break;
         }
@@ -257,9 +247,8 @@ public class SidebarActivity extends FragmentActivity {
             mDrawerList.setSelection(position);
             setTitle(navMenuTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
-        } else {
+        } else
             Log.e("SidebarActivity", "Error in creating fragment");
-        }
     }
 
     @Override

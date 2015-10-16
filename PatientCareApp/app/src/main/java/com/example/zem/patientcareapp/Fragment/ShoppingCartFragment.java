@@ -2,7 +2,6 @@ package com.example.zem.patientcareapp.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,13 +35,10 @@ import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
-import com.example.zem.patientcareapp.SidebarActivity;
-import com.example.zem.patientcareapp.samplepaypal;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -242,7 +238,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     final Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
                                     basket.setQuantity(new_qty);
 
-                                    HashMap<String, String> hashMap = new HashMap<String, String>();
+                                    HashMap<String, String> hashMap = new HashMap();
                                     hashMap.put("product_id", String.valueOf(productId));
                                     hashMap.put("request", "crud");
                                     hashMap.put("quantity", String.valueOf(new_qty));
@@ -321,8 +317,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             hashMap.put("request", "crud");
                             hashMap.put("action", "delete");
                             hashMap.put("id", String.valueOf(row.get("basket_id")));
-
-//                            Log.d("is_approved id", );
 
                             final ProgressDialog pdialog = new ProgressDialog(getActivity());
                             pdialog.setCancelable(false);

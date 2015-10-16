@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -75,8 +76,6 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
 
         db = new DbHelper(getActivity());
         patient = db.getCurrentLoggedInPatient();
-        settings = db.getAllSettings();
-        lvl = settings.getLvl_limit();
 
         list_myReferrals = new ArrayList();
         hash_myReferrals = new ArrayList();
@@ -92,7 +91,6 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
         dialog.show();
 
         checkForSettingsUpdate();
-        referralsLvlLimit.setText("Referrals Level Limit: " + lvl + " level/s");
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_referrals_by_user", new RespondListener<JSONObject>() {
             @Override
@@ -161,13 +159,20 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
             public void getResult(JSONObject response) {
                 settings = db.getAllSettings();
                 lvl = settings.getLvl_limit();
+                referralsLvlLimit.setText("Referrals Level Limit: " + lvl + " level/s");
+
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
+                settings = db.getAllSettings();
+                lvl = settings.getLvl_limit();
+                referralsLvlLimit.setText("Referrals Level Limit: " + lvl + " level/s");
+
                 Log.d("Error", error + "");
                 Toast.makeText(getActivity(), "Couldn't update settings. Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     @Override
@@ -183,28 +188,21 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
 
             TextView selectedReferral = (TextView) dialog1.findViewById(R.id.selectedReferral);
             TableLayout parentLayout = (TableLayout) dialog1.findViewById(R.id.parentLayout);
-
-            selectedReferral.setText(hash_myReferrals.get(position).get("name") + " (" + hash_myReferrals.get(position).get("referral_id") + ")");
+            String viewRef = hash_myReferrals.get(position).get("name") + " (" + hash_myReferrals.get(position).get("referral_id") + ")";
+            selectedReferral.setText(viewRef);
 
             for (int outer = 0; outer < hash_AllUsers.size(); outer++) {
                 if (hash_myReferrals.get(position).get("referral_id").equals(hash_AllUsers.get(outer).get("referred_by"))) {
-                    int padding = 0;
                     temp_lvl = 2;
-
-                    dialog1.show();
-                    TableRow row = new TableRow(getActivity());
-                    TextView second_lvl = new TextView(getActivity());
-                    second_lvl.setText(hash_AllUsers.get(outer).get("name") + " (" + hash_AllUsers.get(outer).get("referral_id") + ")");
 
                     HashMap<String, String> map = new HashMap();
                     map.put("serverID", hash_AllUsers.get(outer).get("serverID"));
                     map.put("name", hash_AllUsers.get(outer).get("name"));
                     map.put("referral_id", hash_AllUsers.get(outer).get("referral_id"));
                     map.put("referred_by", hash_AllUsers.get(outer).get("referred_by"));
+                    map.put("count", String.valueOf(-1));
                     hash_hash.add(map);
 
-                    row.addView(second_lvl);
-                    parentLayout.addView(row);
                     abc++;
                     listOfIndexes.add(abc);
 
@@ -217,20 +215,12 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                             for (int inner = 0; inner < hash_AllUsers.size(); inner++) {
                                 if (referredBy.equals(hash_AllUsers.get(inner).get("referred_by"))) {
                                     if (lvl != temp_lvl) {
-                                        padding += 15;
-                                        TableRow child_row = new TableRow(getActivity());
-                                        TextView child_view = new TextView(getActivity());
-                                        child_view.setPadding(padding, 0, 0, 0);
-                                        child_view.setText(hash_AllUsers.get(inner).get("name") + " (" + hash_AllUsers.get(inner).get("referral_id") + ")");
-
-                                        child_row.addView(child_view);
-                                        parentLayout.addView(child_row);
-
                                         HashMap<String, String> hash = new HashMap();
                                         hash.put("serverID", hash_AllUsers.get(inner).get("serverID"));
                                         hash.put("name", hash_AllUsers.get(inner).get("name"));
                                         hash.put("referral_id", hash_AllUsers.get(inner).get("referral_id"));
                                         hash.put("referred_by", hash_AllUsers.get(inner).get("referred_by"));
+                                        hash.put("count", String.valueOf(o));
                                         hash_hash.add(hash);
 
                                         abc++;
@@ -245,9 +235,45 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                 }
             }
 
-            if (check > 0)
+            if (check > 0) {
+                int padding = 30;
+
+                for (int a = 0; a < hash_hash.size(); a++) {
+                    for (int b = a + 2; b < hash_hash.size(); b++) {
+                        if (hash_hash.get(a).get("referral_id").equals(hash_hash.get(b).get("referred_by"))) {
+                            HashMap<String, String> temp = hash_hash.get(a + 1);
+                            hash_hash.set(a + 1, hash_hash.get(b));
+                            hash_hash.set(b, temp);
+                        }
+                    }
+
+                    TableRow row = new TableRow(getActivity());
+                    TextView txt = new TextView(getActivity());
+                    txt.setPadding(padding, 10, 20, 0);
+                    txt.setText(hash_hash.get(a).get("name") + " (" + hash_hash.get(a).get("referral_id") + ")");
+                    row.addView(txt);
+
+                    parentLayout.addView(row);
+
+                    if (a + 1 < hash_hash.size() && Integer.parseInt(hash_hash.get(a).get("count")) == Integer.parseInt(hash_hash.get(a + 1).get("count"))) {
+
+                    } else {
+                        padding += 30;
+                    }
+                }
+
                 dialog1.show();
-            else
+
+                //Grab the window of the dialog, and change the width
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                Window window = dialog1.getWindow();
+                lp.copyFrom(window.getAttributes());
+
+                //This makes the dialog take up the full width
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                window.setAttributes(lp);
+            } else
                 Toast.makeText(getActivity(), "This user has no downline", Toast.LENGTH_SHORT).show();
         }
     }

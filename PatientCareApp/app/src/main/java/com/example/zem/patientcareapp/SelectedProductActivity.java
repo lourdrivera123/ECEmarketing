@@ -28,6 +28,10 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+/**
+ * Created by User PC on 7/25/2015.
+ */
+
 public class SelectedProductActivity extends Activity implements View.OnClickListener {
     public static final String PRODUCT_ID = "productID";
     public static final String UP_ACTIVITY = "parent_activity";

@@ -81,7 +81,7 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.delete_menu, menu);
+        inflater.inflate(R.menu.single_delete_menu, menu);
         return true;
     }
 

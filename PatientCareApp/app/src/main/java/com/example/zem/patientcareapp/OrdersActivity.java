@@ -3,10 +3,10 @@ package com.example.zem.patientcareapp;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 
@@ -49,13 +49,9 @@ public class OrdersActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                break;
-        }
+        startActivity(new Intent(this, SidebarActivity.class));
+        this.finish();
 
         return super.onOptionsItemSelected(item);
-
     }
 }

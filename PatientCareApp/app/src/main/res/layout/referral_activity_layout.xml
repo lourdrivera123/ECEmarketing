@@ -29,7 +29,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Other" />
+                android:text="Others" />
+
+            <EditText
+                android:id="@+id/specifyOthers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d10"
+                android:hint="Please specify"
+                android:textSize="15sp" />
 
             <RadioButton
                 android:id="@+id/radioReferredBy"

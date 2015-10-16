@@ -219,7 +219,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
                                                 public void getResult(JSONObject response) {
-                                                    Log.d("response using interface <EditTabsActivity.java - update patient>", response + "");
                                                     int success = 0;
 
                                                     try {
@@ -237,9 +236,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                                                             Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
                                                             EditTabsActivity.this.finish();
-                                                        } else {
-                                                            Toast.makeText(getBaseContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-                                                        }
+                                                        } else
+                                                            Toast.makeText(getBaseContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                                                     } else {
                                                         Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
                                                     }
@@ -249,7 +247,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 public void getError(VolleyError error) {
                                                     pDialog.dismiss();
                                                     Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
-                                                    Log.d("src <EditTabsActivity>: ", error.toString());
+                                                    System.out.print("src <EditTabsActivity>: " + error);
                                                 }
                                             });
                                         } else {
@@ -258,12 +256,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                                             HashMap<String, String> params = setParams("register");
 
-                                            Log.d("register parmas", params+"");
-
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
                                                 public void getResult(JSONObject response) {
-                                                    Log.d("response using interface <EditTabsActivity.java - insert patient>", response + "");
                                                     try {
                                                         int success = response.getInt("success");
 
@@ -284,13 +279,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                 startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                                                 EditTabsActivity.this.finish();
                                                             } else {
-                                                                Toast.makeText(EditTabsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(EditTabsActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                                                             }
-                                                        } else
-                                                            Toast.makeText(EditTabsActivity.this, "Error occurred. Please try again later", Toast.LENGTH_SHORT).show();
+                                                        }
                                                     } catch (JSONException e) {
                                                         Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
-                                                        Log.d("src <EditTabsActivity - catch>: ", e + "");
+                                                        System.out.print("src <EditTabsActivity - catch>: " + e);
                                                     }
                                                     pDialog.dismiss();
                                                 }
@@ -298,7 +292,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 public void getError(VolleyError error) {
                                                     pDialog.dismiss();
                                                     Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
-                                                    Log.d("src <EditTabsActivity>: ", error.toString());
+                                                    System.out.print("src <EditTabsActivity> NETWORK: " + error);
                                                 }
                                             });
                                         }
@@ -425,6 +419,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         limit = 5;
         count = 0;
 
+        Calendar calendar = Calendar.getInstance();
+        int current_year = calendar.get(Calendar.YEAR);
+
         if (s_fname.equals("")) {
             fname.setError("Field Required");
         } else {
@@ -441,6 +438,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         if (s_birthdate.equals("")) {
             birthdate.setError("Field Required");
+        } else if ((current_year - int_year) < 18) {
+            birthdate.setError("Must be 18 years old and above");
         } else {
             patient.setBirthdate(s_birthdate);
             count++;
@@ -660,15 +659,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     s_filepath = cursor.getString(columnIndex);
                     cursor.close();
 
-                    Log.d("onactivityresykt", "yess");
-
-                    if (edit_int > 0) {
+                    if (edit_int > 0)
                         purpose = "profile_upload_update";
-                    } else {
+                    else
                         purpose = "profile_upload_insert";
-                    }
 
-//                    filePath = filePath;
                     showProgressbar();
                     new UploadFileToServer().execute();
                     check = 23;
@@ -685,6 +680,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         Calendar cal = Calendar.getInstance();
         switch (v.getId()) {
             case R.id.birthdate:
+
                 if (s_birthdate.equals("")) {
                     birthdate.setError("Field Required");
                     DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
@@ -709,6 +705,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         String dateStr = String.format("%d/%d/%d", (monthOfYear + 1), dayOfMonth, year);
         birthdate.setText(dateStr);
+
         birthdate.setError(null);
         patient.setBirthdate(dateStr);
         int_year = year;
@@ -733,22 +730,17 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(progress[0]);
             txtPercentage.setText(String.valueOf(progress[0]) + "%");
-            Log.d("naa ko sa progressupdate", "true");
         }
 
         @Override
         protected String doInBackground(Void... params) {
-            Log.d("naa ko sa doinbg", "true");
-
             return uploadFile();
         }
 
         @SuppressWarnings("deprecation")
         private String uploadFile() {
-            Log.d("naa ko sa uploadfile", "true");
             String responseString;
 
-//            DbHelper dbHelper = new DbHelper(getBaseContext());
             int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
@@ -778,8 +770,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
+                    responseString = EntityUtils.toString(r_entity); // Server response
                 } else {
                     responseString = "Error occurred! Http Status Code: " + statusCode;
                 }
@@ -793,11 +784,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d("naa ko sa onpostexecute", "true");
-            Log.d("resulta sa lasto", result + "");
-
             JSONObject jObject;
-            int serverID = 0;
+
             try {
                 jObject = new JSONObject(result);
                 image_url = jObject.getString("file_name");
@@ -805,13 +793,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                 ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
-                Log.d("patient server id", SidebarActivity.getUserID() + "");
-
-                if (dbHelper.updatePatientImage(image_url, SidebarActivity.getUserID())) {
+                if (dbHelper.updatePatientImage(image_url, SidebarActivity.getUserID()))
                     Log.d("updated photo", "true");
-                } else {
+                else
                     Log.d("updated photo", "false");
-                }
 
                 helpers.setImage(image_url, progressBar, image_holder);
 
@@ -825,7 +810,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     public void showProgressbar() {
-        Log.d("sulod", "brownout man");
         //for upload
         upload_dialog = new Dialog(this);
         upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -854,18 +838,23 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     private void showOverLay() {
-        final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
-        dialog.setContentView(R.layout.edittabs_overlay);
+        if (dbHelper.checkOverlay("EditTabs", "check")) {
 
-        LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.editTabsLayout);
-        layout.setAlpha((float) 0.8);
+        } else {
+            final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+            dialog.setContentView(R.layout.edittabs_overlay);
 
-        layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.editTabsLayout);
+            layout.setAlpha((float) 0.8);
+
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    if (dbHelper.checkOverlay("EditTabs", "insert"))
+                        dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
     }
 }

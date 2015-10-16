@@ -8,6 +8,6 @@ import com.paypal.android.sdk.payments.PayPalPayment;
  */
 public interface RespondListener<T> {
 
-    public void getResult(T object);
+    void getResult(T object);
 
 }

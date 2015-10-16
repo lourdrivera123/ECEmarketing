@@ -196,7 +196,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showOverLay() {
-        if (db.checkOverlay(SidebarActivity.getUserID(), "HomeTile", "check")) {
+        if (db.checkOverlay("HomeTile", "check")) {
 
         } else {
             final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
@@ -218,7 +218,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
             quickSearch_overlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (db.checkOverlay(SidebarActivity.getUserID(), "HomeTile", "insert"))
+                    if (db.checkOverlay("HomeTile", "insert"))
                         dialog.dismiss();
                 }
             });
