@@ -66,7 +66,7 @@ public class samplepaypal extends Activity {
     BigDecimal tax = new BigDecimal("0.0");
     BigDecimal amount;
     int billing_id = 0, branch_server_id = 0;
-    String basket_ids = "", recipient_name="", recipient_address = "", recipient_contactNumber = "", modeOfDelivery = "", payment_method = "";
+    String basket_ids = "", recipient_name = "", recipient_address = "", recipient_contactNumber = "", modeOfDelivery = "", payment_method = "";
 
     // PayPal configuration
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration()
@@ -254,21 +254,16 @@ public class samplepaypal extends Activity {
                     String message = res.getString("message");
 
 
-                    if(dbHelper.emptyBasket(SidebarActivity.getUserID())){
+                    if (dbHelper.emptyBasket(SidebarActivity.getUserID())) {
                         //request for orders request
                         GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
-                                Log.d("response using interface <samplepaypal.java - orders request >", response + "");
-
                                 //request for order_details request
                                 GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                     @Override
                                     public void getResult(JSONObject response) {
-                                        Log.d("response using interface <samplepaypal.java - order_details request >", response + "");
-
-                                        Toast.makeText(getApplicationContext(), "Thank you !",
-                                                Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Thank you !", Toast.LENGTH_LONG).show();
 
                                         Intent orders_intent = new Intent(samplepaypal.this, OrdersActivity.class);
                                         startActivity(orders_intent);
@@ -334,7 +329,7 @@ public class samplepaypal extends Activity {
                 params.put("payment_method", payment_method);
                 params.put("status", "open");
 
-                Log.d("params shit", params+"");
+                Log.d("params shit", params + "");
 
                 return params;
             }
