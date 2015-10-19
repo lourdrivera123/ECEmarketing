@@ -5,8 +5,8 @@ package com.example.zem.patientcareapp.GetterSetter;
  */
 public class Consultation {
 
-    int id, patientID, isAlarmed, isFinished;
-    String doctor, clinic, date, partOfDay, time;
+    int id, serverID, patientID, doctorID, clinicID, isAlarmed, isFinished;
+    String doctor, clinic, date, time, alarmedTime, created_at, updated_at, deleted_at;
 
     public Consultation() {
 
@@ -40,14 +40,37 @@ public class Consultation {
         this.date = date;
     }
 
-    public void setPartOfDay(String partOfDay) {
-        this.partOfDay = partOfDay;
-    }
-
     public void setTime(String time) {
         this.time = time;
     }
 
+    public void setServerID(int serverID) {
+        this.serverID = serverID;
+    }
+
+    public void setDoctorID(int doctorID) {
+        this.doctorID = doctorID;
+    }
+
+    public void setClinicID(int clinicID) {
+        this.clinicID = clinicID;
+    }
+
+    public void setAlarmedTime(String alarmedTime) {
+        this.alarmedTime = alarmedTime;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public void setDeleted_at(String deleted_at) {
+        this.deleted_at = deleted_at;
+    }
 
     public int getId() {
         return id;
@@ -77,11 +100,35 @@ public class Consultation {
         return date;
     }
 
-    public String getPartOfDay() {
-        return partOfDay;
-    }
-
     public String getTime() {
         return time;
+    }
+
+    public int getServerID() {
+        return serverID;
+    }
+
+    public int getDoctorID() {
+        return doctorID;
+    }
+
+    public int getClinicID() {
+        return clinicID;
+    }
+
+    public String getAlarmedTime() {
+        return alarmedTime;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public String getDeleted_at() {
+        return deleted_at;
     }
 }

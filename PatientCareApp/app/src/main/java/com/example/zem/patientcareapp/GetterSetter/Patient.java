@@ -11,7 +11,7 @@ public class Patient implements Serializable {
             occupation = "", birthdate = "", sex = "", civil_status = "", height = "",
             weight = "", address_street = "", address_barangay = "", address_city_municipality = "",
             address_province = "", address_region = "", country = "", address_zip = "", cell_no = "",
-            tel_no = "", email = "", photo = "", building = "", referral_id = "", referred_by = "";
+            tel_no = "", email = "", photo = "", building = "", referral_id = "", referred_byUser = "", referred_byDoctor = "";
 
     int id = 0, serverID = 0, unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no;
 
@@ -36,8 +36,16 @@ public class Patient implements Serializable {
         this.referral_id = referral_id;
     }
 
-    public void setReferred_by(String referred_by) {
-        this.referred_by = referred_by;
+    public void setReferred_byUser(String referred_byUser) {
+        this.referred_byUser = referred_byUser;
+    }
+
+    public void setReferred_byDoctor(String referred_byDoctor) {
+        this.referred_byDoctor = referred_byDoctor;
+    }
+
+    public void setCell_no(String cell_no) {
+        this.cell_no = cell_no;
     }
 
     public int getId() {
@@ -233,6 +241,7 @@ public class Patient implements Serializable {
     public String getWeight() {
         return weight;
     }
+
     public String getMobile_no() {
         return cell_no;
     }
@@ -249,9 +258,18 @@ public class Patient implements Serializable {
         return referral_id;
     }
 
-    public String getReferred_by() {
-        return referred_by;
+    public String getReferred_byUser() {
+        return referred_byUser;
     }
+
+    public String getCell_no() {
+        return cell_no;
+    }
+
+    public String getReferred_byDoctor() {
+        return referred_byDoctor;
+    }
+
     //address
 
     public int getUnit_floor_room_no() {

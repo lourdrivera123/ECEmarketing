@@ -26,40 +26,31 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.GetterSetter.Consultation;
-import com.example.zem.patientcareapp.GetterSetter.Doctor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 public class PatientConsultationActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener, TextWatcher, CompoundButton.OnCheckedChangeListener {
     DbHelper dbhelper;
     Consultation consult;
     AlarmService alarmService;
 
-    LinearLayout setDate, setTime;
-    TextView txtDate, txtTime;
+    LinearLayout setDate, setTime, setAlarmedTime;
+    TextView txtDate, txtTime, txtAlarmedTime;
     CheckBox checkAlarm;
     AutoCompleteTextView search_doctor, search_clinic;
-    Spinner spinner_clinic, spin_dayTime;
+    Spinner spinner_clinic;
 
     Calendar cal;
-    ArrayAdapter<String> doctorAdapter;
-    ArrayAdapter<String> clinicAdapter;
-    ArrayAdapter<String> partOfDayAdapter;
+    ArrayAdapter<String> doctorAdapter, clinicAdapter;
 
-    ArrayList<HashMap<String, String>> doctorsHashmap;
-    ArrayList<HashMap<String, String>> doctorClinicHashmap;
-    ArrayList<String> listOfClinic;
-    ArrayList<String> listOfDoctors;
-    String request;
-    String[] partOfDay = new String[]{
-            "Morning", "Afternoon"
-    };
+    ArrayList<HashMap<String, String>> doctorsHashmap, doctorClinicHashmap;
+    ArrayList<String> listOfClinic, listOfDoctors;
 
-    int hour, minute, new_hour, new_minute;
-    int isAlarm, updateID;
-    int doctorID = 0;
+    String request, current_hour, current_meridiem;
+    int hour, minute, new_hour, hourTime_new, minuteTime_new, new_minute, isAlarm, updateID, doctorID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,15 +67,17 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
 
         setDate = (LinearLayout) findViewById(R.id.setDate);
         setTime = (LinearLayout) findViewById(R.id.setTime);
+        setAlarmedTime = (LinearLayout) findViewById(R.id.setAlarmedTime);
         txtDate = (TextView) findViewById(R.id.txtDate);
         txtTime = (TextView) findViewById(R.id.txtTime);
+        txtAlarmedTime = (TextView) findViewById(R.id.txtAlarmedTime);
         checkAlarm = (CheckBox) findViewById(R.id.checkAlarm);
         search_doctor = (AutoCompleteTextView) findViewById(R.id.search_doctor);
         search_clinic = (AutoCompleteTextView) findViewById(R.id.search_clinic);
         spinner_clinic = (Spinner) findViewById(R.id.spinner_clinic);
-        spin_dayTime = (Spinner) findViewById(R.id.spin_dayTime);
 
         cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         hour = cal.get(Calendar.HOUR_OF_DAY);
         minute = cal.get(Calendar.MINUTE);
 
@@ -96,7 +89,6 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
             listOfDoctors.add(doctorsHashmap.get(i).get("fullname"));
         }
 
-        partOfDayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, partOfDay);
         doctorAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfDoctors);
 
         search_doctor.setAdapter(doctorAdapter);
@@ -112,14 +104,26 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
                         search_doctor.setText(doctor);
                     }
                 }
-
                 prepareSpinner(doctor);
             }
 
             request = "add";
             consult = new Consultation();
 
-            txtTime.setText(hour + " : " + minute);
+            if (hour > 12) {
+                current_meridiem = " PM";
+                int n_hour = hour - 12;
+                Log.d("time nisulod", n_hour + "");
+                current_hour = n_hour + " : " + minute + " PM";
+                txtTime.setText((hour - 12) + " : " + minute + " PM");
+                txtAlarmedTime.setText((hour - 12) + " : " + minute + " PM");
+            } else {
+                current_meridiem = " AM";
+                current_hour = hour + " : " + minute + " AM";
+                txtTime.setText(hour + " : " + minute + " AM");
+                txtAlarmedTime.setText(hour + " : " + minute + " AM");
+            }
+
             txtDate.setText((cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.DATE) + "/" + cal.get(Calendar.YEAR));
         } else {
             request = "update";
@@ -132,15 +136,15 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
 
             if (consult.getIsAlarmed() == 1) {
                 checkAlarm.setChecked(true);
-                setTime.setVisibility(View.VISIBLE);
+                setAlarmedTime.setVisibility(View.VISIBLE);
             }
         }
 
-        spin_dayTime.setAdapter(partOfDayAdapter);
         search_doctor.addTextChangedListener(this);
         search_doctor.setOnItemClickListener(this);
         setDate.setOnClickListener(this);
         setTime.setOnClickListener(this);
+        setAlarmedTime.setOnClickListener(this);
         checkAlarm.setOnCheckedChangeListener(this);
     }
 
@@ -171,9 +175,9 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
                 consult.setPatientID(SidebarActivity.getUserID());
                 consult.setDoctor(search_doctor.getText().toString());
                 consult.setDate(txtDate.getText().toString());
-                consult.setPartOfDay(spin_dayTime.getSelectedItem().toString());
-                consult.setIsAlarmed(isAlarm);
                 consult.setTime(txtTime.getText().toString());
+                consult.setIsAlarmed(isAlarm);
+                consult.setAlarmedTime(txtAlarmedTime.getText().toString());
                 consult.setIsFinished(0);
 
                 if (dbhelper.savePatientConsultation(consult, request)) {
@@ -182,9 +186,8 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
                     intent.putExtra("selected", 4);
                     startActivity(intent);
                     this.finish();
-                } else {
+                } else
                     Toast.makeText(this, "Error while saving", Toast.LENGTH_SHORT).show();
-                }
             }
         } else {
             this.finish();
@@ -208,14 +211,45 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
                 updateDate(year, month - 1, day);
                 break;
 
-            case R.id.setTime:
-                if (txtTime.getText().toString().equals(hour + " : " + minute)) {
-                    TimePickerDialog mTimePicker = new TimePickerDialog(this, onStartTimeListener, hour, minute, false);
-                    mTimePicker.show();
+            case R.id.setAlarmedTime:
+
+                Log.d("time sa txtview", current_hour);
+                Log.d("time na current time", hour + " : " + minute + current_meridiem);
+                if (current_hour.equals(hour + " : " + minute + current_meridiem)) {
+                    Toast.makeText(PatientConsultationActivity.this, "true", Toast.LENGTH_SHORT).show();
+
+                    TimePickerDialog alarmedPicker = new TimePickerDialog(this, onStartTimeListener, hour, minute, false);
+                    alarmedPicker.show();
                 } else {
-                    TimePickerDialog mTimePicker = new TimePickerDialog(this, onStartTimeListener, new_hour, new_minute, false);
-                    mTimePicker.show();
+                    Toast.makeText(PatientConsultationActivity.this, "false", Toast.LENGTH_SHORT).show();
+
+                    TimePickerDialog alarmedPicker = new TimePickerDialog(this, onStartTimeListener, new_hour, new_minute, false);
+                    alarmedPicker.show();
                 }
+                break;
+
+            case R.id.setTime:
+                TimePickerDialog mTimePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        String meridiem = "AM";
+
+                        if (hourOfDay == 12) {
+                            meridiem = "PM";
+                        } else if (hourOfDay > 12) {
+                            hourOfDay -= 12;
+                            meridiem = "PM";
+                        }
+                        if (minute < 10)
+                            txtTime.setText(hourOfDay + " : 0" + minute + " " + meridiem);
+                        else
+                            txtTime.setText(hourOfDay + " : " + minute + " " + meridiem);
+
+                        hourTime_new = hourOfDay;
+                        minuteTime_new = minute;
+                    }
+                }, hour, minute, false);
+                mTimePicker.show();
                 break;
         }
     }
@@ -227,14 +261,14 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
 
             if (hourOfDay == 12) {
                 meridiem = "PM";
-            } else if (hourOfDay > 11) {
+            } else if (hourOfDay > 12) {
                 hourOfDay -= 12;
                 meridiem = "PM";
             }
             if (minute < 10)
-                txtTime.setText(hourOfDay + " : 0" + minute + " " + meridiem);
+                txtAlarmedTime.setText(hourOfDay + " : 0" + minute + " " + meridiem);
             else
-                txtTime.setText(hourOfDay + " : " + minute + " " + meridiem);
+                txtAlarmedTime.setText(hourOfDay + " : " + minute + " " + meridiem);
 
             new_hour = hourOfDay;
             new_minute = minute;
@@ -256,8 +290,6 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String item_clicked = parent.getItemAtPosition(position).toString();
         prepareSpinner(item_clicked);
-
-
     }
 
     public void prepareSpinner(String doctor_name) {
@@ -278,7 +310,6 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
     }
 
     @Override
@@ -300,10 +331,10 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (checkAlarm.isChecked()) {
-            setTime.setVisibility(View.VISIBLE);
+            setAlarmedTime.setVisibility(View.VISIBLE);
             isAlarm = 1;
         } else {
-            setTime.setVisibility(View.GONE);
+            setAlarmedTime.setVisibility(View.GONE);
             isAlarm = 0;
         }
     }

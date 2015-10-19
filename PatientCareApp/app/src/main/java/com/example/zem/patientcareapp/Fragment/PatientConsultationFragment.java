@@ -66,7 +66,6 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
     @Override
     public void onResume() {
-
         super.onResume();
     }
 
@@ -145,7 +144,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
             doctor_name.setText("Dr. " + listOfAllConsultations.get(position).get(DbHelper.CONSULT_DOCTOR));
             clinic_address.setText(listOfAllConsultations.get(position).get(DbHelper.CONSULT_CLINIC));
-            consultation_schedule.setText(listOfAllConsultations.get(position).get(DbHelper.CONSULT_DATE) + ", " + listOfAllConsultations.get(position).get(dbhelper.CONSULT_PART_OF_DAY));
+            consultation_schedule.setText(listOfAllConsultations.get(position).get(DbHelper.CONSULT_DATE) + ", " + listOfAllConsultations.get(position).get(dbhelper.CONSULT_TIME));
 
             return v;
         }
