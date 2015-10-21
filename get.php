@@ -126,9 +126,10 @@ switch ($request) {
     break;
 
     case 'get_referrals_by_user' :
-    $result = mysql_query("SELECT * from patients ORDER BY created_at DESC") or returnError(mysql_error());
+    $result = mysql_query("SELECT * from patients WHERE referred_by = '".$_GET['referred_by']."' ORDER BY created_at DESC") or returnError(mysql_error());
     $tbl = "patients";
     break;
+
 
     case 'get_prescriptions' : 
     $result = mysql_query("SELECT * FROM patient_prescriptions WHERE patient_id = ".$_GET['patient_id']) or returnError(mysql_error());
@@ -221,9 +222,9 @@ function returnError($msg) {
 }
 
 function pre($str){
-   echo "<pre>";
-   print_r($str);
-   echo "</pre>";
+ echo "<pre>";
+ print_r($str);
+ echo "</pre>";
 }
 
 function fetchRows($result, $tbl){
