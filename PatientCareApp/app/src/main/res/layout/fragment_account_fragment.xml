@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TableRow>
+            <TableRow android:id="@+id/uploadpicturerow">
 
                 <LinearLayout
                     android:layout_weight="0.8"

@@ -1,6 +1,10 @@
 package com.example.zem.patientcareapp;
 
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +14,10 @@ import android.widget.ListView;
 
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -46,6 +53,48 @@ public class OrdersActivity extends AppCompatActivity {
 
         adapter = new LazyAdapter(OrdersActivity.this, items, "order_items");
         lv_items.setAdapter(adapter);
+
+        Intent intent = getIntent();
+        String timestamp_ordered = intent.getStringExtra("timestamp_ordered");
+        String payment_from = intent.getStringExtra("payment_from");
+
+
+        if(payment_from != null ){
+            AlertDialog.Builder alert = new AlertDialog.Builder(OrdersActivity.this);
+
+
+            /*String str1 = "12/10/2013";*/
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date1 = formatter.parse(timestamp_ordered);
+
+                //format to date only
+                SimpleDateFormat fd = new SimpleDateFormat("MMM d yyyy");
+                String formatted_date = fd.format(date1);
+
+                if(payment_from.equals("paypal")){
+                    alert.setTitle("Purchase Completed!");
+                    alert.setMessage("Thank you for your purchase !\n You shall receive this order on or before " + formatted_date);
+                } else if(payment_from.equals("")) {
+                    alert.setTitle("Order Placed !");
+                    alert.setMessage("Thank you for your order !\n You shall receive a call from our pharmacist to confirm your order.");
+                }
+
+                alert.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, int which) {
+
+                    }
+                });
+                alert.show();
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
     }
 
     @Override

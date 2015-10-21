@@ -1,7 +1,9 @@
 package com.example.zem.patientcareapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -263,10 +266,17 @@ public class samplepaypal extends Activity {
                                 GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                     @Override
                                     public void getResult(JSONObject response) {
-                                        Toast.makeText(getApplicationContext(), "Thank you !", Toast.LENGTH_LONG).show();
+                                        try {
+                                            String timestamp_ordered = response.getString("server_timestamp");
 
-                                        Intent orders_intent = new Intent(samplepaypal.this, OrdersActivity.class);
-                                        startActivity(orders_intent);
+                                            Intent order_intent = new Intent(getBaseContext(), OrdersActivity.class);
+                                            order_intent.putExtra("payment_from", "paypal");
+                                            order_intent.putExtra("timestamp_ordered", timestamp_ordered);
+                                            startActivity(order_intent);
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
 
                                     }
                                 }, new ErrorListener<VolleyError>() {
