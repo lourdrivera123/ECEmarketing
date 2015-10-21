@@ -73,7 +73,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     public void populateDoctorListView(View rootView, ArrayList<HashMap<String, String>> doctor_items) {
         for (int i = 0; i < doctor_items.size(); i++) {
-            arrayOfSearchDoctors.add(doctor_items.get(i).get(dbHelper.DOC_FULLNAME));
+            arrayOfSearchDoctors.add(doctor_items.get(i).get("fullname"));
         }
         temp_doctors.addAll(doctor_items);
 
@@ -114,8 +114,8 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                 HashMap<String, String> map = new HashMap();
 
                 map.put(dbHelper.DOC_DOC_ID, temp_doctors.get(doctorindex).get(dbHelper.DOC_DOC_ID));
-                map.put(dbHelper.DOC_FULLNAME, temp_doctors.get(doctorindex).get(dbHelper.DOC_FULLNAME));
-                map.put(dbHelper.DOC_SPECIALTY_NAME, temp_doctors.get(doctorindex).get(dbHelper.DOC_SPECIALTY_NAME));
+                map.put("fullname", temp_doctors.get(doctorindex).get("fullname"));
+                map.put("name", temp_doctors.get(doctorindex).get("name"));
                 doctor_items.add(map);
                 adapter.notifyDataSetChanged();
             }

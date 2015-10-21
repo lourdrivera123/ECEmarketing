@@ -374,6 +374,8 @@ public class Sync {
             doctor.setPrc_no(json.getInt("prc_no"));
             doctor.setSub_specialty_id(json.getInt("sub_specialty_id"));
             doctor.setAffiliation(json.getString("affiliation"));
+            doctor.setEmail(json.getString("email"));
+            doctor.setReferral_id(json.getString("referral_id"));
             doctor.setCreated_at(json.getString("created_at"));
             doctor.setUpdated_at(json.getString("updated_at"));
             doctor.setDeleted_at(json.getString("deleted_at"));
@@ -510,7 +512,8 @@ public class Sync {
             patient.setEmail(json.getString(DbHelper.PTNT_EMAIL));
             patient.setPhoto(json.getString(DbHelper.PTNT_PHOTO));
             patient.setReferral_id(json.getString(DbHelper.PTNT_REFERRAL_ID));
-            patient.setReferred_by(json.getString(DbHelper.PTNT_REFERRED_BY));
+            patient.setReferred_byUser(json.getString(DbHelper.PTNT_REFERRED_BY_USER));
+            patient.setReferred_byDoctor(json.getString(DbHelper.PTNT_REFERRED_BY_DOCTOR));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -564,9 +567,9 @@ public class Sync {
         discountsFreeProducts.setLess(json.getDouble(DbHelper.DFP_LESS));
         discountsFreeProducts.setQuantityRequired(json.getInt(DbHelper.DFP_QUANTITY_REQUIRED));
         discountsFreeProducts.setType(json.getInt(DbHelper.DFP_TYPE));
-        discountsFreeProducts.setCreatedAt(json.getString(DbHelper.DFP_CREATED_AT));
-        discountsFreeProducts.setUpdatedAt(json.getString(DbHelper.DFP_UPDATED_AT));
-        discountsFreeProducts.setDeletedAt(json.getString(DbHelper.DFP_DELETED_AT));
+        discountsFreeProducts.setCreatedAt(json.getString(DbHelper.CREATED_AT));
+        discountsFreeProducts.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
+        discountsFreeProducts.setDeletedAt(json.getString(DbHelper.DELETED_AT));
 
         return discountsFreeProducts;
     }

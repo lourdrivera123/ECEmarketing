@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ListView;
 
@@ -21,9 +23,11 @@ import java.util.HashMap;
 /**
  * Created by Zem on 10/2/2015.
  */
-public class OrdersActivity extends Activity {
+public class OrdersActivity extends AppCompatActivity {
 
     ListView lv_items;
+    Toolbar ordersToolbar;
+
     LazyAdapter adapter;
     ArrayList<HashMap<String, String>> items;
     DbHelper dbHelper;
@@ -32,19 +36,18 @@ public class OrdersActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.orders_layout);
 
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBarWithTitle(actionbar);
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeButtonEnabled(true);
-        actionbar.setTitle("Recent Orders");
+        lv_items = (ListView) findViewById(R.id.lv_items);
+        ordersToolbar = (Toolbar) findViewById(R.id.ordersToolbar);
+
+        setSupportActionBar(ordersToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Recent Orders");
+        ordersToolbar.setNavigationIcon(R.drawable.ic_back);
 
         context = getBaseContext();
         dbHelper = new DbHelper(OrdersActivity.this);
-
-        lv_items = (ListView) findViewById(R.id.lv_items);
 
         items = dbHelper.getAllOrderItems(); // returns all basket items for the currently loggedin patient
 

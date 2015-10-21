@@ -2,12 +2,14 @@ package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,7 +38,7 @@ import java.util.HashMap;
  */
 
 public class ReferralActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextWatcher, AdapterView.OnItemClickListener {
-    ArrayList<HashMap<String, String>> hashOfReferrals;
+    ArrayList<HashMap<String, String>> hashOfUsers, hashOfDoctors;
     ArrayList<String> tempReferrals;
     ArrayAdapter referredAdapter;
     ArrayList<String> listOfReferrals;
@@ -50,6 +52,10 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
     ListView listOfNames;
     Button continueBtn;
 
+    ProgressDialog dialog;
+
+    DbHelper db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.referral_activity_layout);
@@ -59,7 +65,9 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         setCustomActionBar(actionbar);
         actionbar.setDisplayHomeAsUpEnabled(true);
 
-        hashOfReferrals = new ArrayList();
+        db = new DbHelper(this);
+        hashOfUsers = new ArrayList();
+        hashOfDoctors = new ArrayList();
         listOfReferrals = new ArrayList();
         tempReferrals = new ArrayList();
 
@@ -70,46 +78,17 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         listOfNames = (ListView) findViewById(R.id.listOfNames);
         continueBtn = (Button) findViewById(R.id.continueBtn);
 
+        listOfReferrals.clear();
+        referredAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfReferrals);
+        listOfNames.setAdapter(referredAdapter);
+
+        getAllReferrals();
+
         continueBtn.setOnClickListener(this);
         radioReferredBy.setOnCheckedChangeListener(this);
         other.setOnCheckedChangeListener(this);
         referredBy.addTextChangedListener(this);
         listOfNames.setOnItemClickListener(this);
-
-        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_patients", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                try {
-                    JSONArray json_array_mysql = response.getJSONArray("patients");
-                    for (int x = 0; x < json_array_mysql.length(); x++) {
-                        try {
-                            JSONObject json_obj = json_array_mysql.getJSONObject(x);
-                            HashMap<String, String> map = new HashMap();
-                            map.put("fullname", json_obj.getString("fname") + " " + json_obj.getString("lname"));
-                            map.put("referral_id", json_obj.getString("referral_id"));
-                            hashOfReferrals.add(map);
-
-                            String name = hashOfReferrals.get(x).get("fullname") + " (" + hashOfReferrals.get(x).get("referral_id") + ")";
-                            listOfReferrals.add(name);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    tempReferrals.addAll(listOfReferrals);
-
-                    referredAdapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_dropdown_item_1line, listOfReferrals);
-                    listOfNames.setAdapter(referredAdapter);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                System.out.print("Error in ReferralActivity" + error);
-                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     public static void setCustomActionBar(ActionBar actionbar) {
@@ -120,31 +99,47 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        String getReferred = null;
-        int pos;
         check = 0;
+        String getReferredByUser = null, getReferredByDoctor = null;
+
+        int pos;
 
         if (radioReferredBy.isChecked()) {
-            try {
-                if (referredBy.getText().toString().equals("")) {
-                    referredBy.setError("Field required");
-                    check += 1;
-                } else {
-                    pos = listOfReferrals.indexOf(referredBy.getText().toString());
-                    getReferred = hashOfReferrals.get(pos).get("referral_id");
-                }
-            } catch (Exception e) {
+            if (referredBy.getText().toString().equals("")) {
+                referredBy.setError("Field required");
                 check += 1;
-                Toast.makeText(getBaseContext(), "name is not on the list", Toast.LENGTH_SHORT).show();
+            } else {
+                try {
+                    if (tempReferrals.contains(referredBy.getText().toString())) {
+                        pos = tempReferrals.indexOf(referredBy.getText().toString());
+
+                        if (hashOfUsers.get(pos).get("typeOfUser").equals("doctor")) {
+                            getReferredByDoctor = hashOfUsers.get(pos).get("referral_id");
+                            getReferredByUser = "";
+                        } else {
+                            getReferredByUser = hashOfUsers.get(pos).get("referral_id");
+                            getReferredByDoctor = "";
+                        }
+                    } else {
+                        check += 1;
+                        referredBy.setError("User not found");
+                    }
+                } catch (Exception e) {
+                    check += 1;
+                    Log.d("ReferralActivity", e + "");
+                    Toast.makeText(getBaseContext(), "User not found", Toast.LENGTH_SHORT).show();
+                }
             }
         } else if (other.isChecked()) {
-            getReferred = "";
+            getReferredByDoctor = "";
+            getReferredByUser = "";
         }
 
         if (check == 0) {
             Intent intent = new Intent(getBaseContext(), EditTabsActivity.class);
             intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
-            intent.putExtra("referred_by", getReferred);
+            intent.putExtra("referred_by_User", getReferredByUser);
+            intent.putExtra("referred_by_Doctor", getReferredByDoctor);
             startActivity(intent);
         }
     }
@@ -154,7 +149,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         if (radioReferredBy.isChecked()) {
             specifyOthers.setVisibility(View.GONE);
             referredBy.setVisibility(View.VISIBLE);
-            listOfNames.setVisibility(View.VISIBLE);
+            listOfNames.setVisibility(View.INVISIBLE);
         } else if (other.isChecked()) {
             specifyOthers.setVisibility(View.VISIBLE);
             referredBy.setVisibility(View.INVISIBLE);
@@ -168,21 +163,28 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
 
     @Override
     public void afterTextChanged(Editable s) {
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
         getText = referredBy.getText().toString();
+
+        if (getText.equals(""))
+            listOfNames.setVisibility(View.INVISIBLE);
+        else
+            listOfNames.setVisibility(View.VISIBLE);
+
         listOfReferrals.clear();
 
-        for (String name : tempReferrals) {
+        for (final String name : tempReferrals) {
             if (name.toLowerCase().contains(getText.toLowerCase())) {
                 int index = tempReferrals.indexOf(name);
 
                 listOfReferrals.add(tempReferrals.get(index));
-                referredAdapter.notifyDataSetChanged();
             }
+            referredAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
     }
 
     @Override
@@ -196,4 +198,75 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         this.finish();
         return super.onOptionsItemSelected(item);
     }
+
+    public void getAllReferrals() {
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Please wait...");
+        dialog.show();
+
+        hashOfDoctors = db.getAllDoctors();
+        for (int d = 0; d < hashOfDoctors.size(); d++) {
+            HashMap<String, String> doc = new HashMap();
+            doc.put("fullname", hashOfDoctors.get(d).get("fullname"));
+            doc.put("referral_id", hashOfDoctors.get(d).get("referral_id"));
+            doc.put("typeOfUser", "doctor");
+            hashOfUsers.add(doc);
+        }
+
+        //for patients
+        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_patients", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    JSONArray json_array_mysql = response.getJSONArray("patients");
+                    for (int x = 0; x < json_array_mysql.length(); x++) {
+                        JSONObject json_obj = json_array_mysql.getJSONObject(x);
+                        HashMap<String, String> map = new HashMap();
+                        map.put("fullname", json_obj.getString("fname") + " " + json_obj.getString("lname"));
+                        map.put("referral_id", json_obj.getString("referral_id"));
+                        map.put("typeOfUser", "patient");
+                        hashOfUsers.add(map);
+                    }
+
+                    for (int s = 0; s < hashOfUsers.size(); s++) {
+                        String name;
+
+                        if (hashOfUsers.get(s).get("typeOfUser").equals("doctor"))
+                            name = "Dr. " + hashOfUsers.get(s).get("fullname") + " (" + hashOfUsers.get(s).get("referral_id") + ")";
+                        else
+                            name = hashOfUsers.get(s).get("fullname") + " (" + hashOfUsers.get(s).get("referral_id") + ")";
+
+                        listOfReferrals.add(name);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                tempReferrals.addAll(listOfReferrals);
+
+                dialog.dismiss();
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                System.out.print("Error in ReferralActivity" + error);
+                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+    }
+//
+//    private void populateTable() {
+//        runOnUiThread(new Runnable(){
+//            public void run() {
+//                //If there are stories, add them to the table
+//                for (Parcelable currentHeadline : allHeadlines) {
+//                    addHeadlineToTable(currentHeadline);
+//                }
+//                try {
+//                    dialog.dismiss();
+//                } catch (final Exception ex) {
+//                    Log.i("---","Exception in thread");
+//                }
+//            }
+//        });
+//    }
 }

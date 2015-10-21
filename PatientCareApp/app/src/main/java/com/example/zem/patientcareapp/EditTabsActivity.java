@@ -99,7 +99,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     public static final String SIGNUP_REQUEST = "signup", EDIT_REQUEST = "edit";
     String purpose = "", image_url = "", url;
-    static String referredBy = "";
     public static int signup_int = 0, edit_int = 0;
     int check = 0, int_year, int_month, int_day, limit = 4, count = 0, unselected;
     long totalSize = 0;
@@ -127,8 +126,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         fragment = new SignUpFragment();
         serverRequest = new ServerRequest();
 
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBar(actionbar);
+        actionBar = getActionBar();
+        actionBar.setHomeButtonEnabled(false);
+        MainActivity.setCustomActionBar(actionBar);
         showOverLay();
 
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
@@ -138,8 +138,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
 
         if (signup_int > 0) {
-            referredBy = intent.getStringExtra("referred_by");
-            patient.setReferred_by(referredBy);
+            patient.setReferred_byUser(intent.getStringExtra("referred_by_User"));
+            patient.setReferred_byDoctor(intent.getStringExtra("referred_by_Doctor"));
         }
 
         queue = VolleySingleton.getInstance().getRequestQueue();
@@ -150,12 +150,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
-        actionBar = getActionBar();
-
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(mAdapter);
-        actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // Adding Tabs
@@ -194,13 +191,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                         }
                     });
 
-                    if (unselected == 1) {
+                    if (unselected == 1)
                         validateAtPosition2();
-                        setProfilePhoto();
-                    } else if (unselected == 0) {
+                    else if (unselected == 0)
                         readFromSignUp();
-                        setProfilePhoto();
-                    }
 
                     Button btn_submit = (Button) findViewById(R.id.btn_save);
                     btn_submit.setOnClickListener(new View.OnClickListener() {
@@ -367,7 +361,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             params.put("photo", patient.getPhoto());
 
             params.put("referral_id", patient.getReferral_id());
-            params.put("referred_by", patient.getReferred_by());
+            params.put("referred_byUser", patient.getReferred_byUser());
+            params.put("referred_byDoctor", patient.getReferred_byDoctor());
         }
         params.put("fname", patient.getFname());
         params.put("lname", patient.getLname());
@@ -623,9 +618,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                 patient.setPassword(pass);
                 count++;
             }
-        } else {
+        } else
             count++;
-        }
 
         if (username.equals("")) {
             et_username.setError("Field is required");
@@ -634,20 +628,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-        if (count == limit) {
+        if (count == limit)
             this.hasError3 = false;
-        }
-    }
-
-    public void setProfilePhoto() {
-        String path = patient.getPhoto();
-//        if (check > 0) { //IF RETURNED FROM ON ACTIVITY RESULT
-//            Bitmap yourSelectedImage = BitmapFactory.decodeFile(path);
-//            d = new BitmapDrawable(yourSelectedImage);
-//            image_holder.setImageDrawable(d);
-//        } else {
-//            image_holder = (ImageView) findViewById(R.id.image_holder);
-//        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -722,6 +704,16 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     public void updateDate(int year, int monthOfYear, int dayOfMonth) {
         DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, year, monthOfYear, dayOfMonth);
         datePicker.show();
+    }
+
+    public void showProgressbar() {
+        upload_dialog = new Dialog(this);
+        upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        upload_dialog.setContentView(R.layout.activity_upload);
+
+        txtPercentage = (TextView) upload_dialog.findViewById(R.id.txtPercentage);
+        progressBar = (ProgressBar) upload_dialog.findViewById(R.id.progressBar);
+        upload_dialog.show();
     }
 
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
@@ -813,16 +805,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             upload_dialog.dismiss();
             super.onPostExecute(result);
         }
-    }
-
-    public void showProgressbar() {
-        upload_dialog = new Dialog(this);
-        upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        upload_dialog.setContentView(R.layout.activity_upload);
-
-        txtPercentage = (TextView) upload_dialog.findViewById(R.id.txtPercentage);
-        progressBar = (ProgressBar) upload_dialog.findViewById(R.id.progressBar);
-        upload_dialog.show();
     }
 
     public void generateCode() {

@@ -72,7 +72,7 @@
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".CheckoutActivity"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".PatientConsultationActivity"
             android:theme="@style/Theme.MyFancyTheme" />
@@ -81,7 +81,8 @@
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".OrdersActivity"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:theme="@style/Theme.MyTheme" />
+
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

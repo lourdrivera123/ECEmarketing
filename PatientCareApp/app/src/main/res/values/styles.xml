@@ -131,5 +131,12 @@
     <style name="Theme.MyFancyTheme" parent="android:Theme.Holo.Light">
         <item name="android:homeAsUpIndicator">@drawable/ic_back</item>
     </style>
-    <style name="ProgressBarStyle" parent="@android:style/Widget.ProgressBar.Horizontal"/>
+
+    <style name="Theme.MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Set AppCompat’s color theming attrs -->
+        <item name="colorAccent">@color/LightGreen</item>
+        <item name="colorPrimaryDark">@color/DarkGreen</item>
+    </style>
+
+    <style name="ProgressBarStyle" parent="@android:style/Widget.ProgressBar.Horizontal" />
 </resources>

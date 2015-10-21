@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="@dimen/d20">
 
     <ScrollView
@@ -11,66 +11,66 @@
         android:fillViewport="true">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <EditText
+                android:id="@+id/fname"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
 
-                android:hint="Firstname"
-                android:id="@+id/fname" />
+                android:layout_height="wrap_content"
+                android:hint="Firstname" />
 
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/d10"
-                android:hint="Lastname"
-                android:id="@+id/lname" />
-
-            <EditText
+                android:id="@+id/lname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:hint="Middlename (Optional)"
-                android:id="@+id/mname" />
+                android:hint="Lastname" />
 
             <EditText
+                android:id="@+id/mname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:inputType="date"
-                android:ems="10"
-                android:hint="mm/dd/yyyy"
-                android:id="@+id/birthdate" />
+                android:hint="Middlename (Optional)" />
 
             <EditText
+                android:id="@+id/birthdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
                 android:ems="10"
-                android:hint="Occupation (Optional)"
-                android:id="@+id/occupation" />
+                android:hint="yyyy-mm-dd"
+                android:inputType="date" />
+
+            <EditText
+                android:id="@+id/occupation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d10"
+                android:ems="10"
+                android:hint="Occupation (Optional)" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Civil status:" />
+                android:text="Civil status:"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Spinner
+                android:id="@+id/civil_status"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/civil_status" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Gender:" />
+                android:text="Gender:"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -79,24 +79,24 @@
 
                 <RadioGroup
                     android:id="@+id/sex"
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <RadioButton
+                        android:id="@+id/male_rb"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Male"
+                        android:layout_weight="0.5"
                         android:checked="true"
-                        android:layout_weight="0.5"
-                        android:id="@+id/male_rb" />
+                        android:text="Male" />
 
                     <RadioButton
+                        android:id="@+id/female_rb"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Female"
                         android:layout_weight="0.5"
-                        android:id="@+id/female_rb" />
+                        android:text="Female" />
                 </RadioGroup>
 
             </LinearLayout>
@@ -108,20 +108,20 @@
                 android:orientation="horizontal">
 
                 <EditText
+                    android:id="@+id/height"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/height"
                     android:layout_weight="0.5"
                     android:hint="Height (Ft.)"
-                    android:inputType="numberDecimal"/>
+                    android:inputType="numberDecimal" />
 
                 <EditText
+                    android:id="@+id/weight"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/weight"
                     android:layout_weight="0.5"
                     android:hint="Weight (Kg)"
-                    android:inputType="numberDecimal"/>
+                    android:inputType="numberDecimal" />
 
             </LinearLayout>
         </LinearLayout>

@@ -1,1 +1,1 @@
-include ':app', ':PayPalAndroidSDK-2.9.7', ':httpcore-4.3.1', ':httpmime-4.3.1', ':universal-image-loader-1.9.4', ':volley'
+include ':library', ':PayPalAndroidSDK-2.9.7', ':app', ':httpcore-4.3.1', ':httpmime-4.3.1', ':universal-image-loader-1.9.4', ':volley'

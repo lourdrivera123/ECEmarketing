@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -152,7 +153,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         GetRequest.getJSONobj(getBaseContext(), "get_prescriptions&patient_id=" + syncedPatient.getServerID(), "patient_prescriptions", "prescriptions_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
-                                                Log.d("response <MainActivity - prescriptions request >", response + "");
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
@@ -165,7 +165,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + syncedPatient.getServerID(), "orders", "orders_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
-                                                Log.d("response using interface <SplashActivity.java - orders request >", response + "");
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
@@ -178,7 +177,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + syncedPatient.getServerID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
-                                                Log.d("response using interface <SplashActivity.java - order_details request >", response + "");
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
@@ -239,10 +237,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
         actionbar.setBackgroundDrawable(colorDrawable);
         actionbar.setDisplayShowTitleEnabled(false);
-    }
-
-    public static void setCustomActionBarWithTitle(ActionBar actionbar) {
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
-        actionbar.setBackgroundDrawable(colorDrawable);
     }
 }

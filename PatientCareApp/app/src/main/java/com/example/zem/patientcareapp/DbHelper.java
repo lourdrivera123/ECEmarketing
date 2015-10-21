@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
@@ -77,7 +76,8 @@ public class DbHelper extends SQLiteOpenHelper {
             PTNT_EMAIL = "email_address",
             PTNT_PHOTO = "photo",
             PTNT_REFERRAL_ID = "referral_id",
-            PTNT_REFERRED_BY = "referred_by";
+            PTNT_REFERRED_BY_USER = "referred_byUser",
+            PTNT_REFERRED_BY_DOCTOR = "referred_byDoctor";
 
     //Updates Table
     public static final String TBL_UPDATES = "updates",
@@ -91,11 +91,11 @@ public class DbHelper extends SQLiteOpenHelper {
             DOC_LNAME = "lname",
             DOC_MNAME = "mname",
             DOC_FNAME = "fname",
-            DOC_FULLNAME = "fullname",
-            DOC_SPECIALTY_NAME = "name",
             DOC_PRC_NO = "prc_no",
             DOC_SUB_SPECIALTY_ID = "sub_specialty_id",
-            DOC_AFFILIATIONS = "affiliations";
+            DOC_AFFILIATIONS = "affiliations",
+            DOC_EMAIL = "email",
+            DOC_REFERRAL_ID = "referral_id";
 
     //SPECIALTIES_TABLE
     public static final String TBL_SPECIALTIES = "specialties",
@@ -241,10 +241,7 @@ public class DbHelper extends SQLiteOpenHelper {
             DFP_PRODUCT_ID = "product_id",
             DFP_TYPE = "type",                          // type = 1 or 0 , 1 for Free Products and 0 for Discount
             DFP_QUANTITY_REQUIRED = "quantity_required",
-            DFP_LESS = "less",                          // (optional) default = 0. Applicable only if type is Discount
-            DFP_CREATED_AT = "created_at",
-            DFP_UPDATED_AT = "updated_at",
-            DFP_DELETED_AT = "deleted_at";
+            DFP_LESS = "less";
 
     // FREE PRODUCTS TABLE
     public static final String TBL_FREE_PRODUCTS = "free_products",
@@ -264,12 +261,15 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //CONSULTATION
     public static final String TBL_PATIENT_CONSULTATIONS = "consultations",
+            CONSULT_DOCTOR_ID = "doctor_id",
+            CONSULT_SERVER_ID = "server_id",
             CONSULT_DOCTOR = "doctor",
+            CONSULT_CLINIC_ID = "clinic_id",
             CONSULT_CLINIC = "clinic",
             CONSULT_DATE = "date",
-            CONSULT_PART_OF_DAY = "partOfDay",
+            CONSULT_TIME = "time",
             CONSULT_IS_ALARMED = "isAlarm",
-            CONSULT_TIME = "alarmedTime",
+            CONSULT_ALARMED_TIME = "alarmedTime",
             CONSULT_IS_FINISHED = "finished";
 
     //OVERLAY
@@ -334,8 +334,8 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // SQL to create table "doctors"
-        String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_DOCTORS, AI_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_DOCTORS, AI_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, DOC_EMAIL, DOC_REFERRAL_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         String sql_create_tbl_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_SPECIALTIES, AI_ID, SERVER_SPECIALTY_ID, SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
@@ -348,8 +348,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_UPDATES, AI_ID, UPDATE_TBL_NAME, UPDATE_TIMESTAMP, UPDATE_SEEN);
 
         // SQL to create table "patients"
-        String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_PATIENTS, AI_ID, PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION, PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO, PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_MOBILE_NO, PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_PATIENTS, AI_ID, PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION, PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_UNIT_NO, PTNT_BUILDING, PTNT_LOT_NO, PTNT_BLOCK_NO, PTNT_PHASE_NO, PTNT_HOUSE_NO, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_MOBILE_NO, PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY_USER, PTNT_REFERRED_BY_DOCTOR, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "product_categories"
         String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s  TEXT , %s  TEXT , %s TEXT  )",
@@ -405,7 +405,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table discounts_free_products
         String sql_create_discounts_products = String.format("CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_DISCOUNTS_FREE_PRODUCTS, AI_ID, SERVER_DFP_ID, DFP_PROMO_ID, DFP_PRODUCT_ID, DFP_TYPE, DFP_QUANTITY_REQUIRED, DFP_LESS, DFP_CREATED_AT, DFP_UPDATED_AT, DFP_DELETED_AT);
+                TBL_DISCOUNTS_FREE_PRODUCTS, AI_ID, SERVER_DFP_ID, DFP_PROMO_ID, DFP_PRODUCT_ID, DFP_TYPE, DFP_QUANTITY_REQUIRED, DFP_LESS, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create tale "free_products"
         String sql_create_free_products_table = String.format("CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
@@ -415,8 +415,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_PATIENT_PRESCRIPTIONS, AI_ID, PRESCRIPTIONS_SERVER_ID, PATIENT_ID, PRESCRIPTIONS_FILENAME, PRESCRIPTIONS_APPROVED, CREATED_AT, DELETED_AT);
 
         //SQL to create PATIENT CONSULTATIONS
-        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER)", TBL_PATIENT_CONSULTATIONS, AI_ID, PATIENT_ID,
-                CONSULT_DOCTOR, CONSULT_CLINIC, CONSULT_DATE, CONSULT_PART_OF_DAY, CONSULT_IS_ALARMED, CONSULT_TIME, CONSULT_IS_FINISHED);
+        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_PATIENT_CONSULTATIONS, AI_ID, CONSULT_SERVER_ID, PATIENT_ID, CONSULT_DOCTOR_ID, CONSULT_DOCTOR, CONSULT_CLINIC_ID, CONSULT_CLINIC, CONSULT_DATE, CONSULT_TIME, CONSULT_IS_ALARMED, CONSULT_ALARMED_TIME, CONSULT_IS_FINISHED, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER)",
                 TBL_OVERLAYS, AI_ID, OVERLAY_TITLE, IS_READ);
@@ -646,7 +646,8 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_EMAIL, patient.getEmail());
         values.put(PTNT_PHOTO, patient.getPhoto());
         values.put(PTNT_REFERRAL_ID, patient.getReferral_id());
-        values.put(PTNT_REFERRED_BY, patient.getReferred_by());
+        values.put(PTNT_REFERRED_BY_USER, patient.getReferred_byUser());
+        values.put(PTNT_REFERRED_BY_DOCTOR, patient.getReferred_byDoctor());
         values.put(CREATED_AT, created_at);
 
         long rowID = 0;
@@ -880,6 +881,8 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DOC_PRC_NO, doctor.getPrc_no());
         values.put(DOC_SUB_SPECIALTY_ID, doctor.getSub_specialty_id());
         values.put(DOC_AFFILIATIONS, doctor.getAffiliation());
+        values.put(DOC_EMAIL, doctor.getEmail());
+        values.put(DOC_REFERRAL_ID, doctor.getReferral_id());
         values.put(CREATED_AT, doctor.getCreated_at());
         values.put(UPDATED_AT, doctor.getUpdated_at());
         values.put(DELETED_AT, doctor.getDeleted_at());
@@ -947,7 +950,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(CONSULT_DOCTOR, consult.getDoctor());
         values.put(CONSULT_CLINIC, consult.getClinic());
         values.put(CONSULT_DATE, consult.getDate());
-        values.put(CONSULT_PART_OF_DAY, consult.getPartOfDay());
+        values.put(CONSULT_TIME, consult.getTime());
         values.put(CONSULT_IS_FINISHED, consult.getIsFinished());
         values.put(CONSULT_IS_ALARMED, consult.getIsAlarmed());
 
@@ -1001,9 +1004,9 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DFP_PRODUCT_ID, discountsFreeProducts.getProductId());
         values.put(DFP_QUANTITY_REQUIRED, discountsFreeProducts.getQuantityRequired());
         values.put(DFP_TYPE, discountsFreeProducts.getType());
-        values.put(DFP_CREATED_AT, discountsFreeProducts.getCreatedAt());
-        values.put(DFP_UPDATED_AT, discountsFreeProducts.getUpdatedAt());
-        values.put(DFP_DELETED_AT, discountsFreeProducts.getDeletedAt());
+        values.put(CREATED_AT, discountsFreeProducts.getCreatedAt());
+        values.put(UPDATED_AT, discountsFreeProducts.getUpdatedAt());
+        values.put(DELETED_AT, discountsFreeProducts.getDeletedAt());
 
         long row;
 
@@ -1281,7 +1284,8 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setEmail(cur.getString(cur.getColumnIndex(PTNT_EMAIL)));
             patient.setPhoto(cur.getString(cur.getColumnIndex(PTNT_PHOTO)));
             patient.setReferral_id(cur.getString(cur.getColumnIndex(PTNT_REFERRAL_ID)));
-            patient.setReferred_by(cur.getString(cur.getColumnIndex(PTNT_REFERRED_BY)));
+            patient.setReferred_byUser(cur.getString(cur.getColumnIndex(PTNT_REFERRED_BY_USER)));
+            patient.setReferred_byDoctor(cur.getString(cur.getColumnIndex(PTNT_REFERRED_BY_DOCTOR)));
         }
         cur.close();
         db.close();
@@ -1390,10 +1394,10 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(DOC_DOC_ID, cur.getString(cur.getColumnIndex(DOC_DOC_ID)));
             map.put(DOC_FNAME, cur.getString(cur.getColumnIndex(DOC_FNAME)));
             map.put(DOC_LNAME, cur.getString(cur.getColumnIndex(DOC_LNAME)));
-            map.put(DOC_FULLNAME, "" + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
-            map.put(DOC_SPECIALTY_NAME, cur.getString(cur.getColumnIndex(DOC_SPECIALTY_NAME)));
+            map.put("fullname", "" + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
             map.put(DOC_MNAME, cur.getString(cur.getColumnIndex(DOC_MNAME)));
             map.put(DOC_SUB_SPECIALTY_ID, cur.getString(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
+            map.put(DOC_REFERRAL_ID, cur.getString(cur.getColumnIndex(DOC_REFERRAL_ID)));
             doctors.add(map);
 
             cur.moveToNext();
@@ -1423,6 +1427,8 @@ public class DbHelper extends SQLiteOpenHelper {
             doctor.setSub_specialty(cur.getString(cur.getColumnIndex("sub_name")));
             doctor.setSub_specialty_id(cur.getInt(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
             doctor.setAffiliation(cur.getString(cur.getColumnIndex(DOC_AFFILIATIONS)));
+            doctor.setEmail(cur.getString(cur.getColumnIndex(DOC_EMAIL)));
+            doctor.setReferral_id(cur.getString(cur.getColumnIndex(DOC_REFERRAL_ID)));
             doctor.setCreated_at(cur.getString(cur.getColumnIndex(CREATED_AT)));
             doctor.setUpdated_at(cur.getString(cur.getColumnIndex(UPDATED_AT)));
             doctor.setDeleted_at(cur.getString(cur.getColumnIndex(DELETED_AT)));
@@ -1616,7 +1622,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(CONSULT_DOCTOR, cur.getString(cur.getColumnIndex(CONSULT_DOCTOR)));
             map.put(CONSULT_CLINIC, cur.getString(cur.getColumnIndex(CONSULT_CLINIC)));
             map.put(CONSULT_DATE, cur.getString(cur.getColumnIndex(CONSULT_DATE)));
-            map.put(CONSULT_PART_OF_DAY, cur.getString(cur.getColumnIndex(CONSULT_PART_OF_DAY)));
+            map.put(CONSULT_TIME, cur.getString(cur.getColumnIndex(CONSULT_TIME)));
             map.put(CONSULT_IS_ALARMED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED))));
             map.put(CONSULT_TIME, cur.getString(cur.getColumnIndex(CONSULT_TIME)));
             map.put(CONSULT_IS_FINISHED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED))));
@@ -1637,14 +1643,20 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             consult.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
+            consult.setServerID(cur.getInt(cur.getColumnIndex(CONSULT_SERVER_ID)));
             consult.setPatientID(cur.getInt(cur.getColumnIndex(PATIENT_ID)));
-            consult.setIsAlarmed(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED)));
-            consult.setIsFinished(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED)));
+            consult.setDoctorID(cur.getInt(cur.getColumnIndex(CONSULT_DOCTOR_ID)));
             consult.setDoctor(cur.getString(cur.getColumnIndex(CONSULT_DOCTOR)));
+            consult.setClinicID(cur.getInt(cur.getColumnIndex(CONSULT_CLINIC_ID)));
             consult.setClinic(cur.getString(cur.getColumnIndex(CONSULT_CLINIC)));
+            consult.setIsAlarmed(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED)));
+            consult.setAlarmedTime(cur.getString(cur.getColumnIndex(CONSULT_ALARMED_TIME)));
             consult.setDate(cur.getString(cur.getColumnIndex(CONSULT_DATE)));
-            consult.setPartOfDay(cur.getString(cur.getColumnIndex(CONSULT_PART_OF_DAY)));
             consult.setTime(cur.getString(cur.getColumnIndex(CONSULT_TIME)));
+            consult.setIsFinished(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED)));
+            consult.setCreated_at(cur.getString(cur.getColumnIndex(CREATED_AT)));
+            consult.setUpdated_at(cur.getString(cur.getColumnIndex(UPDATED_AT)));
+            consult.setDeleted_at(cur.getString(cur.getColumnIndex(DELETED_AT)));
         }
         cur.close();
         db.close();

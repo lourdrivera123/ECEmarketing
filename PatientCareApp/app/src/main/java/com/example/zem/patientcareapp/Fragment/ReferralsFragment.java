@@ -113,15 +113,15 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                             hash.put("serverID", String.valueOf(json_obj.getInt("id")));
                             hash.put("name", name);
                             hash.put("referral_id", json_obj.getString("referral_id"));
-                            hash.put("referred_by", json_obj.getString("referred_by"));
+                            hash.put("referred_by", json_obj.getString("referred_byUser"));
                             hash_AllUsers.add(hash);
 
-                            if (json_obj.get("referred_by").equals(referral_ID)) {
+                            if (json_obj.get("referred_byUser").equals(referral_ID)) {
                                 HashMap<String, String> map = new HashMap();
                                 map.put("serverID", String.valueOf(json_obj.getInt("id")));
                                 map.put("name", name);
                                 map.put("referral_id", json_obj.getString("referral_id"));
-                                map.put("referred_by", json_obj.getString("referred_by"));
+                                map.put("referred_by", json_obj.getString("referred_byUser"));
                                 hash_myReferrals.add(map);
                                 list_myReferrals.add(count, hash_myReferrals.get(count).get("name"));
 
@@ -135,7 +135,7 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                         noReferralsLayout.setVisibility(View.VISIBLE);
                     }
                 } catch (JSONException e) {
-                    Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), e + "", Toast.LENGTH_SHORT).show();
                     System.out.print("src: <ReferralsFragment>: " + e);
                 }
                 dialog.dismiss();
@@ -199,7 +199,7 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                     map.put("serverID", hash_AllUsers.get(outer).get("serverID"));
                     map.put("name", hash_AllUsers.get(outer).get("name"));
                     map.put("referral_id", hash_AllUsers.get(outer).get("referral_id"));
-                    map.put("referred_by", hash_AllUsers.get(outer).get("referred_by"));
+                    map.put("referred_by", hash_AllUsers.get(outer).get("referred_byUser"));
                     map.put("count", String.valueOf(-1));
                     hash_hash.add(map);
 
@@ -219,7 +219,7 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                                         hash.put("serverID", hash_AllUsers.get(inner).get("serverID"));
                                         hash.put("name", hash_AllUsers.get(inner).get("name"));
                                         hash.put("referral_id", hash_AllUsers.get(inner).get("referral_id"));
-                                        hash.put("referred_by", hash_AllUsers.get(inner).get("referred_by"));
+                                        hash.put("referred_by", hash_AllUsers.get(inner).get("referred_byUser"));
                                         hash.put("count", String.valueOf(o));
                                         hash_hash.add(hash);
 
