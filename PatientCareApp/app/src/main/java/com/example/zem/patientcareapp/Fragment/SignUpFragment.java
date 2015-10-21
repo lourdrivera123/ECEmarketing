@@ -1,17 +1,18 @@
 package com.example.zem.patientcareapp.Fragment;
 
-import android.app.DatePickerDialog;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.EditTabsActivity;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
@@ -23,7 +24,7 @@ import java.util.Calendar;
 /**
  * Created by Zem on 4/28/2015.
  */
-public class SignUpFragment extends Fragment implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
+public class SignUpFragment extends Fragment implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener {
 
     public static EditText birthdate, fname, lname, mname, height, weight, occupation;
     public static Spinner civil_status_spinner;
@@ -34,6 +35,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
     public static String[] civil_status_array = {
             "Single", "Married", "Widowed", "Separated", "Divorced"
     };
+    String get_birthdate;
     public static int int_year, int_month, int_day;
 
     DbHelper dbhelper;
@@ -44,6 +46,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
 
         dbhelper = new DbHelper(getActivity());
         int edit = EditTabsActivity.edit_int;
+        get_birthdate = "";
 
         fname = (EditText) rootView.findViewById(R.id.fname);
         lname = (EditText) rootView.findViewById(R.id.lname);
@@ -55,7 +58,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
         female_rb = (RadioButton) rootView.findViewById(R.id.female_rb);
 
         civil_status_spinner = (Spinner) rootView.findViewById(R.id.civil_status);
-        civil_status_adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, civil_status_array);
+        civil_status_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, civil_status_array);
         civil_status_spinner.setAdapter(civil_status_adapter);
 
         birthdate = (EditText) rootView.findViewById(R.id.birthdate);
@@ -64,6 +67,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
         if (edit > 0) {
             String edit_uname = SidebarActivity.getUname();
             Patient patient = dbhelper.getloginPatient(edit_uname);
+            get_birthdate = patient.getBirthdate();
 
             fname.setText(patient.getFname());
             lname.setText(patient.getLname());
@@ -88,46 +92,58 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Da
 
     @Override
     public void onClick(View v) {
-        Calendar cal = Calendar.getInstance();
         switch (v.getId()) {
             case R.id.birthdate:
-                if (birthdate.getText().toString().equals("")) {
-                    DatePickerDialog datePicker = new DatePickerDialog(getActivity(), this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-                    datePicker.show();
+                FragmentManager fm = getChildFragmentManager();
+                Calendar now = Calendar.getInstance();
+                CalendarDatePickerDialogFragment datepicker;
+
+                if (get_birthdate.equals("")) {
+                    datepicker = CalendarDatePickerDialogFragment
+                            .newInstance(this, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
                 } else {
                     int month, year, day;
                     String birth = birthdate.getText().toString();
-                    int indexOfMonthandDay = birth.indexOf("/");
-                    int indexOfYear = birth.lastIndexOf("/");
-                    year = Integer.parseInt(birth.substring(indexOfYear + 1, birth.length()));
-                    month = Integer.parseInt(birth.substring(0, indexOfMonthandDay));
-                    day = Integer.parseInt(birth.substring(indexOfMonthandDay + 1, indexOfYear));
+                    int indexOfYear = birth.indexOf("-");
+                    int indexOfMonthandDay = birth.lastIndexOf("-");
+                    year = Integer.parseInt(birth.substring(0, indexOfYear));
+                    month = Integer.parseInt(birth.substring(indexOfYear + 1, indexOfMonthandDay)) - 1;
+                    day = Integer.parseInt(birth.substring(indexOfMonthandDay + 1, birth.length()));
 
-                    updateDate(year, month - 1, day);
+                    datepicker = CalendarDatePickerDialogFragment
+                            .newInstance(this, year, month, day);
                 }
+                datepicker.show(fm, "fragment_date_picker_name");
                 break;
         }
     }
 
-
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int day) {
-        String dateStr = String.format("%d/%d/%d", (month + 1), day, year);
+    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+        String dateStr = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
         birthdate.setText(dateStr);
+        get_birthdate = dateStr;
 
         int_year = year;
-        int_month = month;
-        int_day = day;
+        int_month = monthOfYear;
+        int_day = dayOfMonth;
 
         Calendar calendar = Calendar.getInstance();
         int current_year = calendar.get(Calendar.YEAR);
 
         if ((current_year - year) < 18)
             birthdate.setError("Must be 18 years old and above");
+        else
+            birthdate.setError(null);
     }
 
-    public void updateDate(int year, int monthOfYear, int dayOfMonth) {
-        DatePickerDialog datePicker = new DatePickerDialog(getActivity(), this, year, monthOfYear, dayOfMonth);
-        datePicker.show();
+    @Override
+    public void onResume() {
+        super.onResume();
+        CalendarDatePickerDialogFragment calendarDatePickerDialogFragment = (CalendarDatePickerDialogFragment) getChildFragmentManager()
+                .findFragmentByTag("fragment_date_picker_name");
+        if (calendarDatePickerDialogFragment != null) {
+            calendarDatePickerDialogFragment.setOnDateSetListener(this);
+        }
     }
 }

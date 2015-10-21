@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
@@ -242,10 +241,7 @@ public class DbHelper extends SQLiteOpenHelper {
             DFP_PRODUCT_ID = "product_id",
             DFP_TYPE = "type",                          // type = 1 or 0 , 1 for Free Products and 0 for Discount
             DFP_QUANTITY_REQUIRED = "quantity_required",
-            DFP_LESS = "less",                          // (optional) default = 0. Applicable only if type is Discount
-            DFP_CREATED_AT = "created_at",
-            DFP_UPDATED_AT = "updated_at",
-            DFP_DELETED_AT = "deleted_at";
+            DFP_LESS = "less";
 
     // FREE PRODUCTS TABLE
     public static final String TBL_FREE_PRODUCTS = "free_products",
@@ -409,7 +405,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table discounts_free_products
         String sql_create_discounts_products = String.format("CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_DISCOUNTS_FREE_PRODUCTS, AI_ID, SERVER_DFP_ID, DFP_PROMO_ID, DFP_PRODUCT_ID, DFP_TYPE, DFP_QUANTITY_REQUIRED, DFP_LESS, DFP_CREATED_AT, DFP_UPDATED_AT, DFP_DELETED_AT);
+                TBL_DISCOUNTS_FREE_PRODUCTS, AI_ID, SERVER_DFP_ID, DFP_PROMO_ID, DFP_PRODUCT_ID, DFP_TYPE, DFP_QUANTITY_REQUIRED, DFP_LESS, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create tale "free_products"
         String sql_create_free_products_table = String.format("CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
@@ -1008,9 +1004,9 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DFP_PRODUCT_ID, discountsFreeProducts.getProductId());
         values.put(DFP_QUANTITY_REQUIRED, discountsFreeProducts.getQuantityRequired());
         values.put(DFP_TYPE, discountsFreeProducts.getType());
-        values.put(DFP_CREATED_AT, discountsFreeProducts.getCreatedAt());
-        values.put(DFP_UPDATED_AT, discountsFreeProducts.getUpdatedAt());
-        values.put(DFP_DELETED_AT, discountsFreeProducts.getDeletedAt());
+        values.put(CREATED_AT, discountsFreeProducts.getCreatedAt());
+        values.put(UPDATED_AT, discountsFreeProducts.getUpdatedAt());
+        values.put(DELETED_AT, discountsFreeProducts.getDeletedAt());
 
         long row;
 

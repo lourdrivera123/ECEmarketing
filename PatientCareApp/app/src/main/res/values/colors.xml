@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ColorPrimary">#5B9A68</color>
-    <color name="ColorPrimaryDark">#5B9A68</color>
+    <color name="LightGreen">#63AB62</color>
+    <color name="DarkGreen">#33562e</color>
     <color name="white">#FFFFFF</color>
     <color name="shadow">#D6D6D6</color>
     <color name="black">#000000</color>
@@ -12,16 +13,4 @@
     <color name="counter_text_bg">#626262</color>
     <color name="list_item_title">#fff</color>
     <color name="counter_text_color">#c5c4c4</color>
-
-    <array name="bg_colors">
-        <item>#b8f0fd</item>
-        <item>#f9b4d6</item>
-        <item>#f4d5d6</item>
-        <item>#ffcf9e</item>
-        <item>#FF6961</item>
-        <item>#bbf4ed</item>
-        <item>#f9f9b4</item>
-        <item>#d7b4f9</item>
-        <item>#d6f9b4</item>
-    </array>
 </resources>

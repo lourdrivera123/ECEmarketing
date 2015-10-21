@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/httpcore-4.3.1/httpcore-4.3.1.iml" filepath="$PROJECT_DIR$/httpcore-4.3.1/httpcore-4.3.1.iml" />
       <module fileurl="file://$PROJECT_DIR$/httpmime-4.3.1/httpmime-4.3.1.iml" filepath="$PROJECT_DIR$/httpmime-4.3.1/httpmime-4.3.1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/universal-image-loader-1.9.4/universal-image-loader-1.9.4.iml" filepath="$PROJECT_DIR$/universal-image-loader-1.9.4/universal-image-loader-1.9.4.iml" />
       <module fileurl="file://$PROJECT_DIR$/volley/volley.iml" filepath="$PROJECT_DIR$/volley/volley.iml" />
     </modules>

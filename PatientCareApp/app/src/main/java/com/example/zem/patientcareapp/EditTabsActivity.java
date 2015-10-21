@@ -125,8 +125,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         fragment = new SignUpFragment();
         serverRequest = new ServerRequest();
 
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBar(actionbar);
+        actionBar = getActionBar();
+        actionBar.setHomeButtonEnabled(false);
+        MainActivity.setCustomActionBar(actionBar);
         showOverLay();
 
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
@@ -148,12 +149,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
-        actionBar = getActionBar();
-
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(mAdapter);
-        actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // Adding Tabs
@@ -187,13 +185,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                         }
                     });
 
-                    if (unselected == 1) {
+                    if (unselected == 1)
                         validateAtPosition2();
-                        setProfilePhoto();
-                    } else if (unselected == 0) {
+                    else if (unselected == 0)
                         readFromSignUp();
-                        setProfilePhoto();
-                    }
 
                     Button btn_submit = (Button) findViewById(R.id.btn_save);
                     btn_submit.setOnClickListener(new View.OnClickListener() {
@@ -617,9 +612,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                 patient.setPassword(pass);
                 count++;
             }
-        } else {
+        } else
             count++;
-        }
 
         if (username.equals("")) {
             et_username.setError("Field is required");
@@ -630,17 +624,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         if (count == limit)
             this.hasError3 = false;
-    }
-
-    public void setProfilePhoto() {
-        String path = patient.getPhoto();
-//        if (check > 0) { //IF RETURNED FROM ON ACTIVITY RESULT
-//            Bitmap yourSelectedImage = BitmapFactory.decodeFile(path);
-//            d = new BitmapDrawable(yourSelectedImage);
-//            image_holder.setImageDrawable(d);
-//        } else {
-//            image_holder = (ImageView) findViewById(R.id.image_holder);
-//        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

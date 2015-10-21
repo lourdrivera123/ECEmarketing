@@ -1,10 +1,10 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +26,6 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,8 +35,7 @@ import java.util.HashMap;
  * Created by User PC on 9/21/2015.
  */
 
-public class CheckoutActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
-    ActionBar actionBar;
+public class CheckoutActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     LinearLayout hideLayout;
     TextView customerName, customerContactNumber, customerAddress;
     EditText recipientName, recipientAddress, recipientContactNumber;
@@ -45,6 +43,7 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
     Spinner listOfECEBranches;
     CheckBox check;
     Button proceed;
+    Toolbar myToolBar;
 
     String senderName, senderAddress, senderContactNumber, receiverName, receiverAddress, receiverContactNumber,
             modeOfDelivery, eceBranch, payment_option;
@@ -59,6 +58,7 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
     Context context;
 
     int billing_id = 0, branch_server_id = 0;
+    int p_year, p_month, p_day;
     ServerRequest serverRequest;
 
     @Override
@@ -66,9 +66,15 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkoutform);
 
-        actionBar = getActionBar();
-        MainActivity.setCustomActionBar(actionBar);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        myToolBar = (Toolbar) findViewById(R.id.myToolBar);
+        setSupportActionBar(myToolBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Checkout");
+        myToolBar.setNavigationIcon(R.drawable.ic_back);
+
+        p_year = 0;
+        p_month = 0;
+        p_day = 0;
 
         context = getBaseContext();
         db = new DbHelper(this);
@@ -101,6 +107,7 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
 
         proceed.setOnClickListener(this);
         check.setOnCheckedChangeListener(this);
+        pickup.setOnCheckedChangeListener(this);
 
         ptnt_completeAddress = patient.getAddress_street() + " " + patient.getAddress_city_municipality() + ", " + patient.getAddress_province();
         ptnt_fullname = patient.getFname() + " " + patient.getLname();
@@ -111,6 +118,10 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
         customerContactNumber.setText("Contact No.: " + ptnt_contactNumber);
 
         serverRequest = new ServerRequest();
+
+    }
+
+    public CheckoutActivity() {
 
     }
 
@@ -126,64 +137,71 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        senderName = ptnt_fullname;
-        senderAddress = ptnt_completeAddress;
-        senderContactNumber = ptnt_contactNumber;
-        eceBranch = listOfECEBranches.getSelectedItem().toString();
-        int pos = listOfECEBranches.getSelectedItemPosition();
+        switch (v.getId()) {
+            case R.id.proceed:
+                senderName = ptnt_fullname;
+                senderAddress = ptnt_completeAddress;
+                senderContactNumber = ptnt_contactNumber;
+                eceBranch = listOfECEBranches.getSelectedItem().toString();
+                int pos = listOfECEBranches.getSelectedItemPosition();
 
-        branch_server_id = Integer.parseInt(getBranchesFromDB.get(pos).get("branches_id"));
+                branch_server_id = Integer.parseInt(getBranchesFromDB.get(pos).get("branches_id"));
 
-        if (check.isChecked()) {
-            receiverName = senderName;
-            receiverAddress = senderAddress;
-            receiverContactNumber = senderContactNumber;
-        } else {
-            receiverName = recipientName.getText().toString();
-            receiverAddress = recipientAddress.getText().toString();
-            receiverContactNumber = recipientContactNumber.getText().toString();
-        }
+                if (check.isChecked()) {
+                    receiverName = senderName;
+                    receiverAddress = senderAddress;
+                    receiverContactNumber = senderContactNumber;
+                } else {
+                    receiverName = recipientName.getText().toString();
+                    receiverAddress = recipientAddress.getText().toString();
+                    receiverContactNumber = recipientContactNumber.getText().toString();
+                }
 
-        if (pickup.isChecked())
-            modeOfDelivery = "pick-up";
-        else if (deliver.isChecked())
-            modeOfDelivery = "delivery";
+                if (pickup.isChecked())
+                    modeOfDelivery = "pick-up";
+                else if (deliver.isChecked())
+                    modeOfDelivery = "delivery";
 
-        if (cod.isChecked()) {
-            HashMap<String, String> map = new HashMap();
-            map.put("request", "save_orders");
-            map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
-            map.put("recipient_name", receiverName);
-            map.put("recipient_address", receiverAddress);
-            map.put("recipient_contactNumber", receiverContactNumber);
-            map.put("branch_id", String.valueOf(1)); //needs to be the id of the selected combobox
-            map.put("modeOfDelivery", modeOfDelivery);
-            map.put("payment_method", "cod");
-            map.put("status", "pending");
+                if (cod.isChecked()) {
+                    HashMap<String, String> map = new HashMap();
+                    map.put("request", "save_orders");
+                    map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
+                    map.put("recipient_name", receiverName);
+                    map.put("recipient_address", receiverAddress);
+                    map.put("recipient_contactNumber", receiverContactNumber);
+                    map.put("branch_id", String.valueOf(1)); //needs to be the id of the selected combobox
+                    map.put("modeOfDelivery", modeOfDelivery);
+                    map.put("payment_method", "cod");
+                    map.put("status", "pending");
 
-            Log.d("paramshit", map + "");
-
-
-            PostRequest.send(getBaseContext(), map, serverRequest, new RespondListener<JSONObject>() {
-                @Override
-                public void getResult(JSONObject response) {
-                    try {
-                        if (db.emptyBasket(SidebarActivity.getUserID())) {
-                            //request for orders request
-                            GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
-                                @Override
-                                public void getResult(JSONObject response) {
-
-                                    //request for order_details request
-                                    GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
+                    PostRequest.send(getBaseContext(), map, serverRequest, new RespondListener<JSONObject>() {
+                        @Override
+                        public void getResult(JSONObject response) {
+                            try {
+                                if (db.emptyBasket(SidebarActivity.getUserID())) {
+                                    //request for orders request
+                                    GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
 
-                                            Toast.makeText(getApplicationContext(), "Thank you !",
-                                                    Toast.LENGTH_LONG).show();
+                                            //request for order_details request
+                                            GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
+                                                @Override
+                                                public void getResult(JSONObject response) {
 
-                                            Intent orders_intent = new Intent(CheckoutActivity.this, OrdersActivity.class);
-                                            startActivity(orders_intent);
+                                                    Toast.makeText(getApplicationContext(), "Thank you !",
+                                                            Toast.LENGTH_LONG).show();
+
+                                                    Intent orders_intent = new Intent(CheckoutActivity.this, OrdersActivity.class);
+                                                    startActivity(orders_intent);
+
+                                                }
+                                            }, new ErrorListener<VolleyError>() {
+                                                public void getError(VolleyError error) {
+                                                    Log.d("Error", error + "");
+                                                    Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
 
                                         }
                                     }, new ErrorListener<VolleyError>() {
@@ -192,55 +210,49 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
                                             Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                         }
                                     });
-
                                 }
-                            }, new ErrorListener<VolleyError>() {
-                                public void getError(VolleyError error) {
-                                    Log.d("Error", error + "");
-                                    Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            } catch (Exception e) {
+                                System.out.print("src: <ShoppingCartFragment > " + e.toString());
+                            }
                         }
-                    } catch (Exception e) {
-                        System.out.print("src: <ShoppingCartFragment > " + e.toString());
-                    }
+                    }, new ErrorListener<VolleyError>() {
+                        @Override
+                        public void getError(VolleyError error) {
+                            System.out.print("src: <HomeTileActivityClone>: " + error.toString());
+                            Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                } else if (paypal.isChecked()) {
+
+                    Intent intent = new Intent(getBaseContext(), samplepaypal.class); //CheckoutActivity.class
+                    intent.putExtra("request", "save_orders");
+                    intent.putExtra("user_id", String.valueOf(SidebarActivity.getUserID()));
+                    intent.putExtra("recipient_name", receiverName);
+                    intent.putExtra("recipient_address", receiverAddress);
+                    intent.putExtra("recipient_contactNumber", receiverContactNumber);
+                    intent.putExtra("branch_server_id", branch_server_id);
+                    intent.putExtra("modeOfDelivery", modeOfDelivery);
+                    intent.putExtra("payment_method", "paypal");
+                    intent.putExtra("status", "pending");
+                    startActivity(intent);
+
+                } else if (visa_or_mastercard.isChecked()) {
+                    Intent intent = new Intent(getBaseContext(), samplepaypal.class); //CheckoutActivity.class
+                    intent.putExtra("request", "save_orders");
+                    intent.putExtra("user_id", String.valueOf(SidebarActivity.getUserID()));
+                    intent.putExtra("recipient_name", receiverName);
+                    intent.putExtra("recipient_address", receiverAddress);
+                    intent.putExtra("recipient_contactNumber", receiverContactNumber);
+                    intent.putExtra("branch_server_id", branch_server_id);
+                    intent.putExtra("modeOfDelivery", modeOfDelivery);
+                    intent.putExtra("payment_method", "visa_or_mastercard");
+                    intent.putExtra("status", "pending");
+                    startActivity(intent);
                 }
-            }, new ErrorListener<VolleyError>() {
-                @Override
-                public void getError(VolleyError error) {
-                    System.out.print("src: <HomeTileActivityClone>: " + error.toString());
-                    Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                }
-            });
 
-        } else if (paypal.isChecked()) {
-
-            Intent intent = new Intent(getBaseContext(), samplepaypal.class); //CheckoutActivity.class
-            intent.putExtra("request", "save_orders");
-            intent.putExtra("user_id", String.valueOf(SidebarActivity.getUserID()));
-            intent.putExtra("recipient_name", receiverName);
-            intent.putExtra("recipient_address", receiverAddress);
-            intent.putExtra("recipient_contactNumber", receiverContactNumber);
-            intent.putExtra("branch_server_id", branch_server_id);
-            intent.putExtra("modeOfDelivery", modeOfDelivery);
-            intent.putExtra("payment_method", "paypal");
-            intent.putExtra("status", "pending");
-            startActivity(intent);
-
-        } else if (visa_or_mastercard.isChecked()) {
-            Intent intent = new Intent(getBaseContext(), samplepaypal.class); //CheckoutActivity.class
-            intent.putExtra("request", "save_orders");
-            intent.putExtra("user_id", String.valueOf(SidebarActivity.getUserID()));
-            intent.putExtra("recipient_name", receiverName);
-            intent.putExtra("recipient_address", receiverAddress);
-            intent.putExtra("recipient_contactNumber", receiverContactNumber);
-            intent.putExtra("branch_server_id", branch_server_id);
-            intent.putExtra("modeOfDelivery", modeOfDelivery);
-            intent.putExtra("payment_method", "visa_or_mastercard");
-            intent.putExtra("status", "pending");
-            startActivity(intent);
+                break;
         }
-
     }
 
     @Override

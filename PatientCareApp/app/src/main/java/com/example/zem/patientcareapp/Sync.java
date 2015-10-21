@@ -567,9 +567,9 @@ public class Sync {
         discountsFreeProducts.setLess(json.getDouble(DbHelper.DFP_LESS));
         discountsFreeProducts.setQuantityRequired(json.getInt(DbHelper.DFP_QUANTITY_REQUIRED));
         discountsFreeProducts.setType(json.getInt(DbHelper.DFP_TYPE));
-        discountsFreeProducts.setCreatedAt(json.getString(DbHelper.DFP_CREATED_AT));
-        discountsFreeProducts.setUpdatedAt(json.getString(DbHelper.DFP_UPDATED_AT));
-        discountsFreeProducts.setDeletedAt(json.getString(DbHelper.DFP_DELETED_AT));
+        discountsFreeProducts.setCreatedAt(json.getString(DbHelper.CREATED_AT));
+        discountsFreeProducts.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
+        discountsFreeProducts.setDeletedAt(json.getString(DbHelper.DELETED_AT));
 
         return discountsFreeProducts;
     }

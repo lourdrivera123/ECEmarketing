@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ import com.example.zem.patientcareapp.GetterSetter.Doctor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DoctorActivity extends Activity implements View.OnClickListener {
+public class DoctorActivity extends ActionBarActivity implements View.OnClickListener {
     TextView doctor_name, specialty, clinic_name, clinic_address_first_line, clinic_address_second_line, contact_number;
     ListView listOfDoctors;
     Button scheduleConsultation;
@@ -42,9 +43,8 @@ public class DoctorActivity extends Activity implements View.OnClickListener {
         listOfDoctors = (ListView) findViewById(R.id.listOfDoctors);
         scheduleConsultation = (Button) findViewById(R.id.scheduleConsultation);
 
-        ActionBar actionBar = getActionBar();
-        MainActivity.setCustomActionBar(actionBar);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         dbHelper = new DbHelper(this);
         Intent intent = getIntent();
