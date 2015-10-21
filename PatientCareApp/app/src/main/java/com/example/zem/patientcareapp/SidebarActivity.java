@@ -140,8 +140,8 @@ public class SidebarActivity extends FragmentActivity {
 
         if (dbHelper.checkUserIfRegistered(getUname()) > 0) {
             // start consultation schedules reminder
-            alarmService = new AlarmService(this);
-            alarmService.patientConsultationReminder();
+//            alarmService = new AlarmService(this);
+//            alarmService.patientConsultationReminder();
         } else {
             editor.clear();
             editor.commit();

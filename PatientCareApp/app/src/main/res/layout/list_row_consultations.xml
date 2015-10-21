@@ -42,4 +42,17 @@
         android:textColor="#343434"
         android:textSize="10dip"
         android:textStyle="bold" />
+
+    <!-- Schedule Date -->
+    <TextView
+        android:id="@+id/consultation_created_by"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:gravity="right"
+        android:text="Created by: Patient"
+        android:textColor="#343434"
+        android:textSize="10dip"
+        android:textStyle="bold"
+        android:layout_marginBottom="@dimen/d10" />
 </LinearLayout>

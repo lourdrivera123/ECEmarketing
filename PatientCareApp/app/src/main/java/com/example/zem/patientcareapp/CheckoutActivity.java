@@ -27,6 +27,7 @@ import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -179,11 +180,17 @@ public class CheckoutActivity extends Activity implements View.OnClickListener, 
                                         @Override
                                         public void getResult(JSONObject response) {
 
-                                            Toast.makeText(getApplicationContext(), "Thank you !",
-                                                    Toast.LENGTH_LONG).show();
+                                            try {
+                                                String timestamp_ordered = response.getString("server_timestamp");
 
-                                            Intent orders_intent = new Intent(CheckoutActivity.this, OrdersActivity.class);
-                                            startActivity(orders_intent);
+                                                Intent order_intent = new Intent(getBaseContext(), OrdersActivity.class);
+                                                order_intent.putExtra("payment_from", "cod");
+                                                order_intent.putExtra("timestamp_ordered", timestamp_ordered);
+                                                startActivity(order_intent);
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
 
                                         }
                                     }, new ErrorListener<VolleyError>() {

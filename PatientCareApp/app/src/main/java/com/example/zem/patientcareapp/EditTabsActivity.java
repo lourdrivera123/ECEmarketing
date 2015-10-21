@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -179,6 +180,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                 } else if (position == 2) {
                     Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
                     image_holder = (ImageView) findViewById(R.id.image_holder);
+                    TableRow tbrow = (TableRow) findViewById(R.id.uploadpicturerow);
+
+                    if(signup_int > 0) {
+                        tbrow.setVisibility(View.GONE);
+                    }
 
                     choose_image_btn.setOnClickListener(new View.OnClickListener() {
                         @Override
