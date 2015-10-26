@@ -43,6 +43,7 @@ import java.util.Random;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
+import com.example.zem.patientcareapp.Fragment.ContactsFragment;
 import com.example.zem.patientcareapp.Fragment.SignUpFragment;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -77,7 +78,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
-    private String[] tabs = {"Gen. Info", "Contact Info", "Acct. Info"};
+    private String[] tabs = {"Gen. Info", "Contact & Addr.", "Acct. Info"};
     public boolean hasError = true, hasError2 = true, hasError3 = true;
 
     // SIGN UP FRAGMENT
@@ -87,9 +88,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     String s_fname, s_lname, s_mname, s_birthdate, s_sex, s_civil_status, s_height, s_weight, s_occupation;
 
     // CONTACTS FRAGMENT
-    EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_barangay, address_city_municipality, address_province, address_zip,
+    EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_zip,
             email, tel_no, cell_no;
-    Spinner address_region;
+    Spinner address_region, address_barangay, address_city_municipality, address_province;
     String s_unit_no, s_building, s_lot_no, s_block_no, s_phase_no, s_house_no, s_street, s_barangay, s_city, s_province, s_zip, s_email, s_tel_no, s_cell_no, s_region;
 
     // ACCOUNT INFO FRAGMENT
@@ -255,6 +256,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                                             HashMap<String, String> params = setParams("register");
 
+                                            Log.d("params from register", params + "");
+
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
                                                 public void getResult(JSONObject response) {
@@ -290,7 +293,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
                                                     pDialog.dismiss();
-                                                    Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                                                    Log.d("unsay error yawa", error + "");
+                                                    Toast.makeText(getBaseContext(), "Please check your internet connection putang ina", Toast.LENGTH_SHORT).show();
                                                     System.out.print("src <EditTabsActivity> NETWORK: " + error);
                                                 }
                                             });
@@ -380,14 +384,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("phase_no", "" + patient.getPhase_no());
         params.put("address_house_no", "" + patient.getAddress_house_no());
         params.put("address_street", patient.getAddress_street());
-        params.put("address_barangay", patient.getAddress_barangay());
-        params.put("address_city_municipality", patient.getAddress_city_municipality());
-        params.put("address_province", patient.getAddress_province());
-        params.put("address_region", patient.getAddress_region());
-        params.put("address_zip", patient.getAddress_zip());
         params.put("tel_no", patient.getTel_no());
         params.put("mobile_no", patient.getMobile_no());
         params.put("email_address", patient.getEmail());
+//        int barangay_id = Integer.parseInt(String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition())));
+        params.put("barangay_id", String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition())));
+
+        Log.d("brgy id", String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition())));
 
         return params;
     }
@@ -486,14 +489,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         phase_no = (EditText) findViewById(R.id.phase_no);
         address_house_no = (EditText) findViewById(R.id.address_house_no);
         address_street = (EditText) findViewById(R.id.address_street);
-        address_barangay = (EditText) findViewById(R.id.address_barangay);
-        address_city_municipality = (EditText) findViewById(R.id.address_city_municipality);
-        address_province = (EditText) findViewById(R.id.address_province);
-        address_zip = (EditText) findViewById(R.id.address_zip);
         email = (EditText) findViewById(R.id.email);
         tel_no = (EditText) findViewById(R.id.tel_no);
         cell_no = (EditText) findViewById(R.id.cell_no);
         address_region = (Spinner) findViewById(R.id.address_region);
+        address_barangay = (Spinner) findViewById(R.id.address_barangay);
+        address_city_municipality = (Spinner) findViewById(R.id.address_city_municipality);
+        address_province = (Spinner) findViewById(R.id.address_province);
 
         s_house_no = address_house_no.getText().toString();
         s_unit_no = unit_no.getText().toString();
@@ -502,50 +504,18 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         s_block_no = block_no.getText().toString();
         s_phase_no = phase_no.getText().toString();
         s_street = address_street.getText().toString();
-        s_barangay = address_barangay.getText().toString();
-        s_city = address_city_municipality.getText().toString();
-        s_province = address_province.getText().toString();
-        s_zip = address_zip.getText().toString();
+
         s_email = email.getText().toString();
         s_tel_no = tel_no.getText().toString();
         s_cell_no = cell_no.getText().toString();
-        s_region = address_region.getSelectedItem().toString();
 
         count = 0;
-        limit = 6;
+        limit = 2;
 
         if (s_street.equals("")) {
             address_street.setError("Field Required");
         } else {
             patient.setAddress_street(s_street);
-            count++;
-        }
-
-        if (s_barangay.equals("")) {
-            address_barangay.setError("Field Required");
-        } else {
-            patient.setAddress_barangay(s_barangay);
-            count++;
-        }
-
-        if (s_city.equals("")) {
-            address_city_municipality.setError("Field Required");
-        } else {
-            patient.setAddress_city_municipality(s_city);
-            count++;
-        }
-
-        if (s_province.equals("")) {
-            address_province.setError("Field Required");
-        } else {
-            patient.setAddress_province(s_province);
-            count++;
-        }
-
-        if (s_zip.equals("")) {
-            address_zip.setError("Field Required");
-        } else {
-            patient.setAddress_zip(s_zip);
             count++;
         }
 
@@ -595,7 +565,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         patient.setTel_no(s_tel_no);
         patient.setBuilding(s_building);
         patient.setEmail(s_email);
-        patient.setAddress_region(s_region);
+//        patient.setAddress_region(s_region);
     }
 
     public void validateUserAccountInfo() {
