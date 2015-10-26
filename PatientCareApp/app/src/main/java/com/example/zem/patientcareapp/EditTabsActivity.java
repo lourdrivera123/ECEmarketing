@@ -78,7 +78,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
-    private String[] tabs = {"Gen. Info", "Contact Info", "Acct. Info"};
+    private String[] tabs = {"Gen. Info", "Contact & Addr.", "Acct. Info"};
     public boolean hasError = true, hasError2 = true, hasError3 = true;
 
     // SIGN UP FRAGMENT
@@ -490,10 +490,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         phase_no = (EditText) findViewById(R.id.phase_no);
         address_house_no = (EditText) findViewById(R.id.address_house_no);
         address_street = (EditText) findViewById(R.id.address_street);
-//        address_barangay = (EditText) findViewById(R.id.address_barangay);
-//        address_city_municipality = (EditText) findViewById(R.id.address_city_municipality);
-//        address_province = (EditText) findViewById(R.id.address_province);
-//        address_zip = (EditText) findViewById(R.id.address_zip);
         email = (EditText) findViewById(R.id.email);
         tel_no = (EditText) findViewById(R.id.tel_no);
         cell_no = (EditText) findViewById(R.id.cell_no);
@@ -509,20 +505,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         s_block_no = block_no.getText().toString();
         s_phase_no = phase_no.getText().toString();
         s_street = address_street.getText().toString();
-//        s_barangay = address_barangay.getText().toString();
-//        s_city = address_city_municipality.getText().toString();
-//        s_province = address_province.getText().toString();
-//        s_zip = address_zip.getText().toString();
 
         s_email = email.getText().toString();
         s_tel_no = tel_no.getText().toString();
         s_cell_no = cell_no.getText().toString();
-//        s_region = address_region.getSelectedItem().toString();
-
-
 
         count = 0;
-        limit = 6;
+        limit = 2;
 
         if (s_street.equals("")) {
             address_street.setError("Field Required");
@@ -530,34 +519,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             patient.setAddress_street(s_street);
             count++;
         }
-
-//        if (s_barangay.equals("")) {
-//            address_barangay.setError("Field Required");
-//        } else {
-//            patient.setAddress_barangay(s_barangay);
-//            count++;
-//        }
-//
-//        if (s_city.equals("")) {
-//            address_city_municipality.setError("Field Required");
-//        } else {q
-//            patient.setAddress_city_municipality(s_city);
-//            count++;
-//        }
-//
-//        if (s_province.equals("")) {
-//            address_province.setError("Field Required");
-//        } else {
-//            patient.setAddress_province(s_province);
-//            count++;
-//        }
-
-//        if (s_zip.equals("")) {
-//            address_zip.setError("Field Required");
-//        } else {
-//            patient.setAddress_zip(s_zip);
-//            count++;
-//        }
 
         if (s_cell_no.equals("")) {
             cell_no.setError("Field Required");
