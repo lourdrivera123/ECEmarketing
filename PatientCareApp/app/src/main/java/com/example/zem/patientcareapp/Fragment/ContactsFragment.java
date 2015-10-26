@@ -42,12 +42,12 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contacts_fragment, container, false);
 
-        unit_no = (EditText) rootView.findViewById(R.id.unit_no);
-        building = (EditText) rootView.findViewById(R.id.building);
-        lot_no = (EditText) rootView.findViewById(R.id.lot_no);
-        block_no = (EditText) rootView.findViewById(R.id.block_no);
-        phase_no = (EditText) rootView.findViewById(R.id.phase_no);
-        address_house_no = (EditText) rootView.findViewById(R.id.address_house_no);
+//        unit_no = (EditText) rootView.findViewById(R.id.unit_no);
+//        building = (EditText) rootView.findViewById(R.id.building);
+//        lot_no = (EditText) rootView.findViewById(R.id.lot_no);
+//        block_no = (EditText) rootView.findViewById(R.id.block_no);
+//        phase_no = (EditText) rootView.findViewById(R.id.phase_no);
+//        address_house_no = (EditText) rootView.findViewById(R.id.address_house_no);
         address_street = (EditText) rootView.findViewById(R.id.address_street);
         email = (EditText) rootView.findViewById(R.id.email);
         tel_no = (EditText) rootView.findViewById(R.id.tel_no);
@@ -78,7 +78,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                         listOfRegions.add(hashOfRegions.get(y).get("name"));
                     }
 
-                    regions_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, listOfRegions);
+                    regions_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfRegions);
                     address_region.setAdapter(regions_adapter);
 
                 } catch (JSONException e) {
@@ -92,11 +92,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
 
             }
         });
-//        address_province.setVisibility(View.GONE);
-
-//        address_city_municipality.setVisibility(View.GONE);
-//        address_barangay.setVisibility(View.GONE);
-
         address_region.setOnItemSelectedListener(this);
         address_province.setOnItemSelectedListener(this);
         address_city_municipality.setOnItemSelectedListener(this);
@@ -159,7 +154,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                 listOfProvinces.add(hashOfProvinces.get(y).get("name"));
                             }
 
-                            provinces_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, listOfProvinces);
+                            provinces_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfProvinces);
                             address_province.setAdapter(provinces_adapter);
 
                         } catch (JSONException e) {
@@ -197,7 +192,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                 listOfMunicipalities.add(hashOfMunicipalities.get(y).get("name"));
                             }
 
-                            municipalities_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, listOfMunicipalities);
+                            municipalities_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfMunicipalities);
                             address_city_municipality.setAdapter(municipalities_adapter);
 
                         } catch (JSONException e) {
@@ -235,7 +230,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                 listOfBarangays.add(hashOfBarangays.get(y).get("name"));
                             }
 
-                            barangays_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, listOfBarangays);
+                            barangays_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfBarangays);
                             address_barangay.setAdapter(barangays_adapter);
 
                         } catch (JSONException e) {
