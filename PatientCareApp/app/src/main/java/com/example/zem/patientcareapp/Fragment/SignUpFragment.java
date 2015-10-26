@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp.Fragment;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -92,6 +91,8 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
             }
         } else if (signup > 0) {
             if (intent.getExtras().getString("fname") != null) {
+                get_birthdate = intent.getExtras().getString("birthdate");
+
                 fname.setText(intent.getExtras().getString("fname"));
                 mname.setText(intent.getExtras().getString("mname"));
                 lname.setText(intent.getExtras().getString("lname"));
@@ -99,6 +100,12 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
                 occupation.setText(intent.getExtras().getString("occupation"));
                 height.setText(intent.getExtras().getString("height"));
                 weight.setText(intent.getExtras().getString("weight"));
+                civil_status_spinner.setSelection(civil_status_adapter.getPosition(intent.getExtras().getString("civil_status")));
+
+                if (male_rb.getText().equals(intent.getExtras().getString("sex")))
+                    male_rb.setChecked(true);
+                else if (female_rb.getText().equals(intent.getExtras().getString("sex")))
+                    female_rb.setChecked(true);
             }
         }
 

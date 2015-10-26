@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp;
 
 import android.app.ActionBar;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -15,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +41,7 @@ import java.util.Random;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.Fragment.ContactsFragment;
 import com.example.zem.patientcareapp.Fragment.SignUpFragment;
@@ -65,7 +65,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener, DatePickerDialog.OnDateSetListener, View.OnClickListener {
+public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener, View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener {
 
     public static Patient patient;
     RequestQueue queue;
@@ -88,10 +88,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     String s_fname, s_lname, s_mname, s_birthdate, s_sex, s_civil_status, s_height, s_weight, s_occupation;
 
     // CONTACTS FRAGMENT
-    EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_zip,
-            email, tel_no, cell_no;
+    EditText address_street, optional_address_line, tel_no, cell_no, email;
     Spinner address_region, address_barangay, address_city_municipality, address_province;
-    String s_unit_no, s_building, s_lot_no, s_block_no, s_phase_no, s_house_no, s_street, s_barangay, s_city, s_province, s_zip, s_email, s_tel_no, s_cell_no, s_region;
+    String s_street, s_optional_address, s_email, s_tel_no, s_cell_no;
 
     // ACCOUNT INFO FRAGMENT
     String username = "", pass = "", s_filepath = "";
@@ -375,20 +374,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("civil_status", patient.getCivil_status());
         params.put("height", patient.getHeight());
         params.put("weight", patient.getWeight());
-        params.put("unit_floor_room_no", "" + patient.getUnit_floor_room_no());
-        params.put("building", patient.getBuilding());
-        params.put("lot_no", "" + patient.getLot_no());
-        params.put("block_no", "" + patient.getBlock_no());
-        params.put("phase_no", "" + patient.getPhase_no());
-        params.put("address_house_no", "" + patient.getAddress_house_no());
+        params.put("optional_address", patient.getOptional_address());
         params.put("address_street", patient.getAddress_street());
         params.put("tel_no", patient.getTel_no());
         params.put("mobile_no", patient.getMobile_no());
         params.put("email_address", patient.getEmail());
-//        int barangay_id = Integer.parseInt(String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition())));
-        params.put("barangay_id", String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition())));
-
-        Log.d("brgy id", String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition())));
+        params.put("barangay_id", String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition()).get("barangay_server_id")));
 
         return params;
     }
@@ -480,13 +471,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     public void validateAtPosition2() {
-//        unit_no = (EditText) findViewById(R.id.unit_no);
-//        building = (EditText) findViewById(R.id.building);
-//        lot_no = (EditText) findViewById(R.id.lot_no);
-//        block_no = (EditText) findViewById(R.id.block_no);
-//        phase_no = (EditText) findViewById(R.id.phase_no);
-//        address_house_no = (EditText) findViewById(R.id.address_house_no);
         address_street = (EditText) findViewById(R.id.address_street);
+        optional_address_line = (EditText) findViewById(R.id.optional_address_line);
         email = (EditText) findViewById(R.id.email);
         tel_no = (EditText) findViewById(R.id.tel_no);
         cell_no = (EditText) findViewById(R.id.cell_no);
@@ -494,18 +480,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         address_barangay = (Spinner) findViewById(R.id.address_barangay);
         address_city_municipality = (Spinner) findViewById(R.id.address_city_municipality);
         address_province = (Spinner) findViewById(R.id.address_province);
-
-//        s_house_no = address_house_no.getText().toString();
-//        s_unit_no = unit_no.getText().toString();
-//        s_building = building.getText().toString();
-//        s_lot_no = lot_no.getText().toString();
-//        s_block_no = block_no.getText().toString();
-//        s_phase_no = phase_no.getText().toString();
         s_street = address_street.getText().toString();
 
         s_email = email.getText().toString();
         s_tel_no = tel_no.getText().toString();
         s_cell_no = cell_no.getText().toString();
+        s_optional_address = cell_no.getText().toString();
 
         count = 0;
         limit = 2;
@@ -524,45 +504,14 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-        if (count == limit) {
+        if (count == limit)
             this.hasError2 = false;
-        } else {
+        else
             this.hasError2 = true;
-        }
 
-        //NOT REQUIRED VARIABLES
-//        if (s_unit_no.equals(""))
-//            s_unit_no = "0";
-//
-//        if (s_lot_no.equals(""))
-//            s_lot_no = "0";
-//
-//        if (s_block_no.equals(""))
-//            s_block_no = "0";
-//
-//        if (s_phase_no.equals(""))
-//            s_phase_no = "0";
-//
-//        if (s_house_no.equals(""))
-//            s_house_no = "0";
-
-        if (s_tel_no.equals(""))
-            s_tel_no = "";
-
-//        if (s_building.equals(""))
-//            s_building = "";
-
-        if (s_email.equals(""))
-            s_email = "";
-
-//        patient.setUnit_floor_room_no(Integer.parseInt(s_unit_no));
-//        patient.setLot_no(Integer.parseInt(s_lot_no));
-//        patient.setBlock_no(Integer.parseInt(s_block_no));
-//        patient.setPhase_no(Integer.parseInt(s_phase_no));
-//        patient.setAddress_house_no(Integer.parseInt(s_house_no));
         patient.setTel_no(s_tel_no);
-//        patient.setBuilding(s_building);
         patient.setEmail(s_email);
+        patient.setOptional_address(s_optional_address);
     }
 
     public void validateUserAccountInfo() {
@@ -631,46 +580,68 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     @Override
     public void onClick(View v) {
-        Calendar cal = Calendar.getInstance();
         switch (v.getId()) {
             case R.id.birthdate:
+                FragmentManager fm = getSupportFragmentManager();
+                Calendar now = Calendar.getInstance();
+                CalendarDatePickerDialogFragment datepicker;
 
                 if (s_birthdate.equals("")) {
                     birthdate.setError("Field Required");
-                    DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-                    datePicker.show();
+                    datepicker = CalendarDatePickerDialogFragment
+                            .newInstance(this, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
                 } else {
-                    if (int_year > 0 && int_month > 0 && int_day > 0) {
-                        updateDate(int_year, int_month, int_day);
-                    } else {
-                        int_year = fragment.int_year;
-                        int_month = fragment.int_month;
-                        int_day = fragment.int_day;
-                        updateDate(int_year, int_month, int_day);
-                    }
-                    patient.setBirthdate(s_birthdate);
+                    int month, year, day;
+                    String birth = birthdate.getText().toString();
+                    int indexOfYear = birth.indexOf("-");
+                    int indexOfMonthandDay = birth.lastIndexOf("-");
+                    year = Integer.parseInt(birth.substring(0, indexOfYear));
+                    month = Integer.parseInt(birth.substring(indexOfYear + 1, indexOfMonthandDay)) - 1;
+                    day = Integer.parseInt(birth.substring(indexOfMonthandDay + 1, birth.length()));
                     count++;
+
+                    datepicker = CalendarDatePickerDialogFragment
+                            .newInstance(this, year, month, day);
                 }
+                datepicker.show(fm, "fragment_date_picker_name");
+
                 break;
         }
     }
 
     @Override
-    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        String dateStr = String.format("%d/%d/%d", (monthOfYear + 1), dayOfMonth, year);
+    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+        String dateStr = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
         birthdate.setText(dateStr);
+        s_birthdate = dateStr;
 
-        birthdate.setError(null);
-        patient.setBirthdate(dateStr);
         int_year = year;
         int_month = monthOfYear;
         int_day = dayOfMonth;
+
+        birthdate.setError(null);
+        patient.setBirthdate(dateStr);
+
+        Calendar calendar = Calendar.getInstance();
+        int current_year = calendar.get(Calendar.YEAR);
+
+        if ((current_year - year) < 18)
+            birthdate.setError("Must be 18 years old and above");
+        else
+            birthdate.setError(null);
     }
 
-    public void updateDate(int year, int monthOfYear, int dayOfMonth) {
-        DatePickerDialog datePicker = new DatePickerDialog(EditTabsActivity.this, this, year, monthOfYear, dayOfMonth);
-        datePicker.show();
-    }
+//    @Override
+//    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//        String dateStr = String.format("%d/%d/%d", (monthOfYear + 1), dayOfMonth, year);
+//        birthdate.setText(dateStr);
+//
+//        birthdate.setError(null);
+//        patient.setBirthdate(dateStr);
+//        int_year = year;
+//        int_month = monthOfYear;
+//        int_day = dayOfMonth;
+//    }
 
     public void showProgressbar() {
         upload_dialog = new Dialog(this);
