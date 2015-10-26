@@ -26,6 +26,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
@@ -229,10 +230,31 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                                         JSONObject obj = json_mysql.getJSONObject(0);
 
                                         if (doctor_id.equals(obj.getString("doctor_id"))) {
+                                            Bundle ptnt = new Bundle();
+                                            ptnt.putString("fname", obj.getString("fname"));
+                                            ptnt.putString("mname", obj.getString("mname"));
+                                            ptnt.putString("lname", obj.getString("lname"));
+                                            ptnt.putString("mobile_no", obj.getString("mobile_no"));
+                                            ptnt.putString("tel_no", obj.getString("tel_no"));
+                                            ptnt.putString("occupation", obj.getString("occupation"));
+                                            ptnt.putString("birthdate", obj.getString("birthdate"));
+                                            ptnt.putString("sex", obj.getString("sex"));
+                                            ptnt.putString("civil_status", obj.getString("civil_status"));
+                                            ptnt.putString("height", obj.getString("height"));
+                                            ptnt.putString("weight", obj.getString("weight"));
+                                            ptnt.putString("unit_floor_room_no", obj.getString("unit_floor_room_no"));
+                                            ptnt.putString("building", obj.getString("building"));
+                                            ptnt.putString("lot_no", obj.getString("lot_no"));
+                                            ptnt.putString("block_no", obj.getString("block_no"));
+                                            ptnt.putString("phase_no", obj.getString("phase_no"));
+                                            ptnt.putString("address_house_no", obj.getString("address_house_no"));
+                                            ptnt.putString("address_street", obj.getString("address_street"));
+
                                             Intent intent = new Intent(getBaseContext(), EditTabsActivity.class);
                                             intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
                                             intent.putExtra("referred_by_User", "");
                                             intent.putExtra("referred_by_Doctor", getDoctor_referral_id);
+                                            intent.putExtras(ptnt);
                                             startActivity(intent);
                                         } else
                                             Toast.makeText(getBaseContext(), "mali ang doctor", Toast.LENGTH_SHORT).show();

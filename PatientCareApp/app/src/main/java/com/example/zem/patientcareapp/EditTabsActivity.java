@@ -113,6 +113,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     ProgressBar progressBar;
     ProgressDialog pDialog;
     Dialog upload_dialog;
+    public static Intent intent;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -134,14 +135,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
 
-        final Intent intent = getIntent();
+        intent = getIntent();
         signup_int = intent.getIntExtra(SIGNUP_REQUEST, 0);
         edit_int = intent.getIntExtra(EDIT_REQUEST, 0);
-
-        if (signup_int > 0) {
-            patient.setReferred_byUser(intent.getStringExtra("referred_by_User"));
-            patient.setReferred_byDoctor(intent.getStringExtra("referred_by_Doctor"));
-        }
 
         queue = VolleySingleton.getInstance().getRequestQueue();
         url = Constants.POST_URL;
@@ -239,9 +235,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                             EditTabsActivity.this.finish();
                                                         } else
                                                             Toast.makeText(getBaseContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                                    } else {
+                                                    } else
                                                         Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
-                                                    }
                                                     pDialog.dismiss();
                                                 }
                                             }, new ErrorListener<VolleyError>() {
@@ -255,8 +250,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                             pDialog.show();
 
                                             HashMap<String, String> params = setParams("register");
-
-                                            Log.d("params from register", params + "");
 
                                             PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
                                                 @Override
@@ -315,6 +308,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             public void onPageScrollStateChanged(int arg0) {
             }
         });
+
+        if (signup_int > 0) {
+            patient.setReferred_byUser(intent.getStringExtra("referred_by_User"));
+            patient.setReferred_byDoctor(intent.getStringExtra("referred_by_Doctor"));
+        }
     }
 
     @Override
@@ -565,7 +563,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         patient.setTel_no(s_tel_no);
         patient.setBuilding(s_building);
         patient.setEmail(s_email);
-//        patient.setAddress_region(s_region);
     }
 
     public void validateUserAccountInfo() {

@@ -30,15 +30,13 @@ import java.util.HashMap;
 
 public class ContactsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     Spinner address_region, address_province, address_city_municipality, address_barangay;
-    EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_zip, email, tel_no, cell_no;
+    EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, email, tel_no, cell_no;
     DbHelper dbhelper;
+
     public static ArrayList<HashMap<String, String>> hashOfBarangays;
-    public ArrayList<HashMap<String, String>> hashOfProvinces;
-    public ArrayList<HashMap<String, String>> hashOfMunicipalities;
-    public  ArrayList<HashMap<String, String>> hashOfRegions;
+    public ArrayList<HashMap<String, String>> hashOfProvinces, hashOfMunicipalities, hashOfRegions;
     ArrayList<String> listOfRegions, listOfProvinces, listOfMunicipalities, listOfBarangays;
     ArrayAdapter<String> regions_adapter, provinces_adapter, municipalities_adapter, barangays_adapter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,7 +49,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         phase_no = (EditText) rootView.findViewById(R.id.phase_no);
         address_house_no = (EditText) rootView.findViewById(R.id.address_house_no);
         address_street = (EditText) rootView.findViewById(R.id.address_street);
-//        address_zip = (EditText) rootView.findViewById(R.id.address_zip);
         email = (EditText) rootView.findViewById(R.id.email);
         tel_no = (EditText) rootView.findViewById(R.id.tel_no);
         cell_no = (EditText) rootView.findViewById(R.id.cell_no);
@@ -62,9 +59,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
 
         hashOfRegions = new ArrayList();
         listOfRegions = new ArrayList();
-
-
-
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_regions", new RespondListener<JSONObject>() {
             @Override
@@ -114,46 +108,26 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
             String edit_uname = SidebarActivity.getUname();
             Patient patient = dbhelper.getloginPatient(edit_uname);
 
-            if (patient.getUnit_floor_room_no() == 0) {
-
-            } else {
+            if (patient.getUnit_floor_room_no() != 0)
                 unit_no.setText("" + patient.getUnit_floor_room_no());
-            }
 
-            if (patient.getLot_no() == 0) {
-
-            } else {
+            if (patient.getLot_no() != 0)
                 lot_no.setText("" + patient.getLot_no());
-            }
 
-            if (patient.getBlock_no() == 0) {
-
-            } else {
+            if (patient.getBlock_no() != 0)
                 block_no.setText("" + patient.getBlock_no());
-            }
 
-            if (patient.getPhase_no() == 0) {
-
-            } else {
+            if (patient.getPhase_no() != 0)
                 phase_no.setText("" + patient.getPhase_no());
-            }
 
-            if (patient.getAddress_house_no() == 0) {
-
-            } else {
+            if (patient.getAddress_house_no() != 0)
                 address_house_no.setText("" + patient.getAddress_house_no());
-            }
 
             building.setText(patient.getBuilding());
             address_street.setText(patient.getAddress_street());
-//            address_barangay.setText(patient.getAddress_barangay());
-//            address_city_municipality.setText(patient.getAddress_city_municipality());
-//            address_province.setText(patient.getAddress_province());
-//            address_zip.setText(patient.getAddress_zip());
             email.setText(patient.getEmail());
             tel_no.setText(patient.getTel_no());
             cell_no.setText(patient.getMobile_no());
-//            address_region.setSelection(regions_adapter.getPosition(patient.getAddress_region()));
         }
 
         return rootView;
