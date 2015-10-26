@@ -13,7 +13,7 @@ public class Patient implements Serializable {
             address_province = "", address_region = "", country = "", address_zip = "", cell_no = "",
             tel_no = "", email = "", photo = "", building = "", referral_id = "", referred_byUser = "", referred_byDoctor = "";
 
-    int id = 0, serverID = 0, unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no;
+    int id = 0, serverID = 0, unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no, barangay_id = 0;
 
     public Patient() {
 
@@ -69,12 +69,6 @@ public class Patient implements Serializable {
         this.setPhase_no(phase_no);
         this.setAddress_house_no(address_house_no);
         this.setAddress_street(street);
-        this.setAddress_barangay(barangay);
-        this.setAddress_city_municipality(city_municipality);
-        this.setAddress_province(province);
-        this.setAddress_zip(zip);
-        this.setAddress_region(region);
-        this.setCountry(country);
     }
 
     public void setUnit_floor_room_no(int unit_floor_room_no) {
@@ -181,26 +175,6 @@ public class Patient implements Serializable {
         this.address_street = address_street;
     }
 
-    public void setAddress_barangay(String address_barangay) {
-        this.address_barangay = address_barangay;
-    }
-
-    public void setAddress_city_municipality(String address_city_municipality) {
-        this.address_city_municipality = address_city_municipality;
-    }
-
-    public void setAddress_province(String address_province) {
-        this.address_province = address_province;
-    }
-
-    public void setAddress_region(String address_region) {
-        this.address_region = address_region;
-    }
-
-    public void setAddress_zip(String address_zip) {
-        this.address_zip = address_zip;
-    }
-
     public void setMobile_no(String cell_no) {
         this.cell_no = cell_no;
     }
@@ -219,10 +193,6 @@ public class Patient implements Serializable {
 
     public void setPhoto(String photo) {
         this.photo = photo;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
     }
 
     //GETTER
@@ -292,29 +262,16 @@ public class Patient implements Serializable {
         return phase_no;
     }
 
-
-    public String getAddress_barangay() {
-        return address_barangay;
-    }
-
-    public String getAddress_region() {
-        return address_region;
-    }
-
     public int getAddress_house_no() {
         return address_house_no;
     }
 
-    public String getAddress_city_municipality() {
-        return address_city_municipality;
+    public void setBarangay_id(int brgy_id){
+        this.barangay_id = brgy_id;
     }
 
-    public String getAddress_province() {
-        return address_province;
-    }
-
-    public String getAddress_zip() {
-        return address_zip;
+    public int getBarangay_id() {
+        return barangay_id;
     }
 
 }

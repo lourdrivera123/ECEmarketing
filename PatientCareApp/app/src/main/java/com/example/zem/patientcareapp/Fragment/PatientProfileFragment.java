@@ -116,9 +116,8 @@ public class PatientProfileFragment extends Fragment {
         }
 
         address_first_line.setText(unit_no + " " + building + " " + lot_no + " " + block_no + " " + phase_no + " " + house_no + " " +
-                loginUser.getAddress_street() + " " + loginUser.getAddress_barangay());
-        address_second_line.setText(loginUser.getAddress_city_municipality() + ", " + loginUser.getAddress_region() + ", Philippines, " +
-                loginUser.getAddress_zip());
+                loginUser.getAddress_street() + " ");
+        address_second_line.setText(", Philippines, ");
 
         if (loginUser.getEmail() == null || loginUser.getEmail().equals("")) {
             email.setVisibility(View.GONE);

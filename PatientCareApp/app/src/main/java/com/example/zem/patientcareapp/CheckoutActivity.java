@@ -111,7 +111,7 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         check.setOnCheckedChangeListener(this);
         pickup.setOnCheckedChangeListener(this);
 
-        ptnt_completeAddress = patient.getAddress_street() + " " + patient.getAddress_city_municipality() + ", " + patient.getAddress_province();
+        ptnt_completeAddress = patient.getAddress_street() + " ";
         ptnt_fullname = patient.getFname() + " " + patient.getLname();
         ptnt_contactNumber = patient.getMobile_no();
 

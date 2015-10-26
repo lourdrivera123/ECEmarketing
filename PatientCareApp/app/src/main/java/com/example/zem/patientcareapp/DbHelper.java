@@ -636,11 +636,6 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_PHASE_NO, patient.getPhase_no());
         values.put(PTNT_HOUSE_NO, patient.getAddress_house_no());
         values.put(PTNT_STREET, patient.getAddress_street());
-        values.put(PTNT_BARANGAY, patient.getAddress_barangay());
-        values.put(PTNT_CITY, patient.getAddress_city_municipality());
-        values.put(PTNT_PROVINCE, patient.getAddress_province());
-        values.put(PTNT_REGION, patient.getAddress_region());
-        values.put(PTNT_ZIP, patient.getAddress_zip());
         values.put(PTNT_TEL_NO, patient.getTel_no());
         values.put(PTNT_MOBILE_NO, patient.getMobile_no());
         values.put(PTNT_EMAIL, patient.getEmail());
@@ -1274,11 +1269,6 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setPhase_no(cur.getInt(cur.getColumnIndex(PTNT_PHASE_NO)));
             patient.setAddress_house_no(cur.getInt(cur.getColumnIndex(PTNT_HOUSE_NO)));
             patient.setAddress_street(cur.getString(cur.getColumnIndex(PTNT_STREET)));
-            patient.setAddress_barangay(cur.getString(cur.getColumnIndex(PTNT_BARANGAY)));
-            patient.setAddress_city_municipality(cur.getString(cur.getColumnIndex(PTNT_CITY)));
-            patient.setAddress_province(cur.getString(cur.getColumnIndex(PTNT_PROVINCE)));
-            patient.setAddress_region(cur.getString(cur.getColumnIndex(PTNT_REGION)));
-            patient.setAddress_zip(cur.getString(cur.getColumnIndex(PTNT_ZIP)));
             patient.setTel_no(cur.getString(cur.getColumnIndex(PTNT_TEL_NO)));
             patient.setMobile_no(cur.getString(cur.getColumnIndex(PTNT_MOBILE_NO)));
             patient.setEmail(cur.getString(cur.getColumnIndex(PTNT_EMAIL)));
