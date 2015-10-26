@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -1380,6 +1381,32 @@ public class DbHelper extends SQLiteOpenHelper {
         return doctors;
     }
 
+    public ArrayList<HashMap<Integer, ArrayList<String>>> getSearchDoctors() {
+        ArrayList<HashMap<Integer, ArrayList<String>>> doctors = new ArrayList();
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "select d.*, s.name as specialty, ss.name as sub_specialty from " + TBL_SPECIALTIES + " as s" +
+                " inner join " + TBL_SUB_SPECIALTIES + " as ss on s.specialty_id = ss.specialty_id inner join " + TBL_DOCTORS + " as d on ss.sub_specialty_id = d.sub_specialty_id";
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            HashMap<Integer, ArrayList<String>> map = new HashMap();
+            ArrayList<String> list = new ArrayList();
+
+            list.add(cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
+            list.add(cur.getString(cur.getColumnIndex(DOC_PRC_NO)));
+            list.add(cur.getString(cur.getColumnIndex("specialty")));
+            list.add(cur.getString(cur.getColumnIndex("sub_specialty")));
+
+            map.put(cur.getInt(cur.getColumnIndex("doc_id")), list);
+            doctors.add(map);
+        }
+
+        db.close();
+        cur.close();
+
+        return doctors;
+    }
+
     public ArrayList<HashMap<String, String>> getAllDoctors() {
         ArrayList<HashMap<String, String>> doctors = new ArrayList();
 
@@ -1397,6 +1424,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put("fullname", "" + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
             map.put(DOC_MNAME, cur.getString(cur.getColumnIndex(DOC_MNAME)));
             map.put(DOC_SUB_SPECIALTY_ID, cur.getString(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
+            map.put("name", cur.getString(cur.getColumnIndex("name")));
             map.put(DOC_REFERRAL_ID, cur.getString(cur.getColumnIndex(DOC_REFERRAL_ID)));
             doctors.add(map);
 

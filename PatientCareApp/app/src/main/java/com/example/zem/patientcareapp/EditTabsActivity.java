@@ -179,7 +179,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                     image_holder = (ImageView) findViewById(R.id.image_holder);
                     TableRow tbrow = (TableRow) findViewById(R.id.uploadpicturerow);
 
-                    if(signup_int > 0) {
+                    if (signup_int > 0) {
                         tbrow.setVisibility(View.GONE);
                     }
 
@@ -251,7 +251,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                 }
                                             });
                                         } else {
-                                            generateCode();
                                             pDialog.show();
 
                                             HashMap<String, String> params = setParams("register");

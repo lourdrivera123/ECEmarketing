@@ -10,28 +10,34 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <EditText
             android:id="@+id/search_doctor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/d10"
             android:drawableLeft="@drawable/ic_search"
-            android:hint="Search..."
+            android:hint="Search Name/Specialty/Clinic/Prc No."
             android:paddingBottom="0dip"
-            android:paddingTop="0dip" />
+            android:paddingTop="0dip"
+            android:textSize="13sp" />
 
-        <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/refresh_doctor"
+        <TextView
+            android:id="@+id/noUserFound"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="No Doctor/s found"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
-            <ListView
-                android:id="@+id/list_of_doctors"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal" />
-        </android.support.v4.widget.SwipeRefreshLayout>
+        <ListView
+            android:id="@+id/list_of_doctors"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 </RelativeLayout>

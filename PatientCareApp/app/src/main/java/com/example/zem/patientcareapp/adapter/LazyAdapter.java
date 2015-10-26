@@ -103,14 +103,14 @@ public class LazyAdapter extends BaseAdapter {
             vi = inflater.inflate(R.layout.list_row, null);
 
             TextView title = (TextView) vi.findViewById(R.id.title); // title
-            TextView artist = (TextView) vi.findViewById(R.id.specialty); // artist name
+            TextView specialty = (TextView) vi.findViewById(R.id.specialty); // artist name
 
             HashMap<String, String> doctor;
             doctor = data.get(position);
 
             // Setting all values in listview
             title.setText("Dr. " + doctor.get("fullname"));
-            artist.setText(doctor.get("name"));
+            specialty.setText(doctor.get("name"));
 
         } else if (list_type.equals("product_lists")) {
             vi = inflater.inflate(R.layout.list_row_products, null);

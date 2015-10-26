@@ -111,7 +111,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         }, new ErrorListener<VolleyError>() {
             @Override
             public void getError(VolleyError error) {
-                Log.d("Error in HomeTileActivityClone", error + "");
+                System.out.print("Error in HomeTileActivityClone: " + error);
                 Toast.makeText(context, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
