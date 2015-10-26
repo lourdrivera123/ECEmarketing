@@ -483,12 +483,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     public void validateAtPosition2() {
-        unit_no = (EditText) findViewById(R.id.unit_no);
-        building = (EditText) findViewById(R.id.building);
-        lot_no = (EditText) findViewById(R.id.lot_no);
-        block_no = (EditText) findViewById(R.id.block_no);
-        phase_no = (EditText) findViewById(R.id.phase_no);
-        address_house_no = (EditText) findViewById(R.id.address_house_no);
+//        unit_no = (EditText) findViewById(R.id.unit_no);
+//        building = (EditText) findViewById(R.id.building);
+//        lot_no = (EditText) findViewById(R.id.lot_no);
+//        block_no = (EditText) findViewById(R.id.block_no);
+//        phase_no = (EditText) findViewById(R.id.phase_no);
+//        address_house_no = (EditText) findViewById(R.id.address_house_no);
         address_street = (EditText) findViewById(R.id.address_street);
         email = (EditText) findViewById(R.id.email);
         tel_no = (EditText) findViewById(R.id.tel_no);
@@ -498,12 +498,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         address_city_municipality = (Spinner) findViewById(R.id.address_city_municipality);
         address_province = (Spinner) findViewById(R.id.address_province);
 
-        s_house_no = address_house_no.getText().toString();
-        s_unit_no = unit_no.getText().toString();
-        s_building = building.getText().toString();
-        s_lot_no = lot_no.getText().toString();
-        s_block_no = block_no.getText().toString();
-        s_phase_no = phase_no.getText().toString();
+//        s_house_no = address_house_no.getText().toString();
+//        s_unit_no = unit_no.getText().toString();
+//        s_building = building.getText().toString();
+//        s_lot_no = lot_no.getText().toString();
+//        s_block_no = block_no.getText().toString();
+//        s_phase_no = phase_no.getText().toString();
         s_street = address_street.getText().toString();
 
         s_email = email.getText().toString();
@@ -534,37 +534,37 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
 
         //NOT REQUIRED VARIABLES
-        if (s_unit_no.equals(""))
-            s_unit_no = "0";
-
-        if (s_lot_no.equals(""))
-            s_lot_no = "0";
-
-        if (s_block_no.equals(""))
-            s_block_no = "0";
-
-        if (s_phase_no.equals(""))
-            s_phase_no = "0";
-
-        if (s_house_no.equals(""))
-            s_house_no = "0";
+//        if (s_unit_no.equals(""))
+//            s_unit_no = "0";
+//
+//        if (s_lot_no.equals(""))
+//            s_lot_no = "0";
+//
+//        if (s_block_no.equals(""))
+//            s_block_no = "0";
+//
+//        if (s_phase_no.equals(""))
+//            s_phase_no = "0";
+//
+//        if (s_house_no.equals(""))
+//            s_house_no = "0";
 
         if (s_tel_no.equals(""))
             s_tel_no = "";
 
-        if (s_building.equals(""))
-            s_building = "";
+//        if (s_building.equals(""))
+//            s_building = "";
 
         if (s_email.equals(""))
             s_email = "";
 
-        patient.setUnit_floor_room_no(Integer.parseInt(s_unit_no));
-        patient.setLot_no(Integer.parseInt(s_lot_no));
-        patient.setBlock_no(Integer.parseInt(s_block_no));
-        patient.setPhase_no(Integer.parseInt(s_phase_no));
-        patient.setAddress_house_no(Integer.parseInt(s_house_no));
+//        patient.setUnit_floor_room_no(Integer.parseInt(s_unit_no));
+//        patient.setLot_no(Integer.parseInt(s_lot_no));
+//        patient.setBlock_no(Integer.parseInt(s_block_no));
+//        patient.setPhase_no(Integer.parseInt(s_phase_no));
+//        patient.setAddress_house_no(Integer.parseInt(s_house_no));
         patient.setTel_no(s_tel_no);
-        patient.setBuilding(s_building);
+//        patient.setBuilding(s_building);
         patient.setEmail(s_email);
 //        patient.setAddress_region(s_region);
     }
