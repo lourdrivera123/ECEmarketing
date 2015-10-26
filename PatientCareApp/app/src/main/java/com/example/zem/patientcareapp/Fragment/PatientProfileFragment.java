@@ -1,9 +1,5 @@
 package com.example.zem.patientcareapp.Fragment;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,7 +21,7 @@ public class PatientProfileFragment extends Fragment {
     Helpers helpers;
 
     TextView patient_name, username, birthdate, civil_status, height_weight, occupation, address_first_line, address_second_line, email, cp_no;
-    String ptnt_name, unit_no, building, lot_no, block_no, phase_no, house_no = "";
+    String ptnt_name;
     String patient_uname;
     ProgressBar progressBar;
 
@@ -79,44 +75,6 @@ public class PatientProfileFragment extends Fragment {
             occupation.setText("Occupation: " + loginUser.getOccupation());
         }
 
-        if (loginUser.getUnit_floor_room_no() == 0) {
-            unit_no = "";
-        } else {
-            unit_no = "# " + loginUser.getUnit_floor_room_no();
-        }
-
-        if (loginUser.getBuilding() == null || loginUser.getBuilding().equals("")) {
-            building = "";
-        } else {
-            building = loginUser.getBuilding();
-        }
-
-        if (loginUser.getLot_no() == 0) {
-            lot_no = "";
-        } else {
-            lot_no = "Lot " + loginUser.getLot_no();
-        }
-
-        if (loginUser.getBlock_no() == 0) {
-            block_no = "";
-        } else {
-            block_no = "Block " + loginUser.getBlock_no();
-        }
-
-        if (loginUser.getPhase_no() == 0) {
-            phase_no = "";
-        } else {
-            phase_no = "Phase " + loginUser.getPhase_no();
-        }
-
-        if (loginUser.getAddress_house_no() == 0) {
-            house_no = "";
-        } else {
-            house_no = "#" + loginUser.getAddress_house_no();
-        }
-
-        address_first_line.setText(unit_no + " " + building + " " + lot_no + " " + block_no + " " + phase_no + " " + house_no + " " +
-                loginUser.getAddress_street() + " ");
         address_second_line.setText(", Philippines, ");
 
         if (loginUser.getEmail() == null || loginUser.getEmail().equals("")) {

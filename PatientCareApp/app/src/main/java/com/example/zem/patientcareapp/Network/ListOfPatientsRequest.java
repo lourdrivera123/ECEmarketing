@@ -38,7 +38,7 @@ public class ListOfPatientsRequest {
             @Override
             public void onErrorResponse(VolleyError error) {
                 errorlistener.getError(error);
-                Log.d("error on interface gaming", error + "");
+                System.out.print("error on interface: " + error);
             }
         });
         queue.add(doctor_request);

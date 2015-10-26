@@ -1,7 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -59,7 +57,7 @@ public class OrdersActivity extends AppCompatActivity {
         String payment_from = intent.getStringExtra("payment_from");
 
 
-        if(payment_from != null ){
+        if (payment_from != null) {
             AlertDialog.Builder alert = new AlertDialog.Builder(OrdersActivity.this);
 
 
@@ -72,10 +70,10 @@ public class OrdersActivity extends AppCompatActivity {
                 SimpleDateFormat fd = new SimpleDateFormat("MMM d yyyy");
                 String formatted_date = fd.format(date1);
 
-                if(payment_from.equals("paypal")){
+                if (payment_from.equals("paypal")) {
                     alert.setTitle("Purchase Completed!");
                     alert.setMessage("Thank you for your purchase !\n You shall receive this order on or before " + formatted_date);
-                } else if(payment_from.equals("")) {
+                } else if (payment_from.equals("")) {
                     alert.setTitle("Order Placed !");
                     alert.setMessage("Thank you for your order !\n You shall receive a call from our pharmacist to confirm your order.");
                 }

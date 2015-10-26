@@ -9,11 +9,10 @@ public class Patient implements Serializable {
 
     private String fname = "", mname = "", lname = "", username = "", password = "",
             occupation = "", birthdate = "", sex = "", civil_status = "", height = "",
-            weight = "", address_street = "", address_barangay = "", address_city_municipality = "",
-            address_province = "", address_region = "", country = "", address_zip = "", cell_no = "",
-            tel_no = "", email = "", photo = "", building = "", referral_id = "", referred_byUser = "", referred_byDoctor = "";
+            weight = "", address_street = "", cell_no = "", tel_no = "", email = "", photo = "",
+            referral_id = "", referred_byUser = "", referred_byDoctor = "", optional_address = "";
 
-    int id = 0, serverID = 0, unit_floor_room_no = 0, lot_no = 0, block_no = 0, phase_no = 0, address_house_no, barangay_id = 0;
+    int id = 0, serverID = 0, barangay_id = 0;
 
     public Patient() {
 
@@ -57,38 +56,6 @@ public class Patient implements Serializable {
         this.setFname(first_name);
         this.setMname(middle_name);
         this.setLname(last_name);
-    }
-
-    public void setFullAddress(int unit_floor_room_no, String building, int lot_no, int block_no,
-                               int phase_no, int address_house_no, String street, String barangay, String city_municipality,
-                               String province, String region, String zip) {
-        this.setUnit_floor_room_no(unit_floor_room_no);
-        this.setBuilding(building);
-        this.setLot_no(lot_no);
-        this.setBlock_no(block_no);
-        this.setPhase_no(phase_no);
-        this.setAddress_house_no(address_house_no);
-        this.setAddress_street(street);
-    }
-
-    public void setUnit_floor_room_no(int unit_floor_room_no) {
-        this.unit_floor_room_no = unit_floor_room_no;
-    }
-
-    public void setBuilding(String building) {
-        this.building = building;
-    }
-
-    public void setLot_no(int lot_no) {
-        this.lot_no = lot_no;
-    }
-
-    public void setBlock_no(int block_no) {
-        this.block_no = block_no;
-    }
-
-    public void setPhase_no(int phase_no) {
-        this.phase_no = phase_no;
     }
 
     public String getFname() {
@@ -163,10 +130,6 @@ public class Patient implements Serializable {
         this.weight = weight;
     }
 
-    public void setAddress_house_no(int address_house_no) {
-        this.address_house_no = address_house_no;
-    }
-
     public String getAddress_street() {
         return address_street;
     }
@@ -177,10 +140,6 @@ public class Patient implements Serializable {
 
     public void setMobile_no(String cell_no) {
         this.cell_no = cell_no;
-    }
-
-    public String getTel_no() {
-        return tel_no;
     }
 
     public void setTel_no(String tel_no) {
@@ -195,9 +154,19 @@ public class Patient implements Serializable {
         this.photo = photo;
     }
 
+    public void setBarangay_id(int brgy_id) {
+        this.barangay_id = brgy_id;
+    }
+
+    public void setOptional_address(String optional_address) { this.optional_address = optional_address; }
+
     //GETTER
     public String getOccupation() {
         return occupation;
+    }
+
+    public String getTel_no() {
+        return tel_no;
     }
 
     public String getBirthdate() {
@@ -240,35 +209,7 @@ public class Patient implements Serializable {
         return referred_byDoctor;
     }
 
-    //address
-
-    public int getUnit_floor_room_no() {
-        return unit_floor_room_no;
-    }
-
-    public String getBuilding() {
-        return building;
-    }
-
-    public int getLot_no() {
-        return lot_no;
-    }
-
-    public int getBlock_no() {
-        return block_no;
-    }
-
-    public int getPhase_no() {
-        return phase_no;
-    }
-
-    public int getAddress_house_no() {
-        return address_house_no;
-    }
-
-    public void setBarangay_id(int brgy_id){
-        this.barangay_id = brgy_id;
-    }
+    public String getOptional_address() { return optional_address; }
 
     public int getBarangay_id() {
         return barangay_id;

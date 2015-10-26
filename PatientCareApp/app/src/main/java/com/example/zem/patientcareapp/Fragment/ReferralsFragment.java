@@ -144,7 +144,7 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
             public void getError(VolleyError error) {
                 dialog.dismiss();
                 System.out.print("VolleyError <ReferralsFragment>: " + error);
-                Toast.makeText(getActivity(), "Couldn't refresh list. Plealise check your Internet connection", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -172,7 +172,6 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
                 Toast.makeText(getActivity(), "Couldn't update settings. Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     @Override

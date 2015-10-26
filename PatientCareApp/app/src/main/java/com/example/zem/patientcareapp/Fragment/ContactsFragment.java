@@ -1,5 +1,6 @@
 package com.example.zem.patientcareapp.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,28 +31,22 @@ import java.util.HashMap;
 
 public class ContactsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     Spinner address_region, address_province, address_city_municipality, address_barangay;
-    EditText unit_no, building, lot_no, block_no, phase_no, address_house_no, address_street, address_zip, email, tel_no, cell_no;
+    EditText optional_address_line, address_street, email, tel_no, cell_no;
     DbHelper dbhelper;
+
     public static ArrayList<HashMap<String, String>> hashOfBarangays;
-    public ArrayList<HashMap<String, String>> hashOfProvinces;
-    public ArrayList<HashMap<String, String>> hashOfMunicipalities;
-    public  ArrayList<HashMap<String, String>> hashOfRegions;
+    public ArrayList<HashMap<String, String>> hashOfProvinces, hashOfMunicipalities, hashOfRegions;
     ArrayList<String> listOfRegions, listOfProvinces, listOfMunicipalities, listOfBarangays;
     ArrayAdapter<String> regions_adapter, provinces_adapter, municipalities_adapter, barangays_adapter;
 
+    Intent intent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contacts_fragment, container, false);
 
-//        unit_no = (EditText) rootView.findViewById(R.id.unit_no);
-//        building = (EditText) rootView.findViewById(R.id.building);
-//        lot_no = (EditText) rootView.findViewById(R.id.lot_no);
-//        block_no = (EditText) rootView.findViewById(R.id.block_no);
-//        phase_no = (EditText) rootView.findViewById(R.id.phase_no);
-//        address_house_no = (EditText) rootView.findViewById(R.id.address_house_no);
         address_street = (EditText) rootView.findViewById(R.id.address_street);
-//        address_zip = (EditText) rootView.findViewById(R.id.address_zip);
+        optional_address_line = (EditText) rootView.findViewById(R.id.optional_address_line);
         email = (EditText) rootView.findViewById(R.id.email);
         tel_no = (EditText) rootView.findViewById(R.id.tel_no);
         cell_no = (EditText) rootView.findViewById(R.id.cell_no);
@@ -63,8 +58,25 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         hashOfRegions = new ArrayList();
         listOfRegions = new ArrayList();
 
+        intent = EditTabsActivity.intent;
+        dbhelper = new DbHelper(getActivity());
 
+        if (intent.getIntExtra("edit", 0) > 0) {
+            String edit_uname = SidebarActivity.getUname();
+            Patient patient = dbhelper.getloginPatient(edit_uname);
 
+            address_street.setText(patient.getAddress_street());
+            email.setText(patient.getEmail());
+            tel_no.setText(patient.getTel_no());
+            cell_no.setText(patient.getMobile_no());
+        } else if (intent.getIntExtra("signup", 0) > 0) {
+            if (intent.getExtras().getString("fname") != null) {
+                optional_address_line.setText(intent.getExtras().getString("optional_address"));
+                address_street.setText(intent.getExtras().getString("address_street"));
+                tel_no.setText(intent.getExtras().getString("tel_no"));
+                cell_no.setText(intent.getExtras().getString("mobile_no"));
+            }
+        }
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_regions", new RespondListener<JSONObject>() {
             @Override
@@ -80,12 +92,23 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                         hashOfRegions.add(map);
                     }
 
-                    for (int y = 0; y < hashOfRegions.size(); y++) {
+                    for (int y = 0; y < hashOfRegions.size(); y++)
                         listOfRegions.add(hashOfRegions.get(y).get("name"));
-                    }
 
                     regions_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfRegions);
                     address_region.setAdapter(regions_adapter);
+
+                    if (intent.getIntExtra("signup", 0) > 0) {
+                        if (intent.getExtras().getString("fname") != null) {
+                            String regionSelected = "";
+
+                            for (int x = 0; x < hashOfRegions.size(); x++) {
+                                if (hashOfRegions.get(x).get("region_server_id").equals(intent.getExtras().getString("region_id")))
+                                    regionSelected = hashOfRegions.get(x).get("name");
+                            }
+                            address_region.setSelection(regions_adapter.getPosition(regionSelected));
+                        }
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -102,55 +125,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         address_province.setOnItemSelectedListener(this);
         address_city_municipality.setOnItemSelectedListener(this);
 
-        int edit = EditTabsActivity.edit_int;
-        dbhelper = new DbHelper(getActivity());
-
-        if (edit > 0) {
-            String edit_uname = SidebarActivity.getUname();
-            Patient patient = dbhelper.getloginPatient(edit_uname);
-
-            if (patient.getUnit_floor_room_no() == 0) {
-
-            } else {
-                unit_no.setText("" + patient.getUnit_floor_room_no());
-            }
-
-            if (patient.getLot_no() == 0) {
-
-            } else {
-                lot_no.setText("" + patient.getLot_no());
-            }
-
-            if (patient.getBlock_no() == 0) {
-
-            } else {
-                block_no.setText("" + patient.getBlock_no());
-            }
-
-            if (patient.getPhase_no() == 0) {
-
-            } else {
-                phase_no.setText("" + patient.getPhase_no());
-            }
-
-            if (patient.getAddress_house_no() == 0) {
-
-            } else {
-                address_house_no.setText("" + patient.getAddress_house_no());
-            }
-
-            building.setText(patient.getBuilding());
-            address_street.setText(patient.getAddress_street());
-//            address_barangay.setText(patient.getAddress_barangay());
-//            address_city_municipality.setText(patient.getAddress_city_municipality());
-//            address_province.setText(patient.getAddress_province());
-//            address_zip.setText(patient.getAddress_zip());
-            email.setText(patient.getEmail());
-            tel_no.setText(patient.getTel_no());
-            cell_no.setText(patient.getMobile_no());
-//            address_region.setSelection(regions_adapter.getPosition(patient.getAddress_region()));
-        }
-
         return rootView;
     }
 
@@ -161,6 +135,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
             case R.id.address_region:
                 hashOfProvinces = new ArrayList();
                 listOfProvinces = new ArrayList();
+
                 int region_server_id = Integer.parseInt(hashOfRegions.get(position).get("region_server_id"));
                 ListOfPatientsRequest.getJSONobj(getActivity(), "get_provinces&region_id=" + region_server_id, new RespondListener<JSONObject>() {
                     @Override
@@ -176,13 +151,23 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                 hashOfProvinces.add(map);
                             }
 
-                            for (int y = 0; y < hashOfProvinces.size(); y++) {
+                            for (int y = 0; y < hashOfProvinces.size(); y++)
                                 listOfProvinces.add(hashOfProvinces.get(y).get("name"));
-                            }
 
                             provinces_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfProvinces);
                             address_province.setAdapter(provinces_adapter);
 
+                            if (intent.getIntExtra("signup", 0) > 0) {
+                                if (intent.getExtras().getString("fname") != null) {
+                                    String provinceSelected = "";
+
+                                    for (int x = 0; x < hashOfProvinces.size(); x++) {
+                                        if (hashOfProvinces.get(x).get("province_server_id").equals(intent.getExtras().getString("province_id")))
+                                            provinceSelected = hashOfProvinces.get(x).get("name");
+                                    }
+                                    address_province.setSelection(provinces_adapter.getPosition(provinceSelected));
+                                }
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -214,12 +199,23 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                 hashOfMunicipalities.add(map);
                             }
 
-                            for (int y = 0; y < hashOfMunicipalities.size(); y++) {
+                            for (int y = 0; y < hashOfMunicipalities.size(); y++)
                                 listOfMunicipalities.add(hashOfMunicipalities.get(y).get("name"));
-                            }
 
                             municipalities_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfMunicipalities);
                             address_city_municipality.setAdapter(municipalities_adapter);
+
+                            if (intent.getIntExtra("signup", 0) > 0) {
+                                if (intent.getExtras().getString("fname") != null) {
+                                    String municipalitySelected = "";
+
+                                    for (int x = 0; x < hashOfMunicipalities.size(); x++) {
+                                        if (hashOfMunicipalities.get(x).get("municipality_server_id").equals(intent.getExtras().getString("municipality_id")))
+                                            municipalitySelected = hashOfMunicipalities.get(x).get("name");
+                                    }
+                                    address_city_municipality.setSelection(municipalities_adapter.getPosition(municipalitySelected));
+                                }
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -252,12 +248,23 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                 hashOfBarangays.add(map);
                             }
 
-                            for (int y = 0; y < hashOfBarangays.size(); y++) {
+                            for (int y = 0; y < hashOfBarangays.size(); y++)
                                 listOfBarangays.add(hashOfBarangays.get(y).get("name"));
-                            }
 
                             barangays_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfBarangays);
                             address_barangay.setAdapter(barangays_adapter);
+
+                            if (intent.getIntExtra("signup", 0) > 0) {
+                                if (intent.getExtras().getString("fname") != null) {
+                                    String barangaySelected = "";
+
+                                    for (int x = 0; x < hashOfBarangays.size(); x++) {
+                                        if (hashOfBarangays.get(x).get("barangay_server_id").equals(intent.getExtras().getString("barangay_id")))
+                                            barangaySelected = hashOfBarangays.get(x).get("name");
+                                    }
+                                    address_barangay.setSelection(barangays_adapter.getPosition(barangaySelected));
+                                }
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();

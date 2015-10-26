@@ -3,7 +3,6 @@ package com.example.zem.patientcareapp.Fragment;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,41 +12,38 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.DoctorActivity;
 import com.example.zem.patientcareapp.Helpers;
-import com.example.zem.patientcareapp.Interface.ErrorListener;
-import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
-import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class ListOfDoctorsFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener {
     ListView list_of_doctors;
     EditText search_doctor;
-    SwipeRefreshLayout refresh_doctor;
+    TextView noUserFound;
 
-    ArrayList<String> arrayOfSearchDoctors;
-    ArrayList<HashMap<String, String>> temp_doctors;
+    ArrayList<HashMap<Integer, ArrayList<String>>> searchDoctors;
+    ArrayList<String> listOfSearchDoctors;
+    ArrayList<HashMap<String, String>> arrayOfSearchDoctors;
     public static ArrayList<HashMap<String, String>> doctor_items;
 
     String s_doctor;
 
     DbHelper dbHelper;
     RequestQueue queue;
-
     LazyAdapter adapter;
     Helpers helpers;
+
     View root_view;
 
     @Override
@@ -60,12 +56,13 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         queue = VolleySingleton.getInstance().getRequestQueue();
 
         arrayOfSearchDoctors = new ArrayList();
-        temp_doctors = new ArrayList();
+        listOfSearchDoctors = new ArrayList();
 
         search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
-        refresh_doctor = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_doctor);
+        noUserFound = (TextView) rootView.findViewById(R.id.noUserFound);
 
         doctor_items = dbHelper.getAllDoctors();
+        searchDoctors = dbHelper.getSearchDoctors();
         populateDoctorListView(rootView, doctor_items);
 
         return rootView;
@@ -73,14 +70,14 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     public void populateDoctorListView(View rootView, ArrayList<HashMap<String, String>> doctor_items) {
         for (int i = 0; i < doctor_items.size(); i++) {
-            arrayOfSearchDoctors.add(doctor_items.get(i).get("fullname"));
+            listOfSearchDoctors.add(doctor_items.get(i).get("fullname"));
         }
-        temp_doctors.addAll(doctor_items);
+
+        arrayOfSearchDoctors.addAll(doctor_items);
 
         adapter = new LazyAdapter(getActivity(), doctor_items, "list_of_doctors");
         list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
         list_of_doctors.setAdapter(adapter);
-        refresh_doctor.setOnRefreshListener(this);
 
         list_of_doctors.setOnItemClickListener(this);
         search_doctor.addTextChangedListener(this);
@@ -100,73 +97,48 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void afterTextChanged(Editable s) {
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
         s_doctor = search_doctor.getText().toString();
         doctor_items.clear();
 
-        for (String doctor : arrayOfSearchDoctors) {
-            if (doctor.toLowerCase().contains(s_doctor.toLowerCase())) {
-                int doctorindex = arrayOfSearchDoctors.indexOf(doctor);
+        if (!s_doctor.equals("")) {
+            for (int x = 0; x < searchDoctors.size(); x++) {
+                for (Map.Entry<Integer, ArrayList<String>> ee : searchDoctors.get(x).entrySet()) {
+                    Integer key = ee.getKey();
+                    ArrayList<String> values = ee.getValue();
+                    int check = 0;
 
-                HashMap<String, String> map = new HashMap();
+                    for (int y = 0; y < values.size(); y++) {
+                        if (values.get(y).toLowerCase().contains(s_doctor.toLowerCase()))
+                            check += 1;
+                    }
 
-                map.put(dbHelper.DOC_DOC_ID, temp_doctors.get(doctorindex).get(dbHelper.DOC_DOC_ID));
-                map.put("fullname", temp_doctors.get(doctorindex).get("fullname"));
-                map.put("name", temp_doctors.get(doctorindex).get("name"));
-                doctor_items.add(map);
-                adapter.notifyDataSetChanged();
+                    if (check > 0) {
+                        noUserFound.setVisibility(View.GONE);
+                        list_of_doctors.setVisibility(View.VISIBLE);
+
+                        HashMap<String, String> hash = new HashMap();
+
+                        hash.put(dbHelper.DOC_DOC_ID, String.valueOf(key));
+                        hash.put("fullname", values.get(0));
+                        hash.put("name", values.get(2));
+                        doctor_items.add(hash);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
             }
+
+            if (doctor_items.size() == 0) {
+                noUserFound.setVisibility(View.VISIBLE);
+                list_of_doctors.setVisibility(View.GONE);
+            }
+        } else {
+            doctor_items = dbHelper.getAllDoctors();
+            populateDoctorListView(root_view, doctor_items);
         }
     }
 
     @Override
-    public void onRefresh() {
-        //request for doctors
-        GetRequest.getJSONobj(getActivity(), "get_doctors", "doctors", "doc_id", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                doctor_items = dbHelper.getAllDoctors();
-                populateDoctorListView(root_view, doctor_items);
-                refresh_doctor.setRefreshing(false);
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //request for clinic
-        GetRequest.getJSONobj(getActivity(), "get_clinics", "clinics", "clinics_id", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                doctor_items = dbHelper.getAllDoctors();
-                populateDoctorListView(root_view, doctor_items);
-                refresh_doctor.setRefreshing(false);
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                Log.d("Error", error + "");
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //request for clinic doctor request
-        GetRequest.getJSONobj(getActivity(), "get_clinic_doctor", "clinic_doctor", "clinic_doctor_id", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                doctor_items = dbHelper.getAllDoctors();
-                populateDoctorListView(root_view, doctor_items);
-                refresh_doctor.setRefreshing(false);
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                Log.d("Error", error + "");
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-            }
-        });
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
     }
 }
 

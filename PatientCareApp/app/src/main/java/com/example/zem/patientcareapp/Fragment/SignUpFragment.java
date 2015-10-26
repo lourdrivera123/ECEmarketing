@@ -1,6 +1,6 @@
 package com.example.zem.patientcareapp.Fragment;
 
-import android.content.res.Resources;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -40,12 +40,16 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
 
     DbHelper dbhelper;
 
+    Intent intent;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_signup_fragment, container, false);
 
         dbhelper = new DbHelper(getActivity());
         int edit = EditTabsActivity.edit_int;
+        int signup = EditTabsActivity.signup_int;
+        intent = EditTabsActivity.intent;
         get_birthdate = "";
 
         fname = (EditText) rootView.findViewById(R.id.fname);
@@ -84,6 +88,24 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
             } else if (female_rb.getText().equals(patient.getSex())) {
                 female_rb.setChecked(true);
                 male_rb.setChecked(false);
+            }
+        } else if (signup > 0) {
+            if (intent.getExtras().getString("fname") != null) {
+                get_birthdate = intent.getExtras().getString("birthdate");
+
+                fname.setText(intent.getExtras().getString("fname"));
+                mname.setText(intent.getExtras().getString("mname"));
+                lname.setText(intent.getExtras().getString("lname"));
+                birthdate.setText(intent.getExtras().getString("birthdate"));
+                occupation.setText(intent.getExtras().getString("occupation"));
+                height.setText(intent.getExtras().getString("height"));
+                weight.setText(intent.getExtras().getString("weight"));
+                civil_status_spinner.setSelection(civil_status_adapter.getPosition(intent.getExtras().getString("civil_status")));
+
+                if (male_rb.getText().equals(intent.getExtras().getString("sex")))
+                    male_rb.setChecked(true);
+                else if (female_rb.getText().equals(intent.getExtras().getString("sex")))
+                    female_rb.setChecked(true);
             }
         }
 

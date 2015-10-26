@@ -1,11 +1,10 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,10 @@ import com.example.zem.patientcareapp.GetterSetter.Doctor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DoctorActivity extends ActionBarActivity implements View.OnClickListener {
+public class DoctorActivity extends AppCompatActivity implements View.OnClickListener {
     TextView doctor_name, specialty, clinic_name, clinic_address_first_line, clinic_address_second_line, contact_number;
     ListView listOfDoctors;
+    Toolbar doctorsToolbar;
     Button scheduleConsultation;
 
     ArrayList<HashMap<String, String>> hashClinicsByDoctorID;
@@ -38,13 +38,11 @@ public class DoctorActivity extends ActionBarActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.doctor_profile);
 
+        doctorsToolbar = (Toolbar) findViewById(R.id.doctorsToolbar);
         doctor_name = (TextView) findViewById(R.id.doctor_name);
         specialty = (TextView) findViewById(R.id.specialty);
         listOfDoctors = (ListView) findViewById(R.id.listOfDoctors);
         scheduleConsultation = (Button) findViewById(R.id.scheduleConsultation);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         dbHelper = new DbHelper(this);
         Intent intent = getIntent();
@@ -60,6 +58,11 @@ public class DoctorActivity extends ActionBarActivity implements View.OnClickLis
             doctor_name.setText(doctor.getLname() + ", " + doctor.getFname() + " " + doctor.getMname().charAt(0) + ".");
             specialty.setText("(" + doctor.getSpecialty() + ", " + doctor.getSub_specialty() + ")");
         }
+
+        setSupportActionBar(doctorsToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Doctor Information");
+        doctorsToolbar.setNavigationIcon(R.drawable.ic_back);
 
         scheduleConsultation.setOnClickListener(this);
     }
