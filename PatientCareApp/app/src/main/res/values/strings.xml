@@ -13,6 +13,7 @@
         <item>Messages</item>
         <item>Referrals</item>
         <item>Orders</item>
+        <item>Points</item>
     </string-array>
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
