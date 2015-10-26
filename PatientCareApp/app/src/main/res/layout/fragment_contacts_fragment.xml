@@ -135,7 +135,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Unit#/Building#/Lot#/Block#/Phase#/House#"
-                android:paddingTop="5dp" />
+                android:paddingTop="5dp"
+                android:textSize="14sp"/>
 
             <EditText
                 android:id="@+id/address_street"
@@ -143,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Street"
                 android:paddingTop="5dp"
-                />
+                android:textSize="14sp"/>
 
             <TextView
                 android:layout_width="match_parent"
