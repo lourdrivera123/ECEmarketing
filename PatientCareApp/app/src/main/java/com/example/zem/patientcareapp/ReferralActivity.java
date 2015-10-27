@@ -160,6 +160,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                         intent.putExtra("referred_by_User", getReferredByUser);
                         intent.putExtra("referred_by_Doctor", getReferredByDoctor);
                         startActivity(intent);
+                        this.finish();
                     }
                 }
                 break;
@@ -205,6 +206,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                     intent.putExtra("referred_by_User", "");
                     intent.putExtra("referred_by_Doctor", getDoctor_referral_id);
                     startActivity(intent);
+                    ReferralActivity.this.finish();
                 } else if (useInfo.isChecked()) {
                     if (autoUname.getText().toString().equals(""))
                         autoUname.setError("Field required");
@@ -254,6 +256,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                                             intent.putExtra("referred_by_Doctor", getDoctor_referral_id);
                                             intent.putExtras(ptnt);
                                             startActivity(intent);
+                                            ReferralActivity.this.finish();
                                         } else
                                             Toast.makeText(getBaseContext(), "mali ang doctor", Toast.LENGTH_SHORT).show();
                                     } else

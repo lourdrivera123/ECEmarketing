@@ -62,11 +62,11 @@ public class DbHelper extends SQLiteOpenHelper {
             PTNT_WEIGHT = "weight",
             PTNT_OPTIONAL_ADDRESS = "optional_address",
             PTNT_STREET = "address_street",
+            PTNT_BRGY_ID = "address_barangay_id",
             PTNT_BARANGAY = "address_barangay",
             PTNT_CITY = "address_city_municipality",
             PTNT_PROVINCE = "address_province",
             PTNT_REGION = "address_region",
-            PTNT_ZIP = "address_zip",
             PTNT_TEL_NO = "tel_no",
             PTNT_MOBILE_NO = "mobile_no",
             PTNT_EMAIL = "email_address",
@@ -345,7 +345,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         // SQL to create table "patients"
         String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_PATIENTS, AI_ID, PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION, PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_OPTIONAL_ADDRESS, PTNT_STREET, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_ZIP, PTNT_TEL_NO, PTNT_MOBILE_NO, PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY_USER, PTNT_REFERRED_BY_DOCTOR, CREATED_AT, UPDATED_AT, DELETED_AT);
+                TBL_PATIENTS, AI_ID, PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION, PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_OPTIONAL_ADDRESS, PTNT_STREET, PTNT_BRGY_ID, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_TEL_NO, PTNT_MOBILE_NO, PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY_USER, PTNT_REFERRED_BY_DOCTOR, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "product_categories"
         String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s  TEXT , %s  TEXT , %s TEXT  )",
@@ -625,7 +625,13 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PTNT_CIVIL_STATUS, patient.getCivil_status());
         values.put(PTNT_HEIGHT, patient.getHeight());
         values.put(PTNT_WEIGHT, patient.getWeight());
+        values.put(PTNT_OPTIONAL_ADDRESS, patient.getOptional_address());
         values.put(PTNT_STREET, patient.getAddress_street());
+        values.put(PTNT_BRGY_ID, patient.getBarangay_id());
+        values.put(PTNT_BARANGAY, patient.getBarangay());
+        values.put(PTNT_CITY, patient.getMunicipality());
+        values.put(PTNT_PROVINCE, patient.getProvince());
+        values.put(PTNT_REGION, patient.getRegion());
         values.put(PTNT_TEL_NO, patient.getTel_no());
         values.put(PTNT_MOBILE_NO, patient.getMobile_no());
         values.put(PTNT_EMAIL, patient.getEmail());
@@ -1252,7 +1258,12 @@ public class DbHelper extends SQLiteOpenHelper {
             patient.setCivil_status(cur.getString(cur.getColumnIndex(PTNT_CIVIL_STATUS)));
             patient.setHeight(cur.getString(cur.getColumnIndex(PTNT_HEIGHT)));
             patient.setWeight(cur.getString(cur.getColumnIndex(PTNT_WEIGHT)));
+            patient.setOptional_address(cur.getString(cur.getColumnIndex(PTNT_OPTIONAL_ADDRESS)));
             patient.setAddress_street(cur.getString(cur.getColumnIndex(PTNT_STREET)));
+            patient.setBarangay(cur.getString(cur.getColumnIndex(PTNT_BARANGAY)));
+            patient.setMunicipality(cur.getString(cur.getColumnIndex(PTNT_CITY)));
+            patient.setProvince(cur.getString(cur.getColumnIndex(PTNT_PROVINCE)));
+            patient.setRegion(cur.getString(cur.getColumnIndex(PTNT_REGION)));
             patient.setTel_no(cur.getString(cur.getColumnIndex(PTNT_TEL_NO)));
             patient.setMobile_no(cur.getString(cur.getColumnIndex(PTNT_MOBILE_NO)));
             patient.setEmail(cur.getString(cur.getColumnIndex(PTNT_EMAIL)));

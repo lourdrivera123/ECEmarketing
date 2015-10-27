@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/d20">
+    android:padding="@dimen/d10">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,54 +15,46 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Basic Information"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dip"
-                android:background="@color/LightGreen"
-                android:layout_marginBottom="10dp"/>
 
             <EditText
                 android:id="@+id/fname"
                 android:layout_width="match_parent"
-
                 android:layout_height="wrap_content"
-                android:hint="Firstname" />
+                android:hint="Firstname"
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/lname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:hint="Lastname" />
+                android:hint="Lastname"
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/mname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:hint="Middlename (Optional)" />
+                android:hint="Middlename (Optional)"
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/birthdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:ems="10"
                 android:hint="yyyy-mm-dd"
-                android:inputType="date" />
+                android:inputType="date"
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/occupation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:ems="10"
-                android:hint="Occupation (Optional)" />
+                android:hint="Occupation (Optional)"
+                android:textSize="15sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -84,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:text="Gender:"/>
+                android:text="Gender:" />
 
             <View
                 android:layout_width="match_parent"
@@ -124,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:text="BMI Requirements"/>
+                android:text="BMI Requirements" />
 
             <View
                 android:layout_width="match_parent"
@@ -143,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:hint="Height (Ft.)"
-                    android:inputType="numberDecimal" />
+                    android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/weight"
@@ -151,7 +143,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:hint="Weight (Kg)"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:textSize="15sp" />
 
             </LinearLayout>
         </LinearLayout>

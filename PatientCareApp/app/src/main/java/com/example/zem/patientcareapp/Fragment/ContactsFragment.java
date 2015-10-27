@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ContactsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
-    Spinner address_region, address_province, address_city_municipality, address_barangay;
+    public static Spinner address_region, address_province, address_city_municipality, address_barangay;
     EditText optional_address_line, address_street, email, tel_no, cell_no;
     DbHelper dbhelper;
 
@@ -40,6 +40,8 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
     ArrayAdapter<String> regions_adapter, provinces_adapter, municipalities_adapter, barangays_adapter;
 
     Intent intent;
+
+    public static String barangay_id;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -124,14 +126,18 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         address_region.setOnItemSelectedListener(this);
         address_province.setOnItemSelectedListener(this);
         address_city_municipality.setOnItemSelectedListener(this);
-
+        address_barangay.setOnItemSelectedListener(this);
         return rootView;
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
 
         switch (parent.getId()) {
+            case R.id.address_barangay:
+                barangay_id = hashOfBarangays.get(position).get("barangay_server_id");
+                break;
+
             case R.id.address_region:
                 hashOfProvinces = new ArrayList();
                 listOfProvinces = new ArrayList();
@@ -279,7 +285,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                 });
                 break;
         }
-
     }
 
     @Override

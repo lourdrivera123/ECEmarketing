@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,16 +32,19 @@ import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.PatientMedicalRecordActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarActivity;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringListener;
+import com.facebook.rebound.SpringSystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, SpringListener {
     ListView list_of_history;
     ImageButton update_record, add_record;
     Button view_doctor_btn;
-    SwipeRefreshLayout swipe_refresh;
     TextView date, doctor_name, noResults;
     EditText complaints, findings, treatments;
 
@@ -53,12 +56,15 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     private int nr = 0;
     private SelectionAdapter mAdapter;
+    private Spring mSpring;
+    private SpringSystem mSpringSystem;
 
     public int DOCTOR_ID = 0;
     public int update_recordID = 0;
 
     DbHelper dbHelper;
     Helpers helpers;
+    Dialog dialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,13 +77,19 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
 
+        mSpringSystem = SpringSystem.create();
+        mSpring = mSpringSystem.createSpring();
+        mSpring.addListener(this);
+
+        SpringConfig config = new SpringConfig(800, 50);
+        mSpring.setSpringConfig(config);
+
         for (int x = 0; x < hashHistory.size(); x++) {
             medRecords.add(hashHistory.get(x).get(DbHelper.RECORDS_DOCTOR_NAME));
         }
 
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
-        swipe_refresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         list_of_history = (ListView) rootView.findViewById(R.id.list_of_history);
 
         if (hashHistory.size() == 0) {
@@ -89,8 +101,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
         mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, R.id.doctor_name, medRecords);
         list_of_history.setAdapter(mAdapter);
-
-        swipe_refresh.setOnRefreshListener(this);
 
         list_of_history.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         list_of_history.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -226,9 +236,24 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_record:
-                Intent intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                mSpring.setEndValue(1f);
+
+                dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
+                dialog.setContentView(R.layout.add_new_med_records);
+
+                LinearLayout clinicRecord = (LinearLayout) dialog.findViewById(R.id.clinicRecord);
+                clinicRecord.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+//                dialog.show();
+
+//                Intent intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
+//                startActivity(intent);
+//                getActivity().finish();
 
                 break;
             case R.id.view_doctor_btn:
@@ -247,8 +272,24 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     }
 
     @Override
-    public void onRefresh() {
-        swipe_refresh.setRefreshing(false);
+    public void onSpringUpdate(Spring spring) {
+        float value = (float) spring.getCurrentValue();
+        float scale = 1f - (value * 0.5f);
+    }
+
+    @Override
+    public void onSpringAtRest(Spring spring) {
+
+    }
+
+    @Override
+    public void onSpringActivate(Spring spring) {
+
+    }
+
+    @Override
+    public void onSpringEndStateChange(Spring spring) {
+
     }
 
     private class SelectionAdapter extends ArrayAdapter<String> {

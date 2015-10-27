@@ -37,7 +37,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Random;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -205,6 +204,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                 if (!hasError && !hasError2) {
                                     validateUserAccountInfo();
                                     if (!hasError3) {
+                                        patient.setBarangay_id(Integer.parseInt(ContactsFragment.barangay_id));
+                                        patient.setBarangay(ContactsFragment.address_barangay.getSelectedItem().toString());
+                                        patient.setMunicipality(ContactsFragment.address_city_municipality.getSelectedItem().toString());
+                                        patient.setProvince(ContactsFragment.address_province.getSelectedItem().toString());
+                                        patient.setRegion(ContactsFragment.address_region.getSelectedItem().toString());
+
                                         if (edit_int > 0) {
                                             pDialog.show();
                                             editUser = dbHelper.getloginPatient(SidebarActivity.getUname());
@@ -262,7 +267,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                             patient_json_array_mysql = response.getJSONArray("patient");
                                                             patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
 
-                                                            //saving to sqlite database
                                                             if (dbHelper.savePatient(patient_json_object_mysql, patient, "insert")) {
                                                                 SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                                                                 SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -272,9 +276,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                                                                 startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                                                 EditTabsActivity.this.finish();
-                                                            } else {
+                                                            } else
                                                                 Toast.makeText(EditTabsActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
-                                                            }
                                                         }
                                                     } catch (JSONException e) {
                                                         Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
@@ -285,7 +288,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
                                                     pDialog.dismiss();
-                                                    Log.d("unsay error yawa", error + "");
                                                     Toast.makeText(getBaseContext(), "Please check your internet connection putang ina", Toast.LENGTH_SHORT).show();
                                                     System.out.print("src <EditTabsActivity> NETWORK: " + error);
                                                 }
@@ -343,7 +345,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     public HashMap<String, String> setParams(String request) {
-        HashMap<String, String> params = new HashMap();
+        final HashMap<String, String> params = new HashMap();
         if (request.equals("update")) {
             if (AccountFragment.checkIfChangedPass > 0) {
                 params.put("password", AccountFragment.NEW_PASS);
@@ -360,7 +362,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             params.put("table", "patients");
             params.put("photo", patient.getPhoto());
 
-            params.put("referral_id", patient.getReferral_id());
             params.put("referred_byUser", patient.getReferred_byUser());
             params.put("referred_byDoctor", patient.getReferred_byDoctor());
         }
@@ -379,7 +380,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("tel_no", patient.getTel_no());
         params.put("mobile_no", patient.getMobile_no());
         params.put("email_address", patient.getEmail());
-        params.put("barangay_id", String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition()).get("barangay_server_id")));
+        params.put("address_barangay_id", String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition()).get("barangay_server_id")));
 
         return params;
     }
@@ -485,7 +486,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         s_email = email.getText().toString();
         s_tel_no = tel_no.getText().toString();
         s_cell_no = cell_no.getText().toString();
-        s_optional_address = cell_no.getText().toString();
+        s_optional_address = optional_address_line.getText().toString();
 
         count = 0;
         limit = 2;
@@ -631,18 +632,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             birthdate.setError(null);
     }
 
-//    @Override
-//    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//        String dateStr = String.format("%d/%d/%d", (monthOfYear + 1), dayOfMonth, year);
-//        birthdate.setText(dateStr);
-//
-//        birthdate.setError(null);
-//        patient.setBirthdate(dateStr);
-//        int_year = year;
-//        int_month = monthOfYear;
-//        int_day = dayOfMonth;
-//    }
-
     public void showProgressbar() {
         upload_dialog = new Dialog(this);
         upload_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -742,23 +731,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             upload_dialog.dismiss();
             super.onPostExecute(result);
         }
-    }
-
-    public void generateCode() {
-        Random rn = new Random();
-        int max = 3;
-        String randomNumbers = "0123456789";
-        String randomLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String tempLetter, tempNumber, finalCode = "", finalNumber = "", finalLetter = "";
-
-        for (int n = 0; n < max; n++) {
-            tempLetter = String.valueOf(randomLetters.charAt(rn.nextInt(randomLetters.length())));
-            tempNumber = String.valueOf(randomNumbers.charAt(rn.nextInt(randomNumbers.length())));
-            finalLetter = (finalLetter + tempLetter).trim();
-            finalNumber = (finalNumber + tempNumber).trim();
-        }
-        finalCode = (finalLetter + finalNumber).trim();
-        patient.setReferral_id(finalCode);
     }
 
     private void showOverLay() {

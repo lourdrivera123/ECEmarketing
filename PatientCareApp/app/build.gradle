@@ -31,6 +31,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.+'
     compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.facebook.rebound:rebound:0.3.4'
     compile project(':volley')
     compile project(':PayPalAndroidSDK-2.9.7')
     compile project(':httpcore-4.3.1')

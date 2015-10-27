@@ -69,30 +69,30 @@ public class PatientProfileFragment extends Fragment {
         civil_status.setText("Civil Status: " + loginUser.getCivil_status());
         height_weight.setText("Height: " + loginUser.getHeight() + " ft. / Weight: " + loginUser.getWeight() + " kg.");
 
-        if (loginUser.getOccupation() == null || loginUser.getOccupation().equals("")) {
+        if (loginUser.getOccupation() == null || loginUser.getOccupation().equals(""))
             occupation.setVisibility(View.GONE);
-        } else {
+        else
             occupation.setText("Occupation: " + loginUser.getOccupation());
-        }
 
-        address_second_line.setText(", Philippines, ");
+        if (!loginUser.getOptional_address().equals(""))
+            address_first_line.setText(loginUser.getOptional_address() + ", " + loginUser.getAddress_street() + ", " + loginUser.getBarangay());
+        else
+            address_first_line.setText(loginUser.getAddress_street() + ", " + loginUser.getBarangay());
+        address_second_line.setText(loginUser.getMunicipality() + ", " + loginUser.getProvince() + ", " + loginUser.getRegion() + ", Philippines, ");
 
-        if (loginUser.getEmail() == null || loginUser.getEmail().equals("")) {
+        if (loginUser.getEmail() == null || loginUser.getEmail().equals(""))
             email.setVisibility(View.GONE);
-        } else {
+        else
             email.setText(loginUser.getEmail());
-        }
 
-        if (loginUser.getTel_no() == null || loginUser.getTel_no().equals("")) {
+        if (loginUser.getTel_no() == null || loginUser.getTel_no().equals(""))
             cp_no.setText(loginUser.getMobile_no());
-        } else {
+        else
             cp_no.setText(loginUser.getTel_no() + " / " + loginUser.getMobile_no());
-        }
 
         String imgFile = loginUser.getPhoto();
 
-        if (imgFile != null || !imgFile.equals("")) {
+        if (imgFile != null || !imgFile.equals(""))
             helpers.setImage(imgFile, progressBar, image_holder);
-        }
     }
 }

@@ -21,7 +21,8 @@
                 <LinearLayout
                     android:layout_weight="0.8"
                     android:minHeight="100dp"
-                    android:minWidth="100dp">
+                    android:minWidth="100dp"
+                    android:orientation="vertical">
 
                     <ImageView
                         android:id="@+id/image_holder"
@@ -56,20 +57,23 @@
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d10"
                 android:hint="Username" />
 
             <EditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Password"
                 android:inputType="textPassword"
-                android:visibility="gone"
-                android:hint="Password" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/changePassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d10"
+                android:background="?android:attr/selectableItemBackground"
                 android:drawableLeft="@drawable/ic_update"
                 android:gravity="center_vertical"
                 android:text="Change Password" />
@@ -87,7 +91,6 @@
                     android:background="#5B9A68"
                     android:text="Save" />
             </TableRow>
-
         </TableLayout>
     </LinearLayout>
 </ScrollView>

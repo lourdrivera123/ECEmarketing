@@ -9,8 +9,9 @@ public class Patient implements Serializable {
 
     private String fname = "", mname = "", lname = "", username = "", password = "",
             occupation = "", birthdate = "", sex = "", civil_status = "", height = "",
-            weight = "", address_street = "", cell_no = "", tel_no = "", email = "", photo = "",
-            referral_id = "", referred_byUser = "", referred_byDoctor = "", optional_address = "";
+            weight = "", cell_no = "", tel_no = "", email = "", photo = "",
+            referral_id = "", referred_byUser = "", referred_byDoctor = "",
+            optional_address = "", address_street = "", barangay = "", municipality = "", province = "", region = "";
 
     int id = 0, serverID = 0, barangay_id = 0;
 
@@ -41,10 +42,6 @@ public class Patient implements Serializable {
 
     public void setReferred_byDoctor(String referred_byDoctor) {
         this.referred_byDoctor = referred_byDoctor;
-    }
-
-    public void setCell_no(String cell_no) {
-        this.cell_no = cell_no;
     }
 
     public int getId() {
@@ -158,7 +155,25 @@ public class Patient implements Serializable {
         this.barangay_id = brgy_id;
     }
 
-    public void setOptional_address(String optional_address) { this.optional_address = optional_address; }
+    public void setOptional_address(String optional_address) {
+        this.optional_address = optional_address;
+    }
+
+    public void setBarangay(String barangay) {
+        this.barangay = barangay;
+    }
+
+    public void setMunicipality(String municipality) {
+        this.municipality = municipality;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
     //GETTER
     public String getOccupation() {
@@ -201,18 +216,31 @@ public class Patient implements Serializable {
         return referred_byUser;
     }
 
-    public String getCell_no() {
-        return cell_no;
-    }
-
     public String getReferred_byDoctor() {
         return referred_byDoctor;
     }
 
-    public String getOptional_address() { return optional_address; }
+    public String getOptional_address() {
+        return optional_address;
+    }
 
     public int getBarangay_id() {
         return barangay_id;
     }
 
+    public String getBarangay() {
+        return barangay;
+    }
+
+    public String getMunicipality() {
+        return municipality;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public String getRegion() {
+        return region;
+    }
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/d20">
+    android:padding="@dimen/d10">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Unit#/Building#/Lot#/Block#/Phase#/House#"
                 android:paddingTop="5dp"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/address_street"
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Street"
                 android:paddingTop="5dp"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -81,14 +81,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/tel_no"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Telephone Number"
-                />
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/cell_no"
@@ -96,8 +97,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Cellphone Number"
                 android:inputType="number"
-                />
-
+                android:textSize="15sp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
