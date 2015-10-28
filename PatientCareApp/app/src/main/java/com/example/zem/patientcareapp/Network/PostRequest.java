@@ -33,8 +33,6 @@ public class PostRequest {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.out.println("response is <PostRequest.java>: " + response);
-
                         serverRequest.init(c, parameters, response);
 
                         listener.getResult(response);
@@ -43,8 +41,7 @@ public class PostRequest {
             @Override
             public void onErrorResponse(VolleyError error) {
                 errorlistener.getError(error);
-                Log.d("unsay problema?", error+ "");
-                System.out.print("error on interface <PostRequest.java>" + error);
+                Log.d("<PostRequest>", error + "");
             }
         });
         queue.add(jsObjRequest);

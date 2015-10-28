@@ -2,12 +2,14 @@ package com.example.zem.patientcareapp.Fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,33 +17,36 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.DoctorActivity;
 import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.PatientMedicalRecordActivity;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.SidebarActivity;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringListener;
-import com.facebook.rebound.SpringSystem;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, SpringListener {
+public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
     ImageButton update_record, add_record;
     Button view_doctor_btn;
@@ -56,8 +61,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     private int nr = 0;
     private SelectionAdapter mAdapter;
-    private Spring mSpring;
-    private SpringSystem mSpringSystem;
 
     public int DOCTOR_ID = 0;
     public int update_recordID = 0;
@@ -65,10 +68,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     DbHelper dbHelper;
     Helpers helpers;
     Dialog dialog;
+    ServerRequest serverRequest;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_patient_history_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_patient_records, container, false);
         dbHelper = new DbHelper(getActivity());
         helpers = new Helpers();
 
@@ -76,17 +80,10 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         medRecords = new ArrayList();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
+        serverRequest = new ServerRequest();
 
-        mSpringSystem = SpringSystem.create();
-        mSpring = mSpringSystem.createSpring();
-        mSpring.addListener(this);
-
-        SpringConfig config = new SpringConfig(800, 50);
-        mSpring.setSpringConfig(config);
-
-        for (int x = 0; x < hashHistory.size(); x++) {
+        for (int x = 0; x < hashHistory.size(); x++)
             medRecords.add(hashHistory.get(x).get(DbHelper.RECORDS_DOCTOR_NAME));
-        }
 
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
@@ -236,24 +233,83 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_record:
-                mSpring.setEndValue(1f);
-
                 dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
                 dialog.setContentView(R.layout.add_new_med_records);
 
-                LinearLayout clinicRecord = (LinearLayout) dialog.findViewById(R.id.clinicRecord);
+                ImageButton clinicRecord = (ImageButton) dialog.findViewById(R.id.clinicRecord);
                 clinicRecord.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        dialog.dismiss();
+                        final Dialog dialog2 = new Dialog(getActivity());
+                        dialog2.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog2.setContentView(R.layout.get_clinic_record);
+                        dialog2.show();
 
+                        final EditText username = (EditText) dialog2.findViewById(R.id.username);
+                        final EditText password = (EditText) dialog2.findViewById(R.id.password);
+                        Button submitBtn = (Button) dialog2.findViewById(R.id.submitBtn);
+
+                        submitBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (username.getText().toString().equals(""))
+                                    username.setError("Field required");
+                                else if (password.getText().toString().equals(""))
+                                    password.setError("Field required");
+                                else {
+                                    final ProgressDialog progress = new ProgressDialog(getActivity());
+                                    progress.setMessage("Please wait...");
+                                    progress.show();
+
+                                    HashMap<String, String> map = new HashMap();
+                                    map.put("request", "insert_medical_record");
+                                    map.put("username", username.getText().toString());
+                                    map.put("password", password.getText().toString());
+                                    map.put("patient_id", String.valueOf(SidebarActivity.getUserID()));
+
+                                    PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
+                                        @Override
+                                        public void getResult(JSONObject response) {
+                                            try {
+                                                int success = response.getInt("success");
+
+                                                if (success == 0)
+                                                    Toast.makeText(getActivity(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+                                                else if (success == 1) {
+                                                    dialog2.dismiss();
+                                                    Toast.makeText(getActivity(), "Your request has been submitted. The Clinic/Doctor will be reviewing your request.", Toast.LENGTH_LONG).show();
+                                                }
+                                            } catch (Exception e) {
+                                                Log.d("<P-History catch>", e + "");
+                                            }
+                                            progress.dismiss();
+                                        }
+                                    }, new ErrorListener<VolleyError>() {
+                                        @Override
+                                        public void getError(VolleyError error) {
+                                            Log.d("<P-HistoryFragment>", error + "");
+                                            progress.dismiss();
+                                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                 });
 
-//                dialog.show();
-
-//                Intent intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
-//                startActivity(intent);
-//                getActivity().finish();
+                final ImageButton personalRecord = (ImageButton) dialog.findViewById(R.id.personalRecord);
+                personalRecord.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
 
                 break;
             case R.id.view_doctor_btn:
@@ -269,27 +325,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 getActivity().finish();
                 break;
         }
-    }
-
-    @Override
-    public void onSpringUpdate(Spring spring) {
-        float value = (float) spring.getCurrentValue();
-        float scale = 1f - (value * 0.5f);
-    }
-
-    @Override
-    public void onSpringAtRest(Spring spring) {
-
-    }
-
-    @Override
-    public void onSpringActivate(Spring spring) {
-
-    }
-
-    @Override
-    public void onSpringEndStateChange(Spring spring) {
-
     }
 
     private class SelectionAdapter extends ArrayAdapter<String> {

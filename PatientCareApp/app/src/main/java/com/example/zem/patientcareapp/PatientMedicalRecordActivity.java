@@ -1,11 +1,12 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,9 +30,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class PatientMedicalRecordActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener {
+public class PatientMedicalRecordActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener {
     EditText date, complaint, diagnosis, generic_name, qty, dosage;
     TextView add_treatment;
+    Toolbar myToolBar;
     ListView list_of_treatments;
     AutoCompleteTextView search_doctor, search_medicine;
     Button save_treatment, cancel_treatment;
@@ -68,8 +70,10 @@ public class PatientMedicalRecordActivity extends Activity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_new_medical_record);
 
-        ActionBar actionBar = getActionBar();
-        MainActivity.setCustomActionBar(actionBar);
+        myToolBar = (Toolbar) findViewById(R.id.myToolBar);
+        setSupportActionBar(myToolBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setTitle("New Record");
 
         dbhelper = new DbHelper(this);
         product = new Product();

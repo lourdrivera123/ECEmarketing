@@ -7,8 +7,8 @@
         android:id="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha=".90"
-        android:background="#ffffff"
+        android:alpha=".80"
+        android:background="#000000"
         android:orientation="vertical" />
 
     <LinearLayout
@@ -18,10 +18,8 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/clinicRecord"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
             android:gravity="right"
             android:orientation="horizontal"
             android:padding="@dimen/d10">
@@ -32,9 +30,10 @@
                 android:layout_marginRight="@dimen/d10"
                 android:gravity="center"
                 android:text="Clinic's record"
-                android:textColor="#000000" />
+                android:textColor="@color/white" />
 
             <ImageButton
+                android:id="@+id/clinicRecord"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@drawable/circle"
@@ -42,10 +41,8 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/personalRecord"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
             android:gravity="right"
             android:orientation="horizontal"
             android:padding="@dimen/d10">
@@ -56,9 +53,10 @@
                 android:layout_marginRight="@dimen/d10"
                 android:gravity="center"
                 android:text="Personal record"
-                android:textColor="#000000" />
+                android:textColor="@color/white" />
 
             <ImageButton
+                android:id="@+id/personalRecord"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@drawable/circle"

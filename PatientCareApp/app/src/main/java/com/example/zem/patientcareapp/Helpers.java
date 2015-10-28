@@ -95,6 +95,10 @@ public class Helpers implements View.OnCreateContextMenuListener {
         return Constants.GET_REQUEST_URL + request;
     }
 
+    public String get_api_url(String request) {
+        return Constants.GET_API_REQUEST_URL + request;
+    }
+
     public String md5(final String s) {
         final String MD5 = "MD5";
         try {

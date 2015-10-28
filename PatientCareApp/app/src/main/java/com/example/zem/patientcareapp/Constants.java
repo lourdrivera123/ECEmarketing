@@ -17,6 +17,9 @@ public class Constants {
     //Helpers get request url
     public static final String GET_REQUEST_URL = "http://159.203.111.108/db/get.php?q=";
 
+    //Helper get api request url
+    public static final String GET_API_REQUEST_URL = "http://159.203.111.108/api/";
+
     //uploads path url
     public static final String UPLOAD_PATH_URL = "http://159.203.111.108/db/uploads/";
 }

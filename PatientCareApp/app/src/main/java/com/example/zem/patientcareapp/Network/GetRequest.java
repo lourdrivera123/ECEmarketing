@@ -38,9 +38,8 @@ public class GetRequest {
                 sync.init(c, q, table_name, table_id, response);
                 try {
                     dbHelper.updateLastUpdatedTable(table_name, response.getString("latest_updated_at"));
-                    Log.d("saving timestamp status", "success");
                 } catch (Exception e) {
-                    Log.d("something wrong with json", "" + e);
+                    System.out.print("<GetRequest> something wrong with json: " + e);
                 }
                 listener.getResult(response);
             }

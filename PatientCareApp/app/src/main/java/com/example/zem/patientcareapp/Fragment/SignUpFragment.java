@@ -50,7 +50,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
         int edit = EditTabsActivity.edit_int;
         int signup = EditTabsActivity.signup_int;
         intent = EditTabsActivity.intent;
-        get_birthdate = "";
+        get_birthdate = "1995-02-23";
 
         fname = (EditText) rootView.findViewById(R.id.fname);
         lname = (EditText) rootView.findViewById(R.id.lname);
@@ -117,24 +117,18 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
         switch (v.getId()) {
             case R.id.birthdate:
                 FragmentManager fm = getChildFragmentManager();
-                Calendar now = Calendar.getInstance();
                 CalendarDatePickerDialogFragment datepicker;
 
-                if (get_birthdate.equals("")) {
-                    datepicker = CalendarDatePickerDialogFragment
-                            .newInstance(this, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
-                } else {
-                    int month, year, day;
-                    String birth = birthdate.getText().toString();
-                    int indexOfYear = birth.indexOf("-");
-                    int indexOfMonthandDay = birth.lastIndexOf("-");
-                    year = Integer.parseInt(birth.substring(0, indexOfYear));
-                    month = Integer.parseInt(birth.substring(indexOfYear + 1, indexOfMonthandDay)) - 1;
-                    day = Integer.parseInt(birth.substring(indexOfMonthandDay + 1, birth.length()));
+                int month, year, day;
+                int indexOfYear = get_birthdate.indexOf("-");
+                int indexOfMonthandDay = get_birthdate.lastIndexOf("-");
+                year = Integer.parseInt(get_birthdate.substring(0, indexOfYear));
+                month = Integer.parseInt(get_birthdate.substring(indexOfYear + 1, indexOfMonthandDay)) - 1;
+                day = Integer.parseInt(get_birthdate.substring(indexOfMonthandDay + 1, get_birthdate.length()));
 
-                    datepicker = CalendarDatePickerDialogFragment
-                            .newInstance(this, year, month, day);
-                }
+                datepicker = CalendarDatePickerDialogFragment
+                        .newInstance(this, year, month, day);
+
                 datepicker.show(fm, "fragment_date_picker_name");
                 break;
         }
