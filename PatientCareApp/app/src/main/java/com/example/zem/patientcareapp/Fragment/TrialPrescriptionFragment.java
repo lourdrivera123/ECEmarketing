@@ -149,12 +149,15 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(DbHelper.PRESCRIPTIONS_SERVER_ID));
+                    final String filename = uploadsByUser.get(menuInfo.position).get(DbHelper.PRESCRIPTIONS_FILENAME);
+                    Log.d("filename log", filename);
                     serverRequest = new ServerRequest();
                     HashMap<String, String> hashMap = new HashMap();
                     hashMap.put("table", "patient_prescriptions");
                     hashMap.put("request", "crud");
-                    hashMap.put("action", "delete");
+                    hashMap.put("action", "delete_prescription");
                     hashMap.put("id", String.valueOf(serverID));
+                    hashMap.put("url", "uploads/user_"+SidebarActivity.getUserID()+"/"+filename);
 
                     final ProgressDialog pdialog = new ProgressDialog(getActivity());
                     pdialog.setCancelable(false);
@@ -167,6 +170,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                             try {
                                 int success = response.getInt("success");
 
+                                Log.d("success is", success + "");
+
                                 if (success == 1) {
                                     if (dbhelper.deletePrescriptionByServerID(serverID)) {
                                         arrayOfPrescriptions = refreshPrescriptionList();
@@ -174,6 +179,9 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                                     } else {
                                         Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
                                     }
+                                }  else if (success == 2) {
+                                    pdialog.dismiss();
+                                    Toast.makeText(getActivity(), "Cannot delete a prescription that is used for an order.", Toast.LENGTH_LONG).show();
                                 }
                             } catch (Exception e) {
                                 System.out.print("src: <TrialPrescriptionFragment>");
@@ -183,6 +191,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
+                            pdialog.dismiss();
+                            Log.d("error sa pag delete", error+"");
                             Toast.makeText(getActivity(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
                         }
                     });

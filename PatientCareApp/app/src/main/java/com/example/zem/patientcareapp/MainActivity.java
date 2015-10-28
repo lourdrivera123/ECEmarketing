@@ -1,5 +1,6 @@
 package com.example.zem.patientcareapp;
 
+import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -72,8 +74,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         queue = VolleySingleton.getInstance().getRequestQueue();
         sync = new Sync();
 
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
 
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
@@ -120,7 +120,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 } else if (password.equals("")) {
                     password_txtfield.setError("Field Required");
                 } else {
+                    pDialog = new ProgressDialog(MainActivity.this);
+                    pDialog.setMessage("Loading...");
                     pDialog.show();
+
                     patient = new Patient();
                     patient.setUsername(uname);
                     patient.setPassword(helpers.md5(password));
@@ -193,14 +196,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         String patient_image_name = patient_json_array_mysql.getJSONObject(0).getString("photo");
                                         if (!patient_image_name.equals(""))
                                             helpers.cacheImageOnly(patient_image_name, patient_json_array_mysql.getJSONObject(0).getInt("id"));
-
+                                        pDialog.dismiss();
                                         startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                     } else {
                                         Toast.makeText(MainActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                                         System.out.print("error on dbHelper.loginUser <source: MainActivity>");
+                                        pDialog.dismiss();
                                     }
-                                } else
+                                } else {
                                     Toast.makeText(MainActivity.this, "Invalid username/password", Toast.LENGTH_SHORT).show();
+                                    pDialog.dismiss();
+                                }
                             } catch (JSONException e) {
                                 Log.d("try catch error", e + "");
                             }
@@ -210,10 +216,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         public void onErrorResponse(VolleyError error) {
                             System.out.print("src: <MainActivity>: " + error.toString());
                             Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+                            pDialog.dismiss();
                         }
                     });
 
-                    pDialog.dismiss();
                     queue.add(jsObjRequest);
                 }
                 break;

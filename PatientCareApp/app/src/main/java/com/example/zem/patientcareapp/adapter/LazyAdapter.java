@@ -402,7 +402,7 @@ public class LazyAdapter extends BaseAdapter {
                 // Setting all values in listview
                 basketIsApproved.setText("");
                 if (isApproved == 0)
-                    basketIsApproved.setText("Waiting for approval...");
+                    basketIsApproved.setText("Original Prescription must be presented upon delivery/pickup");
 
                 productName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
                 total_amount = price * quantity;
