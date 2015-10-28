@@ -25,7 +25,6 @@ public class StringRequests {
         helpers = new Helpers();
 
         // Request a string response from the provided URL.
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, helpers.get_api_url(q), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -38,11 +37,6 @@ public class StringRequests {
                 errorlistener.getError(error);
             }
         });
-
         queue.add(stringRequest);
-
-
     }
-
-
 }
