@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.MessagesFragment;
@@ -103,6 +104,7 @@ public class SidebarActivity extends FragmentActivity {
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], 0));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], 0));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], 0));
 
         navMenuIcons.recycle(); // Recycle the typed array
 
@@ -231,6 +233,9 @@ public class SidebarActivity extends FragmentActivity {
             case 3:
                 Intent orders_intent = new Intent(getBaseContext(), OrdersActivity.class);
                 startActivity(orders_intent);
+            case 4:
+//                Intent points_intent = new Intent(getBaseContext(), PointsActivity.class);
+                Toast.makeText(getBaseContext(), "Your point/s: 1", Toast.LENGTH_SHORT).show();
             default:
                 break;
         }

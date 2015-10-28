@@ -1523,7 +1523,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public ArrayList<HashMap<String, String>> getAllOrderItems() {
         ArrayList<HashMap<String, String>> stfu = new ArrayList<>();
         SQLiteDatabase asdas = getWritableDatabase();
-        String sql = "SELECT od.order_details_id, p.name as product_name, p.price, od.quantity, o.created_at as ordered_on, o.status,  p.packing, p.qty_per_packing, p.unit from order_details as od inner join orders as o on od.order_id = o.orders_id inner join products as p on od.product_id = p.product_id inner join branches as br on o.branch_id = br.branches_id where o.patient_id = " + SidebarActivity.getUserID();
+        String sql = "SELECT od.order_details_id, p.name as product_name, p.price, od.quantity, o.created_at as ordered_on, o.status,  p.packing, p.qty_per_packing, p.unit from order_details as od inner join orders as o on od.order_id = o.orders_id inner join products as p on od.product_id = p.product_id inner join branches as br on o.branch_id = br.branches_id where o.patient_id = " + SidebarActivity.getUserID() + " order by od.created_at DESC";
         Cursor cur = asdas.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
@@ -2109,7 +2109,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public boolean emptyBasket(int patient_id) {
         SQLiteDatabase db = getWritableDatabase();
-        long row = db.delete(TBL_BASKETS, PATIENT_ID + "=" + patient_id + " and " + BASKET_IS_APPROVED + " = 1", null);
+        long row = db.delete(TBL_BASKETS, PATIENT_ID + "=" + patient_id, null);
         db.close();
         return row > 0;
 
