@@ -3,6 +3,7 @@ package com.example.zem.patientcareapp.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,11 +35,10 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
     EditText optional_address_line, address_street, email, tel_no, cell_no;
     DbHelper dbhelper;
 
-    public static ArrayList<HashMap<String, String>> hashOfBarangays;
-    public ArrayList<HashMap<String, String>> hashOfProvinces, hashOfMunicipalities, hashOfRegions;
+    public static ArrayList<HashMap<String, String>> hashOfBarangays, hashOfProvinces, hashOfMunicipalities, hashOfRegions;
     ArrayList<String> listOfRegions, listOfProvinces, listOfMunicipalities, listOfBarangays;
     ArrayAdapter<String> regions_adapter, provinces_adapter, municipalities_adapter, barangays_adapter;
-
+    Patient patient;
     Intent intent;
 
     public static String barangay_id;
@@ -65,7 +65,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
 
         if (intent.getIntExtra("edit", 0) > 0) {
             String edit_uname = SidebarActivity.getUname();
-            Patient patient = dbhelper.getloginPatient(edit_uname);
+            patient = dbhelper.getloginPatient(edit_uname);
 
             address_street.setText(patient.getAddress_street());
             email.setText(patient.getEmail());
@@ -79,19 +79,31 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                 cell_no.setText(intent.getExtras().getString("mobile_no"));
             }
         }
+//        map_region.put("name", "Select Region");
+//        map_region.put("code", "Select Region");
+//        map_region.put("region_server_id", "0");
+//        hashOfRegions.add(map_region);
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_regions", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
+
                     JSONArray json_array_mysql = response.getJSONArray("regions");
+
+                    HashMap<String, String> map_placeholder = new HashMap();
+                    map_placeholder.put("name", "Select Region");
+                    map_placeholder.put("code", "Select Region");
+                    map_placeholder.put("region_server_id", "0");
+                    hashOfRegions.add(map_placeholder);
+
                     for (int x = 0; x < json_array_mysql.length(); x++) {
+                        HashMap<String, String> map_region = new HashMap();
                         JSONObject json_obj = json_array_mysql.getJSONObject(x);
-                        HashMap<String, String> map = new HashMap();
-                        map.put("name", json_obj.getString("name"));
-                        map.put("code", json_obj.getString("code"));
-                        map.put("region_server_id", json_obj.getString("id"));
-                        hashOfRegions.add(map);
+                        map_region.put("name", json_obj.getString("name"));
+                        map_region.put("code", json_obj.getString("code"));
+                        map_region.put("region_server_id", json_obj.getString("id"));
+                        hashOfRegions.add(map_region);
                     }
 
                     for (int y = 0; y < hashOfRegions.size(); y++)
@@ -110,6 +122,14 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                             }
                             address_region.setSelection(regions_adapter.getPosition(regionSelected));
                         }
+                    } else if (intent.getIntExtra("edit", 0) > 0) {
+                        String regionSelected = "";
+
+                        for (int x = 0; x < hashOfRegions.size(); x++) {
+                            if (hashOfRegions.get(x).get("name").equals(patient.getRegion()))
+                                regionSelected = hashOfRegions.get(x).get("name");
+                        }
+                        address_region.setSelection(regions_adapter.getPosition(regionSelected));
                     }
 
                 } catch (JSONException e) {
@@ -118,7 +138,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                System.out.print("Error in ReferralActivity" + error);
+                Log.d("<ContactsFragment>", error+"");
                 Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
 
             }
@@ -141,154 +161,216 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
             case R.id.address_region:
                 hashOfProvinces = new ArrayList();
                 listOfProvinces = new ArrayList();
+                final int region_server_id = Integer.parseInt(hashOfRegions.get(position).get("region_server_id"));
 
-                int region_server_id = Integer.parseInt(hashOfRegions.get(position).get("region_server_id"));
-                ListOfPatientsRequest.getJSONobj(getActivity(), "get_provinces&region_id=" + region_server_id, new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                        try {
-                            JSONArray json_array_mysql = response.getJSONArray("provinces");
-                            for (int x = 0; x < json_array_mysql.length(); x++) {
-                                JSONObject json_obj = json_array_mysql.getJSONObject(x);
-                                HashMap<String, String> map = new HashMap();
-                                map.put("name", json_obj.getString("name"));
-                                map.put("province_server_id", json_obj.getString("id"));
-                                map.put("region_server_id", json_obj.getString("region_id"));
-                                hashOfProvinces.add(map);
-                            }
+                Log.d("region server id", region_server_id + "");
+                if (region_server_id == 0) {
+                    HashMap<String, String> map_placeholder = new HashMap();
+                    map_placeholder.put("name", "Select Province");
+                    map_placeholder.put("province_server_id", "0");
+                    map_placeholder.put("region_server_id", "0");
+                    hashOfProvinces.add(map_placeholder);
 
-                            for (int y = 0; y < hashOfProvinces.size(); y++)
-                                listOfProvinces.add(hashOfProvinces.get(y).get("name"));
+                    listOfProvinces.add(hashOfProvinces.get(0).get("name"));
 
-                            provinces_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfProvinces);
-                            address_province.setAdapter(provinces_adapter);
+                    provinces_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfProvinces);
+                    address_province.setAdapter(provinces_adapter);
+                } else {
 
-                            if (intent.getIntExtra("signup", 0) > 0) {
-                                if (intent.getExtras().getString("fname") != null) {
+                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_provinces&region_id=" + region_server_id, new RespondListener<JSONObject>() {
+                        @Override
+                        public void getResult(JSONObject response) {
+                            try {
+                                JSONArray json_array_mysql = response.getJSONArray("provinces");
+                                for (int x = 0; x < json_array_mysql.length(); x++) {
+                                    HashMap<String, String> map = new HashMap();
+                                    JSONObject json_obj = json_array_mysql.getJSONObject(x);
+                                    map.put("name", json_obj.getString("name"));
+                                    map.put("province_server_id", json_obj.getString("id"));
+                                    map.put("region_server_id", json_obj.getString("region_id"));
+                                    hashOfProvinces.add(map);
+                                }
+
+                                for (int y = 0; y < hashOfProvinces.size(); y++)
+                                    listOfProvinces.add(hashOfProvinces.get(y).get("name"));
+
+                                provinces_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfProvinces);
+                                address_province.setAdapter(provinces_adapter);
+
+                                if (intent.getIntExtra("signup", 0) > 0) {
+                                    if (intent.getExtras().getString("fname") != null) {
+                                        String provinceSelected = "";
+
+                                        for (int x = 0; x < hashOfProvinces.size(); x++) {
+                                            if (hashOfProvinces.get(x).get("province_server_id").equals(intent.getExtras().getString("province_id")))
+                                                provinceSelected = hashOfProvinces.get(x).get("name");
+                                        }
+                                        address_province.setSelection(provinces_adapter.getPosition(provinceSelected));
+                                    }
+                                } else if (intent.getIntExtra("edit", 0) > 0) {
                                     String provinceSelected = "";
 
                                     for (int x = 0; x < hashOfProvinces.size(); x++) {
-                                        if (hashOfProvinces.get(x).get("province_server_id").equals(intent.getExtras().getString("province_id")))
+                                        if (hashOfProvinces.get(x).get("name").equals(patient.getProvince()))
                                             provinceSelected = hashOfProvinces.get(x).get("name");
                                     }
                                     address_province.setSelection(provinces_adapter.getPosition(provinceSelected));
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        System.out.print("Error in ReferralActivity" + error);
-                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }, new ErrorListener<VolleyError>() {
+                        public void getError(VolleyError error) {
+                            Log.d("<ContactsFragment>", error + "");
+                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
 
-                    }
-                });
+                        }
+                    });
+                }
                 break;
 
             case R.id.address_province:
                 hashOfMunicipalities = new ArrayList();
                 listOfMunicipalities = new ArrayList();
-                int province_server_id = Integer.parseInt(hashOfProvinces.get(position).get("province_server_id"));
-                ListOfPatientsRequest.getJSONobj(getActivity(), "get_municipalities&province_id=" + province_server_id, new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                        try {
-                            JSONArray json_array_mysql = response.getJSONArray("municipalities");
-                            for (int x = 0; x < json_array_mysql.length(); x++) {
-                                JSONObject json_obj = json_array_mysql.getJSONObject(x);
-                                HashMap<String, String> map = new HashMap();
-                                map.put("name", json_obj.getString("name"));
-                                map.put("municipality_server_id", json_obj.getString("id"));
-                                map.put("province_server_id", json_obj.getString("province_id"));
-                                hashOfMunicipalities.add(map);
-                            }
+                final int province_server_id = Integer.parseInt(hashOfProvinces.get(position).get("province_server_id"));
+                if (province_server_id == 0) {
+                    HashMap<String, String> map_placeholder = new HashMap();
+                    map_placeholder.put("name", "Select Municipality");
+                    map_placeholder.put("municipality_server_id", "0");
+                    map_placeholder.put("province_server_id", "0");
+                    hashOfMunicipalities.add(map_placeholder);
 
-                            for (int y = 0; y < hashOfMunicipalities.size(); y++)
-                                listOfMunicipalities.add(hashOfMunicipalities.get(y).get("name"));
+                    listOfMunicipalities.add(hashOfMunicipalities.get(0).get("name"));
 
-                            municipalities_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfMunicipalities);
-                            address_city_municipality.setAdapter(municipalities_adapter);
+                    municipalities_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfMunicipalities);
+                    address_city_municipality.setAdapter(municipalities_adapter);
+                } else {
+                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_municipalities&province_id=" + province_server_id, new RespondListener<JSONObject>() {
+                        @Override
+                        public void getResult(JSONObject response) {
+                            try {
+                                JSONArray json_array_mysql = response.getJSONArray("municipalities");
+                                for (int x = 0; x < json_array_mysql.length(); x++) {
+                                    HashMap<String, String> map = new HashMap();
+                                    JSONObject json_obj = json_array_mysql.getJSONObject(x);
+                                    map.put("name", json_obj.getString("name"));
+                                    map.put("municipality_server_id", json_obj.getString("id"));
+                                    map.put("province_server_id", json_obj.getString("province_id"));
+                                    hashOfMunicipalities.add(map);
+                                }
 
-                            if (intent.getIntExtra("signup", 0) > 0) {
-                                if (intent.getExtras().getString("fname") != null) {
+                                for (int y = 0; y < hashOfMunicipalities.size(); y++)
+                                    listOfMunicipalities.add(hashOfMunicipalities.get(y).get("name"));
+
+                                municipalities_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfMunicipalities);
+                                address_city_municipality.setAdapter(municipalities_adapter);
+
+                                if (intent.getIntExtra("signup", 0) > 0) {
+                                    if (intent.getExtras().getString("fname") != null) {
+                                        String municipalitySelected = "";
+
+                                        for (int x = 0; x < hashOfMunicipalities.size(); x++) {
+                                            if (hashOfMunicipalities.get(x).get("municipality_server_id").equals(intent.getExtras().getString("municipality_id")))
+                                                municipalitySelected = hashOfMunicipalities.get(x).get("name");
+                                        }
+                                        address_city_municipality.setSelection(municipalities_adapter.getPosition(municipalitySelected));
+                                    }
+                                } else if (intent.getIntExtra("edit", 0) > 0) {
                                     String municipalitySelected = "";
 
                                     for (int x = 0; x < hashOfMunicipalities.size(); x++) {
-                                        if (hashOfMunicipalities.get(x).get("municipality_server_id").equals(intent.getExtras().getString("municipality_id")))
+                                        if (hashOfMunicipalities.get(x).get("name").equals(patient.getMunicipality()))
                                             municipalitySelected = hashOfMunicipalities.get(x).get("name");
                                     }
                                     address_city_municipality.setSelection(municipalities_adapter.getPosition(municipalitySelected));
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        System.out.print("Error in ReferralActivity" + error);
-                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
+                    }, new ErrorListener<VolleyError>() {
+                        public void getError(VolleyError error) {
+                            Log.d("<ContactsFragment>", error + "");
+                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 break;
 
             case R.id.address_city_municipality:
                 hashOfBarangays = new ArrayList();
                 listOfBarangays = new ArrayList();
-                int municipality_server_id = Integer.parseInt(hashOfMunicipalities.get(position).get("municipality_server_id"));
-                ListOfPatientsRequest.getJSONobj(getActivity(), "get_barangays&municipality_id=" + municipality_server_id, new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                        try {
-                            JSONArray json_array_mysql = response.getJSONArray("barangays");
-                            for (int x = 0; x < json_array_mysql.length(); x++) {
-                                JSONObject json_obj = json_array_mysql.getJSONObject(x);
-                                HashMap<String, String> map = new HashMap();
-                                map.put("name", json_obj.getString("name"));
-                                map.put("barangay_server_id", json_obj.getString("id"));
-                                map.put("municipality_server_id", json_obj.getString("municipality_id"));
-                                hashOfBarangays.add(map);
-                            }
+                final int municipality_server_id = Integer.parseInt(hashOfMunicipalities.get(position).get("municipality_server_id"));
 
-                            for (int y = 0; y < hashOfBarangays.size(); y++)
-                                listOfBarangays.add(hashOfBarangays.get(y).get("name"));
+                if (municipality_server_id == 0) {
+                    HashMap<String, String> map_placeholder = new HashMap();
+                    map_placeholder.put("name", "Select Barangay");
+                    map_placeholder.put("barangay_server_id", "0");
+                    map_placeholder.put("municipality_server_id", "0");
+                    hashOfBarangays.add(map_placeholder);
 
-                            barangays_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfBarangays);
-                            address_barangay.setAdapter(barangays_adapter);
+                    listOfBarangays.add(hashOfBarangays.get(0).get("name"));
 
-                            if (intent.getIntExtra("signup", 0) > 0) {
-                                if (intent.getExtras().getString("fname") != null) {
+                    barangays_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfBarangays);
+                    address_barangay.setAdapter(barangays_adapter);
+
+                } else {
+                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_barangays&municipality_id=" + municipality_server_id, new RespondListener<JSONObject>() {
+                        @Override
+                        public void getResult(JSONObject response) {
+                            try {
+                                JSONArray json_array_mysql = response.getJSONArray("barangays");
+                                for (int x = 0; x < json_array_mysql.length(); x++) {
+                                    HashMap<String, String> map = new HashMap();
+                                    JSONObject json_obj = json_array_mysql.getJSONObject(x);
+                                    map.put("name", json_obj.getString("name"));
+                                    map.put("barangay_server_id", json_obj.getString("id"));
+                                    map.put("municipality_server_id", json_obj.getString("municipality_id"));
+                                    hashOfBarangays.add(map);
+                                }
+
+                                for (int y = 0; y < hashOfBarangays.size(); y++)
+                                    listOfBarangays.add(hashOfBarangays.get(y).get("name"));
+
+                                barangays_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfBarangays);
+                                address_barangay.setAdapter(barangays_adapter);
+
+                                if (intent.getIntExtra("signup", 0) > 0) {
+                                    if (intent.getExtras().getString("fname") != null) {
+                                        String barangaySelected = "";
+
+                                        for (int x = 0; x < hashOfBarangays.size(); x++) {
+                                            if (hashOfBarangays.get(x).get("barangay_server_id").equals(intent.getExtras().getString("barangay_id")))
+                                                barangaySelected = hashOfBarangays.get(x).get("name");
+                                        }
+                                        address_barangay.setSelection(barangays_adapter.getPosition(barangaySelected));
+                                    }
+                                } else if (intent.getIntExtra("edit", 0) > 0) {
                                     String barangaySelected = "";
 
                                     for (int x = 0; x < hashOfBarangays.size(); x++) {
-                                        if (hashOfBarangays.get(x).get("barangay_server_id").equals(intent.getExtras().getString("barangay_id")))
+                                        if (hashOfBarangays.get(x).get("name").equals(patient.getBarangay()))
                                             barangaySelected = hashOfBarangays.get(x).get("name");
                                     }
                                     address_barangay.setSelection(barangays_adapter.getPosition(barangaySelected));
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        System.out.print("Error in ReferralActivity" + error);
-                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
+                    }, new ErrorListener<VolleyError>() {
+                        public void getError(VolleyError error) {
+                            Log.d("<ContactsFragment>", error + "");
+                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 break;
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 }

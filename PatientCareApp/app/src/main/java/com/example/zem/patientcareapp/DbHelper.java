@@ -1520,7 +1520,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return items;
     }
 
-    public ArrayList<HashMap<String, String>> getAllOrderItems() {
+    public ArrayList<HashMap<String, String>> getAllOrderDetailItems() {
         ArrayList<HashMap<String, String>> stfu = new ArrayList<>();
         SQLiteDatabase asdas = getWritableDatabase();
         String sql = "SELECT od.order_details_id, p.name as product_name, p.price, od.quantity, o.created_at as ordered_on, o.status,  p.packing, p.qty_per_packing, p.unit from order_details as od inner join orders as o on od.order_id = o.orders_id inner join products as p on od.product_id = p.product_id inner join branches as br on o.branch_id = br.branches_id where o.patient_id = " + SidebarActivity.getUserID() + " order by od.created_at DESC";
@@ -1544,6 +1544,22 @@ public class DbHelper extends SQLiteOpenHelper {
         cur.close();
         asdas.close();
         return stfu;
+    }
+
+    public ArrayList<String> getAllOrderItems(){
+        ArrayList<String> order_items = new ArrayList<>();
+        SQLiteDatabase asdas = getWritableDatabase();
+        String sql = "SELECT * from orders where patient_id = " + SidebarActivity.getUserID() + " order by created_at DESC";
+        Cursor cur = asdas.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            HashMap<String, String> map = new HashMap<>();
+            order_items.add("Order #"+cur.getString(cur.getColumnIndex(SERVER_ORDERS_ID))+" - "+cur.getString(cur.getColumnIndex(CREATED_AT)));
+        }
+
+        cur.close();
+        asdas.close();
+        return order_items;
     }
 
     //for prescription

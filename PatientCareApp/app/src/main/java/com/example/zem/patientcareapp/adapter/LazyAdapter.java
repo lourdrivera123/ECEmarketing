@@ -496,7 +496,7 @@ public class LazyAdapter extends BaseAdapter {
             }
         } else if (list_type.equals("order_items")) {
             vi = inflater.inflate(R.layout.list_row_order_item, null);
-            TextView product_name, product_qty_price, ordered_on, status, time_status;
+            TextView product_name, product_qty_price, ordered_on, status, time_status, order_detail_items;
             String unit, packing;
             int qtyPerPacking;
 
@@ -508,6 +508,7 @@ public class LazyAdapter extends BaseAdapter {
             ordered_on = (TextView) vi.findViewById(R.id.ordered_on);
             status = (TextView) vi.findViewById(R.id.status);
             time_status = (TextView) vi.findViewById(R.id.time_status);
+            order_detail_items = (TextView) vi.findViewById(R.id.order_detail_items);
 
             unit = order_item.get(DbHelper.PRODUCT_UNIT);
             packing = order_item.get(DbHelper.PRODUCT_PACKING);
@@ -519,13 +520,17 @@ public class LazyAdapter extends BaseAdapter {
             int num = quantity / qtyPerPacking;
 
 
-            product_name.setText(order_item.get(DbHelper.PRODUCT_NAME));
+            product_name.setText("4 item(s) for Doe, John");
 //            product_qty_price.setText(order_item.get(DbHelper.PRODUCT_PRICE) + " - " + order_item.get(DbHelper.ORDER_DETAILS_QUANTITY));
 //            ordered_on.setText(order_item.get(DbHelper.CREATED_AT));
             status.setText(order_item.get(DbHelper.ORDERS_STATUS));
 
-            product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount) + " \nQuantity: " + quantity + "  (" + helpers.getPluralForm(unit, quantity) + ") (" + num + " " + helpers.getPluralForm(packing, num) + ")" +
-                    "\nPrice: \u20B1 " + String.format("%.2f", price) + " / " + (!unit.equals("0") ? unit : ""));
+            product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount));
+
+
+
+//            product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount) + " \nQuantity: " + quantity + "  (" + helpers.getPluralForm(unit, quantity) + ") (" + num + " " + helpers.getPluralForm(packing, num) + ")" +
+//                    "\nPrice: \u20B1 " + String.format("%.2f", price) + " / " + (!unit.equals("0") ? unit : ""));
 
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -546,6 +551,8 @@ public class LazyAdapter extends BaseAdapter {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+
+            order_detail_items.setText("item 1, item2, item3,item3,item3,item3,item3,item3, item3, item3, item3, item3, item3, item3, item3, item3, item3, ");
 
         }
         return vi;
