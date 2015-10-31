@@ -1,6 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -10,10 +9,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -73,7 +70,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         main = this;
         queue = VolleySingleton.getInstance().getRequestQueue();
         sync = new Sync();
-
 
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
@@ -219,7 +215,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             pDialog.dismiss();
                         }
                     });
-
                     queue.add(jsObjRequest);
                 }
                 break;

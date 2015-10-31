@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -136,6 +135,11 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                             map.put("isRead", String.valueOf(obj.getInt("isRead")));
                             map.put("serverID", String.valueOf(obj.getInt("id")));
                             hashOfMessages.add(map);
+
+                            if (db.saveMessages(obj, "insert")) {
+
+                            } else
+                                Toast.makeText(getActivity(), "Failed to save", Toast.LENGTH_SHORT).show();
                         }
 
                         adapter = new MessagesAdapter(getActivity(), R.layout.list_item_messages_fragment, hashOfMessages);
@@ -355,8 +359,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             String date = hashOfMessages.get(position).get("created_at");
             String content = hashOfMessages.get(position).get("content");
 
-            if (Integer.parseInt(hashOfMessages.get(position).get("isRead")) == 0)
-                msgLayout.setBackgroundColor(Color.parseColor("#d3d3d3"));
+//            if (Integer.parseInt(hashOfMessages.get(position).get("isRead")) == 0)
+//                msgLayout.setBackgroundColor(Color.parseColor("#d3d3d3"));
 
             if (content.length() >= 30)
                 msgMessage.setText(hashOfMessages.get(position).get("content").substring(0, 30) + "...");

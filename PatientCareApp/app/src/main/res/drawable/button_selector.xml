@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/LightGreen" android:state_pressed="true"/>
-    <item android:drawable="@color/ColorPrimary"/>
+    <item android:state_pressed="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <gradient android:angle="90" android:endColor="@color/LightGreen" android:startColor="@color/LightGreen" />
+            <corners android:radius="3dip" />
+        </shape>
+    </item>
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <gradient android:endColor="@color/ColorPrimary" android:startColor="@color/ColorPrimary" />
+            <corners android:radius="3dip" />
+            <stroke android:width="1px" android:color="@color/DarkGreen" />
+        </shape>
+    </item>
 </selector>

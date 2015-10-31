@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
@@ -15,12 +16,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.example.zem.patientcareapp.GetterSetter.Medicine;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.GetterSetter.PatientRecord;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class PatientMedicalRecordActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener {
+public class PatientMedicalRecordActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, CalendarDatePickerDialogFragment.OnDateSetListener {
     EditText date, complaint, diagnosis, generic_name, qty, dosage;
     TextView add_treatment;
     Toolbar myToolBar;
@@ -54,7 +55,6 @@ public class PatientMedicalRecordActivity extends AppCompatActivity implements V
     Intent intent;
 
     public static Activity medRecord;
-    public static String UPDATE_RECORD_ID = "recordID";
 
     public static final String TREATMENTS_ID = "id", MEDICINE_NAME = "medicine_name", GENERIC_NAME = "generic_name",
             QUANITY = "quantity", PRESCRIPTION = "prescription";
@@ -62,7 +62,8 @@ public class PatientMedicalRecordActivity extends AppCompatActivity implements V
     private int doctorID = 0;
     private String request = "";
     long IDs;
-    static int update_recordID = 0;
+    static int view_record_id = 0;
+    static Menu menu;
 
 
     @Override
@@ -84,7 +85,7 @@ public class PatientMedicalRecordActivity extends AppCompatActivity implements V
         medRecord = this;
 
         intent = getIntent();
-        update_recordID = intent.getIntExtra(UPDATE_RECORD_ID, 0);
+        view_record_id = intent.getIntExtra("viewRecord", 0);
 
         date = (EditText) findViewById(R.id.date);
         list_of_treatments = (ListView) findViewById(R.id.list_of_treatments);
@@ -111,9 +112,12 @@ public class PatientMedicalRecordActivity extends AppCompatActivity implements V
             }
         });
 
-        if (update_recordID > 0) {
-            record = dbhelper.getPatientRecordByRecordID(update_recordID, SidebarActivity.getUserID());
-            update_treatments = dbhelper.getTreatmentByRecordID(update_recordID);
+        if (view_record_id > 0) {
+            getSupportActionBar().setTitle("View Record");
+            add_treatment.setVisibility(View.INVISIBLE);
+
+            record = dbhelper.getPatientRecordByRecordID(view_record_id, SidebarActivity.getUserID());
+            update_treatments = dbhelper.getTreatmentByRecordID(view_record_id);
 
             for (int x = 0; x < update_treatments.size(); x++) {
                 map = new HashMap();
@@ -125,11 +129,18 @@ public class PatientMedicalRecordActivity extends AppCompatActivity implements V
                 items.add(map);
                 treatments.add(items.get(x).get(MEDICINE_NAME) + " - " + items.get(x).get(PRESCRIPTION));
             }
+
             date.setText(record.getDate());
             complaint.setText(record.getComplaints());
             diagnosis.setText(record.getFindings());
             search_doctor.setText(record.getDoctorName());
             doctorID = record.getDoctorID();
+
+            date.setEnabled(false);
+            complaint.setEnabled(false);
+            diagnosis.setEnabled(false);
+            search_doctor.setEnabled(false);
+            list_of_treatments.setEnabled(false);
         }
 
         treatmentsAdapter = new ArrayAdapter(this, R.layout.treatments_list_layout, treatments);
@@ -142,75 +153,89 @@ public class PatientMedicalRecordActivity extends AppCompatActivity implements V
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.save_and_cancel, menu);
+        this.menu = menu;
+        if (view_record_id > 0)
+            getMenuInflater().inflate(R.menu.update_options_menu, menu);
+        else
+            getMenuInflater().inflate(R.menu.save_and_cancel, menu);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        if (view_record_id > 0) {
+            switch (item.getItemId()) {
+                case R.id.edit:
+                    MenuItem menuEdit = menu.findItem(R.id.edit);
+                    menuEdit.setEnabled(false).setVisible(false);
+                    getSupportActionBar().setTitle("Update Record");
+                    getMenuInflater().inflate(R.menu.save_and_cancel, menu);
 
-        if (id == R.id.save) {
-            s_date = date.getText().toString();
-            s_doctor = search_doctor.getText().toString();
-            s_complaint = complaint.getText().toString();
-            s_diagnosis = diagnosis.getText().toString();
-
-            if (s_date.equals("") || s_doctor.equals("") || s_complaint.equals("") || s_diagnosis.equals("") || items.size() == 0) {
-                if (date.getText().toString().equals("")) {
-                    date.setError("Field required");
-                }
-                if (search_doctor.getText().toString().equals("")) {
-                    search_doctor.setError("Field required");
-                }
-                if (complaint.getText().toString().equals("")) {
-                    complaint.setError("Field required");
-                }
-                if (items.size() == 0) {
-                    add_treatment.setError("Field required");
-                }
-                if (diagnosis.getText().toString().equals("")) {
-                    diagnosis.setError("Field required");
-                }
-            } else {
-                String uname = SidebarActivity.getUname();
-                patient = dbhelper.getloginPatient(uname);
-
-                record = new PatientRecord();
-                record.setPatientID(patient.getServerID());
-                record.setComplaints(s_complaint);
-                record.setFindings(s_diagnosis);
-                record.setDate(s_date);
-                record.setDoctorID(doctorID);
-                record.setDoctorName(s_doctor);
-
-                if (update_recordID > 0) { //FOR UPDATING RECORD
-                    request = "update";
-                    record.setRecordID(update_recordID);
-                } else { //FOR ADDING NEW RECORD
-                    request = "insert";
-                }
-
-                IDs = dbhelper.savePatientRecord(record, request);
-                if (IDs > 0) {
-                    if (update_recordID > 0) {
-                        IDs = update_recordID;
-                    }
-                    dbhelper.insertTreatment(items, IDs);
-                    Intent intent = new Intent(this, MasterTabActivity.class);
-                    intent.putExtra("selected", 1);
-                    startActivity(intent);
-                    this.finish();
-
-                } else {
-                    Toast.makeText(this, "error occurred", Toast.LENGTH_SHORT).show();
-                }
+                    date.setEnabled(true);
+                    search_doctor.setEnabled(true);
+                    complaint.setEnabled(true);
+                    diagnosis.setEnabled(true);
+                    list_of_treatments.setEnabled(true);
+                    add_treatment.setVisibility(View.VISIBLE);
+                    break;
             }
-        } else if (id == R.id.cancel) {
-            Intent intent = new Intent(this, MasterTabActivity.class);
-            intent.putExtra("selected", 1);
-            startActivity(intent);
-            this.finish();
+        }
+        switch (item.getItemId()) {
+            case R.id.save:
+                s_date = date.getText().toString();
+                s_doctor = search_doctor.getText().toString();
+                s_complaint = complaint.getText().toString();
+                s_diagnosis = diagnosis.getText().toString();
+
+                if (s_date.equals("") || s_doctor.equals("") || s_complaint.equals("") || s_diagnosis.equals("") || items.size() == 0) {
+                    if (date.getText().toString().equals(""))
+                        date.setError("Field required");
+                    if (search_doctor.getText().toString().equals(""))
+                        search_doctor.setError("Field required");
+                    if (complaint.getText().toString().equals(""))
+                        complaint.setError("Field required");
+                    if (items.size() == 0)
+                        add_treatment.setError("Field required");
+                    if (diagnosis.getText().toString().equals(""))
+                        diagnosis.setError("Field required");
+                } else {
+                    String uname = SidebarActivity.getUname();
+                    patient = dbhelper.getloginPatient(uname);
+
+                    record = new PatientRecord();
+                    record.setPatientID(patient.getServerID());
+                    record.setComplaints(s_complaint);
+                    record.setFindings(s_diagnosis);
+                    record.setDate(s_date);
+                    record.setDoctorID(doctorID);
+                    record.setDoctorName(s_doctor);
+
+                    if (view_record_id > 0) { //FOR UPDATING RECORD
+                        request = "update";
+                        record.setRecordID(view_record_id);
+                    } else //FOR ADDING NEW RECORD
+                        request = "insert";
+
+                    IDs = dbhelper.savePatientRecord(record, request);
+                    if (IDs > 0) {
+                        if (view_record_id > 0)
+                            IDs = view_record_id;
+
+                        dbhelper.insertTreatment(items, IDs);
+                        Intent intent = new Intent(this, MasterTabActivity.class);
+                        intent.putExtra("selected", 1);
+                        startActivity(intent);
+                        this.finish();
+                    } else
+                        Toast.makeText(this, "error occurred", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case R.id.cancel:
+                this.finish();
+
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -219,21 +244,27 @@ public class PatientMedicalRecordActivity extends AppCompatActivity implements V
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.date:
-                Calendar cal = Calendar.getInstance();
-                if (date.getText().toString().equals("")) {
-                    DatePickerDialog datePicker = new DatePickerDialog(this, this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-                    datePicker.show();
-                } else {
-                    int month, year, day;
-                    String birth = date.getText().toString();
-                    int indexOfMonthandDay = birth.indexOf("/");
-                    int indexOfYear = birth.lastIndexOf("/");
-                    year = Integer.parseInt(birth.substring(indexOfYear + 1, birth.length()));
-                    month = Integer.parseInt(birth.substring(0, indexOfMonthandDay));
-                    day = Integer.parseInt(birth.substring(indexOfMonthandDay + 1, indexOfYear));
+                FragmentManager fm = getSupportFragmentManager();
+                CalendarDatePickerDialogFragment datepicker;
+                String birth = date.getText().toString();
+                int month, year, day;
 
-                    updateDate(year, month - 1, day);
+                if (birth.equals("")) {
+                    Calendar calendar = Calendar.getInstance();
+                    year = calendar.get(Calendar.YEAR);
+                    month = calendar.get(Calendar.MONTH);
+                    day = calendar.get(Calendar.DATE);
+                } else {
+                    int indexOfYear = birth.indexOf("-");
+                    int indexOfMonthandDay = birth.lastIndexOf("-");
+                    year = Integer.parseInt(birth.substring(0, indexOfYear));
+                    month = Integer.parseInt(birth.substring(indexOfYear + 1, indexOfMonthandDay)) - 1;
+                    day = Integer.parseInt(birth.substring(indexOfMonthandDay + 1, birth.length()));
                 }
+
+                datepicker = CalendarDatePickerDialogFragment.newInstance(this, year, month, day);
+
+                datepicker.show(fm, "fragment_date_picker_name");
                 break;
 
             case R.id.add_treatment:
@@ -247,15 +278,9 @@ public class PatientMedicalRecordActivity extends AppCompatActivity implements V
     }
 
     @Override
-    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        String dateStr = String.format("%d/%d/%d", (monthOfYear + 1), dayOfMonth, year);
+    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+        String dateStr = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
         date.setText(dateStr);
-        date.setError(null);
-    }
-
-    public void updateDate(int year, int monthOfYear, int dayOfMonth) {
-        DatePickerDialog datePicker = new DatePickerDialog(this, this, year, monthOfYear, dayOfMonth);
-        datePicker.show();
     }
 
     @Override

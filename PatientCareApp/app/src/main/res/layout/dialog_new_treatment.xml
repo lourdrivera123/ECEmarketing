@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/d10"
-    android:layout_marginTop="@dimen/d10"
-    android:layout_marginLeft="@dimen/d10"
-    android:layout_marginRight="@dimen/d10">
+    android:orientation="vertical"
+    android:padding="@dimen/d10">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -23,65 +20,68 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_search"
-                android:paddingTop="0dip"
+                android:hint="Medicine"
                 android:paddingBottom="0dip"
                 android:paddingLeft="0dip"
-                android:hint="Medicine" />
+                android:paddingTop="0dip"
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/generic_name"
-                android:layout_marginTop="@dimen/d10"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Generic name" />
+                android:layout_marginTop="5dp"
+                android:hint="Generic name"
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/qty"
-                android:layout_marginTop="@dimen/d10"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Quantity" />
+                android:layout_marginTop="5dp"
+                android:hint="Quantity"
+                android:textSize="15sp" />
 
 
             <EditText
                 android:id="@+id/dosage"
-                android:layout_marginTop="@dimen/d10"
-                android:inputType="textMultiLine"
-                android:lines="2"
-                android:minLines="2"
-                android:maxLines="5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:gravity="bottom|left"
                 android:hint="Dosage"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:scrollbars="vertical" />
+                android:inputType="textMultiLine"
+                android:lines="2"
+                android:maxLines="5"
+                android:minLines="2"
+                android:scrollbars="vertical"
+                android:textSize="15sp" />
         </LinearLayout>
     </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/d20">
+        android:layout_marginTop="@dimen/d10">
 
         <Button
             android:id="@+id/save_treatment"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_bg"
+            android:layout_height="40dp"
             android:layout_marginRight="5dp"
-            android:textColor="@color/white"
             android:layout_weight="1"
-            android:text="Save" />
+            android:background="@drawable/button_selector"
+            android:text="Save"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/cancel_treatment"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_bg"
+            android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:textColor="@color/white"
             android:layout_weight="1"
-            android:text="Cancel" />
-
+            android:background="@drawable/button_selector"
+            android:text="Cancel"
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

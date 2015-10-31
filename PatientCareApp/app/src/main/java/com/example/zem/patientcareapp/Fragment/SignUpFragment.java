@@ -36,7 +36,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
             "Single", "Married", "Widowed", "Separated", "Divorced"
     };
     String get_birthdate;
-    public static int int_year, int_month, int_day;
 
     DbHelper dbhelper;
 
@@ -126,10 +125,9 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
                 month = Integer.parseInt(get_birthdate.substring(indexOfYear + 1, indexOfMonthandDay)) - 1;
                 day = Integer.parseInt(get_birthdate.substring(indexOfMonthandDay + 1, get_birthdate.length()));
 
-                datepicker = CalendarDatePickerDialogFragment
-                        .newInstance(this, year, month, day);
-
+                datepicker = CalendarDatePickerDialogFragment.newInstance(this, year, month, day);
                 datepicker.show(fm, "fragment_date_picker_name");
+
                 break;
         }
     }
@@ -139,10 +137,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
         String dateStr = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
         birthdate.setText(dateStr);
         get_birthdate = dateStr;
-
-        int_year = year;
-        int_month = monthOfYear;
-        int_day = dayOfMonth;
 
         Calendar calendar = Calendar.getInstance();
         int current_year = calendar.get(Calendar.YEAR);

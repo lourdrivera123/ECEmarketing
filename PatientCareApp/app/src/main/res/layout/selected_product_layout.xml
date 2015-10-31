@@ -115,7 +115,7 @@
                 android:textColor="@color/white"
                 android:layout_gravity="center"
                 style="?android:attr/buttonStyleSmall"
-                android:background="@drawable/button_bg" />
+                android:background="@drawable/button_selector" />
         </LinearLayout>
     </LinearLayout>
 

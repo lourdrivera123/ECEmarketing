@@ -1078,12 +1078,10 @@ public class DbHelper extends SQLiteOpenHelper {
             val.put(IS_READ, json.getInt(IS_READ));
             val.put(CREATED_AT, json.getString(CREATED_AT));
             val.put(UPDATED_AT, json.getString(UPDATED_AT));
-            val.put(DELETED_AT, json.getString(DELETED_AT));
 
             if (request.equals("insert")) {
                 rowID = db.insert(TBl_MSGS, null, val);
             } else {
-                Log.d("updated", "yes");
                 rowID = db.update(TBl_MSGS, val, MSGS_SERVER_ID + " = " + json.getInt("id"), null);
             }
         } catch (Exception e) {

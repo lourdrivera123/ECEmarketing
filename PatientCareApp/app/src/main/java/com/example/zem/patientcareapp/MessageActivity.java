@@ -47,8 +47,9 @@ public class MessageActivity extends Activity {
         db = new DbHelper(this);
         serverRequest = new ServerRequest();
         Intent intent = getIntent();
+        int server_id = intent.getIntExtra("serverID", 0);
 
-        msg = db.getSpecificMessage(intent.getIntExtra("serverID", 0));
+        msg = db.getSpecificMessage(server_id);
 
         if (msg.getIsRead() == 0) {
             HashMap<String, String> hashMap = new HashMap();
