@@ -93,8 +93,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     // CONTACTS FRAGMENT
     EditText address_street, optional_address_line, tel_no, cell_no, email;
     Spinner address_region, address_barangay, address_city_municipality, address_province;
+    int i_region_id, i_province_id, i_municpality_id, i_barangay_id;
     String s_street, s_optional_address, s_email, s_tel_no, s_cell_no;
-    int i_region_id;
 
     // ACCOUNT INFO FRAGMENT
     String username = "", pass = "", s_filepath = "";
@@ -261,6 +261,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                             final HashMap<String, String> params = setParams("register");
 
                                             StringRequests.getString(EditTabsActivity.this, "generate/referral_id", new StringRespondListener<String>() {
+
                                                 @Override
                                                 public void getResult(String response) {
                                                     Log.d("response id", response);
@@ -503,6 +504,11 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         address_city_municipality = (Spinner) findViewById(R.id.address_city_municipality);
         address_province = (Spinner) findViewById(R.id.address_province);
         i_region_id = Integer.parseInt(ContactsFragment.hashOfRegions.get(address_region.getSelectedItemPosition()).get("region_server_id"));
+
+//        i_province_id = Integer.parseInt(ContactsFragment.hashOfProvinces.get(address_province.getSelectedItemPosition()).get("province_server_id"));
+//        i_municpality_id = Integer.parseInt(ContactsFragment.hashOfMunicipalities.get(address_city_municipality.getSelectedItemPosition()).get("municipality_server_id"));
+//        i_barangay_id = Integer.parseInt(ContactsFragment.hashOfBarangays.get(address_barangay.getSelectedItemPosition()).get("barangay_server_id"));
+
         s_street = address_street.getText().toString();
 
         s_email = email.getText().toString();

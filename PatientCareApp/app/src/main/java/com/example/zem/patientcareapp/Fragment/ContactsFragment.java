@@ -138,7 +138,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Log.d("<ContactsFragment>", error+"");
+                Log.d("<ContactsFragment>", error + "");
                 Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
 
             }
@@ -170,7 +170,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     map_placeholder.put("province_server_id", "0");
                     map_placeholder.put("region_server_id", "0");
                     hashOfProvinces.add(map_placeholder);
-
                     listOfProvinces.add(hashOfProvinces.get(0).get("name"));
 
                     provinces_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfProvinces);
@@ -207,15 +206,9 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                         }
                                         address_province.setSelection(provinces_adapter.getPosition(provinceSelected));
                                     }
-                                } else if (intent.getIntExtra("edit", 0) > 0) {
-                                    String provinceSelected = "";
-
-                                    for (int x = 0; x < hashOfProvinces.size(); x++) {
-                                        if (hashOfProvinces.get(x).get("name").equals(patient.getProvince()))
-                                            provinceSelected = hashOfProvinces.get(x).get("name");
-                                    }
-                                    address_province.setSelection(provinces_adapter.getPosition(provinceSelected));
                                 }
+
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -250,6 +243,8 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                         @Override
                         public void getResult(JSONObject response) {
                             try {
+
+
                                 JSONArray json_array_mysql = response.getJSONArray("municipalities");
                                 for (int x = 0; x < json_array_mysql.length(); x++) {
                                     HashMap<String, String> map = new HashMap();
@@ -276,15 +271,8 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                         }
                                         address_city_municipality.setSelection(municipalities_adapter.getPosition(municipalitySelected));
                                     }
-                                } else if (intent.getIntExtra("edit", 0) > 0) {
-                                    String municipalitySelected = "";
-
-                                    for (int x = 0; x < hashOfMunicipalities.size(); x++) {
-                                        if (hashOfMunicipalities.get(x).get("name").equals(patient.getMunicipality()))
-                                            municipalitySelected = hashOfMunicipalities.get(x).get("name");
-                                    }
-                                    address_city_municipality.setSelection(municipalities_adapter.getPosition(municipalitySelected));
                                 }
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -302,7 +290,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                 hashOfBarangays = new ArrayList();
                 listOfBarangays = new ArrayList();
                 final int municipality_server_id = Integer.parseInt(hashOfMunicipalities.get(position).get("municipality_server_id"));
-
                 if (municipality_server_id == 0) {
                     HashMap<String, String> map_placeholder = new HashMap();
                     map_placeholder.put("name", "Select Barangay");
@@ -314,12 +301,13 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
 
                     barangays_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfBarangays);
                     address_barangay.setAdapter(barangays_adapter);
-
                 } else {
                     ListOfPatientsRequest.getJSONobj(getActivity(), "get_barangays&municipality_id=" + municipality_server_id, new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {
+
+
                                 JSONArray json_array_mysql = response.getJSONArray("barangays");
                                 for (int x = 0; x < json_array_mysql.length(); x++) {
                                     HashMap<String, String> map = new HashMap();
@@ -346,15 +334,8 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                         }
                                         address_barangay.setSelection(barangays_adapter.getPosition(barangaySelected));
                                     }
-                                } else if (intent.getIntExtra("edit", 0) > 0) {
-                                    String barangaySelected = "";
-
-                                    for (int x = 0; x < hashOfBarangays.size(); x++) {
-                                        if (hashOfBarangays.get(x).get("name").equals(patient.getBarangay()))
-                                            barangaySelected = hashOfBarangays.get(x).get("name");
-                                    }
-                                    address_barangay.setSelection(barangays_adapter.getPosition(barangaySelected));
                                 }
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -369,6 +350,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                 break;
         }
     }
+
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
