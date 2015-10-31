@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.example.zem.patientcareapp.adapter.ExpandableListViewAdapter;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 
 import java.text.ParseException;
@@ -27,6 +29,7 @@ public class OrdersActivity extends AppCompatActivity {
     Toolbar ordersToolbar;
 
     LazyAdapter adapter;
+    ArrayList<String> order_items;
     ArrayList<HashMap<String, String>> items;
     DbHelper dbHelper;
     Context context;
@@ -47,10 +50,36 @@ public class OrdersActivity extends AppCompatActivity {
         context = getBaseContext();
         dbHelper = new DbHelper(OrdersActivity.this);
 
-        items = dbHelper.getAllOrderItems(); // returns all basket items for the currently loggedin patient
+        order_items = dbHelper.getAllOrderItems();
+        items = dbHelper.getAllOrderDetailItems(); // returns all basket items for the currently loggedin patient
+
+        //experiment on expandable listview
+
+//       ExpandableListView lv_items = (ExpandableListView) findViewById(R.id.lv_items);
+//
+//
+//        ArrayList<String> listDataHeader = new ArrayList<String>();
+//
+//        HashMap<String, ArrayList<String>> listDataChild = new HashMap<String, ArrayList<String>>();
+//
+//        listDataHeader.add("Coming Soon");
+//
+//        ArrayList<String> comingSoon = new ArrayList<String>();
+//        comingSoon.add("2 Guns");
+//        comingSoon.add("The Smurfs 2");
+//        comingSoon.add("The Spectacular Now");
+//        comingSoon.add("The Canyons");
+//        comingSoon.add("Europa Report");
+//
+//        listDataChild.put(order_items.get(0), comingSoon);
+//
+//        ExpandableListViewAdapter listAdapte
+//       //end of experimentr = new ExpandableListViewAdapter(this, order_items, listDataChild);
+//        lv_items.setAdapter(listAdapter);
 
         adapter = new LazyAdapter(OrdersActivity.this, items, "order_items");
         lv_items.setAdapter(adapter);
+
 
         Intent intent = getIntent();
         String timestamp_ordered = intent.getStringExtra("timestamp_ordered");

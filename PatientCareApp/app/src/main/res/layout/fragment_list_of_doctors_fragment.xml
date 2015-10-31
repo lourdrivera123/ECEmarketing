@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/d10"
             android:drawableLeft="@drawable/ic_search"
-            android:hint="Search Name/Specialty/Clinic/Prc No."
+            android:hint="Search by Name/Specialty/Clinic"
             android:paddingBottom="0dip"
             android:paddingTop="0dip"
             android:textSize="13sp" />

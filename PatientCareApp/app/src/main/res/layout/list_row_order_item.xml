@@ -54,6 +54,16 @@
         android:textSize="12sp"
         tools:ignore="RtlCompat" />
 
+    <TextView
+        android:id="@+id/order_detail_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ordered_on"
+        android:layout_marginStart="10dp"
+        android:text="Item 1, Item 2, Item 3"
+        android:textSize="12sp"
+        tools:ignore="RtlCompat" />
+
     <LinearLayout
         android:id="@+id/item_status"
         android:layout_width="match_parent"

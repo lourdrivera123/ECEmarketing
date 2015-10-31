@@ -1,11 +1,11 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -32,7 +32,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-public class PatientConsultationActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener, TextWatcher, CompoundButton.OnCheckedChangeListener {
+public class PatientConsultationActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemClickListener, TextWatcher, CompoundButton.OnCheckedChangeListener {
     DbHelper dbhelper;
     Consultation consult;
     AlarmService alarmService;
@@ -42,6 +42,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
     CheckBox checkAlarm;
     AutoCompleteTextView search_doctor, search_clinic;
     Spinner spinner_clinic;
+    Toolbar myToolBar;
 
     Calendar cal;
     ArrayAdapter<String> doctorAdapter, clinicAdapter;
@@ -57,9 +58,9 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_consultation_layout);
 
-        ActionBar actionBar = getActionBar();
-        MainActivity.setCustomActionBar(actionBar);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        myToolBar = (Toolbar) findViewById(R.id.myToolBar);
+        setSupportActionBar(myToolBar);
+        getSupportActionBar().setTitle("Set Consultation");
 
         dbhelper = new DbHelper(this);
         alarmService = new AlarmService(this);
@@ -151,7 +152,7 @@ public class PatientConsultationActivity extends Activity implements View.OnClic
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.save_menu, menu);
+        inflater.inflate(R.menu.save_and_cancel, menu);
         return true;
     }
 

@@ -72,7 +72,7 @@
             android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".PatientConsultationActivity"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".MessageActivity"
             android:theme="@style/Theme.MyFancyTheme" />
