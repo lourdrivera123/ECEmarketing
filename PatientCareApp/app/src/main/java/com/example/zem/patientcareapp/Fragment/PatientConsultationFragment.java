@@ -1,23 +1,17 @@
 package com.example.zem.patientcareapp.Fragment;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Consultation;
@@ -47,17 +41,6 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         listOfConsultations = (ListView) rootView.findViewById(R.id.consultation_schedules);
         add_consultation = (ImageButton) rootView.findViewById(R.id.add_consultation);
 
-        dbhelper = new DbHelper(getActivity());
-        listOfAllConsultations = dbhelper.getAllConsultationsByUserId(SidebarActivity.getUserID());
-        consultationDoctors = new ArrayList();
-        consult = new Consultation();
-
-        for (int x = 0; x < listOfAllConsultations.size(); x++) {
-            consultationDoctors.add(listOfAllConsultations.get(x).get(DbHelper.CONSULT_DOCTOR));
-        }
-        consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, R.id.doctor_name, consultationDoctors);
-        listOfConsultations.setAdapter(consultAdapter);
-
         add_consultation.setOnClickListener(this);
         listOfConsultations.setOnCreateContextMenuListener(this);
 
@@ -66,6 +49,14 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
     @Override
     public void onResume() {
+        dbhelper = new DbHelper(getActivity());
+        listOfAllConsultations = dbhelper.getAllConsultationsByUserId(SidebarActivity.getUserID());
+        consultationDoctors = new ArrayList();
+        consult = new Consultation();
+
+        consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, listOfAllConsultations);
+        listOfConsultations.setAdapter(consultAdapter);
+
         super.onResume();
     }
 
@@ -77,64 +68,18 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         startActivity(intent);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.cart_menus, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        final AdapterView.AdapterContextMenuInfo menuinfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        switch (item.getItemId()) {
-            case R.id.update_cart:
-                Intent intent = new Intent(getActivity(), PatientConsultationActivity.class);
-                intent.putExtra("updateID", listOfAllConsultations.get(menuinfo.position).get(DbHelper.AI_ID));
-                intent.putExtra("request", "update");
-                startActivity(intent);
-                break;
-
-            case R.id.delete_context:
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                dialog.setTitle("Delete?");
-                dialog.setMessage("1 record will be deleted.");
-                dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int consultID = Integer.parseInt(listOfAllConsultations.get(menuinfo.position).get("id"));
-
-                        if (dbhelper.deleteConsultation(consultID)) {
-                            listOfAllConsultations.remove(menuinfo.position);
-                            consultationDoctors.remove(menuinfo.position);
-                            consultAdapter.notifyDataSetChanged();
-                        } else {
-                            Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.create().show();
-
-                break;
-        }
-        return super.onContextItemSelected(item);
-    }
-
     private class ConsultationAdapter extends ArrayAdapter {
+        LayoutInflater inflater;
 
-        public ConsultationAdapter(Context context, int resource, int textViewResourceId, ArrayList<String> objects) {
-            super(context, resource, textViewResourceId, objects);
+        public ConsultationAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
+            super(context, resource, objects);
+            inflater = LayoutInflater.from(context);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View v = super.getView(position, convertView, parent);
+            View v = inflater.inflate(R.layout.list_row_consultations, parent, false);
+
             Drawable d = getResources().getDrawable(R.drawable.list_selector);
             v.setBackgroundDrawable(d);
 
@@ -142,8 +87,8 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
             clinic_address = (TextView) v.findViewById(R.id.clinic_address);
             consultation_schedule = (TextView) v.findViewById(R.id.consultation_schedule);
 
-            doctor_name.setText("Dr. " + listOfAllConsultations.get(position).get(DbHelper.CONSULT_DOCTOR));
-            clinic_address.setText(listOfAllConsultations.get(position).get(DbHelper.CONSULT_CLINIC));
+//            doctor_name.setText("Dr. " + listOfAllConsultations.get(position).get(DbHelper.CONSULT_DOCTOR));
+//            clinic_address.setText(listOfAllConsultations.get(position).get(DbHelper.CONSULT_CLINIC));
             consultation_schedule.setText(listOfAllConsultations.get(position).get(DbHelper.CONSULT_DATE) + ", " + listOfAllConsultations.get(position).get(dbhelper.CONSULT_TIME));
 
             return v;

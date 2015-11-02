@@ -79,10 +79,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                 cell_no.setText(intent.getExtras().getString("mobile_no"));
             }
         }
-//        map_region.put("name", "Select Region");
-//        map_region.put("code", "Select Region");
-//        map_region.put("region_server_id", "0");
-//        hashOfRegions.add(map_region);
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_regions", new RespondListener<JSONObject>() {
             @Override

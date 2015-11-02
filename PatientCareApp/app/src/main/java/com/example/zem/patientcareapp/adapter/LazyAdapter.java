@@ -528,7 +528,6 @@ public class LazyAdapter extends BaseAdapter {
             product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount));
 
 
-
 //            product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount) + " \nQuantity: " + quantity + "  (" + helpers.getPluralForm(unit, quantity) + ") (" + num + " " + helpers.getPluralForm(packing, num) + ")" +
 //                    "\nPrice: \u20B1 " + String.format("%.2f", price) + " / " + (!unit.equals("0") ? unit : ""));
 

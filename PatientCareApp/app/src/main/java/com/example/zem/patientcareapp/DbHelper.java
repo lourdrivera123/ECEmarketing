@@ -257,16 +257,15 @@ public class DbHelper extends SQLiteOpenHelper {
 
     //CONSULTATION
     public static final String TBL_PATIENT_CONSULTATIONS = "consultations",
+            CONSULT_SERVER_ID = "consultation_id",
             CONSULT_DOCTOR_ID = "doctor_id",
-            CONSULT_SERVER_ID = "server_id",
-            CONSULT_DOCTOR = "doctor",
             CONSULT_CLINIC_ID = "clinic_id",
-            CONSULT_CLINIC = "clinic",
             CONSULT_DATE = "date",
             CONSULT_TIME = "time",
-            CONSULT_IS_ALARMED = "isAlarm",
-            CONSULT_ALARMED_TIME = "alarmedTime",
-            CONSULT_IS_FINISHED = "finished";
+            CONSULT_IS_ALARMED = "is_alarm",
+            CONSULT_ALARMED_TIME = "alarm_time",
+            CONSULT_IS_FINISHED = "finished",
+            CONSULT_IS_APPROVED = "is_approved";
 
     //OVERLAY
     public static final String TBL_OVERLAYS = "overlays",
@@ -411,8 +410,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_PATIENT_PRESCRIPTIONS, AI_ID, PRESCRIPTIONS_SERVER_ID, PATIENT_ID, PRESCRIPTIONS_FILENAME, PRESCRIPTIONS_APPROVED, CREATED_AT, DELETED_AT);
 
         //SQL to create PATIENT CONSULTATIONS
-        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_PATIENT_CONSULTATIONS, AI_ID, CONSULT_SERVER_ID, PATIENT_ID, CONSULT_DOCTOR_ID, CONSULT_DOCTOR, CONSULT_CLINIC_ID, CONSULT_CLINIC, CONSULT_DATE, CONSULT_TIME, CONSULT_IS_ALARMED, CONSULT_ALARMED_TIME, CONSULT_IS_FINISHED, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT)",
+                TBL_PATIENT_CONSULTATIONS, AI_ID, CONSULT_SERVER_ID, PATIENT_ID, CONSULT_DOCTOR_ID, CONSULT_CLINIC_ID, CONSULT_DATE, CONSULT_TIME, CONSULT_IS_ALARMED, CONSULT_ALARMED_TIME, CONSULT_IS_FINISHED, CONSULT_IS_APPROVED, CREATED_AT, UPDATED_AT);
 
         String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER)",
                 TBL_OVERLAYS, AI_ID, OVERLAY_TITLE, IS_READ);
@@ -937,18 +936,16 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         long rowID = 0;
 
+        values.put(CONSULT_SERVER_ID, consult.getServerID());
         values.put(PATIENT_ID, consult.getPatientID());
-        values.put(CONSULT_DOCTOR, consult.getDoctor());
-        values.put(CONSULT_CLINIC, consult.getClinic());
+        values.put(CONSULT_DOCTOR_ID, consult.getDoctorID());
+        values.put(CONSULT_CLINIC_ID, consult.getClinicID());
         values.put(CONSULT_DATE, consult.getDate());
         values.put(CONSULT_TIME, consult.getTime());
         values.put(CONSULT_IS_FINISHED, consult.getIsFinished());
         values.put(CONSULT_IS_ALARMED, consult.getIsAlarmed());
-
-        if (consult.getIsAlarmed() == 0)
-            values.put(CONSULT_TIME, "");
-        else
-            values.put(CONSULT_TIME, consult.getTime());
+        values.put(CONSULT_ALARMED_TIME, consult.getAlarmedTime());
+        values.put(CONSULT_IS_APPROVED, consult.getIs_approved());
 
         if (request.equals("add")) {
             rowID = db.insert(TBL_PATIENT_CONSULTATIONS, null, values);
@@ -1403,7 +1400,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(DOC_DOC_ID, cur.getString(cur.getColumnIndex(DOC_DOC_ID)));
             map.put(DOC_FNAME, cur.getString(cur.getColumnIndex(DOC_FNAME)));
             map.put(DOC_LNAME, cur.getString(cur.getColumnIndex(DOC_LNAME)));
-            map.put("fullname", "" + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
+            map.put("fullname", "Dr. " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
             map.put(DOC_MNAME, cur.getString(cur.getColumnIndex(DOC_MNAME)));
             map.put(DOC_SUB_SPECIALTY_ID, cur.getString(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
             map.put("name", cur.getString(cur.getColumnIndex("name")));
@@ -1544,7 +1541,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return stfu;
     }
 
-    public ArrayList<String> getAllOrderItems(){
+    public ArrayList<String> getAllOrderItems() {
         ArrayList<String> order_items = new ArrayList<>();
         SQLiteDatabase asdas = getWritableDatabase();
         String sql = "SELECT * from orders where patient_id = " + SidebarActivity.getUserID() + " order by created_at DESC";
@@ -1552,7 +1549,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap<>();
-            order_items.add("Order #"+cur.getString(cur.getColumnIndex(SERVER_ORDERS_ID))+" - "+cur.getString(cur.getColumnIndex(CREATED_AT)));
+            order_items.add("Order #" + cur.getString(cur.getColumnIndex(SERVER_ORDERS_ID)) + " - " + cur.getString(cur.getColumnIndex(CREATED_AT)));
         }
 
         cur.close();
@@ -1585,15 +1582,16 @@ public class DbHelper extends SQLiteOpenHelper {
         ArrayList<HashMap<String, String>> listOfDoctorClinic = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
 
-        String sql = "select d.lname, d.mname, d.fname, c.name, cd.clinic_sched from " + TBL_DOCTORS + " as d INNER JOIN " +
+        String sql = "select d.lname, d.mname, d.fname, c.name, c.clinics_id, cd.clinic_sched from " + TBL_DOCTORS + " as d INNER JOIN " +
                 TBL_CLINIC_DOCTOR + " as cd on " + "d.doc_id = cd.doctor_id INNER JOIN " + TBL_CLINICS + " as c on cd.clinic_id = " +
                 "c.clinics_id WHERE cd.is_active = 1";
         Cursor cur = db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
-            String fullname = cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME));
+            String fullname = "Dr. " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex(DOC_LNAME));
 
+            map.put("clinics_id", String.valueOf(cur.getInt(cur.getColumnIndex(SERVER_CLINICS_ID))));
             map.put("fullname", fullname);
             map.put("clinic_name", cur.getString(cur.getColumnIndex(CLINIC_NAME)));
             map.put("clinic_sched", cur.getString(cur.getColumnIndex(CD_CLINIC_SCHED)));
@@ -1644,14 +1642,15 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
-            map.put(AI_ID, String.valueOf(cur.getInt(cur.getColumnIndex(AI_ID))));
-            map.put(CONSULT_DOCTOR, cur.getString(cur.getColumnIndex(CONSULT_DOCTOR)));
-            map.put(CONSULT_CLINIC, cur.getString(cur.getColumnIndex(CONSULT_CLINIC)));
+            map.put(CONSULT_SERVER_ID, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_SERVER_ID))));
+            map.put(CONSULT_DOCTOR_ID, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_DOCTOR_ID))));
+            map.put(CONSULT_CLINIC_ID, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_CLINIC_ID))));
             map.put(CONSULT_DATE, cur.getString(cur.getColumnIndex(CONSULT_DATE)));
             map.put(CONSULT_TIME, cur.getString(cur.getColumnIndex(CONSULT_TIME)));
             map.put(CONSULT_IS_ALARMED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED))));
             map.put(CONSULT_TIME, cur.getString(cur.getColumnIndex(CONSULT_TIME)));
             map.put(CONSULT_IS_FINISHED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED))));
+            map.put(CONSULT_IS_APPROVED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_APPROVED))));
             listOfAllConsultations.add(map);
         }
         db.close();
@@ -1672,9 +1671,7 @@ public class DbHelper extends SQLiteOpenHelper {
             consult.setServerID(cur.getInt(cur.getColumnIndex(CONSULT_SERVER_ID)));
             consult.setPatientID(cur.getInt(cur.getColumnIndex(PATIENT_ID)));
             consult.setDoctorID(cur.getInt(cur.getColumnIndex(CONSULT_DOCTOR_ID)));
-            consult.setDoctor(cur.getString(cur.getColumnIndex(CONSULT_DOCTOR)));
             consult.setClinicID(cur.getInt(cur.getColumnIndex(CONSULT_CLINIC_ID)));
-            consult.setClinic(cur.getString(cur.getColumnIndex(CONSULT_CLINIC)));
             consult.setIsAlarmed(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED)));
             consult.setAlarmedTime(cur.getString(cur.getColumnIndex(CONSULT_ALARMED_TIME)));
             consult.setDate(cur.getString(cur.getColumnIndex(CONSULT_DATE)));
@@ -1682,7 +1679,7 @@ public class DbHelper extends SQLiteOpenHelper {
             consult.setIsFinished(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED)));
             consult.setCreated_at(cur.getString(cur.getColumnIndex(CREATED_AT)));
             consult.setUpdated_at(cur.getString(cur.getColumnIndex(UPDATED_AT)));
-            consult.setDeleted_at(cur.getString(cur.getColumnIndex(DELETED_AT)));
+            consult.setIs_approved(cur.getInt(cur.getColumnIndex(CONSULT_IS_APPROVED)));
         }
         cur.close();
         db.close();
@@ -2127,14 +2124,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
         return row > 0;
 
-    }
-
-    public boolean deleteConsultation(int consultationID) {
-        SQLiteDatabase db = getWritableDatabase();
-        long rowID = db.delete(TBL_PATIENT_CONSULTATIONS, AI_ID + "=" + consultationID, null);
-        db.close();
-
-        return rowID > 0;
     }
 
     public long deletePatientRecord(int recordID) {

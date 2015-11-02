@@ -5,8 +5,8 @@ package com.example.zem.patientcareapp.GetterSetter;
  */
 public class Consultation {
 
-    int id, serverID, patientID, doctorID, clinicID, isAlarmed, isFinished;
-    String doctor, clinic, date, time, alarmedTime, created_at, updated_at, deleted_at;
+    int id, serverID, patientID, doctorID, clinicID, isAlarmed, isFinished, is_approved;
+    String date, time, alarmedTime, created_at, updated_at;
 
     public Consultation() {
 
@@ -26,14 +26,6 @@ public class Consultation {
 
     public void setIsFinished(int isFinished) {
         this.isFinished = isFinished;
-    }
-
-    public void setDoctor(String doctor) {
-        this.doctor = doctor;
-    }
-
-    public void setClinic(String clinic) {
-        this.clinic = clinic;
     }
 
     public void setDate(String date) {
@@ -68,10 +60,11 @@ public class Consultation {
         this.updated_at = updated_at;
     }
 
-    public void setDeleted_at(String deleted_at) {
-        this.deleted_at = deleted_at;
+    public void setIs_approved(int is_approved) {
+        this.is_approved = is_approved;
     }
 
+    //GET METHODS
     public int getId() {
         return id;
     }
@@ -86,14 +79,6 @@ public class Consultation {
 
     public int getIsFinished() {
         return isFinished;
-    }
-
-    public String getDoctor() {
-        return doctor;
-    }
-
-    public String getClinic() {
-        return clinic;
     }
 
     public String getDate() {
@@ -128,7 +113,7 @@ public class Consultation {
         return updated_at;
     }
 
-    public String getDeleted_at() {
-        return deleted_at;
+    public int getIs_approved() {
+        return is_approved;
     }
 }

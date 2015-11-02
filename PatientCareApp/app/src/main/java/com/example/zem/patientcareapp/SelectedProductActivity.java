@@ -34,9 +34,8 @@ import java.util.HashMap;
 
 public class SelectedProductActivity extends Activity implements View.OnClickListener {
     public static final String PRODUCT_ID = "productID";
-    public static final String UP_ACTIVITY = "parent_activity";
 
-    String get_parent = "", productPacking = "";
+    String productPacking = "";
     int get_productID = 0;
     int temp_qty = 1, qtyPerPacking = 1;
 
@@ -69,7 +68,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
         pDialog.setMessage("Loading...");
 
         Intent intent = getIntent();
-        get_parent = intent.getStringExtra(UP_ACTIVITY);
         get_productID = intent.getIntExtra(PRODUCT_ID, 0);
         prod = dbhelper.getProductById(get_productID);
 
@@ -105,15 +103,8 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (get_parent.equals("HomeTile")) {
-                    startActivity(new Intent(this, SidebarActivity.class));
-                } else if (get_parent.equals("ProductsFragment")) {
-                    Intent intent = new Intent(this, MasterTabActivity.class);
-                    intent.putExtra("selected", 5);
-                    startActivity(intent);
-                }
                 this.finish();
-                return true;
+                break;
 
             case R.id.go_to_cart:
                 Intent intent = new Intent(this, MasterTabActivity.class);
@@ -197,27 +188,24 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                         PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
-                                Log.d("response <SelectedProductActivity>", response + "");
                                 int success = 0;
 
                                 try {
                                     success = response.getInt("success");
+
+                                    if (success == 1) {
+                                        if (dbhelper.updateBasket(basket)) {
+                                            Toast.makeText(getBaseContext(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                            Log.d("SelectedProductAct", "error on dbhelper");
+                                        }
+                                    } else
+                                        Toast.makeText(getBaseContext(), "Server error occurred.", Toast.LENGTH_SHORT).show();
+                                    pdialog.dismiss();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
-                                if (success == 1) {
-                                    if (dbhelper.updateBasket(basket)) {
-                                        Toast.makeText(getBaseContext(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
-                                        System.out.print("src: <SelectedProductActivity - dbHelper>");
-                                    }
-                                } else {
-                                    Toast.makeText(getBaseContext(), "Server error occurred.", Toast.LENGTH_SHORT).show();
-                                    System.out.print("src: <SelectedProductActivity>");
-                                }
-                                pdialog.dismiss();
                             }
                         }, new ErrorListener<VolleyError>() {
                             public void getError(VolleyError error) {
@@ -245,7 +233,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                         PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
-                                Log.d("response using interface <SelectedProductActivity.java>", response + "");
                             }
                         }, new ErrorListener<VolleyError>() {
                             public void getError(VolleyError error) {
@@ -255,7 +242,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
                         pdialog.dismiss();
                     }
                 } catch (Exception e) {
-                    System.out.print("src: <SelectedProductActivity> " + e.toString());
+                    Log.d("SelectedProductAct: ", e + "");
                 }
                 break;
         }
