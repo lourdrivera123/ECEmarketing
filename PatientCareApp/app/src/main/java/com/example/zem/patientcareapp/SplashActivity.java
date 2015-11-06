@@ -39,9 +39,6 @@ public class SplashActivity extends Activity {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
         if (settings.getBoolean("my_first_time", true)) {
-            //the app is being launched for first time, do something
-            Log.d("Comments", "First time");
-
             // first time task
             if (helpers.isNetworkAvailable(this)) {
 
@@ -205,7 +202,6 @@ public class SplashActivity extends Activity {
                 GetRequest.getJSONobj(SplashActivity.this, "get_branches", "branches", "branches_id", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
-                        Log.d("response using interface <SplashActivity.java - branches request >", response + "");
                     }
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {

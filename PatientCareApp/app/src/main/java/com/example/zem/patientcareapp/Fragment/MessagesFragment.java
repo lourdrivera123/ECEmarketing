@@ -329,12 +329,11 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         public void remove(int position) {
             int serverID = Integer.parseInt(hashOfMessages.get(position).get(db.MSGS_SERVER_ID));
 
-            if (db.deleteSpecificMessage(serverID)) {
+            if (db.deleteFromTable(serverID, "messages", "serverID")) {
                 hashOfMessages.remove(position);
                 adapter.notifyDataSetChanged();
-            } else {
+            } else
                 Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-            }
         }
 
         public void removeSelection(int position) {

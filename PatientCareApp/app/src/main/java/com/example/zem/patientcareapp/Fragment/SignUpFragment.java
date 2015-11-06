@@ -134,7 +134,14 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
 
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        String dateStr = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+        String day;
+
+        if (dayOfMonth < 10)
+            day = "0" + dayOfMonth;
+        else
+            day = String.valueOf(dayOfMonth);
+
+        String dateStr = year + "-" + (monthOfYear + 1) + "-" + day;
         birthdate.setText(dateStr);
         get_birthdate = dateStr;
 

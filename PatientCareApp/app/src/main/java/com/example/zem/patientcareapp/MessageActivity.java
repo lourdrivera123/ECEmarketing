@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,22 +73,19 @@ public class MessageActivity extends Activity {
                         int success = response.getInt("success");
 
                         if (success == 1) {
-                            if (db.updateMessage(msg.getServerID())) {
-
-                            } else {
+                            if (db.updateIsRead_table(msg.getServerID(), "messages", "serverID") == false)
                                 Toast.makeText(getBaseContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                            }
                         }
                     } catch (JSONException e) {
                         Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
-                        System.out.print("src: MessageActivity - " + e);
+                        Log.d("MsgActvity", e + "");
                     }
                     pdialog.dismiss();
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
                     pdialog.dismiss();
-                    System.out.print("src: MessageActivity Network - " + error);
+                    Log.d("MsgActvity", error + "");
                     Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                 }
             });

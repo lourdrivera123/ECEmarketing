@@ -5,8 +5,8 @@ package com.example.zem.patientcareapp.GetterSetter;
  */
 public class Consultation {
 
-    int id, serverID, patientID, doctorID, clinicID, isAlarmed, isFinished, is_approved;
-    String date, time, alarmedTime, created_at, updated_at;
+    int id, serverID, patientID, doctorID, clinicID, isAlarmed, is_approved, is_read, ptnt_is_approved;
+    String date, time, alarmedTime, created_at, updated_at, comment_doctor, comment_patient;
 
     public Consultation() {
 
@@ -22,10 +22,6 @@ public class Consultation {
 
     public void setIsAlarmed(int isAlarmed) {
         this.isAlarmed = isAlarmed;
-    }
-
-    public void setIsFinished(int isFinished) {
-        this.isFinished = isFinished;
     }
 
     public void setDate(String date) {
@@ -64,6 +60,22 @@ public class Consultation {
         this.is_approved = is_approved;
     }
 
+    public void setIs_read(int is_read) {
+        this.is_read = is_read;
+    }
+
+    public void setPtnt_is_approved(int ptnt_is_approved) {
+        this.ptnt_is_approved = ptnt_is_approved;
+    }
+
+    public void setComment_doctor(String comment_doctor) {
+        this.comment_doctor = comment_doctor;
+    }
+
+    public void setComment_patient(String comment_patient) {
+        this.comment_patient = comment_patient;
+    }
+
     //GET METHODS
     public int getId() {
         return id;
@@ -75,10 +87,6 @@ public class Consultation {
 
     public int getIsAlarmed() {
         return isAlarmed;
-    }
-
-    public int getIsFinished() {
-        return isFinished;
     }
 
     public String getDate() {
@@ -109,11 +117,15 @@ public class Consultation {
         return created_at;
     }
 
-    public String getUpdated_at() {
-        return updated_at;
-    }
-
     public int getIs_approved() {
         return is_approved;
     }
+
+    public int getPtnt_is_approved() { return ptnt_is_approved; }
+
+    public int getIs_read() { return is_read; }
+
+    public String getComment_patient() { return comment_patient; }
+
+    public String getComment_doctor() { return comment_doctor; }
 }

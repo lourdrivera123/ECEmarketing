@@ -274,7 +274,7 @@ public class LazyAdapter extends BaseAdapter {
                                 public void getError(VolleyError error) {
                                     pdialog.dismiss();
                                     System.out.print("src: <LazyAdapter - product_lists>: " + error.toString());
-                                    Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(activity, "Couldn't update item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                 }
                             });
 
@@ -319,7 +319,7 @@ public class LazyAdapter extends BaseAdapter {
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
                                                     pdialog.dismiss();
-                                                    Toast.makeText(activity, "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(activity, "Couldn't add item. Please check your Internet connection", Toast.LENGTH_LONG).show();
                                                 }
                                             });
                                             builder.dismiss();

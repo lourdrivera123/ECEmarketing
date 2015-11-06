@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp;
 
 import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,11 +22,12 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
+import com.codetroopers.betterpickers.calendardatepicker.MonthAdapter;
+import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
 import com.example.zem.patientcareapp.GetterSetter.Consultation;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -39,7 +40,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-public class PatientConsultationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher, CompoundButton.OnCheckedChangeListener, CalendarDatePickerDialogFragment.OnDateSetListener {
+public class PatientConsultationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher, CompoundButton.OnCheckedChangeListener, CalendarDatePickerDialogFragment.OnDateSetListener, RadialTimePickerDialogFragment.OnTimeSetListener {
     DbHelper dbhelper;
     Consultation consult;
     AlarmService alarmService;
@@ -58,9 +59,10 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
     ArrayList<HashMap<String, String>> doctorsHashmap, doctorClinicHashmap;
     ArrayList<String> listOfClinic, listOfDoctors;
 
-    String request, current_hour, current_meridiem;
-    int hour, minute, new_hour, new_minute, isAlarm, doctorID = 0;
+    String request;
+    int hour, minute, new_hour, new_min, isAlarm, doctorID = 0;
     static int doctor_id = 0;
+    static String time_alarm = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,18 +119,22 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
             request = "add";
             consult = new Consultation();
 
-            if (hour > 12) {
-                current_meridiem = " PM";
-                int n_hour = hour - 12;
-                current_hour = n_hour + " : " + minute + " PM";
+            if (hour > 12)
                 txtAlarmedTime.setText((hour - 12) + " : " + minute + " PM");
-            } else {
-                current_meridiem = " AM";
-                current_hour = hour + " : " + minute + " AM";
+            else
                 txtAlarmedTime.setText(hour + " : " + minute + " AM");
-            }
 
-            txtDate.setText(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DATE));
+            new_hour = hour;
+            new_min = minute;
+
+            String check_date;
+
+            if (cal.get(Calendar.DATE) < 10)
+                check_date = "0" + (cal.get(Calendar.DATE));
+            else
+                check_date = String.valueOf(cal.get(Calendar.DATE));
+
+            txtDate.setText(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + check_date);
         }
 
         listOfClinic.add("Choose a Doctor");
@@ -172,8 +178,10 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
                 consult.setDoctorID(doctor_id);
                 consult.setDate(txtDate.getText().toString());
                 consult.setIsAlarmed(isAlarm);
-                consult.setAlarmedTime(txtAlarmedTime.getText().toString());
-                consult.setIsFinished(0);
+                consult.setAlarmedTime(time_alarm);
+                consult.setIs_approved(0);
+                consult.setIs_read(0);
+                consult.setPtnt_is_approved(0);
 
                 final HashMap<String, String> hashMap = new HashMap();
                 hashMap.put("table", "consultations");
@@ -186,8 +194,6 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
                 hashMap.put("time", "");
                 hashMap.put("is_alarm", String.valueOf(consult.getIsAlarmed()));
                 hashMap.put("alarm_time", consult.getAlarmedTime());
-                hashMap.put("finished", String.valueOf(consult.getIsFinished()));
-                hashMap.put("is_approved", String.valueOf(consult.getIs_approved()));
 
                 final ProgressDialog pdialog = new ProgressDialog(this);
                 pdialog.setMessage("Please wait...");
@@ -201,10 +207,12 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
 
                             if (success == 1) {
                                 consult.setServerID(response.getInt("last_inserted_id"));
+                                consult.setCreated_at(response.getString("created_at"));
 
                                 if (dbhelper.savePatientConsultation(consult, request)) {
                                     alarmService.patientConsultationReminder();
                                     PatientConsultationActivity.this.finish();
+                                    Toast.makeText(getBaseContext(), "Your request has been submitted. Please wait for your confirmation.", Toast.LENGTH_SHORT).show();
                                 } else
                                     Toast.makeText(getBaseContext(), "Error while saving", Toast.LENGTH_SHORT).show();
                             } else
@@ -218,7 +226,7 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
                     public void getError(VolleyError error) {
                         pdialog.dismiss();
                         Log.d("PatientConsultAct", error + "");
-                        Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -244,45 +252,50 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
                 day = Integer.parseInt(dateInView.substring(indexOfMonthandDay + 1, dateInView.length()));
 
                 datepicker = CalendarDatePickerDialogFragment.newInstance(this, year, month, day);
+                datepicker.setDateRange(new MonthAdapter.CalendarDay(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)), null);
                 datepicker.show(fm, "fragment_date_picker_name");
+
                 break;
 
             case R.id.setAlarmedTime:
-                if (current_hour.equals(hour + " : " + minute + current_meridiem)) {
-                    TimePickerDialog alarmedPicker = new TimePickerDialog(this, onStartTimeListener, hour, minute, false);
-                    alarmedPicker.show();
-                } else {
-                    TimePickerDialog alarmedPicker = new TimePickerDialog(this, onStartTimeListener, new_hour, new_minute, false);
-                    alarmedPicker.show();
-                }
+                RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance(this, new_hour, minute, DateFormat.is24HourFormat(PatientConsultationActivity.this));
+
+                timePickerDialog.show(getSupportFragmentManager(), "timePickerDialogFragment");
                 break;
         }
     }
 
-    TimePickerDialog.OnTimeSetListener onStartTimeListener = new TimePickerDialog.OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            String meridiem = "AM";
+    @Override
+    public void onTimeSet(RadialTimePickerDialogFragment dialog, int hourOfDay, int minute) {
+        String meridiem = "AM";
+        new_hour = hourOfDay;
+        new_min = minute;
 
-            if (hourOfDay == 12) {
-                meridiem = "PM";
-            } else if (hourOfDay > 12) {
-                hourOfDay -= 12;
-                meridiem = "PM";
-            }
-            if (minute < 10)
-                txtAlarmedTime.setText(hourOfDay + " : 0" + minute + " " + meridiem);
-            else
-                txtAlarmedTime.setText(hourOfDay + " : " + minute + " " + meridiem);
-
-            new_hour = hourOfDay;
-            new_minute = minute;
+        if (hourOfDay == 0)
+            hourOfDay = 12;
+        else if (hourOfDay == 12)
+            meridiem = "PM";
+        else if (hourOfDay > 12) {
+            hourOfDay -= 12;
+            meridiem = "PM";
         }
-    };
+        if (minute < 10)
+            txtAlarmedTime.setText(hourOfDay + " : 0" + minute + " " + meridiem);
+        else
+            txtAlarmedTime.setText(hourOfDay + " : " + minute + " " + meridiem);
+    }
+
 
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        String dateStr = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+        String day;
+
+        if (dayOfMonth < 10)
+            day = "0" + dayOfMonth;
+        else
+            day = String.valueOf(dayOfMonth);
+
+        String dateStr = year + "-" + (monthOfYear + 1) + "-" + day;
         txtDate.setText(dateStr);
     }
 
@@ -314,9 +327,11 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
         if (checkAlarm.isChecked()) {
             setAlarmedTime.setVisibility(View.VISIBLE);
             isAlarm = 1;
+            time_alarm = txtAlarmedTime.getText().toString();
         } else {
             setAlarmedTime.setVisibility(View.GONE);
             isAlarm = 0;
+            time_alarm = "";
         }
     }
 

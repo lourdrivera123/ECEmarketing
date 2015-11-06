@@ -72,23 +72,13 @@
                 </LinearLayout>
 
                 <!-- Prescription -->
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/prescriptionLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?android:attr/selectableItemBackground"
                     android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/newNotif"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_alignParentRight="true"
-                        android:background="@drawable/notif_bg"
-                        android:gravity="center"
-                        android:text="1"
-                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/imgPrescription"
@@ -100,11 +90,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/imgPrescription"
                         android:layout_marginTop="@dimen/d10"
                         android:gravity="center"
                         android:text="Prescription" />
-                </RelativeLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -137,7 +126,7 @@
                 </LinearLayout>
 
                 <!-- Consultation -->
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/consultationLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -145,7 +134,19 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:orientation="vertical">
 
+                    <TextView
+                        android:id="@+id/notifConsultation"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/notif_bg"
+                        android:gravity="center"
+                        android:text="N"
+                        android:textColor="@color/white"
+                        android:visibility="invisible" />
+
                     <ImageView
+                        android:id="@+id/img_consultation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -154,10 +155,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/img_consultation"
                         android:layout_marginTop="@dimen/d10"
                         android:gravity="center"
                         android:text="Consultation" />
-                </LinearLayout>
+                </RelativeLayout>
 
                 <!-- Product -->
                 <LinearLayout

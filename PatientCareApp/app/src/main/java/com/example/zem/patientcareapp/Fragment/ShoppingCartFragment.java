@@ -89,7 +89,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
         GetRequest.getJSONobj(getActivity(), url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                System.out.println("response using interface <ShoppingCartFragment.java > " + response.toString() + "");
 
                 items = dbHelper.getAllBasketItems(true); // returns all basket items for the currently loggedin patient
 
@@ -107,7 +106,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                System.out.print("error on <ShoppingCartFragment>: " + error.toString());
+                Log.d("shoppingcart", error + "");
                 Toast.makeText(context, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
             }
         });
@@ -177,8 +176,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             lastQty += productQtyPerPacking;
                             et_qty.setText(lastQty + "");
 
-                            System.out.println("ADD: productPacking: " + productPacking + " productQtyPerPacking: " + productQtyPerPacking + " productUnit: " + productUnit);
-
                             int totalPacking = (lastQty / productQtyPerPacking);
                             String fiProductPacking = helper.getPluralForm(productPacking, totalPacking);
                             p_description.setText("1 " + productUnit + " x " + lastQty + "(" + totalPacking + " " + fiProductPacking + ")");
@@ -192,8 +189,6 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                         @SuppressLint("NewApi")
                         @Override
                         public void onClick(View v) {
-
-                            System.out.println("MINUS: productPacking: " + productPacking + " productQtyPerPacking: " + productQtyPerPacking + " productUnit: " + productUnit);
                             int lastQty = Integer.parseInt(et_qty.getText().toString());
                             lastQty -= productQtyPerPacking;
 
@@ -256,33 +251,31 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
-                                            System.out.print("response <ShoppingCartFragment> update cart" + response);
                                             int success = 0;
 
                                             try {
                                                 success = response.getInt("success");
+
+                                                if (success == 1) {
+                                                    if (dbHelper.updateBasket(basket)) {
+
+                                                        tv_amount.setText(new_total + "");
+
+                                                        row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
+                                                        items.set(gbl_pos, row);
+
+                                                        TotalAmount -= old_total;
+                                                        TotalAmount += new_total;
+                                                        total_amount.setText("\u20B1 " + TotalAmount);
+
+                                                        adapter.notifyDataSetChanged();
+                                                    } else {
+                                                        Toast.makeText(context, "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                } else
+                                                    Toast.makeText(getActivity(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
-                                            }
-
-                                            if (success == 1) {
-                                                if (dbHelper.updateBasket(basket)) {
-
-                                                    tv_amount.setText(new_total + "");
-
-                                                    row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
-                                                    items.set(gbl_pos, row);
-
-                                                    TotalAmount -= old_total;
-                                                    TotalAmount += new_total;
-                                                    total_amount.setText("\u20B1 " + TotalAmount);
-
-                                                    adapter.notifyDataSetChanged();
-                                                } else {
-                                                    Toast.makeText(context, "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
-                                                }
-                                            } else {
-                                                Toast.makeText(getActivity(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }, new ErrorListener<VolleyError>() {
@@ -293,7 +286,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                                     });
                                     pdialog.dismiss();
                                 } catch (Exception e) {
-                                    System.out.println("BASKET ERROR: " + e.getMessage());
+                                    Log.d("shoppingcart", e + "");
                                     Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                 }
                             } else
@@ -326,36 +319,32 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
                             PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
-                                    System.out.print("response <ShoppingCartFragment> delete cart" + response);
-                                    int success = 0;
-
                                     try {
-                                        success = response.getInt("success");
+                                        int success = response.getInt("success");
+
+                                        if (success == 1) {
+                                            if (dbHelper.deleteFromTable(Integer.parseInt(row.get("basket_id")), "baskets", "basket_id")) {
+                                                TotalAmount -= amount;
+                                                total_amount.setText("\u20B1 " + TotalAmount);
+                                                items.remove(pos);
+                                                adapter.notifyDataSetChanged();
+                                            } else {
+                                                Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else
+                                            Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-
-                                    if (success == 1) {
-                                        if (dbHelper.deleteBasketItem(Integer.parseInt(row.get("basket_id")))) {
-                                            TotalAmount -= amount;
-                                            total_amount.setText("\u20B1 " + TotalAmount);
-                                            items.remove(pos);
-                                            adapter.notifyDataSetChanged();
-                                        } else {
-                                            Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
-                                        }
-                                    } else {
-                                        Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
-                                        System.out.print("src: <ShoppingCartFragment>");
-                                    }
+                                    pdialog.dismiss();
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
-                                    Log.d("Error", error.toString());
+                                    Log.d("shoppingcart", error + "");
+                                    pdialog.dismiss();
                                     Toast.makeText(getActivity(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
                                 }
                             });
-                            pdialog.dismiss();
                         }
                     });
                     confirmationDialog.show();

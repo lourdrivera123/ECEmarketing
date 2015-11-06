@@ -264,8 +264,10 @@ public class DbHelper extends SQLiteOpenHelper {
             CONSULT_TIME = "time",
             CONSULT_IS_ALARMED = "is_alarm",
             CONSULT_ALARMED_TIME = "alarm_time",
-            CONSULT_IS_FINISHED = "finished",
-            CONSULT_IS_APPROVED = "is_approved";
+            CONSULT_IS_APPROVED = "is_approved",
+            CONSULT_COMMENT_DOCTOR = "comment_doctor",
+            CONSULT_PTNT_IS_APPROVED = "patient_is_approved",
+            CONSULT_COMMENT_PTNT = "comment_patient";
 
     //OVERLAY
     public static final String TBL_OVERLAYS = "overlays",
@@ -410,8 +412,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_PATIENT_PRESCRIPTIONS, AI_ID, PRESCRIPTIONS_SERVER_ID, PATIENT_ID, PRESCRIPTIONS_FILENAME, PRESCRIPTIONS_APPROVED, CREATED_AT, DELETED_AT);
 
         //SQL to create PATIENT CONSULTATIONS
-        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT)",
-                TBL_PATIENT_CONSULTATIONS, AI_ID, CONSULT_SERVER_ID, PATIENT_ID, CONSULT_DOCTOR_ID, CONSULT_CLINIC_ID, CONSULT_DATE, CONSULT_TIME, CONSULT_IS_ALARMED, CONSULT_ALARMED_TIME, CONSULT_IS_FINISHED, CONSULT_IS_APPROVED, CREATED_AT, UPDATED_AT);
+        String sql_create_consultations = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_PATIENT_CONSULTATIONS, AI_ID, CONSULT_SERVER_ID, PATIENT_ID, CONSULT_DOCTOR_ID, CONSULT_CLINIC_ID, CONSULT_DATE, CONSULT_TIME, CONSULT_IS_ALARMED, CONSULT_ALARMED_TIME, CONSULT_IS_APPROVED, IS_READ, CONSULT_COMMENT_DOCTOR, CONSULT_PTNT_IS_APPROVED, CONSULT_COMMENT_PTNT, CREATED_AT, UPDATED_AT);
 
         String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER)",
                 TBL_OVERLAYS, AI_ID, OVERLAY_TITLE, IS_READ);
@@ -481,6 +483,7 @@ public class DbHelper extends SQLiteOpenHelper {
         insertTableNamesToUpdates(TBL_BRANCHES, db);
         insertTableNamesToUpdates(TBL_ORDERS, db);
         insertTableNamesToUpdates(TBl_MSGS, db);
+        insertTableNamesToUpdates(TBL_PATIENT_CONSULTATIONS, db);
     }
 
     @Override
@@ -942,15 +945,19 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(CONSULT_CLINIC_ID, consult.getClinicID());
         values.put(CONSULT_DATE, consult.getDate());
         values.put(CONSULT_TIME, consult.getTime());
-        values.put(CONSULT_IS_FINISHED, consult.getIsFinished());
         values.put(CONSULT_IS_ALARMED, consult.getIsAlarmed());
         values.put(CONSULT_ALARMED_TIME, consult.getAlarmedTime());
         values.put(CONSULT_IS_APPROVED, consult.getIs_approved());
+        values.put(IS_READ, consult.getIs_read());
+        values.put(CONSULT_COMMENT_DOCTOR, consult.getComment_doctor());
+        values.put(CONSULT_PTNT_IS_APPROVED, consult.getPtnt_is_approved());
+        values.put(CONSULT_COMMENT_PTNT, consult.getComment_patient());
+        values.put(CREATED_AT, consult.getCreated_at());
 
         if (request.equals("add")) {
             rowID = db.insert(TBL_PATIENT_CONSULTATIONS, null, values);
         } else if (request.equals("update")) {
-            rowID = db.update(TBL_PATIENT_CONSULTATIONS, values, AI_ID + "=" + consult.getId(), null);
+            rowID = db.update(TBL_PATIENT_CONSULTATIONS, values, CONSULT_SERVER_ID + "=" + consult.getServerID(), null);
         }
         db.close();
 
@@ -1637,20 +1644,28 @@ public class DbHelper extends SQLiteOpenHelper {
     public ArrayList<HashMap<String, String>> getAllConsultationsByUserId(int userID) {
         ArrayList<HashMap<String, String>> listOfAllConsultations = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PATIENT_CONSULTATIONS + " WHERE " + PATIENT_ID + " = " + userID;
+        String sql = "SELECT c.*, d.fname, d.lname, d.mname, cn.name FROM consultations as c inner join doctors as d " +
+                "on c.doctor_id = d.id inner join clinics as cn on c.clinic_id = cn.id where c.patient_id = " + userID + " ORDER BY c.date ASC";
         Cursor cur = db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
+            map.put(AI_ID, String.valueOf(cur.getInt(cur.getColumnIndex(AI_ID))));
             map.put(CONSULT_SERVER_ID, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_SERVER_ID))));
             map.put(CONSULT_DOCTOR_ID, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_DOCTOR_ID))));
+            map.put("doctor_name", cur.getString(cur.getColumnIndex("fname")) + " " + cur.getString(cur.getColumnIndex("mname")).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex("lname")));
             map.put(CONSULT_CLINIC_ID, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_CLINIC_ID))));
+            map.put("clinic_name", cur.getString(cur.getColumnIndex("name")));
             map.put(CONSULT_DATE, cur.getString(cur.getColumnIndex(CONSULT_DATE)));
             map.put(CONSULT_TIME, cur.getString(cur.getColumnIndex(CONSULT_TIME)));
             map.put(CONSULT_IS_ALARMED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED))));
-            map.put(CONSULT_TIME, cur.getString(cur.getColumnIndex(CONSULT_TIME)));
-            map.put(CONSULT_IS_FINISHED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED))));
+            map.put(CONSULT_ALARMED_TIME, cur.getString(cur.getColumnIndex(CONSULT_ALARMED_TIME)));
             map.put(CONSULT_IS_APPROVED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_IS_APPROVED))));
+            map.put(IS_READ, String.valueOf(cur.getInt(cur.getColumnIndex(IS_READ))));
+            map.put(CONSULT_COMMENT_DOCTOR, cur.getString(cur.getColumnIndex(CONSULT_COMMENT_DOCTOR)));
+            map.put(CONSULT_PTNT_IS_APPROVED, String.valueOf(cur.getInt(cur.getColumnIndex(CONSULT_PTNT_IS_APPROVED))));
+            map.put(CONSULT_COMMENT_PTNT, cur.getString(cur.getColumnIndex(CONSULT_COMMENT_PTNT)));
+
             listOfAllConsultations.add(map);
         }
         db.close();
@@ -1659,36 +1674,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return listOfAllConsultations;
     }
 
-    public Consultation getConsultationById(int ID, int patientID) {
-        SQLiteDatabase db = getWritableDatabase();
-        Consultation consult = new Consultation();
-        String sql = "SELECT * FROM " + TBL_PATIENT_CONSULTATIONS + " WHERE " + AI_ID + " = " + ID + " AND " +
-                PATIENT_ID + " = " + patientID;
-        Cursor cur = db.rawQuery(sql, null);
-
-        while (cur.moveToNext()) {
-            consult.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
-            consult.setServerID(cur.getInt(cur.getColumnIndex(CONSULT_SERVER_ID)));
-            consult.setPatientID(cur.getInt(cur.getColumnIndex(PATIENT_ID)));
-            consult.setDoctorID(cur.getInt(cur.getColumnIndex(CONSULT_DOCTOR_ID)));
-            consult.setClinicID(cur.getInt(cur.getColumnIndex(CONSULT_CLINIC_ID)));
-            consult.setIsAlarmed(cur.getInt(cur.getColumnIndex(CONSULT_IS_ALARMED)));
-            consult.setAlarmedTime(cur.getString(cur.getColumnIndex(CONSULT_ALARMED_TIME)));
-            consult.setDate(cur.getString(cur.getColumnIndex(CONSULT_DATE)));
-            consult.setTime(cur.getString(cur.getColumnIndex(CONSULT_TIME)));
-            consult.setIsFinished(cur.getInt(cur.getColumnIndex(CONSULT_IS_FINISHED)));
-            consult.setCreated_at(cur.getString(cur.getColumnIndex(CREATED_AT)));
-            consult.setUpdated_at(cur.getString(cur.getColumnIndex(UPDATED_AT)));
-            consult.setIs_approved(cur.getInt(cur.getColumnIndex(CONSULT_IS_APPROVED)));
-        }
-        cur.close();
-        db.close();
-
-        return consult;
-    }
-
     //for products
-
     public ArrayList<HashMap<String, String>> getProductsBySubCategory(int subCategoryId) {
         ArrayList<HashMap<String, String>> products = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
@@ -2096,28 +2082,60 @@ public class DbHelper extends SQLiteOpenHelper {
         return row > 0;
     }
 
-    public boolean updateMessage(int serverID) {
+    public boolean updateIsRead_table(int serverID, String table_name, String column_serverID) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(IS_READ, 1);
 
-        long rowID = db.update(TBl_MSGS, values, MSGS_SERVER_ID + " = " + serverID, null);
+        long updated_id = db.update(table_name, values, column_serverID + " = " + serverID, null);
 
         db.close();
-        return rowID > 0;
+        return updated_id > 0;
+    }
+
+    public boolean updateSomeConsultation(JSONObject json) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        long updated_id = 0;
+
+        try {
+            values.put(CONSULT_TIME, json.getString("time"));
+            values.put(IS_READ, 1);
+            values.put(CONSULT_IS_APPROVED, json.getInt("is_approved"));
+            values.put(CONSULT_COMMENT_DOCTOR, json.getString("comment_doctor"));
+
+            updated_id = db.update(TBL_PATIENT_CONSULTATIONS, values, CONSULT_SERVER_ID + " = " + json.getInt("id"), null);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        db.close();
+        return updated_id > 0;
+    }
+
+    public boolean AcceptRejectConsultation(HashMap<String, String> map, String operation) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues val = new ContentValues();
+
+        val.put(CONSULT_SERVER_ID, Integer.parseInt(map.get("id")));
+        val.put(CONSULT_IS_APPROVED, map.get("is_approved"));
+        val.put(CONSULT_PTNT_IS_APPROVED, map.get("patient_is_approved"));
+        val.put(CONSULT_COMMENT_PTNT, map.get("comment_patient"));
+
+        if (operation.equals("accept"))
+            val.put(IS_READ, 0);
+        else
+            val.put(IS_READ, 1);
+
+        long id = db.update(TBL_PATIENT_CONSULTATIONS, val, CONSULT_SERVER_ID + " = " + Integer.parseInt(map.get("id")), null);
+
+        db.close();
+        return id > 0;
     }
     ////////////////////////END OF UPDATE METHODS//////////////////////////////////
 
     /////////////////////////DELETE METHODS///////////////////////////////////////
-    public boolean deleteBasketItem(int basketId) {
-        SQLiteDatabase db = getWritableDatabase();
-        long row = db.delete(TBL_BASKETS, SERVER_BASKET_ID + "=" + basketId, null);
-        db.close();
-        return row > 0;
-
-    }
-
     public boolean emptyBasket(int patient_id) {
         SQLiteDatabase db = getWritableDatabase();
         long row = db.delete(TBL_BASKETS, PATIENT_ID + "=" + patient_id, null);
@@ -2150,12 +2168,21 @@ public class DbHelper extends SQLiteOpenHelper {
         return deletedPrescriptionID > 0;
     }
 
-    public boolean deleteSpecificMessage(int serverID) {
+    public boolean deleteFromTable(int serverID, String tableName, String column_serverID) {
         SQLiteDatabase db = getWritableDatabase();
-        long deletedId = db.delete(TBl_MSGS, MSGS_SERVER_ID + " = " + serverID, null);
+        long deletedID = db.delete(tableName, column_serverID + " = " + serverID, null);
 
         db.close();
-        return deletedId > 0;
+        return deletedID > 0;
+    }
+
+    public boolean removeFromSQLite(int AI_id) {
+        SQLiteDatabase db = getWritableDatabase();
+        long deletedID = db.delete(TBL_PATIENT_CONSULTATIONS, AI_ID + " = " + AI_id, null);
+
+        Log.d("delete", deletedID + "");
+        db.close();
+        return deletedID > 0;
     }
     ////////////////////////////END OF DELETE METHODS/////////////////////////////
 

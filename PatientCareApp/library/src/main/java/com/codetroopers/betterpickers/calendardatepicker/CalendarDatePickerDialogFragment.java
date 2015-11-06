@@ -379,18 +379,18 @@ public class CalendarDatePickerDialogFragment extends DialogFragment implements 
      * range are not shown, the days that are outside of the range are visible but cannot be selected.
      *
      * @param startDate The start date of the range (inclusive)
-     * @param endDate The end date of the range (inclusive)
+     * @param endDate   The end date of the range (inclusive)
      * @throws IllegalArgumentException in case the end date is smaller than the start date
      */
     public void setDateRange(@Nullable CalendarDay startDate, @Nullable CalendarDay endDate) {
-        if(startDate == null){
+        if (startDate == null) {
             mMinDate = DEFAULT_START_DATE;
-        }else{
+        } else {
             mMinDate = startDate;
         }
-        if(endDate == null){
+        if (endDate == null) {
             mMaxDate = DEFAULT_END_DATE;
-        }else{
+        } else {
             mMaxDate = endDate;
         }
         if (mMaxDate.compareTo(mMinDate) < 0) {

@@ -1,6 +1,7 @@
 package com.example.zem.patientcareapp.Fragment;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,18 +28,16 @@ import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.SidebarActivity;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HomeTileFragment extends Fragment implements View.OnClickListener {
-    LinearLayout profileLayout, patientHistoryLayout, doctorsLayout, consultationLayout, productsLayout, cartLayout, promosLayout, newsLayout;
-    RelativeLayout prescriptionLayout;
+    LinearLayout prescriptionLayout, profileLayout, patientHistoryLayout, doctorsLayout, productsLayout, cartLayout, promosLayout, newsLayout;
+    RelativeLayout consultationLayout;
     ImageView sideBar_overlay, quickSearch_overlay;
-    TextView newNotif;
-
-    ArrayList<Integer> arrayOfIDs;
+    TextView notifConsultation;
 
     ServerRequest serverRequest;
     DbHelper db;
@@ -54,16 +53,16 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         db = new DbHelper(context);
         showOverLay();
 
+        consultationLayout = (RelativeLayout) rootView.findViewById(R.id.consultationLayout);
+        prescriptionLayout = (LinearLayout) rootView.findViewById(R.id.prescriptionLayout);
         profileLayout = (LinearLayout) rootView.findViewById(R.id.profileLayout);
         patientHistoryLayout = (LinearLayout) rootView.findViewById(R.id.patientHistoryLayout);
-        prescriptionLayout = (RelativeLayout) rootView.findViewById(R.id.prescriptionLayout);
         doctorsLayout = (LinearLayout) rootView.findViewById(R.id.doctorsLayout);
-        consultationLayout = (LinearLayout) rootView.findViewById(R.id.consultationLayout);
         productsLayout = (LinearLayout) rootView.findViewById(R.id.productsLayout);
         cartLayout = (LinearLayout) rootView.findViewById(R.id.cartLayout);
         promosLayout = (LinearLayout) rootView.findViewById(R.id.promosLayout);
         newsLayout = (LinearLayout) rootView.findViewById(R.id.newsLayout);
-        newNotif = (TextView) rootView.findViewById(R.id.newNotif);
+        notifConsultation = (TextView) rootView.findViewById(R.id.notifConsultation);
 
         profileLayout.setOnClickListener(this);
         patientHistoryLayout.setOnClickListener(this);
@@ -83,35 +82,33 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
-        arrayOfIDs = new ArrayList();
-
-        ListOfPatientsRequest.getJSONobj(getActivity(), "get_notifications&patient_ID=" + patientID + "&table_name=patient_prescriptions", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getActivity(), "get_consultations_notif&patient_ID=" + patientID, new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
                     int success = response.getInt("success");
 
                     if (success == 1) {
-                        newNotif.setVisibility(View.VISIBLE);
-
-                        JSONArray json_mysql = response.getJSONArray("notifications");
+                        JSONArray json_mysql = response.getJSONArray("consultations");
+                        notifConsultation.setVisibility(View.VISIBLE);
 
                         for (int x = 0; x < json_mysql.length(); x++) {
-                            JSONObject json_obj = json_mysql.getJSONObject(x);
-                            arrayOfIDs.add(json_obj.getInt("id"));
+                            JSONObject obj = json_mysql.getJSONObject(x);
+
+                            if (!db.updateSomeConsultation(obj))
+                                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
                         }
-                        newNotif.setText(json_mysql.length() + "");
                     } else
-                        newNotif.setVisibility(View.INVISIBLE);
+                        notifConsultation.setVisibility(View.INVISIBLE);
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
-                    System.out.print("src: <HomeTileActivityClone>: " + e.toString());
+                    Log.d("hometilefrag 2", e + "");
                 }
             }
         }, new ErrorListener<VolleyError>() {
             @Override
-            public void getError(VolleyError error) {
-                System.out.print("Error in HomeTileActivityClone: " + error);
+            public void getError(VolleyError e) {
+                Log.d("hometilefrag3", e + "");
                 Toast.makeText(context, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
@@ -134,32 +131,6 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.prescriptionLayout:
-                for (int x = 0; x < arrayOfIDs.size(); x++) {
-                    HashMap<String, String> map = new HashMap();
-                    map.put("id", String.valueOf(arrayOfIDs.get(x)));
-                    map.put("table", "notifications");
-                    map.put("request", "crud");
-                    map.put("action", "update");
-                    map.put("isRead", String.valueOf(1));
-
-                    PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
-                        @Override
-                        public void getResult(JSONObject response) {
-                            try {
-                                Toast.makeText(getActivity(), "Prescription has been approved", Toast.LENGTH_SHORT).show();
-                            } catch (Exception e) {
-                                System.out.print("src: <HomeTileActivityClone> " + e.toString());
-                            }
-                        }
-                    }, new ErrorListener<VolleyError>() {
-                        @Override
-                        public void getError(VolleyError error) {
-                            System.out.print("src: <HomeTileActivityClone>: " + error.toString());
-                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
                 intent.putExtra("selected", 2);
                 startActivity(intent);
                 break;
@@ -170,6 +141,36 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.consultationLayout:
+                HashMap<String, String> hashMap = new HashMap();
+                hashMap.put("request", "crud");
+                hashMap.put("table", "consultations");
+                hashMap.put("action", "update_with_custom_where_clause");
+                hashMap.put("isRead", String.valueOf(1));
+                hashMap.put("custom_where_clause", "patient_id = " + String.valueOf(SidebarActivity.getUserID()) + " and isRead=0 and is_approved!=0");
+
+                final ProgressDialog pdialog = new ProgressDialog(getActivity());
+                pdialog.setCancelable(false);
+                pdialog.setMessage("Loading...");
+                pdialog.show();
+
+                PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                    @Override
+                    public void getResult(JSONObject response) {
+                        try {
+                            int success = response.getInt("success");
+                        } catch (JSONException e) {
+                            Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                            Log.d("hometilefrag", e + "");
+                        }
+                        pdialog.dismiss();
+                    }
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        pdialog.dismiss();
+                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 intent.putExtra("selected", 4);
                 startActivity(intent);
                 break;

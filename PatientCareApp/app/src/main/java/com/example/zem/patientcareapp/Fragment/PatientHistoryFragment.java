@@ -306,12 +306,10 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                     medRecords.remove(position);
                     hashHistory.remove(position);
                     mAdapter.notifyDataSetChanged();
-                } else {
+                } else
                     Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-                }
-            } else {
+            } else
                 Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-            }
         }
 
         public void removeSelection(int position) {
