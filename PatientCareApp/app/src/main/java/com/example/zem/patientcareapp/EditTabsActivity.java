@@ -214,7 +214,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                         patient.setMunicipality(ContactsFragment.address_city_municipality.getSelectedItem().toString());
                                         patient.setProvince(ContactsFragment.address_province.getSelectedItem().toString());
                                         patient.setRegion(ContactsFragment.address_region.getSelectedItem().toString());
-                                        
+
                                         if (edit_int > 0) {
                                             pDialog.show();
                                             editUser = dbHelper.getloginPatient(SidebarActivity.getUname());
@@ -514,7 +514,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         s_email = email.getText().toString();
         s_tel_no = tel_no.getText().toString();
         s_cell_no = cell_no.getText().toString();
-        s_optional_address = cell_no.getText().toString();
+        s_optional_address = optional_address_line.getText().toString();
 
         count = 0;
         limit = 3;
@@ -526,7 +526,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             count++;
         }
 
-        if(i_region_id == 0) {
+        if (i_region_id == 0) {
             TextView errorText = (TextView) address_region.getSelectedView();
             errorText.setError("");
             errorText.setTextColor(Color.RED);//just to highlight that this is an error

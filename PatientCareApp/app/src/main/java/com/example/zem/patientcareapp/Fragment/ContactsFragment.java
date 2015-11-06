@@ -79,10 +79,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                 cell_no.setText(intent.getExtras().getString("mobile_no"));
             }
         }
-//        map_region.put("name", "Select Region");
-//        map_region.put("code", "Select Region");
-//        map_region.put("region_server_id", "0");
-//        hashOfRegions.add(map_region);
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_regions", new RespondListener<JSONObject>() {
             @Override
@@ -206,9 +202,15 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                         }
                                         address_province.setSelection(provinces_adapter.getPosition(provinceSelected));
                                     }
+                                } else if (intent.getIntExtra("edit", 0) > 0) {
+                                    String provinceSelected = "";
+
+                                    for (int x = 0; x < hashOfProvinces.size(); x++) {
+                                        if (hashOfProvinces.get(x).get("name").equals(patient.getProvince()))
+                                            provinceSelected = hashOfProvinces.get(x).get("name");
+                                    }
+                                    address_province.setSelection(provinces_adapter.getPosition(provinceSelected));
                                 }
-
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -271,8 +273,15 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                         }
                                         address_city_municipality.setSelection(municipalities_adapter.getPosition(municipalitySelected));
                                     }
-                                }
+                                } else if (intent.getIntExtra("edit", 0) > 0) {
+                                    String municipalitySelected = "";
 
+                                    for (int x = 0; x < hashOfMunicipalities.size(); x++) {
+                                        if (hashOfMunicipalities.get(x).get("name").equals(patient.getMunicipality()))
+                                            municipalitySelected = hashOfMunicipalities.get(x).get("name");
+                                    }
+                                    address_city_municipality.setSelection(municipalities_adapter.getPosition(municipalitySelected));
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -334,8 +343,15 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                                         }
                                         address_barangay.setSelection(barangays_adapter.getPosition(barangaySelected));
                                     }
-                                }
+                                } else if (intent.getIntExtra("edit", 0) > 0) {
+                                    String barangaySelected = "";
 
+                                    for (int x = 0; x < hashOfBarangays.size(); x++) {
+                                        if (hashOfBarangays.get(x).get("name").equals(patient.getBarangay()))
+                                            barangaySelected = hashOfBarangays.get(x).get("name");
+                                    }
+                                    address_barangay.setSelection(barangays_adapter.getPosition(barangaySelected));
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

@@ -1,6 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -10,10 +9,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -73,7 +70,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         main = this;
         queue = VolleySingleton.getInstance().getRequestQueue();
         sync = new Sync();
-
 
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
@@ -176,14 +172,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                             }
                                         });
 
-                                        //request for order_details request
+                                        //request for order_details
                                         GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + syncedPatient.getServerID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("Error", error + "");
+                                                Log.d("mainact_consult", error + "");
+                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                        //request for consultations
+                                        GetRequest.getJSONobj(getBaseContext(), "get_consultations&patient_id=" + syncedPatient.getServerID(), "consultations", "consultation_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                Log.d("main_consult4", error + "");
                                                 Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -200,7 +209,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                     } else {
                                         Toast.makeText(MainActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
-                                        System.out.print("error on dbHelper.loginUser <source: MainActivity>");
                                         pDialog.dismiss();
                                     }
                                 } else {
@@ -214,12 +222,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            System.out.print("src: <MainActivity>: " + error.toString());
+                            Log.d("mainAct", error + "");
                             Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
                             pDialog.dismiss();
                         }
                     });
-
                     queue.add(jsObjRequest);
                 }
                 break;

@@ -17,13 +17,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -40,14 +37,11 @@ public class SidebarActivity extends FragmentActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private CharSequence mDrawerTitle, mTitle;
-
     private String[] navMenuTitles; // slide menu items
     private TypedArray navMenuIcons;
     private ArrayList<NavDrawerItem> navDrawerItems;
     ArrayList<HashMap<String, String>> hash_allProducts;
     ArrayList<String> products;
-    ArrayAdapter search_adapter;
 
     private NavDrawerListAdapter adapter;
     AlarmService alarmService;
@@ -57,10 +51,7 @@ public class SidebarActivity extends FragmentActivity {
 
     FragmentTransaction fragmentTransaction;
 
-    AutoCompleteTextView search_product;
     private ListView mDrawerList;
-
-    int productID = 0;
 
     static com.example.zem.patientcareapp.GetterSetter.Patient patient;
     static DbHelper dbHelper;
@@ -88,10 +79,7 @@ public class SidebarActivity extends FragmentActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeButtonEnabled(true);
 
-        createCustomSearchBar(actionbar);
-
         //////////////FOR THE SIDEBAR///////////////////////////////
-        mTitle = mDrawerTitle = getTitle();
         navDrawerItems = new ArrayList();
 
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items); // load slide menu items
@@ -120,13 +108,11 @@ public class SidebarActivity extends FragmentActivity {
                 R.string.app_name // nav drawer close - description for accessibility
         ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
                 // calling onPrepareOptionsMenu() to show action bar icons
                 invalidateOptionsMenu();
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
             }
@@ -250,13 +236,7 @@ public class SidebarActivity extends FragmentActivity {
             setTitle(navMenuTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
         } else
-            Log.e("SidebarActivity", "Error in creating fragment");
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getActionBar().setTitle(mTitle);
+            Log.e("SidebarAct", "Error in creating fragment");
     }
 
     @Override
@@ -271,43 +251,5 @@ public class SidebarActivity extends FragmentActivity {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    public void createCustomSearchBar(ActionBar actionbar) {
-        actionbar.setDisplayShowHomeEnabled(true);
-        actionbar.setDisplayShowTitleEnabled(false);
-        LayoutInflater mInflater = LayoutInflater.from(this);
-
-        View mCustomView = mInflater.inflate(R.layout.searchview_layout, null);
-
-        search_product = (AutoCompleteTextView) mCustomView.findViewById(R.id.search_product);
-        search_adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, products);
-        search_product.setAdapter(search_adapter);
-
-        search_product.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search_product.setCursorVisible(true);
-                search_product.setFocusableInTouchMode(true);
-                search_product.setFocusable(true);
-            }
-        });
-
-        search_product.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item_clicked = parent.getItemAtPosition(position).toString();
-                int itemID = products.indexOf(item_clicked);
-                productID = Integer.parseInt(hash_allProducts.get(itemID).get(dbHelper.SERVER_PRODUCT_ID));
-
-                Intent intent = new Intent(getBaseContext(), SelectedProductActivity.class);
-                intent.putExtra(SelectedProductActivity.PRODUCT_ID, productID);
-                intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "HomeTile");
-                startActivity(intent);
-            }
-        });
-
-        actionbar.setCustomView(mCustomView);
-        actionbar.setDisplayShowCustomEnabled(true);
     }
 }

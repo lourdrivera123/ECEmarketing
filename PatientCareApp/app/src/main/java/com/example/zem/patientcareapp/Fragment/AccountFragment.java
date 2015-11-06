@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,6 +90,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                 save = (Button) dialog.findViewById(R.id.save);
                 cancel = (Button) dialog.findViewById(R.id.cancel);
                 show_and_hide_pass = (TextView) dialog.findViewById(R.id.show_and_hide_pass);
+
+                current_pass.setTransformationMethod(new PasswordTransformationMethod());
+                new_pass.setTransformationMethod(new PasswordTransformationMethod());
+                retype_new_pass.setTransformationMethod(new PasswordTransformationMethod());
 
                 show_and_hide_pass.setOnClickListener(this);
                 save.setOnClickListener(this);

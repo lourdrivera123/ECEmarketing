@@ -24,13 +24,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.DoctorActivity;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -48,13 +48,10 @@ import java.util.Set;
 
 public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
-    ImageButton update_record, add_record;
-    Button view_doctor_btn;
-    TextView date, doctor_name, noResults;
-    EditText complaints, findings, treatments;
+    ImageButton add_record;
+    TextView noResults;
 
     ArrayList<HashMap<String, String>> hashHistory;
-    ArrayList<HashMap<String, String>> hashTreatments;
     ArrayList<String> medRecords;
     ArrayList<Integer> selectedList;
     ArrayList<String> arrayOfRecords;
@@ -62,8 +59,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     private int nr = 0;
     private SelectionAdapter mAdapter;
 
-    public int DOCTOR_ID = 0;
-    public int update_recordID = 0;
+    public int view_record_id = 0;
 
     DbHelper dbHelper;
     Helpers helpers;
@@ -190,43 +186,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Dialog dialog = new Dialog(getActivity());
-        dialog.setTitle("Medical Records");
-        dialog.setContentView(R.layout.patient_diagnosis_layout);
-        dialog.show();
+        view_record_id = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
 
-        view_doctor_btn = (Button) dialog.findViewById(R.id.view_doctor_btn);
-        date = (TextView) dialog.findViewById(R.id.date);
-        doctor_name = (TextView) dialog.findViewById(R.id.doctor_name);
-        complaints = (EditText) dialog.findViewById(R.id.complaints);
-        findings = (EditText) dialog.findViewById(R.id.findings);
-        treatments = (EditText) dialog.findViewById(R.id.treatments);
-        update_record = (ImageButton) dialog.findViewById(R.id.update_record);
-
-        update_recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
-        date.setText(hashHistory.get(position).get(dbHelper.RECORDS_DATE));
-        complaints.setText(hashHistory.get(position).get(dbHelper.RECORDS_COMPLAINT));
-        findings.setText(hashHistory.get(position).get(dbHelper.RECORDS_FINDINGS));
-        doctor_name.setText(hashHistory.get(position).get(dbHelper.RECORDS_DOCTOR_NAME));
-        DOCTOR_ID = Integer.parseInt(hashHistory.get(position).get(dbHelper.RECORDS_DOCTOR_ID));
-
-        if (DOCTOR_ID == 0) {
-            view_doctor_btn.setEnabled(false);
-            view_doctor_btn.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_button_bg));
-        }
-
-        hashTreatments = dbHelper.getTreatmentRecord(Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID)));
-
-        if (hashTreatments.size() > 0) {
-            for (int x = 0; x < hashTreatments.size(); x++) {
-                arrayOfRecords.add(hashTreatments.get(x).get("medicine_name") + " - " + hashTreatments.get(x).get("prescription"));
-            }
-            treatments.setText("" + arrayOfRecords);
-        }
-        arrayOfRecords.clear();
-
-        view_doctor_btn.setOnClickListener(this);
-        update_record.setOnClickListener(this);
+        Intent view_record = new Intent(getActivity(), PatientMedicalRecordActivity.class);
+        view_record.putExtra("viewRecord", view_record_id);
+        startActivity(view_record);
     }
 
     @Override
@@ -305,24 +269,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
                         startActivity(intent);
-                        getActivity().finish();
                         dialog.dismiss();
                     }
                 });
                 dialog.show();
 
-                break;
-            case R.id.view_doctor_btn:
-                Intent intent_doctoractivity = new Intent(getActivity(), DoctorActivity.class);
-                intent_doctoractivity.putExtra(DbHelper.RECORDS_DOCTOR_ID, DOCTOR_ID);
-                startActivity(intent_doctoractivity);
-                break;
-
-            case R.id.update_record:
-                Intent update_record_intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
-                update_record_intent.putExtra(PatientMedicalRecordActivity.UPDATE_RECORD_ID, update_recordID);
-                startActivity(update_record_intent);
-                getActivity().finish();
                 break;
         }
     }
@@ -355,12 +306,10 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                     medRecords.remove(position);
                     hashHistory.remove(position);
                     mAdapter.notifyDataSetChanged();
-                } else {
+                } else
                     Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-                }
-            } else {
+            } else
                 Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-            }
         }
 
         public void removeSelection(int position) {
@@ -383,6 +332,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             TextView record_date = (TextView) v.findViewById(R.id.record_date);
             TextView findings = (TextView) v.findViewById(R.id.findings);
             TextView doctor = (TextView) v.findViewById(R.id.doctor_name);
+            ImageView recordSource = (ImageView) v.findViewById(R.id.recordSource);
+
+            recordSource.setVisibility(View.GONE);
 
             doctor.setText("Dr. " + hashHistory.get(position).get(DbHelper.RECORDS_DOCTOR_NAME));
             doctor.setTag(position);
@@ -391,9 +343,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             findings.setText(hashHistory.get(position).get(DbHelper.RECORDS_FINDINGS));
             findings.setTag(position);
 
-            if (mSelection.get(position) != null) {
+            if (mSelection.get(position) != null)
                 v.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
-            }
+
             return v;
         }
     }

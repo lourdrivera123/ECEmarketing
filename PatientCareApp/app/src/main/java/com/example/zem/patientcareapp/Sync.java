@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.GetterSetter.Clinic;
 import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
+import com.example.zem.patientcareapp.GetterSetter.Consultation;
 import com.example.zem.patientcareapp.GetterSetter.Doctor;
 import com.example.zem.patientcareapp.GetterSetter.Dosage;
 import com.example.zem.patientcareapp.GetterSetter.FreeProducts;
@@ -63,123 +64,76 @@ public class Sync {
 
                         if (json_object != null) {
                             if (tableName.equals("products")) {
-                                if (dbHelper.saveProduct(setProduct(json_object), "insert")) {
-
-                                } else
-                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
+                                if (!dbHelper.saveProduct(setProduct(json_object), "insert"))
+                                    Log.d("sync_22", "wala na save");
                             } else if (tableName.equals("doctors")) {
-                                if (dbHelper.saveDoctor(setDoctor(json_object), "insert")) {
-                                } else {
-                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                }
-
+                                if (!dbHelper.saveDoctor(setDoctor(json_object), "insert"))
+                                    Log.d("sync_21", "wala na save");
                             } else if (tableName.equals("specialties")) {
-                                if (dbHelper.saveSpecialty(setSpecialty(json_object), "insert")) {
-                                } else {
-                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                }
-
+                                if (!dbHelper.saveSpecialty(setSpecialty(json_object), "insert"))
+                                    Log.d("sync_20", "wala na save");
                             } else if (tableName.equals("sub_specialties")) {
-                                if (dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert")) {
-                                } else {
-                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                }
-
+                                if (!dbHelper.saveSubSpecialty(setSubSpecialty(json_object), "insert"))
+                                    Log.d("sync_19", "wala na save");
                             } else if (tableName.equals("product_categories")) {
                                 try {
-                                    if (dbHelper.insertProductCategory(setProductCategory(json_object))) {
-                                    } else {
-                                        Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                    }
+                                    if (!dbHelper.insertProductCategory(setProductCategory(json_object)))
+                                        Log.d("sync_18", "wala na save");
                                 } catch (Exception e) {
                                     Toast.makeText(context, "Something went wrong! " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
 
                             } else if (tableName.equals("product_subcategories")) {
-                                if (dbHelper.insertProductSubCategory(setProductSubCategory(json_object))) {
-                                } else {
-                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                }
-
+                                if (!dbHelper.insertProductSubCategory(setProductSubCategory(json_object)))
+                                    Log.d("sync_17", "wala na save");
                             } else if (tableName.equals("dosage_format_and_strength")) {
-                                if (dbHelper.insertDosage(setDosage(json_object))) {
-                                } else {
-                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                }
-
+                                if (!dbHelper.insertDosage(setDosage(json_object)))
+                                    Log.d("sync_16", "wala na save");
                             } else if (tableName.equals("baskets")) {
-                                if (dbHelper.insertBasket(setBasket(json_object))) {
-                                } else
-                                    System.out.println("BASKET FAILED TO SAVE. <source: Sync.java>");
-
+                                if (!dbHelper.insertBasket(setBasket(json_object)))
+                                    Log.d("sync_15", "wala na save");
                             } else if (tableName.equals("patient_records")) {
-                                if (dbHelper.savePatientRecord(setPatientRecord(json_object), "insert") > 0) {
-
-                                } else
-                                    System.out.println("patient record failed to save. <source: Sync.java>");
-
+                                if (dbHelper.savePatientRecord(setPatientRecord(json_object), "insert") > 0)
+                                    Log.d("sync_14", "wala na save");
                             } else if (tableName.equals("treatments")) {
-                                if (dbHelper.saveTreatments(setTreatments(json_object), "insert")) {
-
-                                } else
-                                    System.out.println("Treatments FAILED TO SAVE. <source: Sync.java>");
-
+                                if (!dbHelper.saveTreatments(setTreatments(json_object), "insert"))
+                                    Log.d("sync_13", "wala na save");
                             } else if (tableName.equals("discounts_free_products")) {
-                                if (dbHelper.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert")) {
-
-                                } else
-                                    System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
-
+                                if (!dbHelper.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert"))
+                                    Log.d("sync_12", "wala na save");
                             } else if (tableName.equals("free_products")) {
-                                if (dbHelper.saveFreeProducts(setFreeProducts(json_object), "insert")) {
-
-                                } else
-                                    System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
-
+                                if (!dbHelper.saveFreeProducts(setFreeProducts(json_object), "insert"))
+                                    Log.d("sync_11", "wala na save");
                             } else if (tableName.equals("promo")) {
-                                if (dbHelper.savePromo(setPromo(json_object), "insert")) {
-
-                                } else
-                                    System.out.println("Promo FAILED TO SAVE. <source: Sync.java>");
-
+                                if (!dbHelper.savePromo(setPromo(json_object), "insert"))
+                                    Log.d("sync_10", "wala na save");
                             } else if (tableName.equals("clinics")) {
-                                if (dbHelper.saveClinic(setClinic(json_object), "insert")) {
-
-                                } else
-                                    System.out.println("Clinics FAILED TO SAVE. <source: Sync.java>");
-
+                                if (!dbHelper.saveClinic(setClinic(json_object), "insert"))
+                                    Log.d("sync_9", "wala na save");
                             } else if (tableName.equals("clinic_doctor")) {
-                                if (dbHelper.saveClinicDoctor(setClinicDoctor(json_object), "insert")) {
-
-                                } else
-                                    System.out.println("ClinicDoctor FAILED TO SAVE. <source: Sync.java>");
+                                if (!dbHelper.saveClinicDoctor(setClinicDoctor(json_object), "insert"))
+                                    Log.d("sync_8", "wala na save");
                             } else if (tableName.equals("patient_prescriptions")) {
-                                if (dbHelper.savePrescription(json_object)) {
-
-                                } else
-                                    System.out.print("patient_prescriptions FAILED TO SAVE <src: Sync.java>");
+                                if (!dbHelper.savePrescription(json_object))
+                                    Log.d("sync_7", "wala na save");
                             } else if (tableName.equals("settings")) {
-                                if (dbHelper.saveSettings(json_object, "insert")) {
-
-                                } else
-                                    System.out.print("referral_settings FAILED TO SAVE <src: Sync.java>");
+                                if (!dbHelper.saveSettings(json_object, "insert"))
+                                    Log.d("sync_6", "wala na save");
                             } else if (tableName.equals("branches")) {
-                                if (dbHelper.saveBranches(json_object)) {
-
-                                } else
-                                    System.out.print("orders FAILED TO SAVE <src: Sync.java>");
+                                if (!dbHelper.saveBranches(json_object))
+                                    Log.d("sync_5", "wala na save");
                             } else if (tableName.equals("orders")) {
                                 if (!dbHelper.saveOrders(json_object))
-                                    System.out.print("orders FAILED TO SAVE <src: Sync.java>");
+                                    Log.d("sync_4", "wala na save");
                             } else if (tableName.equals("order_details")) {
                                 if (!dbHelper.saveOrderDetails(json_object))
-                                    System.out.print("order_details FAILED TO SAVE <src: Sync.java>");
+                                    Log.d("sync_3", "wala na save");
                             } else if (tableName.equals("messages")) {
-                                if (dbHelper.saveMessages(json_object, "insert")) {
-
-                                } else {
-                                    System.out.print("messages FAILED TO SAVE <src: Sync.java>");
-                                }
+                                if (!dbHelper.saveMessages(json_object, "insert"))
+                                    Log.d("sync_2", "wala na save");
+                            } else if (tableName.equals("consultations")) {
+                                if (!dbHelper.savePatientConsultation(setConsultation(json_object), "add"))
+                                    Log.d("sync_1", "wala na save");
                             }
                         }
                     }
@@ -192,27 +146,20 @@ public class Sync {
                         JSONObject json_object = json_array_final_update.getJSONObject(i);
                         if (!json_object.equals("null") && !json_object.equals(null)) {
                             if (tableName.equals("doctors")) {
-                                if (dbHelper.saveDoctor(setDoctor(json_object), "update")) {
-
-                                } else {
+                                if (!dbHelper.saveDoctor(setDoctor(json_object), "update"))
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                }
                             } else if (tableName.equals("products")) {
-                                if (dbHelper.saveProduct(setProduct(json_object), "update")) {
-
-                                } else {
+                                if (!dbHelper.saveProduct(setProduct(json_object), "update"))
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                                }
                             } else if (tableName.equals("settings")) {
-                                if (dbHelper.saveSettings(json_object, "update")) {
-
-                                } else
+                                if (!dbHelper.saveSettings(json_object, "update"))
                                     System.out.print("referral_settings FAILED TO SAVE <src: Sync.java>");
                             } else if (tableName.equals("messages")) {
-                                if (dbHelper.saveMessages(json_object, "update")) {
-
-                                } else
+                                if (!dbHelper.saveMessages(json_object, "update"))
                                     System.out.print("messages FAILED TO SAVE <src: Sync.java>");
+                            } else if (tableName.equals("consultations")) {
+                                if (!dbHelper.savePatientConsultation(setConsultation(json_object), "update"))
+                                    System.out.print("consultations FAILED TO SAVE <src: Sync.java>");
                             }
                         }
                     }
@@ -222,6 +169,32 @@ public class Sync {
             Toast.makeText(context, "general error" + e, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+    }
+
+    public Consultation setConsultation(JSONObject json) {
+        Consultation consult = new Consultation();
+
+        try {
+            consult.setServerID(json.getInt("id"));
+            consult.setPatientID(json.getInt("patient_id"));
+            consult.setDoctorID(json.getInt("doctor_id"));
+            consult.setClinicID(json.getInt("clinic_id"));
+            consult.setDate(json.getString("date"));
+            consult.setTime(json.getString("time"));
+            consult.setIsAlarmed(json.getInt("is_alarm"));
+            consult.setAlarmedTime(json.getString("alarm_time"));
+            consult.setIs_approved(json.getInt("is_approved"));
+            consult.setIs_read(json.getInt("isRead"));
+            consult.setComment_doctor(json.getString("comment_doctor"));
+            consult.setPtnt_is_approved(json.getInt("patient_is_approved"));
+            consult.setComment_patient(json.getString("comment_patient"));
+            consult.setCreated_at(json.getString("created_at"));
+            consult.setUpdated_at(json.getString("updated_at"));
+        } catch (Exception e) {
+            Log.d("sync1", e + "");
+        }
+
+        return consult;
     }
 
     public Dosage setDosage(JSONObject json_object) {

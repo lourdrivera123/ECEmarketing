@@ -36,7 +36,7 @@
                 android:id="@+id/clinicRecord"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@drawable/circle"
+                android:background="@drawable/circle_selector"
                 android:src="@drawable/ic_clinic_note" />
         </LinearLayout>
 
@@ -59,7 +59,7 @@
                 android:id="@+id/personalRecord"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@drawable/circle"
+                android:background="@drawable/circle_selector"
                 android:src="@drawable/ic_personal_note" />
         </LinearLayout>
     </LinearLayout>

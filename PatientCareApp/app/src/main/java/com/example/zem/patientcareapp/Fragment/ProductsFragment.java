@@ -104,7 +104,6 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
         Intent intent = new Intent(getActivity(), SelectedProductActivity.class);
         intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getProductId());
-        intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "ProductsFragment");
         startActivity(intent);
         getActivity().finish();
     }
