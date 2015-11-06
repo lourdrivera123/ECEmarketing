@@ -17,11 +17,13 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.DbHelper;
+import com.example.zem.patientcareapp.GoogleMapsActivity;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.SidebarActivity;
@@ -175,8 +177,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.productsLayout:
-                intent.putExtra("selected", 5);
-                startActivity(intent);
+                startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
                 break;
 
             case R.id.promosLayout:

@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.example.zem.patientcareapp.Fragment.BeforeProductDisplayFragment;
 import com.example.zem.patientcareapp.Fragment.PatientConsultationFragment;
 import com.example.zem.patientcareapp.Fragment.PatientHistoryFragment;
 import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
@@ -37,7 +38,7 @@ public class MasterTabsAdapter extends FragmentStatePagerAdapter{
             case 4:
                 return new PatientConsultationFragment();
             case 5:
-                return new ProductsFragment();
+                return new BeforeProductDisplayFragment();
             case 6:
                 return new PromoFragment();
             case 7:

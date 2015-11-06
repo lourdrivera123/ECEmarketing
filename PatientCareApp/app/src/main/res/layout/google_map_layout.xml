@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/mytoolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ColorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <fragment
+        android:id="@+id/map"
+        class="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"/>
+
+    <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="2dip"-->
+    <!--android:background="@color/LightGreen" />-->
+
+    <!--<Button-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="@dimen/d10"-->
+    <!--android:background="@color/ColorPrimary"-->
+    <!--android:text="Click me, if the branch is not on the list"-->
+    <!--android:textColor="#FFFFFF"-->
+    <!--android:id="@+id/branch_not_found_btn"/>-->
+
+    <!--<TextView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Select a branch you prefer." />-->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:background="@color/LightGreen" />
+
+    <ListView
+        android:id="@+id/list_view_of_branches"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/d10"
+        android:divider="@color/LightGreen"
+        android:dividerHeight="1dip"/>
+</LinearLayout>

@@ -1,15 +1,13 @@
-package com.example.zem.patientcareapp.Fragment;
+package com.example.zem.patientcareapp;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
@@ -21,17 +19,12 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.GetterSetter.Product;
 import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
-import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
-import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.SelectedProductActivity;
-import com.example.zem.patientcareapp.SidebarActivity;
+import com.example.zem.patientcareapp.adapter.LazyAdapter;
 
 import org.json.JSONObject;
 
@@ -40,7 +33,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProductsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
+/**
+ * Created by Zem on 11/5/2015.
+ */
+public class ProductsActivity extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
     ListView list_of_products, lv_subcategories;
     Spinner lv_categories;
     LazyAdapter adapter;
@@ -56,19 +52,23 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
     public static ArrayList<HashMap<String, String>> products_items;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_products_fragment, container, false);
-        root_view = rootView;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_products_fragment);
 
-        lv_categories = (Spinner) rootView.findViewById(R.id.categories);
+        lv_categories = (Spinner) findViewById(R.id.categories);
+        refresh_products_list = (SwipeRefreshLayout) findViewById(R.id.refresh_products_list);
+        refresh_products_list.setOnRefreshListener(this);
 
         productQuantity = new HashMap();
 
-        dbHelper = new DbHelper(getActivity());
-        queue = Volley.newRequestQueue(getActivity());
+        dbHelper = new DbHelper(getBaseContext());
+        queue = Volley.newRequestQueue(getBaseContext());
         helpers = new Helpers();
 
         products_items = dbHelper.getAllProducts();
+
+        Log.d("ASdasd", products_items + "");
 
         for (HashMap<String, String> map : products_items) {
             HashMap<String, String> tempMap = new HashMap();
@@ -81,18 +81,16 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             productQuantity.put(map.get("product_id"), tempMap);
         }
 
-        populateProductsListView(rootView, products_items);
+        populateProductsListView(products_items);
         category_list = dbHelper.getAllProductCategoriesArray();
-        populateListView(rootView, category_list);
-
-        return rootView;
+        populateListView(category_list);
     }
 
-    public void populateProductsListView(View rootView, ArrayList<HashMap<String, String>> products_items) {
-        list_of_products = (ListView) rootView.findViewById(R.id.product_lists);
+    public void populateProductsListView(ArrayList<HashMap<String, String>> products_items) {
+        list_of_products = (ListView) findViewById(R.id.product_lists);
 
         // Getting adapter by passing xml data ArrayList
-        adapter = new LazyAdapter(getActivity(), products_items, "product_lists");
+        adapter = new LazyAdapter(ProductsActivity.this, products_items, "product_lists");
         list_of_products.setAdapter(adapter);
         list_of_products.setOnItemClickListener(this);
     }
@@ -102,19 +100,19 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         Product prod;
         prod = dbHelper.getProductById(Integer.parseInt(view.getTag().toString()));
 
-        Intent intent = new Intent(getActivity(), SelectedProductActivity.class);
+        Intent intent = new Intent(getBaseContext(), SelectedProductActivity.class);
         intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getProductId());
         intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "ProductsFragment");
         startActivity(intent);
-        getActivity().finish();
+        this.finish();
     }
 
-    public void populateListView(View rootView, List<String> categories) {
-        lv_categories = (Spinner) rootView.findViewById(R.id.categories);
-        lv_subcategories = (ListView) rootView.findViewById(R.id.subcategories);
+    public void populateListView(List<String> categories) {
+        lv_categories = (Spinner) findViewById(R.id.categories);
+        lv_subcategories = (ListView) findViewById(R.id.subcategories);
         categories.add(0, "Select Category");
 
-        category_list_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, categories);
+        category_list_adapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_1, categories);
         lv_categories.setAdapter(category_list_adapter);
         lv_subcategories.setVisibility(View.GONE);
         lv_categories.setOnItemSelectedListener(this);
@@ -128,7 +126,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             final int categoryId = dbHelper.getCategoryIdByName(item);
             String[] arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
 
-            final Dialog dialog = new Dialog(getActivity());
+            final Dialog dialog = new Dialog(getBaseContext());
             dialog.setTitle("subcategories");
             dialog.setContentView(R.layout.categories_layout);
 
@@ -139,7 +137,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
             lv_subcategories = (ListView) dialog.findViewById(R.id.subcategories);
             lv_categories = (Spinner) dialog.findViewById(R.id.categories);
 
-            category_list_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, arr);
+            category_list_adapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_1, arr);
             lv_subcategories.setAdapter(category_list_adapter);
             lv_categories.setVisibility(View.GONE);
             lv_subcategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -150,7 +148,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
                     ArrayList<HashMap<String, String>> list = dbHelper.getProductsBySubCategory(subCategory.getId());
 
-                    Toast.makeText(getActivity(), subCategoryName + " : " + list.size() + " item/s found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), subCategoryName + " : " + list.size() + " item/s found", Toast.LENGTH_SHORT).show();
 
                     // Getting adapter by passing xml data ArrayList
                     if (list.size() > 0) {
@@ -176,7 +174,7 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onRefresh() {
-        GetRequest.getJSONobj(getActivity(), "get_products", "products", "product_id", new RespondListener<JSONObject>() {
+        GetRequest.getJSONobj(getBaseContext(), "get_products", "products", "product_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 products_items = dbHelper.getAllProducts();
@@ -190,13 +188,13 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
                     tempMap.put("temp_basket_qty", "0");
                     productQuantity.put(map.get("product_id"), tempMap);
                 }
-                populateProductsListView(root_view, products_items);
+                populateProductsListView(products_items);
                 refresh_products_list.setRefreshing(false);
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
                 Log.d("<ProductsFragment>", error.toString());
-                Toast.makeText(getActivity(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
             }
         });
     }

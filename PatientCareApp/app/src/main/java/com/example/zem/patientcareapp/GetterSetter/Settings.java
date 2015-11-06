@@ -4,7 +4,7 @@ package com.example.zem.patientcareapp.GetterSetter;
  * Created by User PC on 9/30/2015.
  */
 public class Settings {
-    private int serverID, lvl_limit, safety_stock, critical_stock = 0;
+    private int serverID, lvl_limit, delivery_minimum = 0;
     private double points, points_to_peso, referral_comm, comm_variation, delivery_charge = 0.0;
     private String created_at, updated_at, deleted_at = "";
 
@@ -20,12 +20,8 @@ public class Settings {
         this.lvl_limit = lvl_limit;
     }
 
-    public void setSafety_stock(int safety_stock) {
-        this.safety_stock = safety_stock;
-    }
-
-    public void setCritical_stock(int critical_stock) {
-        this.critical_stock = critical_stock;
+    public void setDelivery_minimum(int delivery_minimum) {
+        this.delivery_minimum = delivery_minimum;
     }
 
     public void setPoints(double points) {
@@ -68,12 +64,8 @@ public class Settings {
         return lvl_limit;
     }
 
-    public int getSafety_stock() {
-        return safety_stock;
-    }
-
-    public int getCritical_stock() {
-        return critical_stock;
+    public int getDelivery_minimum() {
+        return delivery_minimum;
     }
 
     public double getPoints() {

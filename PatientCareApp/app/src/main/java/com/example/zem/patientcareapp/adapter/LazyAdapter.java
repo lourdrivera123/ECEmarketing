@@ -30,6 +30,7 @@ import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 
@@ -130,7 +131,7 @@ public class LazyAdapter extends BaseAdapter {
 
             HashMap<String, String> map;
             map = data.get(position);
-            final Map<String, HashMap<String, String>> productQuantity = ProductsFragment.productQuantity;
+            final Map<String, HashMap<String, String>> productQuantity = ProductsActivity.productQuantity;
 
             productId = Integer.parseInt(map.get("id"));
             productPacking = productQuantity.get(productId + "").get("packing");
@@ -526,7 +527,6 @@ public class LazyAdapter extends BaseAdapter {
             status.setText(order_item.get(DbHelper.ORDERS_STATUS));
 
             product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount));
-
 
 
 //            product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount) + " \nQuantity: " + quantity + "  (" + helpers.getPluralForm(unit, quantity) + ") (" + num + " " + helpers.getPluralForm(packing, num) + ")" +

@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -128,7 +127,7 @@ public class DbHelper extends SQLiteOpenHelper {
             PRODUCT_PACKING = "packing",
             PRODUCT_QTY_PER_PACKING = "qty_per_packing",
             PRODUCT_SKU = "sku",
-            PRODUCT_PHOTO = "photo";
+            PRODUCT_CRITICAL_STOCK = "critical_stock";
 
     //DOSAGE_FORMAT_AND_STRENGTH TABLE
     public static final String TBL_DOSAGE = "dosage_format_and_strength",
@@ -298,7 +297,12 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String TBL_BRANCHES = "branches",
             SERVER_BRANCHES_ID = "branches_id",
             BRANCHES_NAME = "name",
-            BRANCHES_FULL_ADDRESS = "full_address",
+            BRANCHES_ADDITIONAL_ADDRESS = "additional_address",
+            BRANCHES_BRGY_ID = "barangay_id",
+            BRANCHES_BARANGAY = "address_barangay",
+            BRANCHES_CITY = "address_city_municipality",
+            BRANCHES_PROVINCE = "address_province",
+            BRANCHES_REGION = "address_region",
             BRANCHES_STATUS = "status";
 
     //REFERRAL_SETTINGS TABLES
@@ -310,8 +314,7 @@ public class DbHelper extends SQLiteOpenHelper {
             SETTINGS_REFERRAL_COMM = "referral_commission",
             SETTINGS_COMM_VARIATION = "commission_variation",
             SETTINGS_DELIVERY_CHARGE = "delivery_charge",
-            SETTINGS_SAFETY_STOCK = "safety_stock",
-            SETTINGS_CRITICAL_STOCK = "critical_stock";
+            SETTINGS_DELIVERY_MINIMUM = "delivery_minimum";
 
     //MESSAGES
     public static final String TBl_MSGS = "messages",
@@ -356,8 +359,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_PRODUCT_SUBCATEGORIES, AI_ID, SERVER_PRODUCT_SUBCATEGORY_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "products"
-        String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT,  %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCTS, AI_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION, PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PACKING, PRODUCT_QTY_PER_PACKING, PRODUCT_SKU, PRODUCT_PHOTO, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s INTEGER, %s  TEXT , %s  INTEGER , %s  TEXT,  %s  TEXT , %s  TEXT  )",
+                TBL_PRODUCTS, AI_ID, SERVER_PRODUCT_ID, PRODUCT_SUBCATEGORY_ID, PRODUCT_NAME, PRODUCT_GENERIC_NAME, PRODUCT_DESCRIPTION, PRODUCT_PRESCRIPTION_REQUIRED, PRODUCT_PRICE, PRODUCT_UNIT, PRODUCT_PACKING, PRODUCT_QTY_PER_PACKING, PRODUCT_SKU, PRODUCT_CRITICAL_STOCK, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL TO CREATE TABLE "TBL_DOSAGE"
         String sql_create_dosage_table = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
@@ -417,8 +420,8 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_overlay = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER)",
                 TBL_OVERLAYS, AI_ID, OVERLAY_TITLE, IS_READ);
 
-        String settings = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s DOUBLE, %s DOUBLE, %s INTEGER, %s DOUBLE, %s DOUBLE, %s DOUBLE, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_SETTINGS, AI_ID, SETTINGS_SERVER_ID, SETTINGS_POINTS, SETTINGS_POINTS_TO_PESO, SETTINGS_LVL_LIMIT, SETTINGS_REFERRAL_COMM, SETTINGS_COMM_VARIATION, SETTINGS_DELIVERY_CHARGE, SETTINGS_SAFETY_STOCK, SETTINGS_CRITICAL_STOCK, CREATED_AT, UPDATED_AT, DELETED_AT);
+        String settings = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s DOUBLE, %s DOUBLE, %s INTEGER, %s DOUBLE, %s DOUBLE, %s DOUBLE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_SETTINGS, AI_ID, SETTINGS_SERVER_ID, SETTINGS_POINTS, SETTINGS_POINTS_TO_PESO, SETTINGS_LVL_LIMIT, SETTINGS_REFERRAL_COMM, SETTINGS_COMM_VARIATION, SETTINGS_DELIVERY_CHARGE, SETTINGS_DELIVERY_MINIMUM, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         String sql_create_orders = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT," +
                         " %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
@@ -426,8 +429,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 ORDERS_RECIPIENT_NUMBER, ORDERS_DELIVERY_SCHED, ORDERS_ECE_BRANCH, ORDERS_MODE_OF_DELIVERY, ORDERS_STATUS, CREATED_AT,
                 UPDATED_AT, DELETED_AT);
 
-        String sql_create_branches = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_BRANCHES, AI_ID, SERVER_BRANCHES_ID, BRANCHES_NAME, BRANCHES_FULL_ADDRESS, BRANCHES_STATUS, CREATED_AT,
+        String sql_create_branches = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_BRANCHES, AI_ID, SERVER_BRANCHES_ID, BRANCHES_NAME, BRANCHES_ADDITIONAL_ADDRESS, BRANCHES_BRGY_ID, BRANCHES_BARANGAY, BRANCHES_CITY, BRANCHES_PROVINCE, BRANCHES_REGION, BRANCHES_STATUS, CREATED_AT,
                 UPDATED_AT, DELETED_AT);
 
         String sql_create_order_details = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
@@ -748,7 +751,12 @@ public class DbHelper extends SQLiteOpenHelper {
         try {
             values.put(SERVER_BRANCHES_ID, object.getInt("id"));
             values.put(BRANCHES_NAME, object.getString(BRANCHES_NAME));
-            values.put(BRANCHES_FULL_ADDRESS, object.getString(BRANCHES_FULL_ADDRESS));
+            values.put(BRANCHES_ADDITIONAL_ADDRESS, object.getString(BRANCHES_ADDITIONAL_ADDRESS));
+            values.put(BRANCHES_BRGY_ID, object.getInt(BRANCHES_BRGY_ID));
+            values.put(BRANCHES_BARANGAY, object.getString(BRANCHES_BARANGAY));
+            values.put(BRANCHES_CITY, object.getString(BRANCHES_CITY));
+            values.put(BRANCHES_PROVINCE, object.getString(BRANCHES_PROVINCE));
+            values.put(BRANCHES_REGION, object.getString(BRANCHES_REGION));
             values.put(BRANCHES_STATUS, object.getString(BRANCHES_STATUS));
             values.put(CREATED_AT, object.getString("created_at"));
 
@@ -1046,8 +1054,7 @@ public class DbHelper extends SQLiteOpenHelper {
             val.put(SETTINGS_REFERRAL_COMM, json.getDouble(SETTINGS_REFERRAL_COMM));
             val.put(SETTINGS_COMM_VARIATION, json.getDouble(SETTINGS_COMM_VARIATION));
             val.put(SETTINGS_DELIVERY_CHARGE, json.getDouble(SETTINGS_DELIVERY_CHARGE));
-            val.put(SETTINGS_SAFETY_STOCK, json.getInt(SETTINGS_SAFETY_STOCK));
-            val.put(SETTINGS_CRITICAL_STOCK, json.getInt(SETTINGS_CRITICAL_STOCK));
+            val.put(SETTINGS_DELIVERY_MINIMUM, json.getInt(SETTINGS_DELIVERY_MINIMUM));
             val.put(CREATED_AT, json.getString(CREATED_AT));
             val.put(UPDATED_AT, json.getString(UPDATED_AT));
             val.put(DELETED_AT, json.getString(DELETED_AT));
@@ -1184,7 +1191,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
         values.put(PRODUCT_DESCRIPTION, product.getDescription());
         values.put(PRODUCT_PRESCRIPTION_REQUIRED, product.getPrescriptionRequired());
-        values.put(PRODUCT_PHOTO, product.getPhoto());
+        values.put(PRODUCT_CRITICAL_STOCK, product.getPhoto());
         values.put(PRODUCT_PRICE, product.getPrice());
         values.put(PRODUCT_SKU, product.getSku());
         values.put(PRODUCT_UNIT, product.getUnit());
@@ -1718,7 +1725,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(PRODUCT_PRESCRIPTION_REQUIRED)));
             map.put(PRODUCT_PRICE, cur.getString(cur.getColumnIndex(PRODUCT_PRICE)));
             map.put(PRODUCT_UNIT, cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
-            map.put(PRODUCT_PHOTO, cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
+            map.put(PRODUCT_CRITICAL_STOCK, cur.getString(cur.getColumnIndex(PRODUCT_CRITICAL_STOCK)));
             map.put(CREATED_AT, cur.getString(cur.getColumnIndex(CREATED_AT)));
             map.put(UPDATED_AT, cur.getString(cur.getColumnIndex(UPDATED_AT)));
             map.put(DELETED_AT, cur.getString(cur.getColumnIndex(DELETED_AT)));
@@ -1750,7 +1757,7 @@ public class DbHelper extends SQLiteOpenHelper {
             prod.setUnit(cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
             prod.setPacking(cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
             prod.setQtyPerPacking(cur.getInt(cur.getColumnIndex(PRODUCT_QTY_PER_PACKING)));
-            prod.setPhoto(cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
+            prod.setPhoto(cur.getString(cur.getColumnIndex(PRODUCT_CRITICAL_STOCK)));
             prod.setCreatedAt(cur.getString(cur.getColumnIndex(CREATED_AT)));
             prod.setUpdatedAt(cur.getString(cur.getColumnIndex(UPDATED_AT)));
             prod.setDeletedAt(cur.getString(cur.getColumnIndex(DELETED_AT)));
@@ -1843,7 +1850,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
             map.put(PRODUCT_DESCRIPTION, cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
             map.put(PRODUCT_PRICE, cur.getString(cur.getColumnIndex(PRODUCT_PRICE)));
-            map.put(PRODUCT_PHOTO, cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
+            map.put(PRODUCT_CRITICAL_STOCK, cur.getString(cur.getColumnIndex(PRODUCT_CRITICAL_STOCK)));
             map.put(PRODUCT_SKU, cur.getString(cur.getColumnIndex(PRODUCT_SKU)));
             map.put(PRODUCT_UNIT, cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
             map.put(PRODUCT_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
@@ -1891,7 +1898,7 @@ public class DbHelper extends SQLiteOpenHelper {
             medicine.setDescription(cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
             medicine.setPrice(cur.getDouble(cur.getColumnIndex(PRODUCT_PRICE)));
             medicine.setUnit(cur.getString(cur.getColumnIndex(PRODUCT_UNIT)));
-            medicine.setPhoto(cur.getString(cur.getColumnIndex(PRODUCT_PHOTO)));
+            medicine.setPhoto(cur.getString(cur.getColumnIndex(PRODUCT_CRITICAL_STOCK)));
         }
         cur.close();
         db.close();
@@ -2021,8 +2028,7 @@ public class DbHelper extends SQLiteOpenHelper {
             settings.setReferral_comm(cur.getDouble(cur.getColumnIndex(SETTINGS_REFERRAL_COMM)));
             settings.setComm_variation(cur.getDouble(cur.getColumnIndex(SETTINGS_COMM_VARIATION)));
             settings.setDelivery_charge(cur.getDouble(cur.getColumnIndex(SETTINGS_DELIVERY_CHARGE)));
-            settings.setSafety_stock(cur.getInt(cur.getColumnIndex(SETTINGS_SAFETY_STOCK)));
-            settings.setCritical_stock(cur.getInt(cur.getColumnIndex(SETTINGS_CRITICAL_STOCK)));
+            settings.setDelivery_minimum(cur.getInt(cur.getColumnIndex(SETTINGS_DELIVERY_MINIMUM)));
             settings.setCreated_at(cur.getString(cur.getColumnIndex(CREATED_AT)));
             settings.setUpdated_at(cur.getString(cur.getColumnIndex(UPDATED_AT)));
             settings.setDeleted_at(cur.getString(cur.getColumnIndex(DELETED_AT)));
@@ -2210,6 +2216,13 @@ public class DbHelper extends SQLiteOpenHelper {
             HashMap<String, String> map = new HashMap();
             map.put(SERVER_BRANCHES_ID, String.valueOf(cur.getInt(cur.getColumnIndex(SERVER_BRANCHES_ID))));
             map.put(BRANCHES_NAME, cur.getString(cur.getColumnIndex(BRANCHES_NAME)));
+            map.put(BRANCHES_ADDITIONAL_ADDRESS, cur.getString(cur.getColumnIndex(BRANCHES_ADDITIONAL_ADDRESS)));
+            map.put(BRANCHES_BRGY_ID, cur.getString(cur.getColumnIndex(BRANCHES_BRGY_ID)));
+            map.put(BRANCHES_BARANGAY, cur.getString(cur.getColumnIndex(BRANCHES_BARANGAY)));
+            map.put(BRANCHES_CITY, cur.getString(cur.getColumnIndex(BRANCHES_CITY)));
+            map.put(BRANCHES_PROVINCE, cur.getString(cur.getColumnIndex(BRANCHES_PROVINCE)));
+            map.put(BRANCHES_REGION, cur.getString(cur.getColumnIndex(BRANCHES_REGION)));
+            map.put("full_address", cur.getString(cur.getColumnIndex(BRANCHES_ADDITIONAL_ADDRESS)) + ", " + cur.getString(cur.getColumnIndex(BRANCHES_BARANGAY)) + ", "+cur.getString(cur.getColumnIndex(BRANCHES_CITY)));
             listOfBranches.add(map);
         }
 
