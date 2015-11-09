@@ -102,7 +102,6 @@ public class ProductsActivity extends Activity implements AdapterView.OnItemClic
 
         Intent intent = new Intent(getBaseContext(), SelectedProductActivity.class);
         intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getProductId());
-        intent.putExtra(SelectedProductActivity.UP_ACTIVITY, "ProductsFragment");
         startActivity(intent);
         this.finish();
     }

@@ -101,17 +101,7 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                break;
-
-            case R.id.go_to_cart:
-                Intent intent = new Intent(this, MasterTabActivity.class);
-                intent.putExtra("selected", 7);
-                startActivity(intent);
-                break;
-        }
+        this.finish();
         return super.onOptionsItemSelected(item);
     }
 
