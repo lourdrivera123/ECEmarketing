@@ -2236,12 +2236,42 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(BRANCHES_CITY, cur.getString(cur.getColumnIndex(BRANCHES_CITY)));
             map.put(BRANCHES_PROVINCE, cur.getString(cur.getColumnIndex(BRANCHES_PROVINCE)));
             map.put(BRANCHES_REGION, cur.getString(cur.getColumnIndex(BRANCHES_REGION)));
-            map.put("full_address", cur.getString(cur.getColumnIndex(BRANCHES_ADDITIONAL_ADDRESS)) + ", " + cur.getString(cur.getColumnIndex(BRANCHES_BARANGAY)) + ", "+cur.getString(cur.getColumnIndex(BRANCHES_CITY)));
+            map.put("full_address", cur.getString(cur.getColumnIndex(BRANCHES_ADDITIONAL_ADDRESS)) + ", " + cur.getString(cur.getColumnIndex(BRANCHES_BARANGAY)) + ", " + cur.getString(cur.getColumnIndex(BRANCHES_CITY)));
             listOfBranches.add(map);
         }
 
         cur.close();
         db.close();
+        return listOfBranches;
+    }
+
+    public ArrayList<HashMap<String, String>> getECEBranchesfromjson(JSONObject jobject, String tbl_name) {
+
+        ArrayList<HashMap<String, String>> listOfBranches = new ArrayList();
+        String table_name = tbl_name;
+
+        try {
+            JSONArray json_array_mysql = jobject.getJSONArray(tbl_name);
+            for (int i = 0; i < json_array_mysql.length(); i++) {
+                JSONObject row = json_array_mysql.getJSONObject(i);
+                HashMap<String, String> map = new HashMap();
+                map.put(SERVER_BRANCHES_ID, String.valueOf(row.getInt(AI_ID)));
+                map.put(BRANCHES_NAME, row.getString(BRANCHES_NAME));
+                map.put(BRANCHES_ADDITIONAL_ADDRESS, row.getString(BRANCHES_ADDITIONAL_ADDRESS));
+                map.put(BRANCHES_BRGY_ID, row.getString(BRANCHES_BRGY_ID));
+                map.put(BRANCHES_BARANGAY, row.getString(BRANCHES_BARANGAY));
+                map.put(BRANCHES_CITY, row.getString(BRANCHES_CITY));
+                map.put(BRANCHES_PROVINCE, row.getString(BRANCHES_PROVINCE));
+                map.put(BRANCHES_REGION, row.getString(BRANCHES_REGION));
+                map.put("latitude", String.valueOf(row.getDouble("latitude")));
+                map.put("longitude", String.valueOf(row.getDouble("longitude")));
+                map.put("full_address", row.getString(BRANCHES_ADDITIONAL_ADDRESS) + ", " + row.getString(BRANCHES_BARANGAY) + ", " + row.getString(BRANCHES_CITY));
+                listOfBranches.add(map);
+            }
+        } catch (Exception e) {
+
+        }
+
         return listOfBranches;
     }
     //////////////////////////END OF CHECK METHODS//////////////////////////////

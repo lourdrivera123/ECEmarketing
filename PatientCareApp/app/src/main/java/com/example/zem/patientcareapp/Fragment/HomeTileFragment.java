@@ -36,7 +36,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 public class HomeTileFragment extends Fragment implements View.OnClickListener {
-    LinearLayout prescriptionLayout, profileLayout, patientHistoryLayout, doctorsLayout, productsLayout, cartLayout, promosLayout, newsLayout;
+    LinearLayout prescriptionLayout, profileLayout, patientHistoryLayout, doctorsLayout, productsLayout, cartLayout, promosLayout, newsLayout, orderLayout;
     RelativeLayout consultationLayout;
     ImageView sideBar_overlay, quickSearch_overlay;
     TextView notifConsultation;
@@ -79,6 +79,11 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
 //        patientID = SidebarActivity.getUserID();
 //        serverRequest = new ServerRequest();
 
+        //new changes
+        orderLayout = (LinearLayout) rootView.findViewById(R.id.orderLayout);
+        orderLayout.setOnClickListener(this);
+        //end of new changes
+
         return rootView;
     }
 
@@ -120,6 +125,8 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
 //
     @Override
     public void onClick(View v) {
+        Intent intent = new Intent(getActivity(), GoogleMapsActivity.class);
+        startActivity(intent);
 //        final Intent intent = new Intent(getActivity(), MasterTabActivity.class);
 //        switch (v.getId()) {
 //

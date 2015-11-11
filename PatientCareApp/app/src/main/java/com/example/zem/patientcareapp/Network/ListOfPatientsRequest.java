@@ -27,6 +27,16 @@ public class ListOfPatientsRequest {
 
         queue = VolleySingleton.getInstance().getRequestQueue();
         helpers = new Helpers();
+//        String url;
+
+//        if(q.contains("custom_url")){
+//            url = q.substring(11, q.length());
+//        } else {
+//            url = helpers.get_url(q);
+//        }
+//
+//        Log.d("and url", url);
+
 
         JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q), null, new Response.Listener<JSONObject>() {
             @Override
