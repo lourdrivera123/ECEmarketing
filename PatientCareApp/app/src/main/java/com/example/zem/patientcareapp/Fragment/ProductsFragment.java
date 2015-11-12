@@ -200,26 +200,26 @@ public class ProductsFragment extends Fragment implements AdapterView.OnItemClic
         });
     }
 
-    public static void showOverLay(Context context) {
-        dbHelper = new DbHelper(context);
-
-        if (dbHelper.checkOverlay("Products", "check")) {
-
-        } else {
-            final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
-            dialog.setContentView(R.layout.products_overlay);
-
-            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.productsLayout);
-            layout.setAlpha((float) 0.8);
-
-            layout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (dbHelper.checkOverlay("Products", "insert"))
-                        dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }
-    }
+//    public static void showOverLay(Context context) {
+//        dbHelper = new DbHelper(context);
+//
+//        if (dbHelper.checkOverlay("Products", "check")) {
+//
+//        } else {
+//            final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
+//            dialog.setContentView(R.layout.products_overlay);
+//
+//            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.productsLayout);
+//            layout.setAlpha((float) 0.8);
+//
+//            layout.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (dbHelper.checkOverlay("Products", "insert"))
+//                        dialog.dismiss();
+//                }
+//            });
+//            dialog.show();
+//        }
+//    }
 }

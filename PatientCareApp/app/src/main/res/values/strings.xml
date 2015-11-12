@@ -7,19 +7,30 @@
     <string name="app_label">Patient Care</string>
     <string name="search_hint">Search products</string>
     <string name="desc_list_item_icon">Item Icon</string>
-    <!-- Nav Drawer Menu Items -->
+
     <string-array name="nav_drawer_items">
         <item>Home</item>
+        <item>Profile</item>
         <item>Messages</item>
-        <item>Referrals</item>
-        <item>Orders</item>
-        <item>Points</item>
+        <item>Medical Records</item>
+        <item>Recent Orders</item>
+        <item>List of Doctors</item>
+        <item>Promos</item>
+        <item>News</item>
+        <item>Logout</item>
     </string-array>
-    <!-- Nav Drawer List Item Icons -->
+
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_plus</item>
-        <item>@drawable/ic_plus</item>
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_profile</item>
+        <item>@drawable/ic_messages</item>
+        <item>@drawable/ic_medical_record</item>
+        <item>@drawable/ic_recent_orders</item>
+        <item>@drawable/ic_doctor</item>
+        <item>@drawable/ic_promo</item>
+        <item>@drawable/ic_news</item>
+        <item>@drawable/ic_logout</item>
     </array>
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>

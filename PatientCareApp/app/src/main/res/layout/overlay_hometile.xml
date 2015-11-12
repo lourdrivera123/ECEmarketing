@@ -11,11 +11,4 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/home_tile_help" />
-
-    <ImageView
-        android:id="@+id/quickSearch_overlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/quick_search"
-        android:visibility="invisible" />
 </LinearLayout>

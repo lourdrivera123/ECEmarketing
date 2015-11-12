@@ -8,6 +8,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -21,12 +23,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
+import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
 import com.example.zem.patientcareapp.Fragment.MessagesFragment;
-import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
+import com.example.zem.patientcareapp.Fragment.PatientHistoryFragment;
+import com.example.zem.patientcareapp.Fragment.PatientProfileFragment;
+import com.example.zem.patientcareapp.Fragment.PromoFragment;
+import com.example.zem.patientcareapp.ImageGallery.ImageHelper;
 import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
 
 /**
@@ -34,30 +42,29 @@ import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
  */
 
 public class SidebarActivity extends FragmentActivity {
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-
     private String[] navMenuTitles; // slide menu items
     private TypedArray navMenuIcons;
     private ArrayList<NavDrawerItem> navDrawerItems;
     ArrayList<HashMap<String, String>> hash_allProducts;
     ArrayList<String> products;
 
-    private NavDrawerListAdapter adapter;
+    public static String uname, pass;
+    public static int userID;
+
     AlarmService alarmService;
-
-    public static SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
-
+    private NavDrawerListAdapter adapter;
     FragmentTransaction fragmentTransaction;
+    private ActionBarDrawerToggle mDrawerToggle;
+    public static SharedPreferences sharedpreferences;
 
+    private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
+    ImageView img_first;
+    TextView txt_uname;
 
     static com.example.zem.patientcareapp.GetterSetter.Patient patient;
     static DbHelper dbHelper;
-
-    public static String uname, pass;
-    public static int userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +87,15 @@ public class SidebarActivity extends FragmentActivity {
         actionbar.setHomeButtonEnabled(true);
 
         //////////////FOR THE SIDEBAR///////////////////////////////
+        //Header of the listview, go to header.xml to customize
+        View header = getLayoutInflater().inflate(R.layout.header_sidebar, null);
+        img_first = (ImageView) header.findViewById(R.id.img_first);
+        txt_uname = (TextView) header.findViewById(R.id.txt_uname);
+
+        txt_uname.setText(getUname());
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.temp_user);
+        img_first.setImageBitmap(ImageHelper.getRoundedCornerBitmap(bm, 300));
+
         navDrawerItems = new ArrayList();
 
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items); // load slide menu items
@@ -88,11 +104,15 @@ public class SidebarActivity extends FragmentActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], 0));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], 0));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], 0));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], 0));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], 0));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
 
         navMenuIcons.recycle(); // Recycle the typed array
 
@@ -100,6 +120,7 @@ public class SidebarActivity extends FragmentActivity {
 
         // setting the nav drawer list adapter
         adapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
+        mDrawerList.addHeaderView(header);
         mDrawerList.setAdapter(adapter);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -155,8 +176,7 @@ public class SidebarActivity extends FragmentActivity {
         return userID;
     }
 
-    private class SlideMenuClickListener implements
-            ListView.OnItemClickListener {
+    private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             displayView(position); // display view for selected nav drawer item
@@ -171,25 +191,10 @@ public class SidebarActivity extends FragmentActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.logout_menu, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (mDrawerToggle.onOptionsItemSelected(item))
             return true;
-        }
 
-        switch (item.getItemId()) {
-            case R.id.logout:
-                editor.clear();
-                editor.commit();
-                startActivity(new Intent(this, MainActivity.class));
-                this.finish();
-                break;
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -211,17 +216,36 @@ public class SidebarActivity extends FragmentActivity {
                 fragment = new HomeTileFragment();
                 break;
             case 1:
-                fragment = new MessagesFragment();
+                fragment = new HomeTileFragment();
                 break;
             case 2:
-                fragment = new ReferralsFragment();
+                fragment = new PatientProfileFragment();
                 break;
             case 3:
-                Intent orders_intent = new Intent(getBaseContext(), OrdersActivity.class);
-                startActivity(orders_intent);
+                fragment = new MessagesFragment();
+                break;
             case 4:
-//                Intent points_intent = new Intent(getBaseContext(), PointsActivity.class);
-                Toast.makeText(getBaseContext(), "Your point/s: 1", Toast.LENGTH_SHORT).show();
+                fragment = new PatientHistoryFragment();
+                break;
+            case 5:
+                startActivity(new Intent(this, OrdersActivity.class));
+                SidebarActivity.this.finish();
+                break;
+            case 6:
+                fragment = new ListOfDoctorsFragment();
+                break;
+            case 7:
+                fragment = new PromoFragment();
+                break;
+            case 8:
+                fragment = new HomeTileFragment();
+                break;
+            case 9:
+                editor.clear();
+                editor.commit();
+                startActivity(new Intent(this, MainActivity.class));
+                SidebarActivity.this.finish();
+                break;
             default:
                 break;
         }

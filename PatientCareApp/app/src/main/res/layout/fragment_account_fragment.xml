@@ -4,94 +4,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:padding="@dimen/d20">
+    android:padding="@dimen/d10">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TableRow android:id="@+id/uploadpicturerow">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.4"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_weight="0.8"
+                <ImageView
+                    android:id="@+id/image_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:minHeight="100dp"
                     android:minWidth="100dp"
-                    android:orientation="vertical">
+                    android:src="@drawable/img_holder" />
 
-                    <ImageView
-                        android:id="@+id/image_holder"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:adjustViewBounds="true"
-                        android:maxHeight="100dp"
-                        android:maxWidth="100dp"
-                        android:src="@drawable/img_holder" />
-
-                    <ProgressBar
-                        android:id="@+id/progress"
-                        style="@style/ProgressBarStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:indeterminate="false"
-                        android:max="100" />
-
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/choose_image_btn"
+                <ProgressBar
+                    android:id="@+id/progress"
+                    style="@style/ProgressBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0.2"
-                    android:text="Choose a picture" />
-            </TableRow>
+                    android:layout_gravity="bottom"
+                    android:indeterminate="false"
+                    android:max="100" />
+            </LinearLayout>
 
-            <EditText
-                android:id="@+id/username"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/choose_image_btn"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/d10"
-                android:hint="Username" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.6"
+                android:text="Choose a picture" />
+        </LinearLayout>
 
-            <EditText
-                android:id="@+id/password"
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d10"
+            android:hint="Username" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/changePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableLeft="@mipmap/ic_update"
+            android:gravity="center_vertical"
+            android:text="Change Password" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="@dimen/d20">
+
+            <Button
+                android:id="@+id/btn_save"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/changePassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:drawableLeft="@mipmap/ic_update"
-                android:gravity="center_vertical"
-                android:text="Change Password" />
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
-                    android:id="@+id/btn_save"
-                    android:layout_width="0dp"
-                    android:layout_height="35dp"
-                    android:layout_marginTop="@dimen/d20"
-                    android:layout_weight="1"
-                    android:background="#5B9A68"
-                    android:text="Save"
-                    android:textColor="@color/white" />
-            </TableRow>
-        </TableLayout>
+                android:layout_height="match_parent"
+                android:background="#5B9A68"
+                android:text="Save"
+                android:textColor="@color/white" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
