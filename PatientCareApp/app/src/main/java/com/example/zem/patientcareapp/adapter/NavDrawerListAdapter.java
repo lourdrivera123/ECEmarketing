@@ -1,6 +1,7 @@
 package com.example.zem.patientcareapp.adapter;
 
 import android.widget.BaseAdapter;
+
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -22,7 +23,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<NavDrawerItem> navDrawerItems;
 
-    public NavDrawerListAdapter(Context context, ArrayList<NavDrawerItem> navDrawerItems){
+    public NavDrawerListAdapter(Context context, ArrayList<NavDrawerItem> navDrawerItems) {
         this.context = context;
         this.navDrawerItems = navDrawerItems;
     }
@@ -50,15 +51,17 @@ public class NavDrawerListAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.drawer_list_item, null);
         }
 
+        ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
         TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
 
         txtTitle.setText(navDrawerItems.get(position).getTitle());
+        icon.setImageResource(navDrawerItems.get(position).getIcon());
 
         // displaying count. check whether it set visible or not
-        if(navDrawerItems.get(position).getCounterVisibility()){
+        if (navDrawerItems.get(position).getCounterVisibility()) {
             txtCount.setText(navDrawerItems.get(position).getCount());
-        }else{
+        } else {
             // hide the counter view
             txtCount.setVisibility(View.GONE);
         }

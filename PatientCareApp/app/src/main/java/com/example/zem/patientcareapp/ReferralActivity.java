@@ -50,6 +50,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
     String getText;
     static String getDoctor_referral_id = "", getDoctor_id = "";
     final int signup = 23;
+    public static int cpd_id;
     int check;
 
     RadioButton other, radioReferredBy, ignoreInfo, useInfo;
@@ -77,6 +78,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         hashOfDoctors = new ArrayList();
         listOfReferrals = new ArrayList();
         tempReferrals = new ArrayList();
+        cpd_id = 0;
 
         other = (RadioButton) findViewById(R.id.other);
         radioReferredBy = (RadioButton) findViewById(R.id.radioReferredBy);
@@ -231,46 +233,51 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                                         JSONObject obj = json_mysql.getJSONObject(0);
 
                                         if (doctor_id.equals(obj.getString("doctor_id"))) {
-                                            Bundle ptnt = new Bundle();
-                                            ptnt.putString("fname", obj.getString("fname"));
-                                            ptnt.putString("mname", obj.getString("mname"));
-                                            ptnt.putString("lname", obj.getString("lname"));
-                                            ptnt.putString("mobile_no", obj.getString("mobile_no"));
-                                            ptnt.putString("tel_no", obj.getString("tel_no"));
-                                            ptnt.putString("occupation", obj.getString("occupation"));
-                                            ptnt.putString("birthdate", obj.getString("birthdate"));
-                                            ptnt.putString("sex", obj.getString("sex"));
-                                            ptnt.putString("civil_status", obj.getString("civil_status"));
-                                            ptnt.putString("height", obj.getString("height"));
-                                            ptnt.putString("weight", obj.getString("weight"));
-                                            ptnt.putString("optional_address", obj.getString("optional_address"));
-                                            ptnt.putString("address_street", obj.getString("address_street"));
-                                            ptnt.putString("barangay_id", obj.getString("address_barangay_id"));
-                                            ptnt.putString("municipality_id", obj.getString("municipality_id"));
-                                            ptnt.putString("province_id", obj.getString("province_id"));
-                                            ptnt.putString("region_id", obj.getString("region_id"));
+                                            if (obj.getInt("patient_id") == 0) {
+                                                Bundle ptnt = new Bundle();
+                                                ptnt.putString("fname", obj.getString("fname"));
+                                                ptnt.putString("mname", obj.getString("mname"));
+                                                ptnt.putString("lname", obj.getString("lname"));
+                                                ptnt.putString("mobile_no", obj.getString("mobile_no"));
+                                                ptnt.putString("tel_no", obj.getString("tel_no"));
+                                                ptnt.putString("occupation", obj.getString("occupation"));
+                                                ptnt.putString("birthdate", obj.getString("birthdate"));
+                                                ptnt.putString("sex", obj.getString("sex"));
+                                                ptnt.putString("civil_status", obj.getString("civil_status"));
+                                                ptnt.putString("height", obj.getString("height"));
+                                                ptnt.putString("weight", obj.getString("weight"));
+                                                ptnt.putString("optional_address", obj.getString("optional_address"));
+                                                ptnt.putString("address_street", obj.getString("address_street"));
+                                                ptnt.putString("barangay_id", obj.getString("address_barangay_id"));
+                                                ptnt.putString("municipality_id", obj.getString("municipality_id"));
+                                                ptnt.putString("province_id", obj.getString("province_id"));
+                                                ptnt.putString("region_id", obj.getString("region_id"));
 
-                                            Intent intent = new Intent(getBaseContext(), EditTabsActivity.class);
-                                            intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
-                                            intent.putExtra("referred_by_User", "");
-                                            intent.putExtra("referred_by_Doctor", getDoctor_referral_id);
-                                            intent.putExtras(ptnt);
-                                            startActivity(intent);
-                                            ReferralActivity.this.finish();
+                                                cpd_id = obj.getInt("cpd_id");
+
+                                                Intent intent = new Intent(getBaseContext(), EditTabsActivity.class);
+                                                intent.putExtra(EditTabsActivity.SIGNUP_REQUEST, signup);
+                                                intent.putExtra("referred_by_User", "");
+                                                intent.putExtra("referred_by_Doctor", getDoctor_referral_id);
+                                                intent.putExtras(ptnt);
+                                                startActivity(intent);
+                                                ReferralActivity.this.finish();
+                                            } else
+                                                Toast.makeText(getBaseContext(), "The credentials provided have already been used", Toast.LENGTH_SHORT).show();
                                         } else
-                                            Toast.makeText(getBaseContext(), "mali ang doctor", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getBaseContext(), "Invalid credentials", Toast.LENGTH_SHORT).show();
                                     } else
                                         Toast.makeText(getBaseContext(), "Incorrect Username/Password", Toast.LENGTH_SHORT).show();
                                 } catch (JSONException e) {
                                     Toast.makeText(ReferralActivity.this, e + "", Toast.LENGTH_SHORT).show();
-                                    System.out.print("src: <ReferralsFragment>: " + e);
+                                    Log.d("ReferralAct0", e + "");
                                 }
                                 dialog_1.dismiss();
                             }
                         }, new ErrorListener<VolleyError>() {
                             public void getError(VolleyError error) {
                                 dialog_1.dismiss();
-                                System.out.print("VolleyError <ReferralsFragment>: " + error);
+                                Log.d("ReferralAct1", error + "");
                                 Toast.makeText(ReferralActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -371,7 +378,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                         String name;
 
                         if (hashOfUsers.get(s).get("typeOfUser").equals("doctor"))
-                            name = "Dr. " + hashOfUsers.get(s).get("fullname") + " (" + hashOfUsers.get(s).get("referral_id") + ")";
+                            name = hashOfUsers.get(s).get("fullname") + " (" + hashOfUsers.get(s).get("referral_id") + ")";
                         else
                             name = hashOfUsers.get(s).get("fullname") + " (" + hashOfUsers.get(s).get("referral_id") + ")";
 
@@ -386,7 +393,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                System.out.print("Error in ReferralActivity" + error);
+                Log.d("ReferralAct2", error + "");
                 Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }

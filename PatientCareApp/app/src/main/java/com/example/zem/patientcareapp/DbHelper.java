@@ -2236,7 +2236,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(BRANCHES_CITY, cur.getString(cur.getColumnIndex(BRANCHES_CITY)));
             map.put(BRANCHES_PROVINCE, cur.getString(cur.getColumnIndex(BRANCHES_PROVINCE)));
             map.put(BRANCHES_REGION, cur.getString(cur.getColumnIndex(BRANCHES_REGION)));
-            map.put("full_address", cur.getString(cur.getColumnIndex(BRANCHES_ADDITIONAL_ADDRESS)) + ", " + cur.getString(cur.getColumnIndex(BRANCHES_BARANGAY)) + ", "+cur.getString(cur.getColumnIndex(BRANCHES_CITY)));
+            map.put("full_address", cur.getString(cur.getColumnIndex(BRANCHES_ADDITIONAL_ADDRESS)) + ", " + cur.getString(cur.getColumnIndex(BRANCHES_BARANGAY)) + ", " + cur.getString(cur.getColumnIndex(BRANCHES_CITY)));
             listOfBranches.add(map);
         }
 

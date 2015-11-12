@@ -30,7 +30,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +37,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Random;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -93,7 +91,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     // CONTACTS FRAGMENT
     EditText address_street, optional_address_line, tel_no, cell_no, email;
     Spinner address_region, address_barangay, address_city_municipality, address_province;
-    int i_region_id, i_province_id, i_municpality_id, i_barangay_id;
+    int i_region_id;
     String s_street, s_optional_address, s_email, s_tel_no, s_cell_no;
 
     // ACCOUNT INFO FRAGMENT
@@ -114,6 +112,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     private TextView txtPercentage;
 
     ProgressBar progressBar;
+    public static ProgressDialog public_progress;
     ProgressDialog pDialog;
     Dialog upload_dialog;
     public static Intent intent;
@@ -148,6 +147,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Please wait...");
 
+        public_progress = new ProgressDialog(this);
+        public_progress.setMessage("Please wait...");
+        public_progress.show();
+
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
@@ -157,8 +160,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
         // Adding Tabs
         for (String tab_name : tabs) {
-            actionBar.addTab(actionBar.newTab().setText(tab_name)
-                    .setTabListener(this));
+            actionBar.addTab(actionBar.newTab().setText(tab_name).setTabListener(this));
         }
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -177,11 +179,10 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                 } else if (position == 2) {
                     Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
                     image_holder = (ImageView) findViewById(R.id.image_holder);
-                    TableRow tbrow = (TableRow) findViewById(R.id.uploadpicturerow);
+                    TextView changePassword = (TextView) findViewById(R.id.changePassword);
 
-                    if (signup_int > 0) {
-                        tbrow.setVisibility(View.GONE);
-                    }
+                    if (signup_int > 0)
+                        changePassword.setVisibility(View.GONE);
 
                     choose_image_btn.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -208,6 +209,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                             } else {
                                 if (!hasError && !hasError2) {
                                     validateUserAccountInfo();
+
                                     if (!hasError3) {
                                         patient.setBarangay_id(Integer.parseInt(ContactsFragment.barangay_id));
                                         patient.setBarangay(ContactsFragment.address_barangay.getSelectedItem().toString());
@@ -264,7 +266,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                                                 @Override
                                                 public void getResult(String response) {
-                                                    Log.d("response id", response);
                                                     patient.setReferral_id(response);
                                                     params.put("referral_id", patient.getReferral_id());
 
@@ -280,6 +281,37 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                     patient_json_array_mysql = response.getJSONArray("patient");
                                                                     patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
 
+                                                                    if (ReferralActivity.cpd_id > 0) {
+                                                                        HashMap<String, String> map = new HashMap();
+                                                                        map.put("request", "crud");
+                                                                        map.put("action", "update");
+                                                                        map.put("table", "clinic_patient_doctor");
+                                                                        map.put("id", String.valueOf(ReferralActivity.cpd_id));
+                                                                        map.put("patient_id", String.valueOf(patient_json_object_mysql.getInt("id")));
+
+                                                                        PostRequest.send(EditTabsActivity.this, map, serverRequest, new RespondListener<JSONObject>() {
+                                                                            @Override
+                                                                            public void getResult(JSONObject response) {
+                                                                                try {
+                                                                                    int success = response.getInt("success");
+
+                                                                                    if (success == 1) {
+
+                                                                                    } else
+                                                                                        Toast.makeText(EditTabsActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
+
+                                                                                } catch (JSONException e) {
+                                                                                    e.printStackTrace();
+                                                                                }
+                                                                            }
+                                                                        }, new ErrorListener<VolleyError>() {
+                                                                            public void getError(VolleyError error) {
+                                                                                Log.d("EditTabs3", error + "");
+                                                                                Toast.makeText(EditTabsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        });
+                                                                    }
+
                                                                     if (dbHelper.savePatient(patient_json_object_mysql, patient, "insert")) {
                                                                         SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                                                                         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -294,22 +326,22 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                 }
                                                             } catch (JSONException e) {
                                                                 Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
-                                                                System.out.print("src <EditTabsActivity - catch>: " + e);
+                                                                Log.d("EditTabs2", e + "");
                                                             }
                                                             pDialog.dismiss();
                                                         }
                                                     }, new ErrorListener<VolleyError>() {
                                                         public void getError(VolleyError error) {
                                                             pDialog.dismiss();
-                                                            Toast.makeText(getBaseContext(), "Please check your internet connection putang ina", Toast.LENGTH_SHORT).show();
-                                                            System.out.print("src <EditTabsActivity> NETWORK: " + error);
+                                                            Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                            Log.d("EditTabs1", error + "");
                                                         }
                                                     });
-
                                                 }
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
-                                                    System.out.print("Error in EditTabsActivity" + error);
+                                                    pDialog.dismiss();
+                                                    Log.d("EditTabs0", error + "");
                                                     Toast.makeText(EditTabsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
@@ -402,7 +434,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         params.put("tel_no", patient.getTel_no());
         params.put("mobile_no", patient.getMobile_no());
         params.put("email_address", patient.getEmail());
-        params.put("address_barangay_id", String.valueOf(ContactsFragment.hashOfBarangays.get(address_region.getSelectedItemPosition()).get("barangay_server_id")));
+        params.put("address_barangay_id", ContactsFragment.barangay_id);
 
         return params;
     }
@@ -504,10 +536,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         address_city_municipality = (Spinner) findViewById(R.id.address_city_municipality);
         address_province = (Spinner) findViewById(R.id.address_province);
         i_region_id = Integer.parseInt(ContactsFragment.hashOfRegions.get(address_region.getSelectedItemPosition()).get("region_server_id"));
-
-//        i_province_id = Integer.parseInt(ContactsFragment.hashOfProvinces.get(address_province.getSelectedItemPosition()).get("province_server_id"));
-//        i_municpality_id = Integer.parseInt(ContactsFragment.hashOfMunicipalities.get(address_city_municipality.getSelectedItemPosition()).get("municipality_server_id"));
-//        i_barangay_id = Integer.parseInt(ContactsFragment.hashOfBarangays.get(address_barangay.getSelectedItemPosition()).get("barangay_server_id"));
 
         s_street = address_street.getText().toString();
 

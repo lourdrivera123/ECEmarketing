@@ -63,6 +63,8 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         intent = EditTabsActivity.intent;
         dbhelper = new DbHelper(getActivity());
 
+        Log.d("intent", intent.getExtras() + "");
+
         if (intent.getIntExtra("edit", 0) > 0) {
             String edit_uname = SidebarActivity.getUname();
             patient = dbhelper.getloginPatient(edit_uname);
@@ -152,6 +154,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         switch (parent.getId()) {
             case R.id.address_barangay:
                 barangay_id = hashOfBarangays.get(position).get("barangay_server_id");
+                EditTabsActivity.public_progress.dismiss();
                 break;
 
             case R.id.address_region:
@@ -159,7 +162,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                 listOfProvinces = new ArrayList();
                 final int region_server_id = Integer.parseInt(hashOfRegions.get(position).get("region_server_id"));
 
-                Log.d("region server id", region_server_id + "");
                 if (region_server_id == 0) {
                     HashMap<String, String> map_placeholder = new HashMap();
                     map_placeholder.put("name", "Select Province");

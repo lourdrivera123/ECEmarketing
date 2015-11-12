@@ -222,41 +222,41 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                 else if (password.getText().toString().equals(""))
                                     password.setError("Field required");
                                 else {
-                                    final ProgressDialog progress = new ProgressDialog(getActivity());
-                                    progress.setMessage("Please wait...");
-                                    progress.show();
+//                                    final ProgressDialog progress = new ProgressDialog(getActivity());
+//                                    progress.setMessage("Please wait...");
+//                                    progress.show();
 
-                                    HashMap<String, String> map = new HashMap();
-                                    map.put("request", "insert_medical_record");
-                                    map.put("username", username.getText().toString());
-                                    map.put("password", password.getText().toString());
-                                    map.put("patient_id", String.valueOf(SidebarActivity.getUserID()));
-
-                                    PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
-                                        @Override
-                                        public void getResult(JSONObject response) {
-                                            try {
-                                                int success = response.getInt("success");
-
-                                                if (success == 0)
-                                                    Toast.makeText(getActivity(), "Invalid username/password", Toast.LENGTH_SHORT).show();
-                                                else if (success == 1) {
-                                                    dialog2.dismiss();
-                                                    Toast.makeText(getActivity(), "Your request has been submitted. The Clinic/Doctor will be reviewing your request.", Toast.LENGTH_LONG).show();
-                                                }
-                                            } catch (Exception e) {
-                                                Log.d("<P-History catch>", e + "");
-                                            }
-                                            progress.dismiss();
-                                        }
-                                    }, new ErrorListener<VolleyError>() {
-                                        @Override
-                                        public void getError(VolleyError error) {
-                                            Log.d("<P-HistoryFragment>", error + "");
-                                            progress.dismiss();
-                                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+//                                    HashMap<String, String> map = new HashMap();
+//                                    map.put("request", "insert_medical_record");
+//                                    map.put("username", username.getText().toString());
+//                                    map.put("password", password.getText().toString());
+//                                    map.put("patient_id", String.valueOf(SidebarActivity.getUserID()));
+//
+//                                    PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
+//                                        @Override
+//                                        public void getResult(JSONObject response) {
+//                                            try {
+//                                                int success = response.getInt("success");
+//
+//                                                if (success == 0)
+//                                                    Toast.makeText(getActivity(), "Invalid username/password", Toast.LENGTH_SHORT).show();
+//                                                else if (success == 1) {
+//                                                    dialog2.dismiss();
+//                                                    Toast.makeText(getActivity(), "Your request has been submitted. The Clinic/Doctor will be reviewing your request.", Toast.LENGTH_LONG).show();
+//                                                }
+//                                            } catch (Exception e) {
+//                                                Log.d("<P-History catch>", e + "");
+//                                            }
+//                                            progress.dismiss();
+//                                        }
+//                                    }, new ErrorListener<VolleyError>() {
+//                                        @Override
+//                                        public void getError(VolleyError error) {
+//                                            Log.d("<P-HistoryFragment>", error + "");
+//                                            progress.dismiss();
+//                                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    });
                                 }
                             }
                         });

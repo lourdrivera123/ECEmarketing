@@ -475,6 +475,11 @@ public class Sync {
             patient.setWeight(json.getString(DbHelper.PTNT_WEIGHT));
             patient.setFullname(json.getString(DbHelper.PTNT_FNAME), json.getString(DbHelper.PTNT_MNAME), json.getString(DbHelper.PTNT_LNAME));
             patient.setAddress_street(json.getString(DbHelper.PTNT_STREET));
+            patient.setBarangay_id(json.getInt("address_barangay_id"));
+            patient.setBarangay(json.getString("address_barangay"));
+            patient.setMunicipality(json.getString("address_city_municipality"));
+            patient.setProvince(json.getString("address_province"));
+            patient.setRegion(json.getString("address_region"));
             patient.setTel_no(json.getString(DbHelper.PTNT_TEL_NO));
             patient.setMobile_no(json.getString(DbHelper.PTNT_MOBILE_NO));
             patient.setEmail(json.getString(DbHelper.PTNT_EMAIL));

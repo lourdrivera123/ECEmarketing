@@ -1,15 +1,21 @@
 package com.example.zem.patientcareapp.Fragment;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.DbHelper;
+import com.example.zem.patientcareapp.EditTabsActivity;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.R;
@@ -23,6 +29,7 @@ public class PatientProfileFragment extends Fragment {
     TextView patient_name, username, birthdate, civil_status, height_weight, occupation, address_first_line, address_second_line, email, cp_no;
     String ptnt_name;
     String patient_uname;
+
     ProgressBar progressBar;
 
     @Override
@@ -45,9 +52,29 @@ public class PatientProfileFragment extends Fragment {
         cp_no = (TextView) rootView.findViewById(R.id.cp_no);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
 
-
+        setHasOptionsMenu(true);
         loadData();
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.mastertabs_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.edit_profile) {
+            int edit = 7;
+
+            Intent intent = new Intent(getActivity(), EditTabsActivity.class);
+            intent.putExtra(EditTabsActivity.EDIT_REQUEST, edit);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -57,7 +84,6 @@ public class PatientProfileFragment extends Fragment {
     }
 
     private void loadData() {
-
         patient_uname = SidebarActivity.getUname();
         Patient loginUser = dbhelper.getloginPatient(patient_uname);
 
@@ -78,6 +104,7 @@ public class PatientProfileFragment extends Fragment {
             address_first_line.setText(loginUser.getOptional_address() + ", " + loginUser.getAddress_street() + ", " + loginUser.getBarangay());
         else
             address_first_line.setText(loginUser.getAddress_street() + ", " + loginUser.getBarangay());
+
         address_second_line.setText(loginUser.getMunicipality() + ", " + loginUser.getProvince() + ", " + loginUser.getRegion() + ", Philippines, ");
 
         if (loginUser.getEmail() == null || loginUser.getEmail().equals(""))

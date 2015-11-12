@@ -38,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class PatientConsultationFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -244,30 +245,43 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
                 }
             });
 
-            if (listOfAllConsultations.get(pos).get("is_approved").equals("1")) {
-                setTime.setVisibility(View.VISIBLE);
-                waiting.setVisibility(View.GONE);
-                time.setText(listOfAllConsultations.get(pos).get("time"));
+            try {
+                Calendar cal = Calendar.getInstance();
+                String dateNow = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH);
+                String consultDate = listOfAllConsultations.get(pos).get("date");
 
-                if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("0"))
-                    acceptReject.setVisibility(View.VISIBLE);
-                else if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("1"))
-                    ongoing_layout.setVisibility(View.VISIBLE);
-                else if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("2")) {
-                    setTime.setVisibility(View.GONE);
-                    rejected.setVisibility(View.VISIBLE);
-                    declined_cancelled.setText("Cancelled");
-                    view_comment.setVisibility(View.GONE);
+                if (dateNow.compareTo(consultDate) > 0) {
+                    waiting.setVisibility(View.GONE);
+                    acceptReject.setVisibility(View.GONE);
+                    ongoing_layout.setVisibility(View.GONE);
+                } else {
+                    if (listOfAllConsultations.get(pos).get("is_approved").equals("1")) {
+                        setTime.setVisibility(View.VISIBLE);
+                        waiting.setVisibility(View.GONE);
+                        time.setText(listOfAllConsultations.get(pos).get("time"));
+
+                        if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("0"))
+                            acceptReject.setVisibility(View.VISIBLE);
+                        else if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("1"))
+                            ongoing_layout.setVisibility(View.VISIBLE);
+                        else if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("2")) {
+                            setTime.setVisibility(View.GONE);
+                            rejected.setVisibility(View.VISIBLE);
+                            declined_cancelled.setText("Cancelled");
+                            view_comment.setVisibility(View.GONE);
+                        }
+                    } else if (listOfAllConsultations.get(pos).get("is_approved").equals("2")) {
+                        rejected.setVisibility(View.VISIBLE);
+                        waiting.setVisibility(View.GONE);
+
+                        if (listOfAllConsultations.get(pos).get("comment_doctor").equals(""))
+                            view_comment.setVisibility(View.INVISIBLE);
+                    } else if (listOfAllConsultations.get(pos).get("is_approved").equals("0"))
+                        waiting.setVisibility(View.VISIBLE);
                 }
-            } else if (listOfAllConsultations.get(pos).get("is_approved").equals("2")) {
-                rejected.setVisibility(View.VISIBLE);
-                waiting.setVisibility(View.GONE);
+            } catch (Exception e) {
 
-                if (listOfAllConsultations.get(pos).get("comment_doctor").equals(""))
-                    view_comment.setVisibility(View.INVISIBLE);
-            } else if (listOfAllConsultations.get(pos).get("is_approved").equals("0"))
-                waiting.setVisibility(View.VISIBLE);
-
+            }
 
             doctor_name.setText("Dr. " + listOfAllConsultations.get(pos).get("doctor_name"));
             clinic_address.setText(listOfAllConsultations.get(pos).get("clinic_name"));
