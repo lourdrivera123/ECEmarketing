@@ -1,18 +1,15 @@
 package com.example.zem.patientcareapp.Network;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Sync;
 
 import org.json.JSONObject;
 
@@ -27,16 +24,6 @@ public class ListOfPatientsRequest {
 
         queue = VolleySingleton.getInstance().getRequestQueue();
         helpers = new Helpers();
-//        String url;
-
-//        if(q.contains("custom_url")){
-//            url = q.substring(11, q.length());
-//        } else {
-//            url = helpers.get_url(q);
-//        }
-//
-//        Log.d("and url", url);
-
 
         JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q), null, new Response.Listener<JSONObject>() {
             @Override

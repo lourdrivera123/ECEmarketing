@@ -191,9 +191,19 @@ public class SidebarActivity extends FragmentActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.go_to_cart_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item))
             return true;
+
+        if (item.getItemId() == R.id.go_to_cart) {
+            startActivity(new Intent(this, ShoppingCartActivity.class));
+        }
 
         return super.onOptionsItemSelected(item);
     }

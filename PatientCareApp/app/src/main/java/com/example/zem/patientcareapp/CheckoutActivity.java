@@ -219,7 +219,7 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                     });
                                 }
                             } catch (Exception e) {
-                                System.out.print("src: <ShoppingCartFragment > " + e.toString());
+                                System.out.print("src: <ShoppingCartActivity > " + e.toString());
                             }
                         }
                     }, new ErrorListener<VolleyError>() {
