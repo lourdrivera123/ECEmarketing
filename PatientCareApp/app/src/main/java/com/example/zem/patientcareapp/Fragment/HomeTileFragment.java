@@ -186,6 +186,5 @@ private void showOverLay() {
         });
         dialog.show();
     }
-    >>>>>>> c0c5604e032adeb74fc9674f44d2d3ef9429300b
 }
 }
