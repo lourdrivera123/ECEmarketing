@@ -102,7 +102,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Log.d("shoppingcart", error + "");
+                Log.d("shoppingcart0", error + "");
                 Toast.makeText(context, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });

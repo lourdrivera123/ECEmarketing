@@ -53,55 +53,66 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyB5vFUn56wjEfd4TdyQv0u5Kq2ZbvZmIRw" />
 
-
         <!--Activities-->
         <activity
             android:name=".ShoppingCartActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".MainActivity"
             launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light" />
         <activity
             android:name=".DoctorActivity"
             launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".ViewPagerActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".MasterTabActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".EditTabsActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light" />
         <activity
             android:name=".PatientMedicalRecordActivity"
             launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".SelectedProductActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".ReferralActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".CheckoutActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".PatientConsultationActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".MessageActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
             android:name=".OrdersActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
 
-        <activity android:name=".SplashActivity">
+        <activity
+            android:name=".SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -110,41 +121,41 @@
 
         <activity
             android:name=".GoogleMapsActivity"
-            android:theme="@style/Theme.MyTheme"></activity>
-
-
-        <activity android:name=".FileCache" />
-        <activity android:name=".Utils" />
-        <activity android:name=".MemoryCache" />
-        <activity android:name=".adapter.LazyAdapter" />
-        <activity android:name=".ImageLoader" />
-        <activity android:name=".DbHelper" />
-        <activity android:name=".AppController" />
-        <activity android:name=".LruBitmapCache" />
-        <activity android:name=".Sync" />
-        <activity android:name=".PreloadNonUserRelatedData" />
-        <activity android:name=".ServerRequest" />
-        <activity android:name=".ImageItem" />
-        <activity android:name=".samplepaypal" />
-        <activity android:name=".UploadActivity" />
-        <activity android:name=".ProductsActivity" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+        <activity
+            android:name=".UploadActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ProductsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SidebarActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light" />
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"
             android:exported="false" />
 
-        <activity android:name="com.paypal.android.sdk.payments.PaymentActivity" />
-        <activity android:name="com.paypal.android.sdk.payments.LoginActivity" />
-        <activity android:name="com.paypal.android.sdk.payments.PaymentMethodActivity" />
-        <activity android:name="com.paypal.android.sdk.payments.PaymentConfirmActivity" />
         <activity
-            android:name="io.card.payment.CardIOActivity"
-            android:configChanges="keyboardHidden|orientation" />
-        <activity android:name="io.card.payment.DataEntryActivity" />
+            android:name="com.paypal.android.sdk.payments.PaymentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.paypal.android.sdk.payments.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.paypal.android.sdk.payments.PaymentMethodActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.paypal.android.sdk.payments.PaymentConfirmActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="io.card.payment.DataEntryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".samplepaypal"
+            android:screenOrientation="portrait" />
 
 
         <!-- Will not be called unless the application explicitly enables it -->

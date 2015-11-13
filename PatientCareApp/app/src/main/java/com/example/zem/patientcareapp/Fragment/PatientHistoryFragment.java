@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -35,12 +36,15 @@ import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.PatientMedicalRecordActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.SidebarActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -66,6 +70,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     Helpers helpers;
     Dialog dialog;
     ServerRequest serverRequest;
+    ProgressDialog progress;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -215,6 +220,8 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                         final EditText password = (EditText) dialog2.findViewById(R.id.password);
                         Button submitBtn = (Button) dialog2.findViewById(R.id.submitBtn);
 
+                        password.setTransformationMethod(new PasswordTransformationMethod());
+
                         submitBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -223,21 +230,39 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                 else if (password.getText().toString().equals(""))
                                     password.setError("Field required");
                                 else {
-//                                    final ProgressDialog progress = new ProgressDialog(getActivity());
-//                                    progress.setMessage("Please wait...");
-//                                    progress.show();
+                                    progress = new ProgressDialog(getActivity());
+                                    progress.setMessage("Please wait...");
+                                    progress.show();
 
-//                                    GetRequest.getJSONobj(getActivity(), "get_orders&patient_id=" + syncedPatient.getServerID(), "orders", "orders_id", new RespondListener<JSONObject>() {
-//                                        @Override
-//                                        public void getResult(JSONObject response) {
-//
-//                                        }
-//                                    }, new ErrorListener<VolleyError>() {
-//                                        public void getError(VolleyError error) {
-//                                            Log.d("ptntHistoryFrag", error + "");
-//                                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-//                                        }
-//                                    });
+                                    String uname = username.getText().toString();
+                                    String pword = password.getText().toString();
+                                    String url = "get_clinic_records&username=" + uname + "&password=" + pword + "&patient_id=" + SidebarActivity.getUserID();
+
+                                    ListOfPatientsRequest.getJSONobj(getActivity(), url, new RespondListener<JSONObject>() {
+                                        @Override
+                                        public void getResult(JSONObject response) {
+                                            try {
+                                                int success = response.getInt("success");
+
+                                                if (success == 1) {
+                                                    JSONArray json_mysql = response.getJSONArray("records");
+                                                    insertHistory(json_mysql);
+                                                } else
+                                                    Toast.makeText(getActivity(), "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                                            } catch (Exception e) {
+                                                progress.dismiss();
+                                                Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                                                Log.e("patientHistoryFrag0", e + "");
+                                            }
+                                        }
+                                    }, new ErrorListener<VolleyError>() {
+                                        @Override
+                                        public void getError(VolleyError e) {
+                                            progress.dismiss();
+                                            Log.e("patientHistoryFrag1", e + "");
+                                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -256,6 +281,100 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 dialog.show();
 
                 break;
+        }
+    }
+
+    public void insertHistory(final JSONArray array) {
+        try {
+            JSONObject object = array.getJSONObject(0);
+
+            HashMap<String, String> map = new HashMap();
+            map.put("table", "patient_records");
+            map.put("request", "crud");
+            map.put("action", "insert");
+            map.put("clinic_patient_record_id", String.valueOf(object.getInt("clinic_patients_record_id")));
+            map.put("patient_id", String.valueOf(SidebarActivity.getUserID()));
+            map.put("doctor_id", String.valueOf(object.getInt("doctor_id")));
+            map.put("clinic_id", String.valueOf(object.getInt("clinic_id")));
+            map.put("complaints", object.getString("complaints"));
+            map.put("findings", object.getString("findings"));
+            map.put("record_date", object.getString("record_date"));
+            map.put("note", object.getString("note"));
+
+            PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
+                @Override
+                public void getResult(JSONObject response) {
+                    try {
+                        int success = response.getInt("success");
+
+                        if (success == 1) {
+                            int last_inserted_id = response.getInt("last_inserted_id");
+
+                            ArrayList<HashMap<String, String>> arrayOfTreatments = new ArrayList();
+
+                            for (int x = 0; x < array.length(); x++) {
+                                JSONObject obj = array.getJSONObject(x);
+                                HashMap<String, String> hash = new HashMap();
+
+                                hash.put("patient_record_id", String.valueOf(last_inserted_id));
+                                hash.put("medicine_id", String.valueOf(obj.getInt("medicine_id")));
+                                hash.put("no_generics", String.valueOf(obj.getInt("no_generics")));
+                                hash.put("quantity", String.valueOf(obj.getInt("quantity")));
+                                hash.put("route", obj.getString("route"));
+                                hash.put("frequency", obj.getString("frequency"));
+                                hash.put("refills", String.valueOf(obj.getInt("refills")));
+                                hash.put("duration", String.valueOf(obj.getInt("duration")));
+                                hash.put("duration_type", String.valueOf(obj.getInt("duration_type")));
+
+                                arrayOfTreatments.add(hash);
+                            }
+
+                            JSONObject obj = new JSONObject();
+                            obj.put("json_treatments", arrayOfTreatments);
+
+                            HashMap<String, String> hash = new HashMap();
+                            hash.put("table", "treatments");
+                            hash.put("request", "crud");
+                            hash.put("action", "multiple_insert");
+                            hash.put("jsobj", obj.toString());
+
+                            Log.d("hash", hash + "");
+
+                            PostRequest.send(getActivity(), hash, serverRequest, new RespondListener<JSONObject>() {
+                                @Override
+                                public void getResult(JSONObject response) {
+                                    try {
+                                        int success = response.getInt("success");
+
+                                        Log.d("response", response + "");
+                                    } catch (Exception e) {
+                                        Toast.makeText(getActivity(), e + "", Toast.LENGTH_SHORT).show();
+                                    }
+                                    progress.dismiss();
+                                }
+                            }, new ErrorListener<VolleyError>() {
+                                public void getError(VolleyError error) {
+                                    progress.dismiss();
+                                    Log.d("patienthistoryfrag2", error + "");
+                                    Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else
+                            Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(getActivity(), e + "", Toast.LENGTH_SHORT).show();
+                    }
+                    progress.dismiss();
+                }
+            }, new ErrorListener<VolleyError>() {
+                public void getError(VolleyError error) {
+                    progress.dismiss();
+                    Log.d("patientHistoryFrag3", error + "");
+                    Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

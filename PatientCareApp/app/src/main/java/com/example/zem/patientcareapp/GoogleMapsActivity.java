@@ -21,7 +21,6 @@ import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
-import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.adapter.BranchesAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -38,7 +37,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Array;
@@ -156,17 +154,17 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
                     for (int i = 0; i < ece_branches.size(); i++) {
                         double lat_from_row = Double.parseDouble(ece_branches.get(i).get("latitude"));
                         double long_from_row = Double.parseDouble(ece_branches.get(i).get("longitude"));
-                        int same_region  = Integer.parseInt(ece_branches.get(i).get("same_region"));
+                        int same_region = Integer.parseInt(ece_branches.get(i).get("same_region"));
                         LatLng latlong = new LatLng(lat_from_row, long_from_row);
                         Marker marker = map.addMarker(new MarkerOptions().position(latlong).title(ece_branches.get(i).get("name")).snippet(ece_branches.get(i).get("full_address")).icon(BitmapDescriptorFactory.fromBitmap(marker_icon)));
 
-                        if(same_region == 1)
+                        if (same_region == 1)
                             same_region_markers.add(marker);
                         else
                             markers.add(marker);
                     }
 
-                    if(same_region_markers.size() == 0) {
+                    if (same_region_markers.size() == 0) {
                         same_region_markers.add(markers.get(0));
                     }
 
@@ -193,12 +191,9 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
                 }
             });
         } else {
-
             Toast.makeText(this, "Can't get ur location", Toast.LENGTH_LONG).show();
         }
-
     }
-
     /**
      * Method to display the location on UI
      */
