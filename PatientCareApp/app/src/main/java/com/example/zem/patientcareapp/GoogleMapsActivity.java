@@ -21,7 +21,6 @@ import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
-import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.adapter.BranchesAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -38,7 +37,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Array;
@@ -207,7 +205,6 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 //
 
 
-
             //request for branches request
 //            GetRequest.getJSONobj(getBaseContext(), "get_branches", "branches", "branches_id", new RespondListener<JSONObject>() {
 //                @Override
@@ -236,13 +233,8 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 //            map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 
 
-
-
-        } else {
-
+        } else
             Toast.makeText(this, "Can't get ur location", Toast.LENGTH_LONG).show();
-        }
-
     }
 
     /**

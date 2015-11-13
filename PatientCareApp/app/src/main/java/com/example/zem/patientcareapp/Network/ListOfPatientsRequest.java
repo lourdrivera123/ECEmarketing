@@ -1,6 +1,7 @@
 package com.example.zem.patientcareapp.Network;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,7 +36,7 @@ public class ListOfPatientsRequest {
             @Override
             public void onErrorResponse(VolleyError error) {
                 errorlistener.getError(error);
-                System.out.print("error on interface: " + error);
+                Log.e("listOfPatients", error + "");
             }
         });
         queue.add(doctor_request);

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -76,6 +77,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         login_btn = (Button) findViewById(R.id.login_btn);
         username_txtfield = (EditText) findViewById(R.id.username_txtfield);
         password_txtfield = (EditText) findViewById(R.id.password_txtfield);
+
+        password_txtfield.setTransformationMethod(new PasswordTransformationMethod());
 
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
