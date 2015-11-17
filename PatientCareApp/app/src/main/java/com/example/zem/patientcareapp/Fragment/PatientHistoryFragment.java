@@ -72,6 +72,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     ServerRequest serverRequest;
     ProgressDialog progress;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_patient_records, container, false);

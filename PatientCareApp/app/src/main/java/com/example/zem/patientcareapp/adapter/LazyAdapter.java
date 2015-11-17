@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.Fragment.ProductsFragment;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.ImageLoader;
@@ -34,23 +33,20 @@ import com.example.zem.patientcareapp.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * Created by Dexter B. on 5/4/2015.
  */
+
 public class LazyAdapter extends BaseAdapter {
     public static int quantity = 0;
     public static double total_amount, price = 0;
@@ -65,14 +61,11 @@ public class LazyAdapter extends BaseAdapter {
     public ImageLoader imageLoader;
     DbHelper dbHelper;
     Helpers helpers;
-    int basket_id = 0;
 
     int productQty, prescriptionId = 0;
-
     private String list_type;
 
     public LazyAdapter(Activity a, ArrayList<HashMap<String, String>> d, String listType) {
-
         list_type = listType;
         activity = a;
         dbHelper = new DbHelper(activity);
@@ -173,7 +166,7 @@ public class LazyAdapter extends BaseAdapter {
                     String fiProductPacking = helpers.getPluralForm(productPacking, totalPacking);
                     tv_new_product_description.setText("1 " + productUnit + " x " + qty + "(" + totalPacking + " " + fiProductPacking + ")");
 
-                    ProductsFragment.productQuantity = productQuantity;
+                    ProductsActivity.productQuantity = productQuantity;
                 }
             });
 
@@ -202,7 +195,7 @@ public class LazyAdapter extends BaseAdapter {
                     String fiProductPacking = helpers.getPluralForm(productPacking, totalPacking);
                     tv_new_product_description.setText("1 " + productUnit + " x " + qty + "(" + totalPacking + " " + fiProductPacking + ")");
 
-                    ProductsFragment.productQuantity = productQuantity;
+                    ProductsActivity.productQuantity = productQuantity;
                 }
             });
 
@@ -249,32 +242,29 @@ public class LazyAdapter extends BaseAdapter {
                             PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
-                                    System.out.print("response using interface <LazyAdapter.java>" + response);
-                                    int success = 0;
-
                                     try {
-                                        success = response.getInt("success");
+                                        int success = response.getInt("success");
+
+                                        if (success == 1) {
+                                            if (dbhelper.updateBasket(basket)) {
+                                                Toast.makeText(activity, "Your cart has been updated.", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
+                                                Log.d("lazyAdapter0", "error");
+                                            }
+                                        } else {
+                                            Toast.makeText(activity, "Server error occurred", Toast.LENGTH_SHORT).show();
+                                            Log.d("lazyAdapter1", "error");
+                                        }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
-                                    }
-
-                                    if (success == 1) {
-                                        if (dbhelper.updateBasket(basket)) {
-                                            Toast.makeText(activity, "Your cart has been updated.", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
-                                            Log.d("error on dbhelper", "error");
-                                        }
-                                    } else {
-                                        Toast.makeText(activity, "Server error occurred", Toast.LENGTH_SHORT).show();
-                                        System.out.print("src: <LazyAdapter - product_lists>");
                                     }
                                     pdialog.dismiss();
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
                                     pdialog.dismiss();
-                                    System.out.print("src: <LazyAdapter - product_lists>: " + error.toString());
+                                    Log.d("lazyAdapter2", "error");
                                     Toast.makeText(activity, "Couldn't update item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -334,7 +324,7 @@ public class LazyAdapter extends BaseAdapter {
                                     });
                                 } else {
                                     pdialog.dismiss();
-//                                    Toast.makeText(activity, "Please upload prescription", Toast.LENGTH_SHORT).show();
+
                                     AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(activity);
                                     confirmationDialog.setTitle("Attention!");
                                     confirmationDialog.setMessage("This product requires you to upload a prescription, do you wish to continue ?");
@@ -361,7 +351,7 @@ public class LazyAdapter extends BaseAdapter {
                                 }, new ErrorListener<VolleyError>() {
                                     public void getError(VolleyError error) {
                                         pdialog.dismiss();
-                                        System.out.print("<LazyAdapter, product_lists>" + error.toString());
+                                        Log.d("lazyAdapter3", "error");
                                         Toast.makeText(activity, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -418,7 +408,7 @@ public class LazyAdapter extends BaseAdapter {
                 total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
                 total.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
             } catch (Exception e) {
-                System.out.println("error on LazyAdapter@basket_items" + e.getMessage());
+                Log.d("lazyAdapter4", "error");
                 e.printStackTrace();
             }
 
@@ -493,7 +483,7 @@ public class LazyAdapter extends BaseAdapter {
                 Date dateEnd = fmt.parse(promo_item.get("end_date"));
                 duration.setText("Starting " + df.format(dateStart) + " to " + df.format(dateEnd));
             } catch (Exception e) {
-                System.out.println("<source: LazyAdapter@promo_items." + e.getMessage());
+                Log.d("lazyAdapter5", "error");
             }
         } else if (list_type.equals("order_items")) {
             vi = inflater.inflate(R.layout.list_row_order_item, null);

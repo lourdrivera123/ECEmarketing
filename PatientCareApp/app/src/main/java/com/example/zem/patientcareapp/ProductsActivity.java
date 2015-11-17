@@ -1,74 +1,79 @@
 package com.example.zem.patientcareapp;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Product;
-import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
-import com.example.zem.patientcareapp.Interface.ErrorListener;
-import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Zem on 11/5/2015.
  */
-public class ProductsActivity extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
-    ListView list_of_products, lv_subcategories;
-    Spinner lv_categories;
-    LazyAdapter adapter;
-    ArrayAdapter category_list_adapter;
-    static DbHelper dbHelper;
-    Helpers helpers;
-    List<String> category_list;
-    SwipeRefreshLayout refresh_products_list;
 
+public class ProductsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    ListView list_of_products;
+    Toolbar products_toolbar;
+    TextView noOfResults;
+    LinearLayout results_layout;
+
+    LazyAdapter adapter;
+    Helpers helpers;
     RequestQueue queue;
-    View root_view;
+    static DbHelper dbHelper;
+
     public static Map<String, HashMap<String, String>> productQuantity;
     public static ArrayList<HashMap<String, String>> products_items;
+    public static ArrayList<HashMap<String, String>> temp_products_items;
+    ArrayList<HashMap<Integer, HashMap<String, String>>> searchProducts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_products_fragment);
+        setContentView(R.layout.products_activity);
 
-        lv_categories = (Spinner) findViewById(R.id.categories);
-        refresh_products_list = (SwipeRefreshLayout) findViewById(R.id.refresh_products_list);
-        refresh_products_list.setOnRefreshListener(this);
+        showOverLay(this);
 
-        productQuantity = new HashMap();
+        results_layout = (LinearLayout) findViewById(R.id.results_layout);
+        noOfResults = (TextView) findViewById(R.id.noOfResults);
+        list_of_products = (ListView) findViewById(R.id.product_lists);
+
+        products_toolbar = (Toolbar) findViewById(R.id.products_toolbar);
+        setSupportActionBar(products_toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Products");
+        products_toolbar.setNavigationIcon(R.drawable.ic_back);
 
         dbHelper = new DbHelper(getBaseContext());
         queue = Volley.newRequestQueue(getBaseContext());
         helpers = new Helpers();
 
+        searchProducts = new ArrayList();
+        productQuantity = new HashMap();
+        temp_products_items = new ArrayList();
         products_items = dbHelper.getAllProducts();
-
-        Log.d("ASdasd", products_items + "");
+        temp_products_items.addAll(products_items);
 
         for (HashMap<String, String> map : products_items) {
             HashMap<String, String> tempMap = new HashMap();
@@ -79,20 +84,61 @@ public class ProductsActivity extends Activity implements AdapterView.OnItemClic
             tempMap.put("temp_basket_qty", "0");
             tempMap.put("prescription_required", map.get("prescription_required"));
             productQuantity.put(map.get("product_id"), tempMap);
+
+            HashMap<Integer, HashMap<String, String>> hash = new HashMap();
+            HashMap<String, String> temp = new HashMap();
+            temp.put("product_name", map.get("name"));
+            temp.put("generic_name", map.get("generic_name"));
+            hash.put(Integer.parseInt(tempMap.get("product_id")), temp);
+            searchProducts.add(hash);
         }
 
-        populateProductsListView(products_items);
-        category_list = dbHelper.getAllProductCategoriesArray();
-        populateListView(category_list);
-    }
-
-    public void populateProductsListView(ArrayList<HashMap<String, String>> products_items) {
-        list_of_products = (ListView) findViewById(R.id.product_lists);
-
-        // Getting adapter by passing xml data ArrayList
-        adapter = new LazyAdapter(ProductsActivity.this, products_items, "product_lists");
+        adapter = new LazyAdapter(this, products_items, "product_lists");
         list_of_products.setAdapter(adapter);
         list_of_products.setOnItemClickListener(this);
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                results_layout.setVisibility(View.GONE);
+
+                products_items = new ArrayList();
+                products_items = dbHelper.getAllProducts();
+
+                adapter = new LazyAdapter(ProductsActivity.this, products_items, "product_lists");
+                list_of_products.setAdapter(adapter);
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -103,107 +149,12 @@ public class ProductsActivity extends Activity implements AdapterView.OnItemClic
         Intent intent = new Intent(getBaseContext(), SelectedProductActivity.class);
         intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getProductId());
         startActivity(intent);
-        this.finish();
-    }
-
-    public void populateListView(List<String> categories) {
-        lv_categories = (Spinner) findViewById(R.id.categories);
-        lv_subcategories = (ListView) findViewById(R.id.subcategories);
-        categories.add(0, "Select Category");
-
-        category_list_adapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_1, categories);
-        lv_categories.setAdapter(category_list_adapter);
-        lv_subcategories.setVisibility(View.GONE);
-        lv_categories.setOnItemSelectedListener(this);
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (position != 0) {
-            String item = ((TextView) view).getText().toString();
-
-            final int categoryId = dbHelper.getCategoryIdByName(item);
-            String[] arr = dbHelper.getAllProductSubCategoriesArray(categoryId);
-
-            final Dialog dialog = new Dialog(getBaseContext());
-            dialog.setTitle("subcategories");
-            dialog.setContentView(R.layout.categories_layout);
-
-            dialog.show();
-
-            TextView browseBy = (TextView) dialog.findViewById(R.id.browse_by);
-            browseBy.setText("");
-            lv_subcategories = (ListView) dialog.findViewById(R.id.subcategories);
-            lv_categories = (Spinner) dialog.findViewById(R.id.categories);
-
-            category_list_adapter = new ArrayAdapter(getBaseContext(), android.R.layout.simple_list_item_1, arr);
-            lv_subcategories.setAdapter(category_list_adapter);
-            lv_categories.setVisibility(View.GONE);
-            lv_subcategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String subCategoryName = ((TextView) view).getText().toString();
-                    ProductSubCategory subCategory = dbHelper.getSubCategoryByName(subCategoryName, categoryId);
-
-                    ArrayList<HashMap<String, String>> list = dbHelper.getProductsBySubCategory(subCategory.getId());
-
-                    Toast.makeText(getBaseContext(), subCategoryName + " : " + list.size() + " item/s found", Toast.LENGTH_SHORT).show();
-
-                    // Getting adapter by passing xml data ArrayList
-                    if (list.size() > 0) {
-                        products_items.clear();
-                        products_items.addAll(list);
-                        adapter.notifyDataSetChanged();
-                    }
-                    dialog.dismiss();
-                }
-            });
-        } else {
-            ArrayList<HashMap<String, String>> prods = dbHelper.getProductsBySubCategory(0);
-            products_items.clear();
-            products_items.addAll(prods);
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-    @Override
-    public void onRefresh() {
-        GetRequest.getJSONobj(getBaseContext(), "get_products", "products", "product_id", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                products_items = dbHelper.getAllProducts();
-
-                for (HashMap<String, String> map : products_items) {
-                    HashMap<String, String> tempMap = new HashMap();
-                    tempMap.put("id", map.get("id"));
-                    tempMap.put("product_id", map.get("product_id"));
-                    tempMap.put("qty_per_packing", map.get("qty_per_packing"));
-                    tempMap.put("packing", map.get("packing"));
-                    tempMap.put("temp_basket_qty", "0");
-                    productQuantity.put(map.get("product_id"), tempMap);
-                }
-                populateProductsListView(products_items);
-                refresh_products_list.setRefreshing(false);
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                Log.d("<ProductsFragment>", error.toString());
-                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     public static void showOverLay(Context context) {
         dbHelper = new DbHelper(context);
 
-        if (dbHelper.checkOverlay("Products", "check")) {
-
-        } else {
+        if (!dbHelper.checkOverlay("Products", "check")) {
             final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
             dialog.setContentView(R.layout.products_overlay);
 
@@ -218,6 +169,37 @@ public class ProductsActivity extends Activity implements AdapterView.OnItemClic
                 }
             });
             dialog.show();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            results_layout.setVisibility(View.VISIBLE);
+            products_items.clear();
+            int ctr = 0;
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            for (int x = 0; x < searchProducts.size(); x++) {
+                for (Map.Entry<Integer, HashMap<String, String>> ee : searchProducts.get(x).entrySet()) {
+                    HashMap<String, String> values = ee.getValue();
+
+                    if (values.get("product_name").toLowerCase().contains(query.toLowerCase()) || values.get("generic_name").toLowerCase().contains(query.toLowerCase())) {
+                        HashMap<String, String> details = temp_products_items.get(x);
+                        products_items.add(details);
+                        ctr += 1;
+                    }
+                }
+            }
+            adapter.notifyDataSetChanged();
+            noOfResults.setText(ctr + "");
+
+            if (ctr == 0)
+                Toast.makeText(this, "No Results", Toast.LENGTH_LONG).show();
         }
     }
 }

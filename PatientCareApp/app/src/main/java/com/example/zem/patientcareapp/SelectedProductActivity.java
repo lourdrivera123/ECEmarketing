@@ -1,11 +1,11 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,16 +32,17 @@ import java.util.HashMap;
  * Created by User PC on 7/25/2015.
  */
 
-public class SelectedProductActivity extends Activity implements View.OnClickListener {
+public class SelectedProductActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String PRODUCT_ID = "productID";
 
     String productPacking = "";
     int get_productID = 0;
     int temp_qty = 1, qtyPerPacking = 1;
 
-    TextView prod_name, prod_generic, prod_unit, prod_price, qty_cart, prod_description;
-    ImageButton minus_qty, add_qty;
     Button add_cart_btn;
+    ImageButton minus_qty, add_qty;
+    Toolbar selected_product_toolbar;
+    TextView prod_name, prod_generic, prod_unit, prod_price, qty_cart, prod_description;
 
     Handler handler;
     DbHelper dbhelper;
@@ -54,10 +55,6 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.selected_product_layout);
-
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBar(actionbar);
-        actionbar.setDisplayHomeAsUpEnabled(true);
 
         handler = new Handler();
         dbhelper = new DbHelper(this);
@@ -97,7 +94,14 @@ public class SelectedProductActivity extends Activity implements View.OnClickLis
 
         qty_cart.setText("" + temp_qty);
         prod_unit.setText("1 " + prod.getUnit() + " x " + qtyPerPacking + "(1 " + productPacking + ")");
+
+        selected_product_toolbar = (Toolbar) findViewById(R.id.selected_product_toolbar);
+        setSupportActionBar(selected_product_toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(prod.getName());
+        selected_product_toolbar.setNavigationIcon(R.drawable.ic_back);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

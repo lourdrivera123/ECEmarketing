@@ -88,7 +88,7 @@
         <activity
             android:name=".SelectedProductActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".ReferralActivity"
             android:screenOrientation="portrait"
@@ -128,7 +128,18 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ProductsActivity"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme">
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SidebarActivity"
             android:screenOrientation="portrait"

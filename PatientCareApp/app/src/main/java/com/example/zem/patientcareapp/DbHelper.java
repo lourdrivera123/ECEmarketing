@@ -1829,6 +1829,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex(PRODUCT_NAME)));
+            map.put(PRODUCT_GENERIC_NAME, cur.getString(cur.getColumnIndex(PRODUCT_GENERIC_NAME)));
             map.put(PRODUCT_DESCRIPTION, cur.getString(cur.getColumnIndex(PRODUCT_DESCRIPTION)));
             map.put(PRODUCT_PRICE, cur.getString(cur.getColumnIndex(PRODUCT_PRICE)));
             map.put(PRODUCT_CRITICAL_STOCK, cur.getString(cur.getColumnIndex(PRODUCT_CRITICAL_STOCK)));
