@@ -2267,6 +2267,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 map.put("latitude", String.valueOf(row.getDouble("latitude")));
                 map.put("longitude", String.valueOf(row.getDouble("longitude")));
                 map.put("full_address", row.getString(BRANCHES_ADDITIONAL_ADDRESS) + ", " + row.getString(BRANCHES_BARANGAY) + ", " + row.getString(BRANCHES_CITY));
+                map.put("same_region", String.valueOf(row.getInt("same_region")));
                 listOfBranches.add(map);
             }
         } catch (Exception e) {

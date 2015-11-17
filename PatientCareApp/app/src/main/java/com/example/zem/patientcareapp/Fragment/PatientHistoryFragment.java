@@ -248,8 +248,10 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                                 if (success == 1) {
                                                     JSONArray json_mysql = response.getJSONArray("records");
                                                     insertHistory(json_mysql);
-                                                } else
+                                                } else {
                                                     Toast.makeText(getActivity(), "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                                                    progress.dismiss();
+                                                }
                                             } catch (Exception e) {
                                                 progress.dismiss();
                                                 Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
@@ -313,6 +315,8 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
                             ArrayList<HashMap<String, String>> arrayOfTreatments = new ArrayList();
 
+                            JSONArray master_arr = new JSONArray();
+
                             for (int x = 0; x < array.length(); x++) {
                                 JSONObject obj = array.getJSONObject(x);
                                 HashMap<String, String> hash = new HashMap();
@@ -328,16 +332,18 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                 hash.put("duration_type", String.valueOf(obj.getInt("duration_type")));
 
                                 arrayOfTreatments.add(hash);
+                                JSONObject obj_for_server = new JSONObject(hash);
+                                master_arr.put(obj_for_server);
                             }
 
-                            JSONObject obj = new JSONObject();
-                            obj.put("json_treatments", arrayOfTreatments);
+                            JSONObject json_to_be_passed = new JSONObject();
+                            json_to_be_passed.put("json_treatments", master_arr);
 
                             HashMap<String, String> hash = new HashMap();
                             hash.put("table", "treatments");
                             hash.put("request", "crud");
                             hash.put("action", "multiple_insert");
-                            hash.put("jsobj", obj.toString());
+                            hash.put("jsobj", json_to_be_passed.toString());
 
                             Log.d("hash", hash + "");
 

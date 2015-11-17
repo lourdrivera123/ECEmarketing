@@ -76,7 +76,7 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
     //basics
     DbHelper dbHelper;
-    ArrayList<HashMap<String, String>> ece_branches;
+    ArrayList<HashMap<String, String>> ece_branches, ece_branches_in_the_same_region;
     ArrayList<String> listOfBranches;
     BranchesAdapter branches_adapter;
 
@@ -100,28 +100,10 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
         list_view_of_branches.setOnItemClickListener(this);
 
-        //start of Ravi
-        // First we need to check availability of play services
         if (checkPlayServices()) {
-
             // Building the GoogleApi client
             buildGoogleApiClient();
         }
-        //End of ravi
-
-        //google map from yancyparedes
-
-//        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-//
-//        Marker davao = map.addMarker(new MarkerOptions().position(DAVAO).title("Davao City").snippet("STI Davao"));
-//
-//        // zoom in the camera to Davao city
-//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(DAVAO, 15));
-//
-//        // animate the zoom process
-//        map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-
-        //end of yancyparedes
 
     }
 
@@ -145,13 +127,8 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
             // before loop:
             final List<Marker> markers = new ArrayList<Marker>();
+            final List<Marker> same_region_markers = new ArrayList<Marker>();
 
-
-//            Marker marker1 = map.addMarker(new MarkerOptions().position(MY_GEOCODE).title("You are here !").snippet("Using this app"));
-//            Marker marker2 = map.addMarker(new MarkerOptions().position(ECE_DAVAO).title("ECE Marketing Davao").snippet("150-5th A St., Ecoland Subdivision, Matina, Davao City, 8000").snippet("(082) 297 5606"));
-//
-//            markers.add(marker1);
-//            markers.add(marker2);
 
             GetRequest.getJSONobj(getBaseContext(), "google_distance_matrix&mylocation_lat=" + mLastLocation.getLatitude() + "&mylocation_long=" + mLastLocation.getLongitude(), "branches", "branches_id", new RespondListener<JSONObject>() {
                 @Override
@@ -160,31 +137,42 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
 //                    ece_branches = dbHelper.getECEBranches();
                     ece_branches = dbHelper.getECEBranchesfromjson(response, "sorted_nearest_branches");
+                    ece_branches_in_the_same_region = dbHelper.getECEBranchesfromjson(response, "branches_in_the_same_region");
+
                     Bitmap marker_icon = BitmapFactory.decodeResource(getResources(), R.mipmap.map_marker_ece);
                     Bitmap my_marker_icon = BitmapFactory.decodeResource(getResources(), R.mipmap.my_map_marker);
-                    Marker marker1 = map.addMarker(new MarkerOptions().position(MY_GEOCODE).title("You are here !").snippet("Using this app").icon(BitmapDescriptorFactory.fromBitmap(my_marker_icon)));
-                    markers.add(marker1);
 
+                    Marker my_location_marker = map.addMarker(new MarkerOptions().position(MY_GEOCODE).title("You are here !").icon(BitmapDescriptorFactory.fromBitmap(my_marker_icon)));
+                    same_region_markers.add(my_location_marker);
+
+                    Log.d("srm", same_region_markers.size() + "");
 
                     for (int i = 0; i < ece_branches.size(); i++) {
                         double lat_from_row = Double.parseDouble(ece_branches.get(i).get("latitude"));
                         double long_from_row = Double.parseDouble(ece_branches.get(i).get("longitude"));
+                        int same_region = Integer.parseInt(ece_branches.get(i).get("same_region"));
                         LatLng latlong = new LatLng(lat_from_row, long_from_row);
                         Marker marker = map.addMarker(new MarkerOptions().position(latlong).title(ece_branches.get(i).get("name")).snippet(ece_branches.get(i).get("full_address")).icon(BitmapDescriptorFactory.fromBitmap(marker_icon)));
-                        markers.add(marker);
+
+                        if (same_region == 1)
+                            same_region_markers.add(marker);
+                        else
+                            markers.add(marker);
+                    }
+
+                    if (same_region_markers.size() == 0) {
+                        same_region_markers.add(markers.get(0));
                     }
 
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    for (Marker marker : markers) {
+                    for (Marker marker : same_region_markers) {
                         builder.include(marker.getPosition());
                     }
                     LatLngBounds bounds = builder.build();
                     int padding = 100; // offset from edges of the map in pixels
-//            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5,5,5);
+
                     CameraUpdate cu1 = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
                     map.moveCamera(cu1);
-
                     map.animateCamera(cu1);
 
                     branches_adapter = new BranchesAdapter(getBaseContext(), ece_branches);
@@ -198,41 +186,10 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
                     list_view_of_branches.setAdapter(branches_adapter);
                 }
             });
-//
-
-
-            //request for branches request
-//            GetRequest.getJSONobj(getBaseContext(), "get_branches", "branches", "branches_id", new RespondListener<JSONObject>() {
-//                @Override
-//                public void getResult(JSONObject response) {
-//                    Log.d("response using interface <SplashActivity.java - branches request >", response + "");
-//                    ece_branches = dbHelper.getECEBranches();
-//
-//                    branches_adapter = new BranchesAdapter(getBaseContext(), ece_branches);
-//                    list_view_of_branches.setAdapter(branches_adapter);
-//
-//                }
-//            }, new ErrorListener<VolleyError>() {
-//                public void getError(VolleyError error) {
-//                    Log.d("Error", error + "");
-////                    Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-//                    ece_branches = dbHelper.getECEBranches();
-//                    branches_adapter = new BranchesAdapter(getBaseContext(), ece_branches);
-//                    list_view_of_branches.setAdapter(branches_adapter);
-//                }
-//            });
-//
-//            // zoom in the camera to Davao city
-//            map.moveCamera(CameraUpdateFactory.newLatLngZoom(MY_GEOCODE, 15));
-//
-//            // animate the zoom process
-//            map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-
-
-        } else
+        } else {
             Toast.makeText(this, "Can't get ur location", Toast.LENGTH_LONG).show();
+        }
     }
-
     /**
      * Method to display the location on UI
      */
