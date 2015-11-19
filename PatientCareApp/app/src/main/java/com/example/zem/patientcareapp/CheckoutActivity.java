@@ -20,13 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -193,7 +193,7 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                                                     try {
                                                 String timestamp_ordered = response.getString("server_timestamp");
 
-                                                Intent order_intent = new Intent(getBaseContext(), OrdersActivity.class);
+                                                Intent order_intent = new Intent(getBaseContext(), OrdersFragment.class);
                                                 order_intent.putExtra("payment_from", "cod");
                                                 order_intent.putExtra("timestamp_ordered", timestamp_ordered);
                                                 startActivity(order_intent);

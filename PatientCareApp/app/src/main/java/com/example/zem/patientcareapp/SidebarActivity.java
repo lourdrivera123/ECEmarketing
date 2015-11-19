@@ -3,7 +3,6 @@ package com.example.zem.patientcareapp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -11,13 +10,14 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,11 +26,11 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
 import com.example.zem.patientcareapp.Fragment.MessagesFragment;
+import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.Fragment.PatientHistoryFragment;
 import com.example.zem.patientcareapp.Fragment.PatientProfileFragment;
 import com.example.zem.patientcareapp.Fragment.PromoFragment;
@@ -41,7 +41,7 @@ import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
  * Created by Zem on 7/16/2015.
  */
 
-public class SidebarActivity extends FragmentActivity {
+public class SidebarActivity extends AppCompatActivity {
     private String[] navMenuTitles; // slide menu items
     private TypedArray navMenuIcons;
     private ArrayList<NavDrawerItem> navDrawerItems;
@@ -61,7 +61,7 @@ public class SidebarActivity extends FragmentActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     ImageView img_first;
-    TextView txt_uname;
+    Toolbar sidebar_toolbar;
 
     static com.example.zem.patientcareapp.GetterSetter.Patient patient;
     static DbHelper dbHelper;
@@ -81,18 +81,17 @@ public class SidebarActivity extends FragmentActivity {
         for (int x = 0; x < hash_allProducts.size(); x++)
             products.add(hash_allProducts.get(x).get(dbHelper.PRODUCT_NAME));
 
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBar(actionbar);
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeButtonEnabled(true);
+        sidebar_toolbar = (Toolbar) findViewById(R.id.sidebar_toolbar);
+        setSupportActionBar(sidebar_toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        sidebar_toolbar.setNavigationIcon(R.drawable.ic_navigator);
 
         //////////////FOR THE SIDEBAR///////////////////////////////
-        //Header of the listview, go to header.xml to customize
+        //Header of the listview
         View header = getLayoutInflater().inflate(R.layout.header_sidebar, null);
         img_first = (ImageView) header.findViewById(R.id.img_first);
-        txt_uname = (TextView) header.findViewById(R.id.txt_uname);
 
-        txt_uname.setText(getUname());
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.temp_user);
         img_first.setImageBitmap(ImageHelper.getRoundedCornerBitmap(bm, 300));
 
@@ -213,14 +212,13 @@ public class SidebarActivity extends FragmentActivity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // if nav drawer is opened, hide the action items
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         return super.onPrepareOptionsMenu(menu);
     }
 
     private void displayView(int position) {
         // update the main content by replacing fragments
         Fragment fragment = null;
+        String title = "Home";
         switch (position) {
             case 0:
                 fragment = new HomeTileFragment();
@@ -229,25 +227,31 @@ public class SidebarActivity extends FragmentActivity {
                 fragment = new HomeTileFragment();
                 break;
             case 2:
+                title = "Profile";
                 fragment = new PatientProfileFragment();
                 break;
             case 3:
+                title = "Messages";
                 fragment = new MessagesFragment();
                 break;
             case 4:
+                title = "Medical Records";
                 fragment = new PatientHistoryFragment();
                 break;
             case 5:
-                startActivity(new Intent(this, OrdersActivity.class));
-                SidebarActivity.this.finish();
+                title = "Recent Orders";
+                fragment = new OrdersFragment();
                 break;
             case 6:
+                title = "Doctors";
                 fragment = new ListOfDoctorsFragment();
                 break;
             case 7:
+                title = "Promos";
                 fragment = new PromoFragment();
                 break;
             case 8:
+                title = "News";
                 fragment = new HomeTileFragment();
                 break;
             case 9:
@@ -267,8 +271,8 @@ public class SidebarActivity extends FragmentActivity {
             // update selected item and title, then close the drawer
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
-            setTitle(navMenuTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
+            getSupportActionBar().setTitle(title);
         } else
             Log.e("SidebarAct", "Error in creating fragment");
     }

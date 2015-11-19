@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
@@ -34,10 +36,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     EditText username_txtfield, password_txtfield;
     TextView signup, forgotpw;
     Button login_btn;
+    Toolbar login_toolbar;
 
     public static final String MyPREFERENCES = "MyPrefs", name = "nameKey", pass = "passwordKey";
     public static SharedPreferences sharedpreferences;
@@ -62,8 +65,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_login);
 
-        ActionBar actionbar = getActionBar();
-        setCustomActionBar(actionbar);
+        login_toolbar = (Toolbar) findViewById(R.id.login_toolbar);
+        setSupportActionBar(login_toolbar);
+        getSupportActionBar().setTitle("PatientCare");
 
         dbHelper = new DbHelper(this);
         helpers = new Helpers();
@@ -196,6 +200,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
                                                 Log.d("main_consult4", error + "");
+                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                        //request for patient_records
+                                        GetRequest.getJSONobj(getBaseContext(), "get_patient_records&patient_id=" + syncedPatient.getServerID(), "patient_records", "record_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                Log.d("main_consult5", error + "");
+                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                        //request for patient_treatments
+                                        GetRequest.getJSONobj(getBaseContext(), "get_treatments", "patient_treatments", "treatments_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                Log.d("main_consult6", error + "");
                                                 Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });

@@ -80,7 +80,7 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
         listOfDoctors = new ArrayList();
         listOfClinic = new ArrayList();
 
-        doctorClinicHashmap = dbhelper.getAllActiveClinics();
+        doctorClinicHashmap = dbhelper.getDoctorsInnerJoinClinics();
         doctorsHashmap = dbhelper.getAllDoctors();
 
         setDate = (LinearLayout) findViewById(R.id.setDate);

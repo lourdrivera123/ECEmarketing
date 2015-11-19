@@ -1,52 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/first"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@color/ColorPrimary" />
-
-    <View
-        android:id="@+id/second"
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:layout_below="@+id/first"
-        android:background="@color/DarkGreen" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/second"
-        android:background="@color/LightGreen"
-        android:orientation="vertical"
-        android:padding="5dp">
-
-        <TextView
-            android:id="@+id/fname_lname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Firstname Lastname"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/txt_uname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="username: eselbarnz"
-            android:textColor="@color/white"
-            android:textSize="13sp" />
-    </LinearLayout>
-
+    android:layout_height="wrap_content"
+    android:background="@color/LightGreen"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/img_first"
-        android:layout_width="80dp"
+        android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:maxHeight="70dp"
+        android:maxWidth="70dp"
         android:src="@drawable/temp_user" />
-</RelativeLayout>
+
+    <TextView
+        android:id="@+id/fname_lname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d10"
+        android:text="Firstname Lastname"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+</LinearLayout>

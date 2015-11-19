@@ -5,6 +5,19 @@
     android:orientation="vertical"
     android:padding="@dimen/d10">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Medication"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginTop="@dimen/d10"
+        android:background="@color/ColorPrimary" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,6 +26,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/d10"
             android:orientation="vertical">
 
             <AutoCompleteTextView
@@ -33,15 +47,6 @@
                 android:layout_marginTop="5dp"
                 android:hint="Generic name"
                 android:textSize="15sp" />
-
-            <EditText
-                android:id="@+id/qty"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:hint="Quantity"
-                android:textSize="15sp" />
-
 
             <EditText
                 android:id="@+id/dosage"

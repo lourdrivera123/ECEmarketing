@@ -1,9 +1,7 @@
 package com.example.zem.patientcareapp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,13 +15,11 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.GetterSetter.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Network.ConvertCurrencyRequest;
 import com.example.zem.patientcareapp.Network.GetRequest;
-import com.example.zem.patientcareapp.Network.PostRequest;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalItem;
 import com.paypal.android.sdk.payments.PayPalPayment;
@@ -269,7 +265,7 @@ public class samplepaypal extends Activity {
                                         try {
                                             String timestamp_ordered = response.getString("server_timestamp");
 
-                                            Intent order_intent = new Intent(getBaseContext(), OrdersActivity.class);
+                                            Intent order_intent = new Intent(getBaseContext(), OrdersFragment.class);
                                             order_intent.putExtra("payment_from", "paypal");
                                             order_intent.putExtra("timestamp_ordered", timestamp_ordered);
                                             startActivity(order_intent);

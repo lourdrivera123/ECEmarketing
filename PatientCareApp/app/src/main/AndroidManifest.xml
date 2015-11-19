@@ -62,7 +62,7 @@
             android:name=".MainActivity"
             launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".DoctorActivity"
             launchMode="singleInstance"
@@ -81,8 +81,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light" />
         <activity
-            android:name=".PatientMedicalRecordActivity"
-            launchMode="singleInstance"
+            android:name=".SaveMedicalRecordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
@@ -105,11 +104,6 @@
             android:name=".MessageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
-        <activity
-            android:name=".OrdersActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyTheme" />
-
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait">
@@ -143,7 +137,7 @@
         <activity
             android:name=".SidebarActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.MyTheme" />
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"

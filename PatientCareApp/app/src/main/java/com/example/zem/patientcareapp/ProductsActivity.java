@@ -9,7 +9,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +36,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     Toolbar products_toolbar;
     TextView noOfResults;
     LinearLayout results_layout;
+
 
     LazyAdapter adapter;
     Helpers helpers;
@@ -135,6 +135,10 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
+                break;
+
+            case R.id.shoppingcart:
+                startActivity(new Intent(this, ShoppingCartActivity.class));
                 break;
 
         }
