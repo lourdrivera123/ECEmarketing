@@ -3,19 +3,15 @@ package com.example.zem.patientcareapp;
 import android.app.ActionBar;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.example.zem.patientcareapp.Fragment.ProductsFragment;
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
 

@@ -16,6 +16,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.Model.Patient;
+import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Fragment.OrdersFragment;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Network.PostRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,24 +146,22 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
                 setContentView(R.layout.address_for_delivery);
                 myToolBar = (Toolbar) findViewById(R.id.myToolBar);
                 Button next_btn = (Button) findViewById(R.id.next_btn);
-                 next_btn.setOnClickListener(new View.OnClickListener() {
-                     @Override
-                     public void onClick(View v) {
-                         setContentView(R.layout.payment_method_layout);
-                         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
-                         setSupportActionBar(myToolBar);
-                         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                         getSupportActionBar().setTitle("Payment Method");
-                         myToolBar.setNavigationIcon(R.drawable.ic_back);
-                     }
-                 });
+                next_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setContentView(R.layout.payment_method_layout);
+                        myToolBar = (Toolbar) findViewById(R.id.myToolBar);
+                        setSupportActionBar(myToolBar);
+                        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                        getSupportActionBar().setTitle("Payment Method");
+                        myToolBar.setNavigationIcon(R.drawable.ic_back);
+                    }
+                });
 
                 setSupportActionBar(myToolBar);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setTitle("Recipient for delivery");
-
                 myToolBar.setNavigationIcon(R.drawable.ic_back);
-
                 break;
             case R.id.pickup_btn:
                 setContentView(R.layout.payment_method_layout);

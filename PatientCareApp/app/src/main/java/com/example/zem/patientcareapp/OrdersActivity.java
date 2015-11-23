@@ -40,7 +40,7 @@ public class OrdersActivity extends AppCompatActivity {
         setContentView(R.layout.orders_layout);
 
         lv_items = (ListView) findViewById(R.id.lv_items);
-        ordersToolbar = (Toolbar) findViewById(R.id.ordersToolbar);
+//        ordersToolbar = (Toolbar) findViewById(R.id.ordersToolbar);
 
         setSupportActionBar(ordersToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

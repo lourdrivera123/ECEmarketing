@@ -38,8 +38,8 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.PatientMedicalRecordActivity;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SaveMedicalRecordActivity;
 import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.SidebarActivity;
 
@@ -191,10 +191,15 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         view_record_id = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
 
-        Intent view_record = new Intent(getActivity(), PatientMedicalRecordActivity.class);
+        Intent view_record = new Intent(getActivity(), SaveMedicalRecordActivity.class);
         view_record.putExtra("viewRecord", view_record_id);
         startActivity(view_record);
     }
@@ -243,19 +248,24 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                         public void getResult(JSONObject response) {
                                             try {
                                                 int success = response.getInt("success");
+                                                int hasRecord = response.getInt("has_record");
+                                                Log.d("response 1", response + "");
 
                                                 if (success == 1) {
                                                     JSONArray json_mysql = response.getJSONArray("records");
-                                                    insertHistory(json_mysql);
+
+                                                    if (hasRecord == 1)
+                                                        Toast.makeText(getActivity(), "NAA NAKA ANI NGA RECORD", Toast.LENGTH_SHORT).show();
+                                                    else
+                                                        insertHistory(json_mysql);
                                                 } else {
                                                     Toast.makeText(getActivity(), "Invalid Credentials", Toast.LENGTH_SHORT).show();
-                                                    progress.dismiss();
                                                 }
                                             } catch (Exception e) {
-                                                progress.dismiss();
                                                 Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
                                                 Log.e("patientHistoryFrag0", e + "");
                                             }
+                                            progress.dismiss();
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         @Override
@@ -275,8 +285,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 personalRecord.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getActivity(), PatientMedicalRecordActivity.class);
-                        startActivity(intent);
+                        startActivity(new Intent(getActivity(), SaveMedicalRecordActivity.class));
                         dialog.dismiss();
                     }
                 });
@@ -308,6 +317,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                 public void getResult(JSONObject response) {
                     try {
                         int success = response.getInt("success");
+                        Log.d("response 2", response + "");
 
                         if (success == 1) {
                             int last_inserted_id = response.getInt("last_inserted_id");
@@ -344,15 +354,12 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                             hash.put("action", "multiple_insert");
                             hash.put("jsobj", json_to_be_passed.toString());
 
-                            Log.d("hash", hash + "");
-
                             PostRequest.send(getActivity(), hash, serverRequest, new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
                                     try {
                                         int success = response.getInt("success");
-
-                                        Log.d("response", response + "");
+                                        Log.d("response 3", response + "");
                                     } catch (Exception e) {
                                         Toast.makeText(getActivity(), e + "", Toast.LENGTH_SHORT).show();
                                     }
@@ -406,16 +413,16 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         }
 
         public void remove(int position) {
-            int recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
-            if (dbHelper.deletePatientRecord(recordID) > 0) {
-                if (dbHelper.deleteTreatmentByRecordID(recordID) > 0) {
-                    medRecords.remove(position);
-                    hashHistory.remove(position);
-                    mAdapter.notifyDataSetChanged();
-                } else
-                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-            } else
-                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+//            int recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
+//            if (dbHelper.deletePatientRecord(recordID) > 0) {
+//                if (dbHelper.deleteTreatmentByRecordID(recordID) > 0) {
+//                    medRecords.remove(position);
+//                    hashHistory.remove(position);
+//                    mAdapter.notifyDataSetChanged();
+//                } else
+//                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+//            } else
+//                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
         }
 
         public void removeSelection(int position) {

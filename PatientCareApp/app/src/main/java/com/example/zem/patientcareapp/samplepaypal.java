@@ -15,7 +15,9 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.Model.Patient;
+import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
@@ -264,7 +266,7 @@ public class samplepaypal extends Activity {
                                         try {
                                             String timestamp_ordered = response.getString("server_timestamp");
 
-                                            Intent order_intent = new Intent(getBaseContext(), OrdersActivity.class);
+                                            Intent order_intent = new Intent(getBaseContext(), OrdersFragment.class);
                                             order_intent.putExtra("payment_from", "paypal");
                                             order_intent.putExtra("timestamp_ordered", timestamp_ordered);
                                             startActivity(order_intent);

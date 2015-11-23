@@ -1,6 +1,5 @@
 package com.example.zem.patientcareapp;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,8 +11,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,7 +36,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONObject;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -137,7 +133,7 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
             GetRequest.getJSONobj(getBaseContext(), "google_distance_matrix&mylocation_lat=" + mLastLocation.getLatitude() + "&mylocation_long=" + mLastLocation.getLongitude(), "branches", "branches_id", new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
-                    Log.d("response in googlemapactivity", response + "");
+                    Log.d("googlemapactivity", response + "");
 
 //                    ece_branches = dbHelper.getECEBranches();
                     ece_branches = dbHelper.getECEBranchesfromjson(response, "sorted_nearest_branches");
@@ -184,7 +180,7 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
-                    Log.d("err in googlemaps activity", error + "");
+                    Log.d("googlemapsAct0", error + "");
                     ece_branches = dbHelper.getECEBranches();
                     branches_adapter = new BranchesAdapter(getBaseContext(), ece_branches);
                     list_view_of_branches.setAdapter(branches_adapter);
@@ -280,7 +276,6 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(this, ProductsActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, ProductsActivity.class));
     }
 }

@@ -138,42 +138,6 @@ public class SplashActivity extends Activity {
                     }
                 });
 
-                //request for dosages request
-                GetRequest.getJSONobj(SplashActivity.this, "get_dosages", "dosage_format_and_strength", "dosage_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for patient records request
-                GetRequest.getJSONobj(SplashActivity.this, "get_patient_records", "patient_records", "record_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for treatments request
-                GetRequest.getJSONobj(SplashActivity.this, "get_treatments", "treatments", "treatments_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
                 //request for promos request
                 GetRequest.getJSONobj(SplashActivity.this, "get_promo", "promo", "promo_id", new RespondListener<JSONObject>() {
                     @Override

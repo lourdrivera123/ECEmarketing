@@ -6,124 +6,129 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/myToolBar"
+        android:id="@+id/medRecord_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/ColorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/d10">
+        android:layout_margin="@dimen/d10"
+        android:fillViewport="true">
 
-        <ScrollView
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fillViewport="true">
+            android:orientation="vertical">
 
-            <TableLayout
+            <EditText
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:hint="Date" />
+
+            <AutoCompleteTextView
+                android:id="@+id/search_doctor"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_search"
+                android:hint="Doctor"
+                android:paddingBottom="0dip"
+                android:paddingTop="0dip"
+                android:textSize="15sp" />
 
-                <TableRow>
+            <AutoCompleteTextView
+                android:id="@+id/search_clinic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:drawableLeft="@drawable/ic_search"
+                android:hint="Clinic"
+                android:paddingBottom="0dip"
+                android:paddingTop="0dip"
+                android:textSize="15sp" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".6" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/date"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".4"
-                        android:hint="Date" />
-                </TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Complaint:" />
 
-                <TableRow>
+                <EditText
+                    android:id="@+id/complaint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:gravity="top|left"
+                    android:hint="..."
+                    android:inputType="textMultiLine"
+                    android:lines="2"
+                    android:maxLines="5"
+                    android:minLines="2"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
 
-                    <AutoCompleteTextView
-                        android:id="@+id/search_doctor"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:drawableLeft="@drawable/ic_search"
-                        android:hint="Doctor"
-                        android:paddingBottom="0dip"
-                        android:paddingTop="0dip" />
-                </TableRow>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Diagnosis:" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".3"
-                        android:text="Complaint:" />
+                <EditText
+                    android:id="@+id/diagnosis"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:gravity="top|left"
+                    android:hint="..."
+                    android:inputType="textMultiLine"
+                    android:lines="2"
+                    android:maxLines="5"
+                    android:minLines="2"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
 
-                    <EditText
-                        android:id="@+id/complaint"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".7"
-                        android:gravity="top|left"
-                        android:hint="..."
-                        android:inputType="textMultiLine"
-                        android:lines="2"
-                        android:maxLines="5"
-                        android:minLines="2"
-                        android:scrollbars="vertical" />
-                </TableRow>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d10"
+                android:orientation="horizontal">
 
-                <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Treatment:" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".3"
-                        android:text="Diagnosis:" />
-
-                    <EditText
-                        android:id="@+id/diagnosis"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".7"
-                        android:gravity="top|left"
-                        android:hint="..."
-                        android:inputType="textMultiLine"
-                        android:lines="2"
-                        android:maxLines="5"
-                        android:minLines="2"
-                        android:scrollbars="vertical" />
-                </TableRow>
-
-                <TableRow android:layout_marginTop="@dimen/d10">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".3"
-                        android:text="Treatment:" />
-
-                    <TextView
-                        android:id="@+id/add_treatment"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".7"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:text="+ Add treatment" />
-                </TableRow>
-            </TableLayout>
-        </ScrollView>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/add_treatment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:text="+ Add treatment" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/d10"
         android:layout_weight="1">
 
         <ListView

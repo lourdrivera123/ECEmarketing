@@ -26,7 +26,9 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Dexter B. on 5/11/2015.
@@ -93,10 +95,10 @@ public class Sync {
                                 if (!dbHelper.insertBasket(setBasket(json_object)))
                                     Log.d("sync_15", "wala na save");
                             } else if (tableName.equals("patient_records")) {
-                                if (dbHelper.savePatientRecord(setPatientRecord(json_object), "insert") > 0)
+                                if (dbHelper.savePatientRecord(setPatientRecord(json_object), "insert"))
                                     Log.d("sync_14", "wala na save");
-                            } else if (tableName.equals("treatments")) {
-                                if (!dbHelper.saveTreatments(setTreatments(json_object), "insert"))
+                            } else if (tableName.equals("patient_treatments")) {
+                                if (!dbHelper.savePatientTreatments(setTreatments(json_object), "insert"))
                                     Log.d("sync_13", "wala na save");
                             } else if (tableName.equals("discounts_free_products")) {
                                 if (!dbHelper.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert"))
@@ -218,8 +220,9 @@ public class Sync {
             patient_record.setFindings(json_object.getString("findings"));
             patient_record.setDate(json_object.getString("record_date"));
             patient_record.setDoctorID(json_object.getInt("doctor_id"));
+            patient_record.setClinicID(json_object.getInt("clinic_id"));
             patient_record.setDoctorName(json_object.getString("doctor_name"));
-            patient_record.setNote(json_object.getString("note"));
+            patient_record.setClinicName(json_object.getString("clinic_name"));
             patient_record.setCreated_at(json_object.getString("created_at"));
             patient_record.setUpdated_at(json_object.getString("updated_at"));
             patient_record.setDeleted_at(json_object.getString("deleted_at"));
@@ -229,22 +232,21 @@ public class Sync {
         return patient_record;
     }
 
-    public Treatments setTreatments(JSONObject json_object) {
-        Treatments treatments = new Treatments();
-        try {
-            treatments.setTreatments_id(json_object.getInt("id"));
-            treatments.setPatient_record_id(json_object.getInt("patient_record_id"));
-            treatments.setMedicine_name(json_object.getString("medicine_name"));
-            treatments.setGeneric_name(json_object.getString("generic_name"));
-            treatments.setQuantity(json_object.getString("quantity"));
-            treatments.setPrescription(json_object.getString("prescription"));
-            treatments.setCreated_at(json_object.getString("created_at"));
-            treatments.setUpdated_at(json_object.getString("updated_at"));
-            treatments.setDeleted_at(json_object.getString("deleted_at"));
-        } catch (Exception e) {
-        }
+    public ArrayList<HashMap<String, String>> setTreatments(JSONObject json) {
+        ArrayList<HashMap<String, String>> listOfTreatments = new ArrayList();
 
-        return treatments;
+        try {
+            HashMap<String, String> map = new HashMap();
+            map.put("treatmentts_id", String.valueOf(json.getInt("id")));
+            map.put("patient_records_id", String.valueOf(json.getInt("patient_records_id")));
+            map.put("medicine_name", json.getString("medicine_name"));
+            map.put("generic_name", json.getString("generic_name"));
+            map.put("dosage", json.getString("dosage"));
+            listOfTreatments.add(map);
+        } catch (Exception e) {
+
+        }
+        return listOfTreatments;
     }
 
     public JSONArray checkWhatToInsert(JSONArray json_array_mysql, JSONArray json_array_sqlite, String server_id) throws JSONException {
