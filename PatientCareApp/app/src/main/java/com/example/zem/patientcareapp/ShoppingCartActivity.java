@@ -24,7 +24,8 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.CheckoutModule.DeliverPickupOption;
+import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
@@ -356,7 +357,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_checkout_ready:
-                startActivity(new Intent(this, CheckoutActivity.class));
+                startActivity(new Intent(this, DeliverPickupOption.class));
                 break;
         }
     }

@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.zem.patientcareapp.GetterSetter.Doctor;
+import com.example.zem.patientcareapp.Model.Doctor;
 
 import java.util.ArrayList;
 import java.util.HashMap;

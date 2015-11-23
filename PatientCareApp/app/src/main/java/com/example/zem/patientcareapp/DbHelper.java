@@ -9,24 +9,24 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
-import com.example.zem.patientcareapp.GetterSetter.Basket;
-import com.example.zem.patientcareapp.GetterSetter.Clinic;
-import com.example.zem.patientcareapp.GetterSetter.ClinicDoctor;
-import com.example.zem.patientcareapp.GetterSetter.Consultation;
-import com.example.zem.patientcareapp.GetterSetter.Doctor;
-import com.example.zem.patientcareapp.GetterSetter.Dosage;
-import com.example.zem.patientcareapp.GetterSetter.FreeProducts;
-import com.example.zem.patientcareapp.GetterSetter.Medicine;
-import com.example.zem.patientcareapp.GetterSetter.Messages;
-import com.example.zem.patientcareapp.GetterSetter.Patient;
-import com.example.zem.patientcareapp.GetterSetter.PatientRecord;
-import com.example.zem.patientcareapp.GetterSetter.Product;
-import com.example.zem.patientcareapp.GetterSetter.ProductCategory;
-import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
-import com.example.zem.patientcareapp.GetterSetter.Settings;
-import com.example.zem.patientcareapp.GetterSetter.Specialty;
-import com.example.zem.patientcareapp.GetterSetter.SubSpecialty;
-import com.example.zem.patientcareapp.GetterSetter.Treatments;
+import com.example.zem.patientcareapp.Model.Basket;
+import com.example.zem.patientcareapp.Model.Clinic;
+import com.example.zem.patientcareapp.Model.ClinicDoctor;
+import com.example.zem.patientcareapp.Model.Consultation;
+import com.example.zem.patientcareapp.Model.Doctor;
+import com.example.zem.patientcareapp.Model.Dosage;
+import com.example.zem.patientcareapp.Model.FreeProducts;
+import com.example.zem.patientcareapp.Model.Medicine;
+import com.example.zem.patientcareapp.Model.Messages;
+import com.example.zem.patientcareapp.Model.Patient;
+import com.example.zem.patientcareapp.Model.PatientRecord;
+import com.example.zem.patientcareapp.Model.Product;
+import com.example.zem.patientcareapp.Model.ProductCategory;
+import com.example.zem.patientcareapp.Model.ProductSubCategory;
+import com.example.zem.patientcareapp.Model.Settings;
+import com.example.zem.patientcareapp.Model.Specialty;
+import com.example.zem.patientcareapp.Model.SubSpecialty;
+import com.example.zem.patientcareapp.Model.Treatments;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1490,6 +1490,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
         String additionalWhere, sql;
         additionalWhere = "";
+        double total = 0;
+
         if (onlyApprovedItems) {
             additionalWhere = " and b.is_approved=1";
         }
@@ -1506,6 +1508,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
+            double item_subtotal = cur.getInt(cur.getColumnIndex(BASKET_QUANTITY)) * cur.getDouble(cur.getColumnIndex(PRODUCT_PRICE));
             HashMap<String, String> map = new HashMap<>();
             map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
@@ -1520,6 +1523,7 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(PRODUCT_PRESCRIPTION_REQUIRED)));
             map.put(BASKET_PRESCRIPTION_ID, cur.getString(cur.getColumnIndex(BASKET_PRESCRIPTION_ID)));
             map.put(BASKET_IS_APPROVED, cur.getString(cur.getColumnIndex(BASKET_IS_APPROVED)));
+            map.put("item_subtotal", String.valueOf(item_subtotal));
             items.add(map);
             cur.moveToNext();
         }

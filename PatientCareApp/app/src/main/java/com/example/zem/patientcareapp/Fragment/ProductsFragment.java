@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp.Fragment;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,8 +20,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.GetterSetter.Product;
-import com.example.zem.patientcareapp.GetterSetter.ProductSubCategory;
+import com.example.zem.patientcareapp.Model.Product;
+import com.example.zem.patientcareapp.Model.ProductSubCategory;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -31,7 +29,6 @@ import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SelectedProductActivity;
-import com.example.zem.patientcareapp.SidebarActivity;
 
 import org.json.JSONObject;
 

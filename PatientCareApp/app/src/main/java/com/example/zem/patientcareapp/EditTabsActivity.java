@@ -44,7 +44,7 @@ import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialo
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.Fragment.ContactsFragment;
 import com.example.zem.patientcareapp.Fragment.SignUpFragment;
-import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Interface.StringRespondListener;

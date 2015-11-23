@@ -9,7 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 
 import org.json.JSONException;

@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.EditTabsActivity;
-import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarActivity;
 

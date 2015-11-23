@@ -134,6 +134,36 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light" />
 
+        <activity
+            android:name=".CheckoutModule.DeliverPickupOption"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+
+        <activity
+            android:name=".CheckoutModule.AddressForDelivery"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+
+        <activity
+            android:name=".CheckoutModule.RecipientForDelivery"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+
+        <activity
+            android:name=".CheckoutModule.PaymentMethod"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+
+        <activity
+            android:name=".CheckoutModule.PromosDiscounts"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+
+        <activity
+            android:name=".CheckoutModule.SummaryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"
             android:exported="false" />

@@ -165,7 +165,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".5"
                     android:text="Deliver"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:checked="false" />
             </RadioGroup>
 
             <TextView

@@ -1,9 +1,7 @@
 package com.example.zem.patientcareapp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,13 +15,10 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.zem.patientcareapp.GetterSetter.Basket;
-import com.example.zem.patientcareapp.GetterSetter.Patient;
+import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Network.ConvertCurrencyRequest;
 import com.example.zem.patientcareapp.Network.GetRequest;
-import com.example.zem.patientcareapp.Network.PostRequest;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalItem;
 import com.paypal.android.sdk.payments.PayPalPayment;

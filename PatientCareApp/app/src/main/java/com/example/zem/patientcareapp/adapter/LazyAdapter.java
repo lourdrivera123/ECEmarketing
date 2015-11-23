@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Fragment.ProductsFragment;
-import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.ImageLoader;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -34,19 +34,15 @@ import com.example.zem.patientcareapp.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * Created by Dexter B. on 5/4/2015.

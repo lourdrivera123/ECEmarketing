@@ -26,7 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.CheckoutActivity;
 import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.GetterSetter.Basket;
+import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;

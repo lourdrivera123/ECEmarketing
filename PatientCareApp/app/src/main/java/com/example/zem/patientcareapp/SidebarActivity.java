@@ -26,7 +26,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
@@ -63,7 +62,7 @@ public class SidebarActivity extends FragmentActivity {
     ImageView img_first;
     TextView txt_uname;
 
-    static com.example.zem.patientcareapp.GetterSetter.Patient patient;
+    static com.example.zem.patientcareapp.Model.Patient patient;
     static DbHelper dbHelper;
 
     @Override

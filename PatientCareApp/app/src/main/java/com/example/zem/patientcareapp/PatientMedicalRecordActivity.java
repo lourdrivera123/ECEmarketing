@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,10 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
-import com.example.zem.patientcareapp.GetterSetter.Medicine;
-import com.example.zem.patientcareapp.GetterSetter.Patient;
-import com.example.zem.patientcareapp.GetterSetter.PatientRecord;
-import com.example.zem.patientcareapp.GetterSetter.Product;
+import com.example.zem.patientcareapp.Model.Medicine;
+import com.example.zem.patientcareapp.Model.Patient;
+import com.example.zem.patientcareapp.Model.PatientRecord;
+import com.example.zem.patientcareapp.Model.Product;
 
 import java.util.ArrayList;
 import java.util.Calendar;
