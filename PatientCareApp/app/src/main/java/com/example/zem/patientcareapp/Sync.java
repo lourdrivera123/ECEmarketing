@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Model.Clinic;
 import com.example.zem.patientcareapp.Model.ClinicDoctor;
@@ -43,6 +44,7 @@ public class Sync {
     String tableName, tableId;
     DbHelper dbHelper;
     Context context;
+    DoctorController doctor_controller;
 
     public void init(Context c, String request, String table_name, String table_id, JSONObject response) {
         tableName = table_name;
@@ -50,6 +52,7 @@ public class Sync {
         context = c;
 
         dbHelper = new DbHelper(context);
+        doctor_controller = new DoctorController(context);
 
         try {
             int success = response.getInt("success");
@@ -69,7 +72,7 @@ public class Sync {
                                 if (!dbHelper.saveProduct(setProduct(json_object), "insert"))
                                     Log.d("sync_22", "wala na save");
                             } else if (tableName.equals("doctors")) {
-                                if (!dbHelper.saveDoctor(setDoctor(json_object), "insert"))
+                                if (!doctor_controller.saveDoctor(setDoctor(json_object), "insert"))
                                     Log.d("sync_21", "wala na save");
                             } else if (tableName.equals("specialties")) {
                                 if (!dbHelper.saveSpecialty(setSpecialty(json_object), "insert"))
@@ -148,7 +151,7 @@ public class Sync {
                         JSONObject json_object = json_array_final_update.getJSONObject(i);
                         if (!json_object.equals("null") && !json_object.equals(null)) {
                             if (tableName.equals("doctors")) {
-                                if (!dbHelper.saveDoctor(setDoctor(json_object), "update"))
+                                if (!doctor_controller.saveDoctor(setDoctor(json_object), "update"))
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                             } else if (tableName.equals("products")) {
                                 if (!dbHelper.saveProduct(setProduct(json_object), "update"))

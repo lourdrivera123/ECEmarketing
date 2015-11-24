@@ -28,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.calendardatepicker.MonthAdapter;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
+import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Model.Consultation;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -80,8 +81,10 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
         listOfDoctors = new ArrayList();
         listOfClinic = new ArrayList();
 
-        doctorClinicHashmap = dbhelper.getDoctorsInnerJoinClinics();
-        doctorsHashmap = dbhelper.getAllDoctors();
+        DoctorController doctor_controller = new DoctorController(this);
+
+        doctorClinicHashmap = doctor_controller.getDoctorsInnerJoinClinics();
+        doctorsHashmap = doctor_controller.getAllDoctors();
 
         setDate = (LinearLayout) findViewById(R.id.setDate);
         setAlarmedTime = (LinearLayout) findViewById(R.id.setAlarmedTime);

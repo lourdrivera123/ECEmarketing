@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Model.Doctor;
 
 import java.util.ArrayList;
@@ -46,14 +47,16 @@ public class DoctorActivity extends AppCompatActivity implements View.OnClickLis
 
         dbHelper = new DbHelper(this);
         Intent intent = getIntent();
-        doctorID = intent.getIntExtra(dbHelper.DOC_DOC_ID, 0);
+        DoctorController doctor_controller = new DoctorController(this);
+
+        doctorID = intent.getIntExtra(doctor_controller.DOC_DOC_ID, 0);
         hashClinicsByDoctorID = dbHelper.getClinicByDoctorID(doctorID);
 
         customAdapter = new CustomAdapterForDoctor(this, R.layout.list_item_of_doctors_layout, R.id.clinic_name, hashClinicsByDoctorID);
         listOfDoctors.setAdapter(customAdapter);
 
         if (doctorID > 0) {
-            doctor = dbHelper.getDoctorByID(doctorID);
+            doctor = doctor_controller.getDoctorByID(doctorID);
 
             doctor_name.setText(doctor.getLname() + ", " + doctor.getFname() + " " + doctor.getMname().charAt(0) + ".");
             specialty.setText("(" + doctor.getSpecialty() + ", " + doctor.getSub_specialty() + ")");

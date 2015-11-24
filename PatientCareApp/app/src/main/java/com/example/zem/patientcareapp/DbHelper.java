@@ -8,6 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.zem.patientcareapp.Controllers.DoctorController;
+import com.example.zem.patientcareapp.Controllers.ProductCategoryController;
+import com.example.zem.patientcareapp.Controllers.ProductSubCategoryController;
+import com.example.zem.patientcareapp.Controllers.SpecialtyController;
+import com.example.zem.patientcareapp.Controllers.SubSpecialtyController;
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Model.Clinic;
@@ -80,39 +85,39 @@ public class DbHelper extends SQLiteOpenHelper {
             UPDATE_TIMESTAMP = "timestamp",
             UPDATE_SEEN = "seen";
 
-    //DOCTORS_TABLE
-    public static final String TBL_DOCTORS = "doctors",
-            DOC_DOC_ID = "doc_id",
-            DOC_LNAME = "lname",
-            DOC_MNAME = "mname",
-            DOC_FNAME = "fname",
-            DOC_PRC_NO = "prc_no",
-            DOC_SUB_SPECIALTY_ID = "sub_specialty_id",
-            DOC_AFFILIATIONS = "affiliations",
-            DOC_EMAIL = "email",
-            DOC_REFERRAL_ID = "referral_id";
+    // //DOCTORS_TABLE
+    // public static final String TBL_DOCTORS = "doctors",
+    //         DOC_DOC_ID = "doc_id",
+    //         DOC_LNAME = "lname",
+    //         DOC_MNAME = "mname",
+    //         DOC_FNAME = "fname",
+    //         DOC_PRC_NO = "prc_no",
+    //         DOC_SUB_SPECIALTY_ID = "sub_specialty_id",
+    //         DOC_AFFILIATIONS = "affiliations",
+    //         DOC_EMAIL = "email",
+    //         DOC_REFERRAL_ID = "referral_id";
 
     //SPECIALTIES_TABLE
-    public static final String TBL_SPECIALTIES = "specialties",
-            SERVER_SPECIALTY_ID = "specialty_id",
-            SPECIALTY_NAME = "name";
+//    public static final String TBL_SPECIALTIES = "specialties",
+//            SERVER_SPECIALTY_ID = "specialty_id",
+//            SPECIALTY_NAME = "name";
 
-    //SPECIALTIES_TABLE
-    public static final String TBL_SUB_SPECIALTIES = "sub_specialties",
-            SERVER_SUB_SPECIALTY_ID = "sub_specialty_id",
-            SUB_SPECIALTY_FOREIGN_ID = "specialty_id",
-            SUB_SPECIALTY_NAME = "name";
+//    //SPECIALTIES_TABLE
+//    public static final String TBL_SUB_SPECIALTIES = "sub_specialties",
+//            SERVER_SUB_SPECIALTY_ID = "sub_specialty_id",
+//            SUB_SPECIALTY_FOREIGN_ID = "specialty_id",
+//            SUB_SPECIALTY_NAME = "name";
 
-    // PRODUCT_CATEGORIES TABLE
-    public static final String PROD_CAT_NAME = "name",
-            TBL_PRODUCT_CATEGORIES = "product_categories",
-            SERVER_PRODUCT_CATEGORY_ID = "product_category_id";
+//    // PRODUCT_CATEGORIES TABLE
+//    public static final String PROD_CAT_NAME = "name",
+//            TBL_PRODUCT_CATEGORIES = "product_categories",
+//            SERVER_PRODUCT_CATEGORY_ID = "product_category_id";
 
-    // PRODUCT_SUBCATEGORIES TABLE
-    public static final String TBL_PRODUCT_SUBCATEGORIES = "product_subcategories",
-            PROD_SUBCAT_NAME = "name",
-            PROD_SUBCAT_CATEGORY_ID = "category_id",
-            SERVER_PRODUCT_SUBCATEGORY_ID = "product_subcategory_id";
+//    // PRODUCT_SUBCATEGORIES TABLE
+//    public static final String TBL_PRODUCT_SUBCATEGORIES = "product_subcategories",
+//            PROD_SUBCAT_NAME = "name",
+//            PROD_SUBCAT_CATEGORY_ID = "category_id",
+//            SERVER_PRODUCT_SUBCATEGORY_ID = "product_subcategory_id";
 
     // PRODUCTS TABLE
     public static final String TBL_PRODUCTS = "products",
@@ -333,14 +338,14 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // SQL to create table "doctors"
-        String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_DOCTORS, AI_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, DOC_EMAIL, DOC_REFERRAL_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
+        // String sql_create_tbl_doctors = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+        //         TBL_DOCTORS, AI_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, DOC_EMAIL, DOC_REFERRAL_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
-        String sql_create_tbl_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_SPECIALTIES, AI_ID, SERVER_SPECIALTY_ID, SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
+//        String sql_create_tbl_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+//                TBL_SPECIALTIES, AI_ID, SERVER_SPECIALTY_ID, SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
-        String sql_create_tbl_sub_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_SUB_SPECIALTIES, AI_ID, SERVER_SUB_SPECIALTY_ID, SUB_SPECIALTY_FOREIGN_ID, SUB_SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
+//        String sql_create_tbl_sub_specialties = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+//                TBL_SUB_SPECIALTIES, AI_ID, SERVER_SUB_SPECIALTY_ID, SUB_SPECIALTY_FOREIGN_ID, SUB_SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "tbl_updates"
         String sql_create_tbl_updates = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s INTEGER)",
@@ -350,13 +355,13 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_create_tbl_patients = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_PATIENTS, AI_ID, PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION, PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_OPTIONAL_ADDRESS, PTNT_STREET, PTNT_BRGY_ID, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_TEL_NO, PTNT_MOBILE_NO, PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY_USER, PTNT_REFERRED_BY_DOCTOR, CREATED_AT, UPDATED_AT, DELETED_AT);
 
-        // SQL to create table "product_categories"
-        String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s  TEXT , %s  TEXT , %s TEXT  )",
-                TBL_PRODUCT_CATEGORIES, AI_ID, SERVER_PRODUCT_CATEGORY_ID, PROD_CAT_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
+//        // SQL to create table "product_categories"
+//        String sql_create_tbl_product_categories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s  TEXT , %s  TEXT , %s TEXT  )",
+//                TBL_PRODUCT_CATEGORIES, AI_ID, SERVER_PRODUCT_CATEGORY_ID, PROD_CAT_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
-        // SQL to create table "product_subcategories"
-        String sql_create_tbl_product_subcategories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
-                TBL_PRODUCT_SUBCATEGORIES, AI_ID, SERVER_PRODUCT_SUBCATEGORY_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
+//        // SQL to create table "product_subcategories"
+//        String sql_create_tbl_product_subcategories = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
+//                TBL_PRODUCT_SUBCATEGORIES, AI_ID, SERVER_PRODUCT_SUBCATEGORY_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         // SQL to create table "products"
         String sql_create_tbl_products = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT,  %s TEXT, %s TEXT , %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s INTEGER, %s  TEXT , %s  INTEGER , %s  TEXT,  %s  TEXT , %s  TEXT  )",
@@ -433,21 +438,26 @@ public class DbHelper extends SQLiteOpenHelper {
                 TBL_BRANCHES, AI_ID, SERVER_BRANCHES_ID, BRANCHES_NAME, BRANCHES_ADDITIONAL_ADDRESS, BRANCHES_BRGY_ID, BRANCHES_BARANGAY, BRANCHES_CITY, BRANCHES_PROVINCE, BRANCHES_REGION, BRANCHES_STATUS, CREATED_AT,
                 UPDATED_AT, DELETED_AT);
 
-        String sql_create_order_details = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+        String sql_create_order_details = String.format("CREATE TABLE %s" +
+                        " (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
                 TBL_ORDER_DETAILS, AI_ID, SERVER_ORDER_DETAILS_ID, ORDER_DETAILS_ORDER_ID, ORDER_DETAILS_PRODUCT_ID, ORDER_DETAILS_PRESCRIPTION_ID, ORDER_DETAILS_QUANTITY, ORDER_DETAILS_TYPE, ORDER_DETAILS_QTY_FULFILLED, CREATED_AT, UPDATED_AT, DELETED_AT);
 
         //sql to create messages table
         String sql_create_messages = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
                 TBl_MSGS, AI_ID, MSGS_SERVER_ID, PATIENT_ID, MSGS_SUBJECT, MSGS_CONTENT, IS_READ, CREATED_AT, UPDATED_AT, DELETED_AT);
 
-        db.execSQL(sql_create_tbl_doctors);
-        db.execSQL(sql_create_tbl_specialties);
-        db.execSQL(sql_create_tbl_sub_specialties);
+        //sql to create order_preferences table
+        String sql_create_order_preferences = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
+                TBl_MSGS, AI_ID, MSGS_SERVER_ID, PATIENT_ID, MSGS_SUBJECT, MSGS_CONTENT, IS_READ, CREATED_AT, UPDATED_AT, DELETED_AT);
+
+        db.execSQL(DoctorController.SQL_CREATE_TBL_DOCTORS);
+        db.execSQL(SpecialtyController.SQL_CREATE_TBL_SPECIALTIES);
+        db.execSQL(SubSpecialtyController.SQL_CREATE_TBL_SUB_SPECIALTIES);
         db.execSQL(sql_create_tbl_updates);
         db.execSQL(sql_create_tbl_patients);
         db.execSQL(sql_create_tbl_baskets);
-        db.execSQL(sql_create_tbl_product_categories);
-        db.execSQL(sql_create_tbl_product_subcategories);
+        db.execSQL(ProductCategoryController.SQL_CREATE_TBL_PRODUCT_CATEGORIES);
+        db.execSQL(ProductSubCategoryController.SQL_CREATE_TBL_PRODUCT_SUBCATEGORIES);
         db.execSQL(sql_create_tbl_products);
         db.execSQL(sql_create_dosage_table);
         db.execSQL(sql_create_patient_records);
@@ -469,12 +479,12 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_messages);
         db.execSQL(sql_patient_treatments);
 
-        insertTableNamesToUpdates(TBL_DOCTORS, db);
-        insertTableNamesToUpdates(TBL_SPECIALTIES, db);
-        insertTableNamesToUpdates(TBL_SUB_SPECIALTIES, db);
+        insertTableNamesToUpdates(DoctorController.TBL_DOCTORS, db);
+        insertTableNamesToUpdates(SpecialtyController.TBL_SPECIALTIES, db);
+        insertTableNamesToUpdates(SubSpecialtyController.TBL_SUB_SPECIALTIES, db);
         insertTableNamesToUpdates(TBL_PRODUCTS, db);
-        insertTableNamesToUpdates(TBL_PRODUCT_CATEGORIES, db);
-        insertTableNamesToUpdates(TBL_PRODUCT_SUBCATEGORIES, db);
+        insertTableNamesToUpdates(ProductCategoryController.TBL_PRODUCT_CATEGORIES, db);
+        insertTableNamesToUpdates(ProductSubCategoryController.TBL_PRODUCT_SUBCATEGORIES, db);
         insertTableNamesToUpdates(TBL_BASKETS, db);
         insertTableNamesToUpdates(TBL_DOSAGE, db);
         insertTableNamesToUpdates(TBL_PATIENT_RECORDS, db);
@@ -546,24 +556,24 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
-    public boolean insertProductCategory(ProductCategory category) throws SQLiteConstraintException {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        long rowID = 0;
-        try {
-            values.put(PROD_CAT_NAME, category.getName());
-            values.put(SERVER_PRODUCT_CATEGORY_ID, category.getCategoryId());
-            values.put(CREATED_AT, category.getCreatedAt());
-            values.put(UPDATED_AT, category.getUpdatedAt());
-            values.put(DELETED_AT, category.getDeletedAt());
-
-            rowID = db.insert(TBL_PRODUCT_CATEGORIES, null, values);
-        } catch (SQLiteConstraintException e) {
-            e.printStackTrace();
-        }
-        db.close();
-        return rowID > 0;
-    }
+//    public boolean insertProductCategory(ProductCategory category) throws SQLiteConstraintException {
+//        SQLiteDatabase db = getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//        long rowID = 0;
+//        try {
+//            values.put(PROD_CAT_NAME, category.getName());
+//            values.put(SERVER_PRODUCT_CATEGORY_ID, category.getCategoryId());
+//            values.put(CREATED_AT, category.getCreatedAt());
+//            values.put(UPDATED_AT, category.getUpdatedAt());
+//            values.put(DELETED_AT, category.getDeletedAt());
+//
+//            rowID = db.insert(TBL_PRODUCT_CATEGORIES, null, values);
+//        } catch (SQLiteConstraintException e) {
+//            e.printStackTrace();
+//        }
+//        db.close();
+//        return rowID > 0;
+//    }
 
     public boolean insertUploadOnPrescription(Integer patientID, String filename, int serverID) {
         SQLiteDatabase db = getWritableDatabase();
@@ -846,77 +856,77 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
-    public boolean saveDoctor(Doctor doctor, String request) {
-        long rowID = 0;
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
+//    public boolean saveDoctor(Doctor doctor, String request) {
+//        long rowID = 0;
+//        SQLiteDatabase db = getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//        values.put(DOC_DOC_ID, doctor.getServer_doc_id());
+//        values.put(DOC_LNAME, doctor.getLname());
+//        values.put(DOC_MNAME, doctor.getMname());
+//        values.put(DOC_FNAME, doctor.getFname());
+//        values.put(DOC_PRC_NO, doctor.getPrc_no());
+//        values.put(DOC_SUB_SPECIALTY_ID, doctor.getSub_specialty_id());
+//        values.put(DOC_AFFILIATIONS, doctor.getAffiliation());
+//        values.put(DOC_EMAIL, doctor.getEmail());
+//        values.put(DOC_REFERRAL_ID, doctor.getReferral_id());
+//        values.put(CREATED_AT, doctor.getCreated_at());
+//        values.put(UPDATED_AT, doctor.getUpdated_at());
+//        values.put(DELETED_AT, doctor.getDeleted_at());
+//
+//        if (request.equals("insert")) {
+//            rowID = db.insert(TBL_DOCTORS, null, values);
+//
+//        } else if (request.equals("update")) {
+//            rowID = db.update(TBL_DOCTORS, values, DOC_DOC_ID + "=" + doctor.getServer_doc_id(), null);
+//        }
+//
+//        db.close();
+//        return rowID > 0;
+//    }
 
-        values.put(DOC_DOC_ID, doctor.getServer_doc_id());
-        values.put(DOC_LNAME, doctor.getLname());
-        values.put(DOC_MNAME, doctor.getMname());
-        values.put(DOC_FNAME, doctor.getFname());
-        values.put(DOC_PRC_NO, doctor.getPrc_no());
-        values.put(DOC_SUB_SPECIALTY_ID, doctor.getSub_specialty_id());
-        values.put(DOC_AFFILIATIONS, doctor.getAffiliation());
-        values.put(DOC_EMAIL, doctor.getEmail());
-        values.put(DOC_REFERRAL_ID, doctor.getReferral_id());
-        values.put(CREATED_AT, doctor.getCreated_at());
-        values.put(UPDATED_AT, doctor.getUpdated_at());
-        values.put(DELETED_AT, doctor.getDeleted_at());
+//    public boolean saveSpecialty(Specialty specialty, String request) {
+//        long rowID = 0;
+//        SQLiteDatabase db = getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//        values.put(SERVER_SPECIALTY_ID, specialty.getSpecialty_id());
+//        values.put(SPECIALTY_NAME, specialty.getName());
+//        values.put(CREATED_AT, specialty.getCreated_at());
+//        values.put(UPDATED_AT, specialty.getUpdated_at());
+//        values.put(DELETED_AT, specialty.getDeleted_at());
+//
+//        if (request.equals("insert")) {
+//            rowID = db.insert(TBL_SPECIALTIES, null, values);
+//        } else if (request.equals("update")) {
+//            rowID = db.update(TBL_SPECIALTIES, values, AI_ID + "=" + specialty.getSpecialty_id(), null);
+//        }
+//
+//        db.close();
+//        return rowID > 0;
+//    }
 
-        if (request.equals("insert")) {
-            rowID = db.insert(TBL_DOCTORS, null, values);
-
-        } else if (request.equals("update")) {
-            rowID = db.update(TBL_DOCTORS, values, DOC_DOC_ID + "=" + doctor.getServer_doc_id(), null);
-        }
-
-        db.close();
-        return rowID > 0;
-    }
-
-    public boolean saveSpecialty(Specialty specialty, String request) {
-        long rowID = 0;
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(SERVER_SPECIALTY_ID, specialty.getSpecialty_id());
-        values.put(SPECIALTY_NAME, specialty.getName());
-        values.put(CREATED_AT, specialty.getCreated_at());
-        values.put(UPDATED_AT, specialty.getUpdated_at());
-        values.put(DELETED_AT, specialty.getDeleted_at());
-
-        if (request.equals("insert")) {
-            rowID = db.insert(TBL_SPECIALTIES, null, values);
-        } else if (request.equals("update")) {
-            rowID = db.update(TBL_SPECIALTIES, values, AI_ID + "=" + specialty.getSpecialty_id(), null);
-        }
-
-        db.close();
-        return rowID > 0;
-    }
-
-    public boolean saveSubSpecialty(SubSpecialty sub_specialty, String request) {
-        long rowID = 0;
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(SERVER_SUB_SPECIALTY_ID, sub_specialty.getSub_specialty_id());
-        values.put(SUB_SPECIALTY_FOREIGN_ID, sub_specialty.getSpecialty_id());
-        values.put(SUB_SPECIALTY_NAME, sub_specialty.getName());
-        values.put(CREATED_AT, sub_specialty.getCreated_at());
-        values.put(UPDATED_AT, sub_specialty.getUpdated_at());
-        values.put(DELETED_AT, sub_specialty.getDeleted_at());
-
-        if (request.equals("insert")) {
-            rowID = db.insert(TBL_SUB_SPECIALTIES, null, values);
-        } else if (request.equals("update")) {
-            rowID = db.update(TBL_SUB_SPECIALTIES, values, AI_ID + "=" + sub_specialty.getSpecialty_id(), null);
-        }
-
-        db.close();
-        return rowID > 0;
-    }
+//    public boolean saveSubSpecialty(SubSpecialty sub_specialty, String request) {
+//        long rowID = 0;
+//        SQLiteDatabase db = getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//        values.put(SERVER_SUB_SPECIALTY_ID, sub_specialty.getSub_specialty_id());
+//        values.put(SUB_SPECIALTY_FOREIGN_ID, sub_specialty.getSpecialty_id());
+//        values.put(SUB_SPECIALTY_NAME, sub_specialty.getName());
+//        values.put(CREATED_AT, sub_specialty.getCreated_at());
+//        values.put(UPDATED_AT, sub_specialty.getUpdated_at());
+//        values.put(DELETED_AT, sub_specialty.getDeleted_at());
+//
+//        if (request.equals("insert")) {
+//            rowID = db.insert(TBL_SUB_SPECIALTIES, null, values);
+//        } else if (request.equals("update")) {
+//            rowID = db.update(TBL_SUB_SPECIALTIES, values, AI_ID + "=" + sub_specialty.getSpecialty_id(), null);
+//        }
+//
+//        db.close();
+//        return rowID > 0;
+//    }
 
     public boolean savePatientConsultation(Consultation consult, String request) {
         SQLiteDatabase db = getWritableDatabase();
@@ -1139,21 +1149,21 @@ public class DbHelper extends SQLiteOpenHelper {
         return check;
     }
 
-    public boolean insertProductSubCategory(ProductSubCategory subCategory) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(PROD_SUBCAT_NAME, subCategory.getName());
-        values.put(PROD_SUBCAT_CATEGORY_ID, subCategory.getCategoryId());
-        values.put(SERVER_PRODUCT_SUBCATEGORY_ID, subCategory.getId());
-        values.put(CREATED_AT, subCategory.getCreatedAt());
-        values.put(UPDATED_AT, subCategory.getUpdatedAt());
-        values.put(DELETED_AT, subCategory.getDeletedAt());
-
-        long rowID = db.insert(TBL_PRODUCT_SUBCATEGORIES, null, values);
-        db.close();
-        return rowID > 0;
-    }
+//    public boolean insertProductSubCategory(ProductSubCategory subCategory) {
+//        SQLiteDatabase db = getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//        values.put(PROD_SUBCAT_NAME, subCategory.getName());
+//        values.put(PROD_SUBCAT_CATEGORY_ID, subCategory.getCategoryId());
+//        values.put(SERVER_PRODUCT_SUBCATEGORY_ID, subCategory.getId());
+//        values.put(CREATED_AT, subCategory.getCreatedAt());
+//        values.put(UPDATED_AT, subCategory.getUpdatedAt());
+//        values.put(DELETED_AT, subCategory.getDeletedAt());
+//
+//        long rowID = db.insert(TBL_PRODUCT_SUBCATEGORIES, null, values);
+//        db.close();
+//        return rowID > 0;
+//    }
 
     public boolean saveProduct(Product product, String request) {
         SQLiteDatabase db = getWritableDatabase();
@@ -1282,115 +1292,115 @@ public class DbHelper extends SQLiteOpenHelper {
         return record;
     }
 
-    //for doctors
-    public ArrayList<HashMap<String, String>> getDoctorName() {
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_DOCTORS;
-        Cursor cur = db.rawQuery(sql, null);
-        HashMap<String, String> map;
-        ArrayList<HashMap<String, String>> doctors = new ArrayList<HashMap<String, String>>();
+//    //for doctors
+//    public ArrayList<HashMap<String, String>> getDoctorName() {
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sql = "SELECT * FROM " + TBL_DOCTORS;
+//        Cursor cur = db.rawQuery(sql, null);
+//        HashMap<String, String> map;
+//        ArrayList<HashMap<String, String>> doctors = new ArrayList<HashMap<String, String>>();
+//
+//        String fullname, fname, lname;
+//        while (cur.moveToNext()) {
+//            lname = Helpers.curGetStr(cur, DOC_LNAME);
+//            fname = Helpers.curGetStr(cur, DOC_FNAME);
+//            fullname = fname + " " + lname;
+//
+//            map = new HashMap();
+//            map.put("doctor_id", String.valueOf(cur.getInt(cur.getColumnIndex(DOC_DOC_ID))));
+//            map.put("fullname", fullname);
+//            doctors.add(map);
+//        }
+//        cur.close();
+//        db.close();
+//
+//        return doctors;
+//    }
 
-        String fullname, fname, lname;
-        while (cur.moveToNext()) {
-            lname = Helpers.curGetStr(cur, DOC_LNAME);
-            fname = Helpers.curGetStr(cur, DOC_FNAME);
-            fullname = fname + " " + lname;
+//    public ArrayList<HashMap<Integer, ArrayList<String>>> getSearchDoctors() {
+//        ArrayList<HashMap<Integer, ArrayList<String>>> doctors = new ArrayList();
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sql = "select d.*, s.name as specialty, ss.name as sub_specialty from " + TBL_SPECIALTIES + " as s" +
+//                " inner join " + TBL_SUB_SPECIALTIES + " as ss on s.specialty_id = ss.specialty_id inner join " + TBL_DOCTORS + " as d on ss.sub_specialty_id = d.sub_specialty_id";
+//        Cursor cur = db.rawQuery(sql, null);
+//
+//        while (cur.moveToNext()) {
+//            HashMap<Integer, ArrayList<String>> map = new HashMap();
+//            ArrayList<String> list = new ArrayList();
+//
+//            list.add(cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
+//            list.add(cur.getString(cur.getColumnIndex(DOC_PRC_NO)));
+//            list.add(cur.getString(cur.getColumnIndex("specialty")));
+//            list.add(cur.getString(cur.getColumnIndex("sub_specialty")));
+//
+//            map.put(cur.getInt(cur.getColumnIndex("doc_id")), list);
+//            doctors.add(map);
+//        }
+//
+//        db.close();
+//        cur.close();
+//
+//        return doctors;
+//    }
 
-            map = new HashMap();
-            map.put("doctor_id", String.valueOf(cur.getInt(cur.getColumnIndex(DOC_DOC_ID))));
-            map.put("fullname", fullname);
-            doctors.add(map);
-        }
-        cur.close();
-        db.close();
+//    public ArrayList<HashMap<String, String>> getAllDoctors() {
+//        ArrayList<HashMap<String, String>> doctors = new ArrayList();
+//
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sql = "SELECT d.*, s.name FROM " + TBL_DOCTORS + " as d inner join " + TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + TBL_SPECIALTIES + " as s on ss.specialty_id = s.specialty_id";
+//        Cursor cur = db.rawQuery(sql, null);
+//
+//        cur.moveToFirst();
+//        while (!cur.isAfterLast()) {
+//            HashMap<String, String> map = new HashMap();
+//            map.put(DOC_DOC_ID, cur.getString(cur.getColumnIndex(DOC_DOC_ID)));
+//            map.put(DOC_FNAME, cur.getString(cur.getColumnIndex(DOC_FNAME)));
+//            map.put(DOC_LNAME, cur.getString(cur.getColumnIndex(DOC_LNAME)));
+//            map.put("fullname", "Dr. " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
+//            map.put(DOC_MNAME, cur.getString(cur.getColumnIndex(DOC_MNAME)));
+//            map.put(DOC_SUB_SPECIALTY_ID, cur.getString(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
+//            map.put("name", cur.getString(cur.getColumnIndex("name")));
+//            map.put(DOC_REFERRAL_ID, cur.getString(cur.getColumnIndex(DOC_REFERRAL_ID)));
+//            doctors.add(map);
+//
+//            cur.moveToNext();
+//        }
+//
+//        cur.close();
+//        db.close();
+//
+//        return doctors;
+//    }
 
-        return doctors;
-    }
-
-    public ArrayList<HashMap<Integer, ArrayList<String>>> getSearchDoctors() {
-        ArrayList<HashMap<Integer, ArrayList<String>>> doctors = new ArrayList();
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "select d.*, s.name as specialty, ss.name as sub_specialty from " + TBL_SPECIALTIES + " as s" +
-                " inner join " + TBL_SUB_SPECIALTIES + " as ss on s.specialty_id = ss.specialty_id inner join " + TBL_DOCTORS + " as d on ss.sub_specialty_id = d.sub_specialty_id";
-        Cursor cur = db.rawQuery(sql, null);
-
-        while (cur.moveToNext()) {
-            HashMap<Integer, ArrayList<String>> map = new HashMap();
-            ArrayList<String> list = new ArrayList();
-
-            list.add(cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
-            list.add(cur.getString(cur.getColumnIndex(DOC_PRC_NO)));
-            list.add(cur.getString(cur.getColumnIndex("specialty")));
-            list.add(cur.getString(cur.getColumnIndex("sub_specialty")));
-
-            map.put(cur.getInt(cur.getColumnIndex("doc_id")), list);
-            doctors.add(map);
-        }
-
-        db.close();
-        cur.close();
-
-        return doctors;
-    }
-
-    public ArrayList<HashMap<String, String>> getAllDoctors() {
-        ArrayList<HashMap<String, String>> doctors = new ArrayList();
-
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT d.*, s.name FROM " + TBL_DOCTORS + " as d inner join " + TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + TBL_SPECIALTIES + " as s on ss.specialty_id = s.specialty_id";
-        Cursor cur = db.rawQuery(sql, null);
-
-        cur.moveToFirst();
-        while (!cur.isAfterLast()) {
-            HashMap<String, String> map = new HashMap();
-            map.put(DOC_DOC_ID, cur.getString(cur.getColumnIndex(DOC_DOC_ID)));
-            map.put(DOC_FNAME, cur.getString(cur.getColumnIndex(DOC_FNAME)));
-            map.put(DOC_LNAME, cur.getString(cur.getColumnIndex(DOC_LNAME)));
-            map.put("fullname", "Dr. " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
-            map.put(DOC_MNAME, cur.getString(cur.getColumnIndex(DOC_MNAME)));
-            map.put(DOC_SUB_SPECIALTY_ID, cur.getString(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
-            map.put("name", cur.getString(cur.getColumnIndex("name")));
-            map.put(DOC_REFERRAL_ID, cur.getString(cur.getColumnIndex(DOC_REFERRAL_ID)));
-            doctors.add(map);
-
-            cur.moveToNext();
-        }
-
-        cur.close();
-        db.close();
-
-        return doctors;
-    }
-
-    public Doctor getDoctorByID(int doctorID) {
-        SQLiteDatabase db = getWritableDatabase();
-        String sqlgetDoctorByID = "SELECT d.*, s.name , ss.name as sub_name FROM " + TBL_DOCTORS + " as d inner join " +
-                TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + TBL_SPECIALTIES +
-                " as s on ss.specialty_id = s.specialty_id where d.doc_id = " + doctorID;
-        Cursor cur = db.rawQuery(sqlgetDoctorByID, null);
-        cur.moveToFirst();
-        Doctor doctor = new Doctor();
-
-        if (cur.getCount() > 0) {
-            doctor.setLname(cur.getString(cur.getColumnIndex(DOC_LNAME)));
-            doctor.setMname(cur.getString(cur.getColumnIndex(DOC_MNAME)));
-            doctor.setFname(cur.getString(cur.getColumnIndex(DOC_FNAME)));
-            doctor.setPrc_no(cur.getInt(cur.getColumnIndex(DOC_PRC_NO)));
-            doctor.setSpecialty(cur.getString(cur.getColumnIndex(SPECIALTY_NAME)));
-            doctor.setSub_specialty(cur.getString(cur.getColumnIndex("sub_name")));
-            doctor.setSub_specialty_id(cur.getInt(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
-            doctor.setAffiliation(cur.getString(cur.getColumnIndex(DOC_AFFILIATIONS)));
-            doctor.setEmail(cur.getString(cur.getColumnIndex(DOC_EMAIL)));
-            doctor.setReferral_id(cur.getString(cur.getColumnIndex(DOC_REFERRAL_ID)));
-            doctor.setCreated_at(cur.getString(cur.getColumnIndex(CREATED_AT)));
-            doctor.setUpdated_at(cur.getString(cur.getColumnIndex(UPDATED_AT)));
-            doctor.setDeleted_at(cur.getString(cur.getColumnIndex(DELETED_AT)));
-        }
-        cur.close();
-        db.close();
-
-        return doctor;
-    }
+//    public Doctor getDoctorByID(int doctorID) {
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sqlgetDoctorByID = "SELECT d.*, s.name , ss.name as sub_name FROM " + TBL_DOCTORS + " as d inner join " +
+//                TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + TBL_SPECIALTIES +
+//                " as s on ss.specialty_id = s.specialty_id where d.doc_id = " + doctorID;
+//        Cursor cur = db.rawQuery(sqlgetDoctorByID, null);
+//        cur.moveToFirst();
+//        Doctor doctor = new Doctor();
+//
+//        if (cur.getCount() > 0) {
+//            doctor.setLname(cur.getString(cur.getColumnIndex(DOC_LNAME)));
+//            doctor.setMname(cur.getString(cur.getColumnIndex(DOC_MNAME)));
+//            doctor.setFname(cur.getString(cur.getColumnIndex(DOC_FNAME)));
+//            doctor.setPrc_no(cur.getInt(cur.getColumnIndex(DOC_PRC_NO)));
+//            doctor.setSpecialty(cur.getString(cur.getColumnIndex(SPECIALTY_NAME)));
+//            doctor.setSub_specialty(cur.getString(cur.getColumnIndex("sub_name")));
+//            doctor.setSub_specialty_id(cur.getInt(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
+//            doctor.setAffiliation(cur.getString(cur.getColumnIndex(DOC_AFFILIATIONS)));
+//            doctor.setEmail(cur.getString(cur.getColumnIndex(DOC_EMAIL)));
+//            doctor.setReferral_id(cur.getString(cur.getColumnIndex(DOC_REFERRAL_ID)));
+//            doctor.setCreated_at(cur.getString(cur.getColumnIndex(CREATED_AT)));
+//            doctor.setUpdated_at(cur.getString(cur.getColumnIndex(UPDATED_AT)));
+//            doctor.setDeleted_at(cur.getString(cur.getColumnIndex(DELETED_AT)));
+//        }
+//        cur.close();
+//        db.close();
+//
+//        return doctor;
+//    }
 
     //for basket
     public Basket getBasket(int productId) {
@@ -1546,30 +1556,30 @@ public class DbHelper extends SQLiteOpenHelper {
         return listOfClinics;
     }
 
-    public ArrayList<HashMap<String, String>> getDoctorsInnerJoinClinics() {
-        ArrayList<HashMap<String, String>> listOfDoctorClinic = new ArrayList();
-        SQLiteDatabase db = getWritableDatabase();
-
-        String sql = "select d.lname, d.mname, d.fname, c.name, c.clinics_id, cd.clinic_sched from " + TBL_DOCTORS + " as d INNER JOIN " +
-                TBL_CLINIC_DOCTOR + " as cd on " + "d.doc_id = cd.doctor_id INNER JOIN " + TBL_CLINICS + " as c on cd.clinic_id = " +
-                "c.clinics_id WHERE cd.is_active = 1";
-        Cursor cur = db.rawQuery(sql, null);
-
-        while (cur.moveToNext()) {
-            HashMap<String, String> map = new HashMap();
-            String fullname = "Dr. " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex(DOC_LNAME));
-
-            map.put("clinics_id", String.valueOf(cur.getInt(cur.getColumnIndex(SERVER_CLINICS_ID))));
-            map.put("fullname", fullname);
-            map.put("clinic_name", cur.getString(cur.getColumnIndex(CLINIC_NAME)));
-            map.put("clinic_sched", cur.getString(cur.getColumnIndex(CD_CLINIC_SCHED)));
-            listOfDoctorClinic.add(map);
-        }
-        cur.close();
-        db.close();
-
-        return listOfDoctorClinic;
-    }
+//    public ArrayList<HashMap<String, String>> getDoctorsInnerJoinClinics() {
+//        ArrayList<HashMap<String, String>> listOfDoctorClinic = new ArrayList();
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        String sql = "select d.lname, d.mname, d.fname, c.name, c.clinics_id, cd.clinic_sched from " + TBL_DOCTORS + " as d INNER JOIN " +
+//                TBL_CLINIC_DOCTOR + " as cd on " + "d.doc_id = cd.doctor_id INNER JOIN " + TBL_CLINICS + " as c on cd.clinic_id = " +
+//                "c.clinics_id WHERE cd.is_active = 1";
+//        Cursor cur = db.rawQuery(sql, null);
+//
+//        while (cur.moveToNext()) {
+//            HashMap<String, String> map = new HashMap();
+//            String fullname = "Dr. " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex(DOC_LNAME));
+//
+//            map.put("clinics_id", String.valueOf(cur.getInt(cur.getColumnIndex(SERVER_CLINICS_ID))));
+//            map.put("fullname", fullname);
+//            map.put("clinic_name", cur.getString(cur.getColumnIndex(CLINIC_NAME)));
+//            map.put("clinic_sched", cur.getString(cur.getColumnIndex(CD_CLINIC_SCHED)));
+//            listOfDoctorClinic.add(map);
+//        }
+//        cur.close();
+//        db.close();
+//
+//        return listOfDoctorClinic;
+//    }
 
     public ArrayList<HashMap<String, String>> getClinicByDoctorID(int doctorID) {
         ArrayList<HashMap<String, String>> listOfClinics = new ArrayList();
@@ -1875,80 +1885,80 @@ public class DbHelper extends SQLiteOpenHelper {
         return resultSet;
     }
 
-    //for category
-    public int getCategoryIdByName(String name) {
-        int id = 0;
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT id FROM " + TBL_PRODUCT_CATEGORIES + " WHERE name='" + name + "'";
-        Cursor cur = db.rawQuery(sql, null);
+//    //for category
+//    public int getCategoryIdByName(String name) {
+//        int id = 0;
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sql = "SELECT id FROM " + TBL_PRODUCT_CATEGORIES + " WHERE name='" + name + "'";
+//        Cursor cur = db.rawQuery(sql, null);
+//
+//        cur.moveToFirst();
+//        while (!cur.isAfterLast()) {
+//            id = cur.getInt(0);
+//            cur.moveToNext();
+//        }
+//        db.close();
+//        cur.close();
+//        return id;
+//    }
 
-        cur.moveToFirst();
-        while (!cur.isAfterLast()) {
-            id = cur.getInt(0);
-            cur.moveToNext();
-        }
-        db.close();
-        cur.close();
-        return id;
-    }
+//    public List<String> getAllProductCategoriesArray() {
+//        List<String> list = new ArrayList();
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sql = "SELECT * FROM " + TBL_PRODUCT_CATEGORIES;
+//        Cursor cur = db.rawQuery(sql, null);
+//        int x = 0;
+//        cur.moveToFirst();
+//        while (!cur.isAfterLast()) {
+//            list.add(x, cur.getString(2));
+//            x++;
+//            cur.moveToNext();
+//        }
+//        cur.close();
+//        db.close();
+//        return list;
+//    }
 
-    public List<String> getAllProductCategoriesArray() {
-        List<String> list = new ArrayList();
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PRODUCT_CATEGORIES;
-        Cursor cur = db.rawQuery(sql, null);
-        int x = 0;
-        cur.moveToFirst();
-        while (!cur.isAfterLast()) {
-            list.add(x, cur.getString(2));
-            x++;
-            cur.moveToNext();
-        }
-        cur.close();
-        db.close();
-        return list;
-    }
+//    //for subcategory
+//    public ProductSubCategory getSubCategoryByName(String name, int categoryId) {
+//        ProductSubCategory subCategory = new ProductSubCategory();
+//        SQLiteDatabase db = getWritableDatabase();
+//        name = name.replace("'", "''");
+//        String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " where name='" + name + "' and category_id='" + categoryId + "'";
+//        Cursor cur = db.rawQuery(sql, null);
+//
+//        while (cur.moveToNext()) {
+//            subCategory.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
+//            subCategory.setName(cur.getString(cur.getColumnIndex(PROD_SUBCAT_NAME)));
+//            subCategory.setCategoryId(Integer.parseInt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_CATEGORY_ID))));
+//            subCategory.setCreatedAt(cur.getString(cur.getColumnIndex(CREATED_AT)));
+//            subCategory.setUpdatedAt(cur.getString(cur.getColumnIndex(UPDATED_AT)));
+//            subCategory.setDeletedAt(cur.getString(cur.getColumnIndex(DELETED_AT)));
+//        }
+//
+//        db.close();
+//        cur.close();
+//        return subCategory;
+//    }
 
-    //for subcategory
-    public ProductSubCategory getSubCategoryByName(String name, int categoryId) {
-        ProductSubCategory subCategory = new ProductSubCategory();
-        SQLiteDatabase db = getWritableDatabase();
-        name = name.replace("'", "''");
-        String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " where name='" + name + "' and category_id='" + categoryId + "'";
-        Cursor cur = db.rawQuery(sql, null);
-
-        while (cur.moveToNext()) {
-            subCategory.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
-            subCategory.setName(cur.getString(cur.getColumnIndex(PROD_SUBCAT_NAME)));
-            subCategory.setCategoryId(Integer.parseInt(cur.getString(cur.getColumnIndex(PROD_SUBCAT_CATEGORY_ID))));
-            subCategory.setCreatedAt(cur.getString(cur.getColumnIndex(CREATED_AT)));
-            subCategory.setUpdatedAt(cur.getString(cur.getColumnIndex(UPDATED_AT)));
-            subCategory.setDeletedAt(cur.getString(cur.getColumnIndex(DELETED_AT)));
-        }
-
-        db.close();
-        cur.close();
-        return subCategory;
-    }
-
-    public String[] getAllProductSubCategoriesArray(int categoryId) {
-        List<String> list = new ArrayList();
-        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " WHERE category_id='" + categoryId + "' ORDER BY name";
-        Cursor cur = db.rawQuery(sql, null);
-        int x = 0;
-
-        cur.moveToFirst();
-        while (!cur.isAfterLast()) {
-            list.add(x, cur.getString(2));
-            x++;
-            cur.moveToNext();
-        }
-        db.close();
-        cur.close();
-        String[] arr = new String[list.size()];
-        return list.toArray(arr);
-    }
+//    public String[] getAllProductSubCategoriesArray(int categoryId) {
+//        List<String> list = new ArrayList();
+//        SQLiteDatabase db = getWritableDatabase();
+//        String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " WHERE category_id='" + categoryId + "' ORDER BY name";
+//        Cursor cur = db.rawQuery(sql, null);
+//        int x = 0;
+//
+//        cur.moveToFirst();
+//        while (!cur.isAfterLast()) {
+//            list.add(x, cur.getString(2));
+//            x++;
+//            cur.moveToNext();
+//        }
+//        db.close();
+//        cur.close();
+//        String[] arr = new String[list.size()];
+//        return list.toArray(arr);
+//    }
 
     public Settings getAllSettings() {
         Settings settings = new Settings();

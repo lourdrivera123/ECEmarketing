@@ -26,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.CheckoutActivity;
 import com.example.zem.patientcareapp.CheckoutModule.DeliverPickupOption;
+import com.example.zem.patientcareapp.CheckoutModule.PromosDiscounts;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Helpers;
@@ -360,7 +361,7 @@ public class ShoppingCartFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_checkout_ready:
-                Intent intent = new Intent(getActivity(), DeliverPickupOption.class); //CheckoutActivity.class
+                Intent intent = new Intent(getActivity(), PromosDiscounts.class); //CheckoutActivity.class
                 startActivity(intent);
                 break;
         }

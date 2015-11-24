@@ -26,6 +26,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
@@ -63,6 +64,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
     ProgressDialog dialog, dialog_1;
 
     DbHelper db;
+    DoctorController doctor_controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,8 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         actionbar.setDisplayHomeAsUpEnabled(true);
 
         db = new DbHelper(this);
+        doctor_controller = new DoctorController(this);
+
         hashOfUsers = new ArrayList();
         hashOfDoctors = new ArrayList();
         listOfReferrals = new ArrayList();
@@ -348,7 +352,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         dialog.setMessage("Please wait...");
         dialog.show();
 
-        hashOfDoctors = db.getAllDoctors();
+        hashOfDoctors = doctor_controller.getAllDoctors();
         for (int d = 0; d < hashOfDoctors.size(); d++) {
             HashMap<String, String> doc = new HashMap();
             doc.put("fullname", hashOfDoctors.get(d).get("fullname"));

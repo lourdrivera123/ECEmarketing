@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
+import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.DoctorActivity;
 import com.example.zem.patientcareapp.Helpers;
@@ -38,6 +39,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     String s_doctor;
 
     DbHelper dbHelper;
+    DoctorController doctor_controller;
     RequestQueue queue;
     LazyAdapter adapter;
     Helpers helpers;
@@ -51,6 +53,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
         helpers = new Helpers();
         dbHelper = new DbHelper(getActivity());
+        doctor_controller = new DoctorController(getActivity());
         queue = VolleySingleton.getInstance().getRequestQueue();
 
         arrayOfSearchDoctors = new ArrayList();
@@ -59,8 +62,8 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
         noUserFound = (TextView) rootView.findViewById(R.id.noUserFound);
 
-        doctor_items = dbHelper.getAllDoctors();
-        searchDoctors = dbHelper.getSearchDoctors();
+        doctor_items = doctor_controller.getAllDoctors();
+        searchDoctors = doctor_controller.getSearchDoctors();
         populateDoctorListView(rootView, doctor_items);
 
         return rootView;
@@ -83,9 +86,9 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        int ID = Integer.parseInt(doctor_items.get(position).get(dbHelper.DOC_DOC_ID));
+        int ID = Integer.parseInt(doctor_items.get(position).get(doctor_controller.DOC_DOC_ID));
         Intent intent = new Intent(getActivity(), DoctorActivity.class);
-        intent.putExtra(dbHelper.DOC_DOC_ID, ID);
+        intent.putExtra(doctor_controller.DOC_DOC_ID, ID);
         startActivity(intent);
     }
 
@@ -116,7 +119,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
                         HashMap<String, String> hash = new HashMap();
 
-                        hash.put(dbHelper.DOC_DOC_ID, String.valueOf(key));
+                        hash.put(doctor_controller.DOC_DOC_ID, String.valueOf(key));
                         hash.put("fullname", values.get(0));
                         hash.put("name", values.get(2));
                         doctor_items.add(hash);
@@ -130,7 +133,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
                 list_of_doctors.setVisibility(View.GONE);
             }
         } else {
-            doctor_items = dbHelper.getAllDoctors();
+            doctor_items = doctor_controller.getAllDoctors();
             populateDoctorListView(root_view, doctor_items);
         }
     }

@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
+import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.Medicine;
@@ -62,6 +63,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
     DbHelper db;
     PatientRecord record;
     ServerRequest serverRequest;
+    DoctorController doctor_controller;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,9 +87,11 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
         view_record_id = intent.getIntExtra("viewRecord", 0);
 
         db = new DbHelper(this);
+        doctor_controller = new DoctorController(this);
+
         serverRequest = new ServerRequest();
 
-        arrayOfDoctors = db.getDoctorName();
+        arrayOfDoctors = doctor_controller.getDoctorName();
         arrayOfClinics = db.getAllClinics();
         listOfDoctors = new ArrayList();
         listOfClinics = new ArrayList();
