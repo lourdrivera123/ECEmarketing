@@ -19,16 +19,16 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.example.zem.patientcareapp.DbHelper;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Model.Product;
 import com.example.zem.patientcareapp.Model.ProductSubCategory;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.SelectedProductActivity;
+import com.example.zem.patientcareapp.Activities.SelectedProductActivity;
 
 import org.json.JSONObject;
 

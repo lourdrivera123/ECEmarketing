@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.example.zem.patientcareapp.Controllers.DoctorController;
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.DoctorActivity;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Activities.DoctorActivity;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;

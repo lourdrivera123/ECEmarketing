@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Model.ProductCategory;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class ProductCategoryController extends DbHelper {
             SERVER_PRODUCT_CATEGORY_ID = "product_category_id";
 
     // SQL to create table "product_categories"
-    public static final String SQL_CREATE_TBL_PRODUCT_CATEGORIES = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s  TEXT , %s  TEXT , %s TEXT  )",
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s  TEXT , %s  TEXT , %s TEXT  )",
             TBL_PRODUCT_CATEGORIES, AI_ID, SERVER_PRODUCT_CATEGORY_ID, PROD_CAT_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public ProductCategoryController(Context context) {

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.zem.patientcareapp.NavDrawerItem;
 import com.example.zem.patientcareapp.R;
 
 import java.util.ArrayList;

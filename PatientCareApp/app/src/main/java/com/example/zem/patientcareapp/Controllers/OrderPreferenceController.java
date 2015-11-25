@@ -3,9 +3,6 @@ package com.example.zem.patientcareapp.Controllers;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.Model.OrderModel;
-
 /**
  * Created by Zem on 11/23/2015.
  */

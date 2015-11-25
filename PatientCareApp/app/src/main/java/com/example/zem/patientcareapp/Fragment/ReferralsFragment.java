@@ -21,7 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.DbHelper;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Model.Settings;
 import com.example.zem.patientcareapp.Interface.ErrorListener;

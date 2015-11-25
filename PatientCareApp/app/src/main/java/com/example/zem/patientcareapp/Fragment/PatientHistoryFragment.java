@@ -31,17 +31,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.SaveMedicalRecordActivity;
-import com.example.zem.patientcareapp.ServerRequest;
-import com.example.zem.patientcareapp.SidebarActivity;
+import com.example.zem.patientcareapp.Activities.SaveMedicalRecordActivity;
+import com.example.zem.patientcareapp.Network.ServerRequest;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;

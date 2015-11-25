@@ -75,7 +75,7 @@ MERGED from PatientCareApp:volley:unspecified:9:5
 		ADDED from AndroidManifest.xml:32:9
 	android:theme
 		ADDED from AndroidManifest.xml:33:9
-activity#com.example.zem.patientcareapp.MainActivity
+activity#com.example.zem.patientcareapp.Activities.MainActivity
 ADDED from AndroidManifest.xml:34:9
 	android:configChanges
 		ADDED from AndroidManifest.xml:38:13
@@ -109,7 +109,7 @@ ADDED from AndroidManifest.xml:50:9
 		ADDED from AndroidManifest.xml:52:13
 	android:name
 		ADDED from AndroidManifest.xml:51:13
-activity#com.example.zem.patientcareapp.DoctorActivity
+activity#com.example.zem.patientcareapp.Activities.DoctorActivity
 ADDED from AndroidManifest.xml:53:9
 	android:configChanges
 		ADDED from AndroidManifest.xml:57:13
@@ -153,7 +153,7 @@ ADDED from AndroidManifest.xml:70:9
 		ADDED from AndroidManifest.xml:72:13
 	android:name
 		ADDED from AndroidManifest.xml:71:13
-activity#com.example.zem.patientcareapp.MasterTabActivity
+activity#com.example.zem.patientcareapp.SwipeTabsModule.MasterTabActivity
 ADDED from AndroidManifest.xml:75:9
 	android:configChanges
 		ADDED from AndroidManifest.xml:78:13
@@ -161,7 +161,7 @@ ADDED from AndroidManifest.xml:75:9
 		ADDED from AndroidManifest.xml:77:13
 	android:name
 		ADDED from AndroidManifest.xml:76:13
-activity#com.example.zem.patientcareapp.EditTabsActivity
+activity#com.example.zem.patientcareapp.SwipeTabsModule.EditTabsActivity
 ADDED from AndroidManifest.xml:79:9
 	android:configChanges
 		ADDED from AndroidManifest.xml:82:13
@@ -177,13 +177,13 @@ ADDED from AndroidManifest.xml:83:9
 		ADDED from AndroidManifest.xml:86:13
 	android:name
 		ADDED from AndroidManifest.xml:84:13
-activity#com.example.zem.patientcareapp.SelectedProductActivity
+activity#com.example.zem.patientcareapp.Activities.SelectedProductActivity
 ADDED from AndroidManifest.xml:87:9
 	android:theme
 		ADDED from AndroidManifest.xml:89:13
 	android:name
 		ADDED from AndroidManifest.xml:88:13
-activity#com.example.zem.patientcareapp.SplashActivity
+activity#com.example.zem.patientcareapp.Activities.SplashActivity
 ADDED from AndroidManifest.xml:90:9
 	android:name
 		ADDED from AndroidManifest.xml:90:19
@@ -229,15 +229,15 @@ activity#com.example.zem.patientcareapp.RoundImage
 ADDED from AndroidManifest.xml:107:9
 	android:name
 		ADDED from AndroidManifest.xml:107:19
-activity#com.example.zem.patientcareapp.FileCache
+activity#com.example.zem.patientcareapp.ImageHandlingModule.FileCache
 ADDED from AndroidManifest.xml:108:9
 	android:name
 		ADDED from AndroidManifest.xml:108:19
-activity#com.example.zem.patientcareapp.Utils
+activity#com.example.zem.patientcareapp.ImageHandlingModule.Utils
 ADDED from AndroidManifest.xml:109:9
 	android:name
 		ADDED from AndroidManifest.xml:109:19
-activity#com.example.zem.patientcareapp.MemoryCache
+activity#com.example.zem.patientcareapp.ImageHandlingModule.MemoryCache
 ADDED from AndroidManifest.xml:110:9
 	android:name
 		ADDED from AndroidManifest.xml:110:19
@@ -245,15 +245,15 @@ activity#com.example.zem.patientcareapp.LazyAdapter
 ADDED from AndroidManifest.xml:111:9
 	android:name
 		ADDED from AndroidManifest.xml:111:19
-activity#com.example.zem.patientcareapp.ImageLoader
+activity#com.example.zem.patientcareapp.ImageHandlingModule.ImageLoader
 ADDED from AndroidManifest.xml:112:9
 	android:name
 		ADDED from AndroidManifest.xml:112:19
-activity#com.example.zem.patientcareapp.DbHelper
+activity#com.example.zem.patientcareapp.Controllers.DbHelper
 ADDED from AndroidManifest.xml:113:9
 	android:name
 		ADDED from AndroidManifest.xml:113:19
-activity#com.example.zem.patientcareapp.PatientConsultationActivity
+activity#com.example.zem.patientcareapp.Activities.PatientConsultationActivity
 ADDED from AndroidManifest.xml:114:9
 	android:name
 		ADDED from AndroidManifest.xml:114:19
@@ -261,15 +261,15 @@ activity#com.example.zem.patientcareapp.PatientConsultationFragment
 ADDED from AndroidManifest.xml:115:9
 	android:name
 		ADDED from AndroidManifest.xml:115:19
-activity#com.example.zem.patientcareapp.AppController
+activity#com.example.zem.patientcareapp.ConfigurationModule.AppController
 ADDED from AndroidManifest.xml:116:9
 	android:name
 		ADDED from AndroidManifest.xml:116:19
-activity#com.example.zem.patientcareapp.LruBitmapCache
+activity#com.example.zem.patientcareapp.ImageHandlingModule.LruBitmapCache
 ADDED from AndroidManifest.xml:117:9
 	android:name
 		ADDED from AndroidManifest.xml:117:19
-activity#com.example.zem.patientcareapp.Sync
+activity#com.example.zem.patientcareapp.Network.Sync
 ADDED from AndroidManifest.xml:118:9
 	android:name
 		ADDED from AndroidManifest.xml:118:19
@@ -293,7 +293,7 @@ activity#com.example.zem.patientcareapp.PreloadNonUserRelatedData
 ADDED from AndroidManifest.xml:123:9
 	android:name
 		ADDED from AndroidManifest.xml:123:19
-activity#com.example.zem.patientcareapp.ServerRequest
+activity#com.example.zem.patientcareapp.Network.ServerRequest
 ADDED from AndroidManifest.xml:124:9
 	android:name
 		ADDED from AndroidManifest.xml:124:19
@@ -339,7 +339,7 @@ action#android.intent.action.VIEW
 ADDED from AndroidManifest.xml:140:17
 	android:name
 		ADDED from AndroidManifest.xml:140:25
-activity#com.example.zem.patientcareapp.samplepaypal
+activity#com.example.zem.patientcareapp.CheckoutModule.PayPalCheckout
 ADDED from AndroidManifest.xml:144:9
 	android:name
 		ADDED from AndroidManifest.xml:144:19

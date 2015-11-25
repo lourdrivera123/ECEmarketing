@@ -15,7 +15,7 @@ import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.example.zem.patientcareapp.DbHelper;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.R;

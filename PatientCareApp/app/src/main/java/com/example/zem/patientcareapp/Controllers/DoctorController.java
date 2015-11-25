@@ -5,8 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Model.Doctor;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class DoctorController extends DbHelper {
     DOC_EMAIL = "email",
     DOC_REFERRAL_ID = "referral_id";
 
-    public static final String SQL_CREATE_TBL_DOCTORS = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
         TBL_DOCTORS, AI_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, DOC_EMAIL, DOC_REFERRAL_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public DoctorController(Context context) {
@@ -98,7 +97,7 @@ public class DoctorController extends DbHelper {
         ArrayList<HashMap<String, String>> doctors = new ArrayList();
 
 //        SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT d.*, s.name FROM " + TBL_DOCTORS + " as d inner join " + TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + TBL_SPECIALTIES + " as s on ss.specialty_id = s.specialty_id";
+        String sql = "SELECT d.*, s.name FROM " + TBL_DOCTORS + " as d inner join " + SubSpecialtyController.TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + SpecialtyController.TBL_SPECIALTIES + " as s on ss.specialty_id = s.specialty_id";
         Cursor cur = sql_db.rawQuery(sql, null);
 
         cur.moveToFirst();
@@ -126,8 +125,8 @@ public class DoctorController extends DbHelper {
     public ArrayList<HashMap<Integer, ArrayList<String>>> getSearchDoctors() {
         ArrayList<HashMap<Integer, ArrayList<String>>> doctors = new ArrayList();
 //        SQLiteDatabase db = getWritableDatabase();
-        String sql = "select d.*, s.name as specialty, ss.name as sub_specialty from " + TBL_SPECIALTIES + " as s" +
-                " inner join " + TBL_SUB_SPECIALTIES + " as ss on s.specialty_id = ss.specialty_id inner join " + TBL_DOCTORS + " as d on ss.sub_specialty_id = d.sub_specialty_id";
+        String sql = "select d.*, s.name as specialty, ss.name as sub_specialty from " + SpecialtyController.TBL_SPECIALTIES + " as s" +
+                " inner join " + SubSpecialtyController.TBL_SUB_SPECIALTIES + " as ss on s.specialty_id = ss.specialty_id inner join " + TBL_DOCTORS + " as d on ss.sub_specialty_id = d.sub_specialty_id";
         Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
@@ -151,7 +150,7 @@ public class DoctorController extends DbHelper {
 
     public Doctor getDoctorByID(int doctorID) {
         String sqlgetDoctorByID = "SELECT d.*, s.name , ss.name as sub_name FROM " + TBL_DOCTORS + " as d inner join " +
-                TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + TBL_SPECIALTIES +
+                SubSpecialtyController.TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + SpecialtyController.TBL_SPECIALTIES +
                 " as s on ss.specialty_id = s.specialty_id where d.doc_id = " + doctorID;
         Cursor cur = sql_db.rawQuery(sqlgetDoctorByID, null);
         cur.moveToFirst();
@@ -162,7 +161,7 @@ public class DoctorController extends DbHelper {
             doctor.setMname(cur.getString(cur.getColumnIndex(DOC_MNAME)));
             doctor.setFname(cur.getString(cur.getColumnIndex(DOC_FNAME)));
             doctor.setPrc_no(cur.getInt(cur.getColumnIndex(DOC_PRC_NO)));
-            doctor.setSpecialty(cur.getString(cur.getColumnIndex(SPECIALTY_NAME)));
+            doctor.setSpecialty(cur.getString(cur.getColumnIndex(SpecialtyController.SPECIALTY_NAME)));
             doctor.setSub_specialty(cur.getString(cur.getColumnIndex("sub_name")));
             doctor.setSub_specialty_id(cur.getInt(cur.getColumnIndex(DOC_SUB_SPECIALTY_ID)));
             doctor.setAffiliation(cur.getString(cur.getColumnIndex(DOC_AFFILIATIONS)));
@@ -183,17 +182,17 @@ public class DoctorController extends DbHelper {
 //        SQLiteDatabase db = getWritableDatabase();
 
         String sql = "select d.lname, d.mname, d.fname, c.name, c.clinics_id, cd.clinic_sched from " + TBL_DOCTORS + " as d INNER JOIN " +
-                TBL_CLINIC_DOCTOR + " as cd on " + "d.doc_id = cd.doctor_id INNER JOIN " + TBL_CLINICS + " as c on cd.clinic_id = " +
+                ClinicDoctorController.TBL_CLINIC_DOCTOR + " as cd on " + "d.doc_id = cd.doctor_id INNER JOIN " + ClinicController.TBL_CLINICS + " as c on cd.clinic_id = " +
                 "c.clinics_id WHERE cd.is_active = 1";
         Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
             String fullname = "Dr. " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex(DOC_LNAME));
-            map.put("clinics_id", String.valueOf(cur.getInt(cur.getColumnIndex(SERVER_CLINICS_ID))));
+            map.put("clinics_id", String.valueOf(cur.getInt(cur.getColumnIndex(ClinicController.SERVER_CLINICS_ID))));
             map.put("fullname", fullname);
-            map.put("clinic_name", cur.getString(cur.getColumnIndex(CLINIC_NAME)));
-            map.put("clinic_sched", cur.getString(cur.getColumnIndex(CD_CLINIC_SCHED)));
+            map.put("clinic_name", cur.getString(cur.getColumnIndex(ClinicController.CLINIC_NAME)));
+            map.put("clinic_sched", cur.getString(cur.getColumnIndex(ClinicDoctorController.CD_CLINIC_SCHED)));
             listOfDoctorClinic.add(map);
         }
         cur.close();

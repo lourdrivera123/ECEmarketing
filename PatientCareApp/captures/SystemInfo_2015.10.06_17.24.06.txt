@@ -11,20 +11,20 @@ TASK com.example.zem.patientcareapp id=48
         mHidden=false mDetached=false mMenuVisible=true mHasMenu=false
         mRetainInstance=false mRetaining=false mUserVisibleHint=true
         mFragmentManager=FragmentManager{53578120 in SidebarActivity{53578fbc}}
-        mActivity=com.example.zem.patientcareapp.SidebarActivity@53578fbc
+        mActivity=com.example.zem.patientcareapp.SidebarModule.SidebarActivity@53578fbc
         mContainer=android.widget.FrameLayout@53666354
         mView=android.widget.LinearLayout@5368a50c
         mInnerView=android.widget.LinearLayout@5368a50c
         Child FragmentManager{5368a398 in ReferralsFragment{53689e18}}:
           FragmentManager misc state:
-            mActivity=com.example.zem.patientcareapp.SidebarActivity@53578fbc
+            mActivity=com.example.zem.patientcareapp.SidebarModule.SidebarActivity@53578fbc
             mContainer=android.support.v4.app.Fragment$1@5368a3d4
             mParent=ReferralsFragment{53689e18 #0 id=0x7f0d011f}
             mCurState=5 mStateSaved=false mDestroyed=false
     Added Fragments:
       #0: ReferralsFragment{53689e18 #0 id=0x7f0d011f}
     FragmentManager misc state:
-      mActivity=com.example.zem.patientcareapp.SidebarActivity@53578fbc
+      mActivity=com.example.zem.patientcareapp.SidebarModule.SidebarActivity@53578fbc
       mContainer=android.support.v4.app.FragmentActivity$2@5356f3ac
       mCurState=5 mStateSaved=false mDestroyed=false
     View Hierarchy:

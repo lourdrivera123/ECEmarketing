@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.example.zem.patientcareapp.GlowingText;
+import com.example.zem.patientcareapp.Customizations.GlowingText;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.R;
 

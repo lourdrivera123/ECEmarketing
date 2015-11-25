@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Model.Specialty;
 
 /**
@@ -19,7 +18,7 @@ public class SpecialtyController extends DbHelper {
             SERVER_SPECIALTY_ID = "specialty_id",
             SPECIALTY_NAME = "name";
 
-    public static final String SQL_CREATE_TBL_SPECIALTIES = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
             TBL_SPECIALTIES, AI_ID, SERVER_SPECIALTY_ID, SPECIALTY_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public SpecialtyController(Context context) {

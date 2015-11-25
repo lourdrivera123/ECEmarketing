@@ -9,9 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.example.zem.patientcareapp.Constants;
+import com.example.zem.patientcareapp.ConfigurationModule.Constants;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.SidebarActivity;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;

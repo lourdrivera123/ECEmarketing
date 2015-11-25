@@ -39,7 +39,7 @@
         android:required="false" />
 
     <application
-        android:name=".PatientCareApplication"
+        android:name=".Network.PatientCareApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
         android:label="@string/app_name"
@@ -55,70 +55,70 @@
 
         <!--Activities-->
         <activity
-            android:name=".ShoppingCartActivity"
+            android:name=".Activities.ShoppingCartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".DoctorActivity"
+            android:name=".Activities.DoctorActivity"
             launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".ViewPagerActivity"
+            android:name=".SwipeTabsModule.ViewPagerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
-            android:name=".MasterTabActivity"
+            android:name=".SwipeTabsModule.MasterTabActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
-            android:name=".EditTabsActivity"
+            android:name=".SwipeTabsModule.EditTabsActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light" />
         <activity
-            android:name=".SaveMedicalRecordActivity"
+            android:name=".Activities.SaveMedicalRecordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".SelectedProductActivity"
+            android:name=".Activities.SelectedProductActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".ReferralActivity"
+            android:name=".Activities.ReferralActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
-            android:name=".CheckoutActivity"
+            android:name=".Activities.CheckoutActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".PatientConsultationActivity"
+            android:name=".Activities.PatientConsultationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".MessageActivity"
+            android:name=".Activities.MessageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".Activities.SplashActivity"
             android:screenOrientation="portrait">
 
         </activity>
 
         <activity
-            android:name=".GoogleMapsActivity"
+            android:name=".Activities.GoogleMapsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".UploadActivity"
+            android:name=".ImageHandlingModule.UploadActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ProductsActivity"
+            android:name=".Activities.ProductsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme">
@@ -132,7 +132,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SidebarActivity"
+            android:name=".SidebarModule.SidebarActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
 
@@ -167,7 +167,7 @@
             android:theme="@style/Theme.MyTheme" />
 
         <activity
-            android:name=".Extravaganza"
+            android:name=".Activities.Extravaganza"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" >
             <intent-filter>
@@ -196,20 +196,20 @@
             android:name="io.card.payment.DataEntryActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".samplepaypal"
+            android:name=".CheckoutModule.PayPalCheckout"
             android:screenOrientation="portrait" />
 
 
         <!-- Will not be called unless the application explicitly enables it -->
         <receiver
-            android:name=".DeviceBootReceiver"
+            android:name=".AlarmModule.DeviceBootReceiver"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.example.zem.patientcareapp.AlarmReceiver"
+            android:name=".AlarmModule.AlarmReceiver"
             android:enabled="true" />
 
     </application>

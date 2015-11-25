@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.zem.patientcareapp.DbHelper;
 import com.example.zem.patientcareapp.Model.ProductSubCategory;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class ProductSubCategoryController extends DbHelper {
             SERVER_PRODUCT_SUBCATEGORY_ID = "product_subcategory_id";
 
     // SQL to create table "product_subcategories"
-    public static final String SQL_CREATE_TBL_PRODUCT_SUBCATEGORIES = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s INTEGER, %s  TEXT , %s  TEXT , %s  TEXT  )",
             TBL_PRODUCT_SUBCATEGORIES, AI_ID, SERVER_PRODUCT_SUBCATEGORY_ID, PROD_SUBCAT_NAME, PROD_SUBCAT_CATEGORY_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public ProductSubCategoryController(Context context) {

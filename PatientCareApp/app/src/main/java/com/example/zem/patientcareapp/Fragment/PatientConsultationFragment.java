@@ -24,15 +24,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.DbHelper;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Model.Consultation;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.PatientConsultationActivity;
+import com.example.zem.patientcareapp.Activities.PatientConsultationActivity;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.ServerRequest;
-import com.example.zem.patientcareapp.SidebarActivity;
+import com.example.zem.patientcareapp.Network.ServerRequest;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

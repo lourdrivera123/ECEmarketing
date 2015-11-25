@@ -21,18 +21,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.DbHelper;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
 
 import com.example.zem.patientcareapp.Model.Basket;
-import com.example.zem.patientcareapp.Helpers;
-import com.example.zem.patientcareapp.ImageLoader;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.ImageHandlingModule.ImageLoader;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.MasterTabActivity;
+import com.example.zem.patientcareapp.SwipeTabsModule.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.ProductsActivity;
+import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.ServerRequest;
+import com.example.zem.patientcareapp.Network.ServerRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
