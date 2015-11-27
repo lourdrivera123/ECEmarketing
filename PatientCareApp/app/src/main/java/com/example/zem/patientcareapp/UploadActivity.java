@@ -145,7 +145,6 @@ public class UploadActivity extends Activity {
 
             super.onPostExecute(result);
         }
-
     }
 
     /**

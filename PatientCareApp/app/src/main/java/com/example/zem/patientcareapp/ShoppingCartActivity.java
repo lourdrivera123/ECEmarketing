@@ -81,7 +81,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle("Shopping Cart");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
-        String url_raw = "get_basket_items&patient_id=" + dbHelper.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
+        String url_raw = "get_basket_items&patient_id=" + SidebarActivity.getUserID() + "&table=baskets";
 
         GetRequest.getJSONobj(this, url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
             @Override

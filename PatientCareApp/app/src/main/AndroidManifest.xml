@@ -85,6 +85,20 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
+            android:name=".ProductsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme">
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".SelectedProductActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
@@ -103,7 +117,7 @@
         <activity
             android:name=".MessageActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait">
@@ -112,7 +126,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".ShowPrescriptionDialog"
+            android:excludeFromRecents="true"
+            android:theme="@style/ForDialogTheme" />
         <activity
             android:name=".GoogleMapsActivity"
             android:screenOrientation="portrait"
@@ -120,20 +137,6 @@
         <activity
             android:name=".UploadActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".ProductsActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyTheme">
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".SidebarActivity"
             android:screenOrientation="portrait"

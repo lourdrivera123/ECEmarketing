@@ -29,7 +29,6 @@ import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 
@@ -106,263 +105,6 @@ public class LazyAdapter extends BaseAdapter {
             title.setText("Dr. " + doctor.get("fullname"));
             specialty.setText(doctor.get("name"));
 
-        } else if (list_type.equals("product_lists")) {
-            vi = inflater.inflate(R.layout.list_row_products, null);
-
-            product_name = (TextView) vi.findViewById(R.id.product_name); // product name
-            product_description = (TextView) vi.findViewById(R.id.product_description); // product description
-            product_price = (TextView) vi.findViewById(R.id.product_price); // product price
-            product_quantity = (TextView) vi.findViewById(R.id.basket_quantity);
-            btnAddQty = (ImageButton) vi.findViewById(R.id.add_qty);
-
-            ImageButton btnMinusQty = (ImageButton) vi.findViewById(R.id.minus_qty);
-            Button addToCart = (Button) vi.findViewById(R.id.add_to_cart_btn);
-
-            final String productPacking;
-            final String productUnit;
-            final int productId, productQtyPerPacking, isPrescriptionRequired;
-
-            HashMap<String, String> map;
-            map = data.get(position);
-            final Map<String, HashMap<String, String>> productQuantity = ProductsActivity.productQuantity;
-
-            productId = Integer.parseInt(map.get("id"));
-            productPacking = productQuantity.get(productId + "").get("packing");
-            productUnit = map.get("unit");
-            productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ? Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
-            isPrescriptionRequired = Integer.parseInt(map.get("prescription_required"));
-
-            product_quantity.setText(productQtyPerPacking + "");
-
-            int PID = dbHelper.getProductServerIdById(productId);
-
-            product_quantity.setId(PID);
-            product_description.setTag(PID);
-
-            productQty = productQty > 0 ? productQty : productQtyPerPacking;
-
-            final TextView tv_new_product_quantity = (TextView) vi.findViewById(PID);
-            final TextView tv_new_product_description = (TextView) vi.findViewWithTag(PID);
-
-            btnAddQty.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("NewApi")
-                @Override
-                public void onClick(View v) {
-                    int qty = Integer.parseInt(productQuantity.get(productId + "").get("temp_basket_qty"));
-                    int productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ?
-                            Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
-
-                    if (qty == 0) {
-                        qty = productQtyPerPacking;
-                    }
-
-                    qty += productQtyPerPacking;
-                    tv_new_product_quantity.setText(qty + "");
-
-                    productQty = qty;
-
-                    productQuantity.get(productId + "").put("temp_basket_qty", qty + "");
-                    int totalPacking = (qty / productQtyPerPacking);
-                    String fiProductPacking = helpers.getPluralForm(productPacking, totalPacking);
-                    tv_new_product_description.setText("1 " + productUnit + " x " + qty + "(" + totalPacking + " " + fiProductPacking + ")");
-
-                    ProductsActivity.productQuantity = productQuantity;
-                }
-            });
-
-            btnMinusQty.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("NewApi")
-                @Override
-                public void onClick(View v) {
-                    int qty = Integer.parseInt(productQuantity.get(productId + "").get("temp_basket_qty"));
-                    int productQtyPerPacking = !productQuantity.get(productId + "").get("qty_per_packing").equals("null") ?
-                            Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing")) : 1;
-
-                    if (qty == 0) {  // check if temp qty is empty
-                        qty = productQtyPerPacking;
-                    }
-
-                    qty -= productQtyPerPacking;
-                    if (qty < 1) {
-                        qty = productQtyPerPacking;
-                    }
-
-                    productQty = qty;
-
-                    productQuantity.get(productId + "").put("temp_basket_qty", qty + "");
-                    tv_new_product_quantity.setText(qty + "");
-                    int totalPacking = (qty / productQtyPerPacking);
-                    String fiProductPacking = helpers.getPluralForm(productPacking, totalPacking);
-                    tv_new_product_description.setText("1 " + productUnit + " x " + qty + "(" + totalPacking + " " + fiProductPacking + ")");
-
-                    ProductsActivity.productQuantity = productQuantity;
-                }
-            });
-
-            // Setting all values in listview
-            vi.setTag(PID);
-            product_name.setText(map.get(DbHelper.PRODUCT_NAME));
-            product_description.setText("1 " + productUnit + " x " + productQtyPerPacking + "(1 " + productPacking + ")");
-            product_price.setText("\u20B1 " + map.get(DbHelper.PRODUCT_PRICE));
-
-            final int tempPID = PID;
-
-            addToCart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Helpers helpers = new Helpers();
-                    final DbHelper dbhelper = new DbHelper(activity);
-                    final ServerRequest serverRequest = new ServerRequest();
-
-                    try {
-                        int q = Integer.parseInt(productQuantity.get(productId + "").get("temp_basket_qty"));
-                        int p = Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing"));
-                        productQty = q != 0 ? q : p;
-                        final Basket basket = dbhelper.getBasket(tempPID);
-
-                        final ProgressDialog pdialog = new ProgressDialog(activity);
-                        pdialog.setCancelable(false);
-                        pdialog.setMessage("Please wait...");
-                        pdialog.show();
-
-                        if (basket.getBasketId() > 0) { //EXISTING ITEM IN YOUR BASKET (UPDATE ONLY)
-                            HashMap<String, String> hashMap = new HashMap();
-                            hashMap.put("id", String.valueOf(tempPID));
-
-                            hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
-                            hashMap.put("table", "baskets");
-                            hashMap.put("request", "crud");
-
-                            int old_qty = basket.getQuantity();
-                            basket.setQuantity(productQty + old_qty);
-                            hashMap.put("quantity", String.valueOf(basket.getQuantity()));
-                            hashMap.put("action", "update");
-                            hashMap.put("id", String.valueOf(basket.getBasketId()));
-
-                            PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
-                                @Override
-                                public void getResult(JSONObject response) {
-                                    try {
-                                        int success = response.getInt("success");
-
-                                        if (success == 1) {
-                                            if (dbhelper.updateBasket(basket)) {
-                                                Toast.makeText(activity, "Your cart has been updated.", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
-                                                Log.d("lazyAdapter0", "error");
-                                            }
-                                        } else {
-                                            Toast.makeText(activity, "Server error occurred", Toast.LENGTH_SHORT).show();
-                                            Log.d("lazyAdapter1", "error");
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    pdialog.dismiss();
-                                }
-                            }, new ErrorListener<VolleyError>() {
-                                public void getError(VolleyError error) {
-                                    pdialog.dismiss();
-                                    Log.d("lazyAdapter2", "error");
-                                    Toast.makeText(activity, "Couldn't update item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        } else { //INSERT NEW PRODUCT IN BASKETS TABLE//
-                            final HashMap<String, String> hashMap = new HashMap();
-                            hashMap.put("product_id", String.valueOf(tempPID));
-                            hashMap.put("quantity", String.valueOf(productQty));
-                            hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
-                            hashMap.put("prescription_id", "0");
-                            hashMap.put("is_approved", "1");
-                            hashMap.put("table", "baskets");
-                            hashMap.put("request", "crud");
-                            hashMap.put("action", "insert");
-
-                            // if prescription required, ask for the prescription
-                            if (isPrescriptionRequired == 1) {
-                                GridView gridView;
-                                final Dialog builder;
-                                HashMap<GridView, Dialog> map;
-                                map = helpers.showPrescriptionDialog(activity);
-
-                                if (map.size() > 0) {
-                                    Map.Entry<GridView, Dialog> entry = map.entrySet().iterator().next();
-                                    gridView = entry.getKey();
-                                    builder = entry.getValue();
-
-                                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            prescriptionId = (int) id;
-                                            hashMap.put("prescription_id", prescriptionId + "");
-                                            hashMap.put("is_approved", "0");
-
-                                            serverRequest.setErrorMessage("Sorry, we can't update your cart this time.");
-
-                                            PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
-                                                @Override
-                                                public void getResult(JSONObject response) {
-                                                    pdialog.dismiss();
-                                                    Toast.makeText(activity, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }, new ErrorListener<VolleyError>() {
-                                                public void getError(VolleyError error) {
-                                                    pdialog.dismiss();
-                                                    Toast.makeText(activity, "Couldn't add item. Please check your Internet connection", Toast.LENGTH_LONG).show();
-                                                }
-                                            });
-                                            builder.dismiss();
-                                        }
-                                    });
-                                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                        @Override
-                                        public void onCancel(DialogInterface dialog) {
-                                            pdialog.dismiss();
-                                        }
-                                    });
-                                } else {
-                                    pdialog.dismiss();
-
-                                    AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(activity);
-                                    confirmationDialog.setTitle("Attention!");
-                                    confirmationDialog.setMessage("This product requires you to upload a prescription, do you wish to continue ?");
-                                    confirmationDialog.setNegativeButton("No", null);
-                                    confirmationDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Intent mastertab_activity_intent = new Intent(activity, MasterTabActivity.class);
-                                            mastertab_activity_intent.putExtra("selected", 2);
-                                            activity.startActivity(mastertab_activity_intent);
-                                        }
-                                    });
-                                    confirmationDialog.show();
-                                }
-                            } else {
-                                serverRequest.setErrorMessage("Sorry, we can't update your cart this time.");
-
-                                PostRequest.send(activity, hashMap, serverRequest, new RespondListener<JSONObject>() {
-                                    @Override
-                                    public void getResult(JSONObject response) {
-                                        pdialog.dismiss();
-                                        Toast.makeText(activity, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
-                                    }
-                                }, new ErrorListener<VolleyError>() {
-                                    public void getError(VolleyError error) {
-                                        pdialog.dismiss();
-                                        Log.d("lazyAdapter3", "error");
-                                        Toast.makeText(activity, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
         } else if (list_type.equals("basket_items")) {
             try {
                 vi = inflater.inflate(R.layout.list_row_basket_items, null);
@@ -411,7 +153,6 @@ public class LazyAdapter extends BaseAdapter {
                 Log.d("lazyAdapter4", "error");
                 e.printStackTrace();
             }
-
         } else if (list_type.equals("ready_for_checkout_items")) {
             vi = inflater.inflate(R.layout.checkout_list_item, null);
 
@@ -485,6 +226,7 @@ public class LazyAdapter extends BaseAdapter {
             } catch (Exception e) {
                 Log.d("lazyAdapter5", "error");
             }
+
         } else if (list_type.equals("order_items")) {
             vi = inflater.inflate(R.layout.list_row_order_item, null);
             TextView product_name, product_qty_price, ordered_on, status, time_status, order_detail_items;
@@ -509,7 +251,6 @@ public class LazyAdapter extends BaseAdapter {
             total_amount = price * quantity;
 
             int num = quantity / qtyPerPacking;
-
 
             product_name.setText("4 item(s) for Doe, John");
 //            product_qty_price.setText(order_item.get(DbHelper.PRODUCT_PRICE) + " - " + order_item.get(DbHelper.ORDER_DETAILS_QUANTITY));

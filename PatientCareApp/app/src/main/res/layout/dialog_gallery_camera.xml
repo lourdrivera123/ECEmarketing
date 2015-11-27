@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/d10"
-    android:layout_marginLeft="@dimen/d10"
-    android:layout_marginRight="@dimen/d10"
-    android:layout_marginTop="@dimen/d10">
+    android:layout_margin="@dimen/d10"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/pick_camera_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:clickable="true"
         android:background="?android:attr/selectableItemBackground"
-        android:paddingTop="@dimen/d20"
-        android:orientation="horizontal">
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/d20">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -27,21 +24,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
-            android:text="Camera" />
+            android:text="Camera"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/pick_gallery_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:clickable="true"
-        android:background="?android:attr/selectableItemBackground"
-        android:paddingBottom="@dimen/d20"
         android:layout_marginTop="@dimen/d20"
-        android:orientation="horizontal">
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/d20">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -50,12 +47,12 @@
             android:src="@drawable/pick_gallery" />
 
         <TextView
+            android:id="@+id/gallery"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
-            android:id="@+id/gallery"
-            android:text="Gallery" />
+            android:text="Gallery"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
 </LinearLayout>

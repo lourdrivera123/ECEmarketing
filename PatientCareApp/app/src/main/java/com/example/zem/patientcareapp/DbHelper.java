@@ -321,6 +321,11 @@ public class DbHelper extends SQLiteOpenHelper {
             MSGS_SUBJECT = "subject",
             MSGS_CONTENT = "content";
 
+    //FAVORITES
+    public static final String TBL_FAVORITES = "favorites",
+            FAVE_PRODUCT_ID = "product_id",
+            FAVE_USER_ID = "user_id";
+
 
     public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at", AI_ID = "id",
             PATIENT_ID = "patient_id", IS_READ = "isRead";
@@ -439,6 +444,9 @@ public class DbHelper extends SQLiteOpenHelper {
         String sql_create_messages = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
                 TBl_MSGS, AI_ID, MSGS_SERVER_ID, PATIENT_ID, MSGS_SUBJECT, MSGS_CONTENT, IS_READ, CREATED_AT, UPDATED_AT, DELETED_AT);
 
+        //sql to create "favorites"
+        String sql_favorites = "CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, product_id INTEGER, FOREIGN KEY(product_id) REFERENCES products(product_id));";
+
         db.execSQL(sql_create_tbl_doctors);
         db.execSQL(sql_create_tbl_specialties);
         db.execSQL(sql_create_tbl_sub_specialties);
@@ -467,6 +475,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_create_order_details);
         db.execSQL(sql_create_messages);
         db.execSQL(sql_patient_treatments);
+        db.execSQL(sql_favorites);
 
         insertTableNamesToUpdates(TBL_DOCTORS, db);
         insertTableNamesToUpdates(TBL_SPECIALTIES, db);
@@ -514,6 +523,19 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(CREATED_AT, datenow);
 
         long row = db.insert(TBL_BASKETS, null, values);
+        db.close();
+        return row > 0;
+    }
+
+    public boolean insertFaveProduct(int user_id, int product_id) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues val = new ContentValues();
+
+        val.put(FAVE_PRODUCT_ID, product_id);
+        val.put(FAVE_USER_ID, user_id);
+
+        long row = db.insert(TBL_FAVORITES, null, val);
+
         db.close();
         return row > 0;
     }
@@ -1396,7 +1418,6 @@ public class DbHelper extends SQLiteOpenHelper {
         Basket basket = new Basket();
 
         String sql = "Select * from " + TBL_BASKETS + " where product_id=" + productId + " and patient_id=" + this.getCurrentLoggedInPatient().getServerID();
-        System.out.println("\ngetBasket: " + sql);
         SQLiteDatabase db = getWritableDatabase();
         Cursor cur = db.rawQuery(sql, null);
 
@@ -1769,11 +1790,10 @@ public class DbHelper extends SQLiteOpenHelper {
     public ArrayList<HashMap<String, String>> getAllProducts() {
         ArrayList<HashMap<String, String>> products = new ArrayList();
         SQLiteDatabase db = getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PRODUCTS;
+        String sql = "SELECT DISTINCT p.*, f.product_id as fave_product FROM " + TBL_PRODUCTS + " as p LEFT JOIN " + TBL_FAVORITES + " as f on p." + SERVER_PRODUCT_ID + " = f.product_id";
         Cursor cur = db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
-
             HashMap<String, String> map = new HashMap();
             map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
@@ -1787,8 +1807,10 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(PRODUCT_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_PACKING)));
             map.put(PRODUCT_QTY_PER_PACKING, cur.getString(cur.getColumnIndex(PRODUCT_QTY_PER_PACKING)));
             map.put(PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(PRODUCT_PRESCRIPTION_REQUIRED)));
+            map.put("is_favorite", cur.getString(cur.getColumnIndex("fave_product")));
             products.add(map);
         }
+
         cur.close();
         db.close();
         return products;
@@ -2129,9 +2151,16 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         long deletedID = db.delete(TBL_PATIENT_CONSULTATIONS, AI_ID + " = " + AI_id, null);
 
-        Log.d("delete", deletedID + "");
         db.close();
         return deletedID > 0;
+    }
+
+    public boolean removeFavorite(int user_id, int product_id) {
+        SQLiteDatabase db = getWritableDatabase();
+        long deleted_id = db.delete(TBL_FAVORITES, "product_id = " + product_id + " AND user_id = " + user_id, null);
+
+        db.close();
+        return deleted_id > 0;
     }
     ////////////////////////////END OF DELETE METHODS/////////////////////////////
 

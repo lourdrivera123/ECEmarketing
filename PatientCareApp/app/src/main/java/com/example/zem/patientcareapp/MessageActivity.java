@@ -1,10 +1,10 @@
 package com.example.zem.patientcareapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -25,8 +25,9 @@ import java.util.HashMap;
  * Created by User PC on 10/13/2015.
  */
 
-public class MessageActivity extends Activity {
+public class MessageActivity extends AppCompatActivity {
     TextView date, subject, message;
+    Toolbar messages_toolbar;
 
     ServerRequest serverRequest;
     DbHelper db;
@@ -41,9 +42,11 @@ public class MessageActivity extends Activity {
         subject = (TextView) findViewById(R.id.subject);
         message = (TextView) findViewById(R.id.message);
 
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBar(actionbar);
-        actionbar.setDisplayHomeAsUpEnabled(true);
+        messages_toolbar = (Toolbar) findViewById(R.id.messages_toolbar);
+        setSupportActionBar(messages_toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Messages");
+        messages_toolbar.setNavigationIcon(R.drawable.ic_back);
 
         db = new DbHelper(this);
         serverRequest = new ServerRequest();

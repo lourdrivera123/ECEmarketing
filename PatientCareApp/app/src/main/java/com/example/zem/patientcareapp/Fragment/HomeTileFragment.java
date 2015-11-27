@@ -23,6 +23,7 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ServerRequest;
 import com.example.zem.patientcareapp.SidebarActivity;
@@ -112,8 +113,9 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.orderLayout:
-                Intent intent1 = new Intent(getActivity(), GoogleMapsActivity.class);
-                startActivity(intent1);
+//                Intent intent1 = new Intent(getActivity(), GoogleMapsActivity.class);
+//                startActivity(intent1);
+                startActivity(new Intent(getActivity(), ProductsActivity.class));
                 break;
 
             case R.id.refillLayout:

@@ -190,6 +190,7 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
             Toast.makeText(this, "Can't get ur location", Toast.LENGTH_LONG).show();
         }
     }
+
     /**
      * Method to display the location on UI
      */
