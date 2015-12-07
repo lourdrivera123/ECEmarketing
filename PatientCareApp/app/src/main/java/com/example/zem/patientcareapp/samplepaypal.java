@@ -185,7 +185,7 @@ public class samplepaypal extends Activity {
 
     public void populateProductsInCart() {
 
-        ArrayList<HashMap<String, String>> items = dbHelper.getAllBasketItems(true);
+        ArrayList<HashMap<String, String>> items = dbHelper.getAllBasketItems();
 
         String name = "", sku = "";
 

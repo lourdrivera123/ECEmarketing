@@ -253,6 +253,7 @@ public class ShowPrescriptionDialog extends Activity implements View.OnClickList
                 arrayOfPrescriptions = refreshPrescriptionList();
                 ShowPrescriptionDialog.this.finish();
                 ProductsActivity.is_finish = serverID;
+                SelectedProductActivity.is_resumed = serverID;
             } else
                 Toast.makeText(ShowPrescriptionDialog.this, "Error occurred", Toast.LENGTH_SHORT).show();
 

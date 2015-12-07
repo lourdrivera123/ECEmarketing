@@ -6,12 +6,25 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/products_toolbar"
+        android:id="@+id/myToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/ColorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <Spinner
+            android:id="@+id/spinner_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:id="@+id/shadow"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/selected_product_toolbar"
+        android:background="@drawable/shadow_toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"

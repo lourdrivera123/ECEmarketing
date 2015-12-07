@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     android:background="@drawable/bg_item_products"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal"
     android:padding="5dp">
 
@@ -17,7 +18,7 @@
             android:id="@+id/product_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/biogesic" />
+            android:src="@drawable/no_image_availabe" />
     </LinearLayout>
 
     <LinearLayout
@@ -79,6 +80,8 @@
                 android:layout_height="30dp"
                 android:layout_weight=".70"
                 android:background="@drawable/border_add_to_cart"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -86,6 +89,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:src="@drawable/green_add_to_cart" />
 
                 <TextView
@@ -111,6 +116,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_weight=".10"
                 android:background="@drawable/star_bg"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:onClick="toggleOnClick"
                 android:scaleType="fitXY"
                 android:textOff=""

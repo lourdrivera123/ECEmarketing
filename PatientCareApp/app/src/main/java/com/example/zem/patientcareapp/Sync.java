@@ -65,7 +65,7 @@ public class Sync {
 
                         if (json_object != null) {
                             if (tableName.equals("products")) {
-                                if (!dbHelper.saveProduct(setProduct(json_object), "insert"))
+                                if (!dbHelper.saveProduct(json_object, "insert"))
                                     Log.d("sync_22", "wala na save");
                             } else if (tableName.equals("doctors")) {
                                 if (!dbHelper.saveDoctor(setDoctor(json_object), "insert"))
@@ -83,7 +83,6 @@ public class Sync {
                                 } catch (Exception e) {
                                     Toast.makeText(context, "Something went wrong! " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-
                             } else if (tableName.equals("product_subcategories")) {
                                 if (!dbHelper.insertProductSubCategory(setProductSubCategory(json_object)))
                                     Log.d("sync_17", "wala na save");
@@ -91,7 +90,7 @@ public class Sync {
                                 if (!dbHelper.insertDosage(setDosage(json_object)))
                                     Log.d("sync_16", "wala na save");
                             } else if (tableName.equals("baskets")) {
-                                if (!dbHelper.insertBasket(setBasket(json_object)))
+                                if (!dbHelper.saveBasket(setHashMapBasket(json_object)))
                                     Log.d("sync_15", "wala na save");
                             } else if (tableName.equals("patient_records")) {
                                 if (dbHelper.savePatientRecord(setPatientRecord(json_object), "insert"))
@@ -150,7 +149,7 @@ public class Sync {
                                 if (!dbHelper.saveDoctor(setDoctor(json_object), "update"))
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                             } else if (tableName.equals("products")) {
-                                if (!dbHelper.saveProduct(setProduct(json_object), "update"))
+                                if (!dbHelper.saveProduct(json_object, "update"))
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                             } else if (tableName.equals("settings")) {
                                 if (!dbHelper.saveSettings(json_object, "update"))
@@ -494,42 +493,16 @@ public class Sync {
         return patient;
     }
 
-    public Product setProduct(JSONObject json) {
-        Product product = new Product();
+    public HashMap<String, String> setHashMapBasket(JSONObject json) throws JSONException {
+        HashMap<String, String> map = new HashMap();
+        map.put("server_id", String.valueOf(json.getInt("id")));
+        map.put("product_id", String.valueOf(json.getInt("product_id")));
+        map.put("quantity", String.valueOf(json.getInt("quantity")));
+        map.put("prescription_id", String.valueOf(json.getInt("prescription_id")));
+        map.put("is_approved", String.valueOf(json.getInt("is_approved")));
+        map.put("action", "insert");
 
-        try {
-            product.setProductId(json.getInt("id"));
-            product.setName(json.getString(DbHelper.PRODUCT_NAME));
-            product.setSubCategoryId(Integer.parseInt(json.getString(DbHelper.PRODUCT_SUBCATEGORY_ID)));
-            product.setGenericName(json.getString(DbHelper.PRODUCT_GENERIC_NAME));
-            product.setDescription(json.getString(DbHelper.PRODUCT_DESCRIPTION));
-            product.setPrescriptionRequired(Integer.parseInt(json.getString("prescription_required")));
-            product.setPrice(Double.parseDouble(json.getString("price")));
-            product.setUnit(json.getString("unit"));
-            product.setSku(json.getString("sku"));
-            product.setPacking(json.getString("packing"));
-            product.setQtyPerPacking(Integer.parseInt(json.getString("qty_per_packing")));
-            product.setCreatedAt(json.getString("created_at"));
-            product.setUpdatedAt(json.getString("updated_at"));
-            product.setDeletedAt(json.getString("deleted_at"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return product;
-    }
-
-    public Basket setBasket(JSONObject json) throws JSONException {
-        Basket basket = new Basket();
-        basket.setBasketId(json.getInt("id"));
-        basket.setQuantity(Integer.parseInt(json.getString(DbHelper.BASKET_QUANTITY)));
-        basket.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
-        basket.setPatienId(json.getInt(DbHelper.PATIENT_ID));
-        basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
-        basket.setPrescriptionId(json.getInt(DbHelper.BASKET_PRESCRIPTION_ID));
-        basket.setIsApproved(json.getInt(DbHelper.BASKET_IS_APPROVED));
-        return basket;
+        return map;
     }
 
     public DiscountsFreeProducts setDiscountsFreeProducts(JSONObject json) throws JSONException {

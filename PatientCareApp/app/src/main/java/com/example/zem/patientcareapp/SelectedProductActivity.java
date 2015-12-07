@@ -1,9 +1,13 @@
 package com.example.zem.patientcareapp;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,37 +15,46 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.GetterSetter.Product;
+import com.example.zem.patientcareapp.ImageGallery.CirclePageIndicator;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.adapter.CircleFragmentAdapter;
+import com.google.android.gms.maps.model.Circle;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by User PC on 7/25/2015.
  */
 
 public class SelectedProductActivity extends AppCompatActivity implements View.OnClickListener {
+    int get_productID = 0, temp_qty = 1, qtyPerPacking = 1;
+    public static int is_resumed = 0;
     public static final String PRODUCT_ID = "productID";
 
-    String productPacking = "";
-    int get_productID = 0;
-    int temp_qty = 1, qtyPerPacking = 1;
-
-    Button add_cart_btn;
+    LinearLayout add_to_cart;
     ImageButton minus_qty, add_qty;
-    Toolbar selected_product_toolbar;
+    Toolbar myToolBar;
+    ViewPager pager;
+    CirclePageIndicator indicator;
     TextView prod_name, prod_generic, prod_unit, prod_price, qty_cart, prod_description;
 
     Handler handler;
@@ -49,7 +62,10 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     Product prod;
     Helpers helpers;
     ServerRequest serverRequest;
+    CircleFragmentAdapter adapter;
     ProgressDialog pDialog;
+
+    public HashMap<String, String> map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +79,13 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         serverRequest = new ServerRequest();
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
+        map = new HashMap();
 
         Intent intent = getIntent();
         get_productID = intent.getIntExtra(PRODUCT_ID, 0);
         prod = dbhelper.getProductById(get_productID);
+
+        getImagesFromServer(get_productID);
 
         prod_name = (TextView) findViewById(R.id.prod_name);
         prod_generic = (TextView) findViewById(R.id.prod_generic);
@@ -75,37 +94,44 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         qty_cart = (TextView) findViewById(R.id.qty_cart);
         minus_qty = (ImageButton) findViewById(R.id.minus_qty);
         add_qty = (ImageButton) findViewById(R.id.add_qty);
-        add_cart_btn = (Button) findViewById(R.id.add_cart_btn);
+        add_to_cart = (LinearLayout) findViewById(R.id.add_to_cart);
         prod_description = (TextView) findViewById(R.id.prod_description);
+        pager = (ViewPager) findViewById(R.id.pager);
+        indicator = (CirclePageIndicator) findViewById(R.id.indicator);
 
         minus_qty.setOnClickListener(this);
         add_qty.setOnClickListener(this);
-        add_cart_btn.setOnClickListener(this);
+        add_to_cart.setOnClickListener(this);
 
         prod_name.setText(prod.getName());
         prod_generic.setText(prod.getGenericName());
-        prod_unit.setText(prod.getUnit());
         prod_description.setText(prod.getDescription());
 
         prod_price.setText("\u20B1" + prod.getPrice());
         qtyPerPacking = prod.getQtyPerPacking();
-        productPacking = prod.getPacking();
-        temp_qty = qtyPerPacking;
 
         qty_cart.setText("" + temp_qty);
-        prod_unit.setText("1 " + prod.getUnit() + " x " + qtyPerPacking + "(1 " + productPacking + ")");
+        prod_unit.setText("1 " + prod.getUnit() + " x " + qtyPerPacking + "(1 " + prod.getPacking() + ")");
 
-        selected_product_toolbar = (Toolbar) findViewById(R.id.selected_product_toolbar);
-        setSupportActionBar(selected_product_toolbar);
+        myToolBar = (Toolbar) findViewById(R.id.myToolBar);
+        setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(prod.getName());
-        selected_product_toolbar.setNavigationIcon(R.drawable.ic_back);
+        myToolBar.setNavigationIcon(R.drawable.ic_back);
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        this.finish();
+        switch (item.getItemId()) {
+            case R.id.go_to_cart:
+                startActivity(new Intent(this, ShoppingCartActivity.class));
+                break;
+
+            case android.R.id.home:
+                this.finish();
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -120,16 +146,16 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.minus_qty:
-                temp_qty -= qtyPerPacking;
+                temp_qty -= 1;
                 minus_qty.setImageResource(R.drawable.ic_minus_dead);
 
                 if (temp_qty < 1) {
-                    qty_cart.setText("" + qtyPerPacking);
-                    temp_qty = qtyPerPacking;
+                    qty_cart.setText("" + 1);
+                    temp_qty = 1;
                 } else
                     qty_cart.setText("" + temp_qty);
 
-                prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "(" + (temp_qty / qtyPerPacking) + " " + productPacking + ")");
+                prod_unit.setText("1 " + prod.getUnit() + " x " + (qtyPerPacking * temp_qty) + "(" + temp_qty + " " + prod.getPacking() + ")");
 
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -140,10 +166,10 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                 break;
 
             case R.id.add_qty:
-                temp_qty += qtyPerPacking;
+                temp_qty += 1;
                 add_qty.setImageResource(R.drawable.ic_plus_dead);
                 qty_cart.setText("" + temp_qty);
-                prod_unit.setText("1 " + prod.getUnit() + " x " + temp_qty + "(" + (temp_qty / qtyPerPacking) + " " + productPacking + ")");
+                prod_unit.setText("1 " + prod.getUnit() + " x " + (qtyPerPacking * temp_qty) + "(" + temp_qty + " " + prod.getPacking() + ")");
 
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -153,21 +179,19 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                 }, 100);
                 break;
 
-            case R.id.add_cart_btn:
+            case R.id.add_to_cart:
                 try {
                     int new_qty;
-                    new_qty = Integer.parseInt(String.valueOf(temp_qty));
-
+                    new_qty = temp_qty * qtyPerPacking;
                     final Basket basket = dbhelper.getBasket(get_productID);
 
+                    final HashMap<String, String> hashMap = new HashMap();
+                    hashMap.put("table", "baskets");
+                    hashMap.put("product_id", String.valueOf(get_productID));
+                    hashMap.put("patient_id", String.valueOf(SidebarActivity.getUserID()));
+                    hashMap.put("request", "crud");
+
                     if (basket.getBasketId() > 0) {
-                        HashMap<String, String> hashMap = new HashMap();
-                        hashMap.put("product_id", String.valueOf(get_productID));
-
-                        hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
-                        hashMap.put("table", "baskets");
-                        hashMap.put("request", "crud");
-
                         int old_qty = basket.getQuantity();
                         basket.setQuantity(new_qty + old_qty);
                         hashMap.put("quantity", String.valueOf(basket.getQuantity()));
@@ -182,24 +206,20 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                         PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
-                                int success = 0;
-
                                 try {
-                                    success = response.getInt("success");
+                                    int success = response.getInt("success");
 
                                     if (success == 1) {
-                                        if (dbhelper.updateBasket(basket)) {
+                                        if (!dbhelper.saveBasket(hashMap))
+                                            Toast.makeText(getBaseContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+                                        else
                                             Toast.makeText(getBaseContext(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
-                                            Log.d("SelectedProductAct", "error on dbhelper");
-                                        }
                                     } else
                                         Toast.makeText(getBaseContext(), "Server error occurred.", Toast.LENGTH_SHORT).show();
-                                    pdialog.dismiss();
                                 } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    Toast.makeText(SelectedProductActivity.this, e + "", Toast.LENGTH_SHORT).show();
                                 }
+                                pdialog.dismiss();
                             }
                         }, new ErrorListener<VolleyError>() {
                             public void getError(VolleyError error) {
@@ -208,37 +228,197 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                         });
 
                     } else {
-                        final HashMap<String, String> hashMap = new HashMap();
-                        hashMap.put("product_id", String.valueOf(get_productID));
                         hashMap.put("quantity", String.valueOf(new_qty));
-                        hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
-                        hashMap.put("table", "baskets");
-                        hashMap.put("request", "crud");
                         hashMap.put("action", "insert");
 
                         final ProgressDialog pdialog = new ProgressDialog(this);
                         pdialog.setCancelable(false);
                         pdialog.setMessage("Loading...");
-                        pdialog.show();
 
-                        serverRequest.setSuccessMessage("New item has been added to your cart!");
-                        serverRequest.setErrorMessage("Sorry, we can't add to your cart this time.");
+                        if (prod.getPrescriptionRequired() == 1) { //IF PRODUCT REQUIRES PRESCRIPTION
+                            GridView gridView;
+                            final Dialog builder;
+                            HashMap<GridView, Dialog> map = helpers.showPrescriptionDialog(this);
 
-                        PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
-                            @Override
-                            public void getResult(JSONObject response) {
+                            if (map.size() > 0) { //IF NAA NAY UPLOADED NGA IMAGES/S
+                                Map.Entry<GridView, Dialog> entry = map.entrySet().iterator().next();
+                                gridView = entry.getKey();
+                                builder = entry.getValue();
+
+                                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        pdialog.show();
+                                        int prescriptionId = (int) id;
+                                        hashMap.put("prescription_id", prescriptionId + "");
+                                        hashMap.put("is_approved", "0");
+
+                                        PostRequest.send(SelectedProductActivity.this, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+                                                try {
+                                                    int success = response.getInt("success");
+
+                                                    if (success == 1) {
+                                                        hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
+                                                        if (dbhelper.saveBasket(hashMap))
+                                                            Toast.makeText(SelectedProductActivity.this, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
+                                                        else
+                                                            Toast.makeText(SelectedProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                                        ProductsActivity.transferHashMap(hashMap);
+                                                    }
+                                                } catch (JSONException e) {
+                                                    Toast.makeText(SelectedProductActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                                                }
+                                                pdialog.dismiss();
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                pdialog.dismiss();
+                                                Toast.makeText(SelectedProductActivity.this, "Couldn't add item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                        builder.dismiss();
+                                    }
+                                });
+                                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        pdialog.dismiss();
+                                    }
+                                });
+                            } else { //IF WALA PA NAKAUPLOAD BSAG ISA
+                                AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(SelectedProductActivity.this);
+                                confirmationDialog.setTitle("Attention!");
+                                confirmationDialog.setMessage("This product requires you to upload a prescription, do you wish to continue ?");
+                                confirmationDialog.setNegativeButton("No", null);
+                                confirmationDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        SelectedProductActivity.this.map = hashMap;
+                                        startActivity(new Intent(SelectedProductActivity.this, ShowPrescriptionDialog.class));
+                                    }
+                                });
+                                confirmationDialog.show();
                             }
-                        }, new ErrorListener<VolleyError>() {
-                            public void getError(VolleyError error) {
-                                Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        pdialog.dismiss();
+                        } else { //IF NO PRESCRIPTION IS REQUIRED
+                            hashMap.put("prescription_id", "0");
+                            hashMap.put("is_approved", "1");
+                            pdialog.show();
+
+                            PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                                @Override
+                                public void getResult(JSONObject response) {
+                                    try {
+                                        hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
+                                        if (!dbhelper.saveBasket(hashMap))
+                                            Toast.makeText(getBaseContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+                                        else
+                                            Toast.makeText(getBaseContext(), "New item has been added to your cart.", Toast.LENGTH_SHORT).show();
+                                    } catch (Exception e) {
+                                        Toast.makeText(SelectedProductActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                                    }
+                                    pdialog.dismiss();
+                                }
+                            }, new ErrorListener<VolleyError>() {
+                                public void getError(VolleyError error) {
+                                    pdialog.dismiss();
+                                    Toast.makeText(getBaseContext(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     }
                 } catch (Exception e) {
-                    Log.d("SelectedProductAct: ", e + "");
+                    Toast.makeText(SelectedProductActivity.this, e + "", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CircleFragmentAdapter.CONTENT.clear();
+        ProductsActivity.is_finish = 0;
+
+        if (is_resumed != 0) {
+            final ProgressDialog pdialog = new ProgressDialog(this);
+            pdialog.setCancelable(false);
+            pdialog.setMessage("Please wait...");
+            pdialog.show();
+
+            int prescriptionId = is_resumed;
+            final HashMap<String, String> hashMap = map;
+            hashMap.put("prescription_id", prescriptionId + "");
+            hashMap.put("is_approved", "0");
+
+            PostRequest.send(this, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                @Override
+                public void getResult(JSONObject response) {
+                    try {
+                        int success = response.getInt("success");
+
+                        if (success == 1) {
+                            hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
+                            if (dbhelper.saveBasket(hashMap))
+                                Toast.makeText(SelectedProductActivity.this, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(SelectedProductActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(SelectedProductActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                    }
+                    pdialog.dismiss();
+                }
+            }, new ErrorListener<VolleyError>() {
+                public void getError(VolleyError error) {
+                    pdialog.dismiss();
+                    Toast.makeText(SelectedProductActivity.this, "Couldn't add item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        is_resumed = 0;
+    }
+
+    public void getImagesFromServer(int productID) {
+        final ArrayList<String> filenames = new ArrayList();
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Please wait...");
+        dialog.show();
+
+        ListOfPatientsRequest.getJSONobj(this, "get_products_gallery&product_id=" + productID, new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    int success = response.getInt("success");
+
+                    if (success == 1) {
+                        JSONArray json_mysql = response.getJSONArray("products_gallery");
+
+                        for (int x = 0; x < json_mysql.length(); x++) {
+                            JSONObject obj = json_mysql.getJSONObject(x);
+                            filenames.add(obj.getString("filename"));
+                        }
+                    } else
+                        filenames.add("default");
+
+                    CircleFragmentAdapter.CONTENT.addAll(filenames);
+                    adapter = new CircleFragmentAdapter(getSupportFragmentManager());
+                    pager.setAdapter(adapter);
+                    indicator.setViewPager(pager);
+                } catch (Exception e) {
+                    Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError e) {
+                dialog.dismiss();
+                Log.d("SelectedProduct", e + "");
+                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -27,10 +27,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.GetterSetter.Basket;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -81,32 +83,19 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle("Shopping Cart");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
-        String url_raw = "get_basket_items&patient_id=" + SidebarActivity.getUserID() + "&table=baskets";
+        items = dbHelper.getAllBasketItems();
 
-        GetRequest.getJSONobj(this, url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
+        for (HashMap<String, String> item : items) {
+            double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
+            double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
+            double total = price * quantity;
+            TotalAmount += total;
+        }
 
-                items = dbHelper.getAllBasketItems(true); // returns all basket items for the currently loggedin patient
+        adapter = new LazyAdapter(this, items, "basket_items");
+        lv_items.setAdapter(adapter);
 
-                for (HashMap<String, String> item : items) {
-                    double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
-                    double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
-                    double total = price * quantity;
-                    TotalAmount += total;
-                }
-                items = dbHelper.getAllBasketItems(false); // returns all basket items for the currently loggedin patient
-
-                adapter = new LazyAdapter(ShoppingCartActivity.this, items, "basket_items");
-                lv_items.setAdapter(adapter);
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                Log.d("shoppingcart0", error + "");
-                Toast.makeText(context, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        total_amount.setText("\u20B1 " + TotalAmount);
         btnCheckout.setOnClickListener(this);
         lv_items.setOnCreateContextMenuListener(this);
     }
@@ -122,7 +111,8 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo
+            menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.cart_menus, menu);
     }
@@ -222,81 +212,78 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
-                        if (helper.isNetworkAvailable(getBaseContext())) {
-                            try {
-                                final int new_qty = Integer.parseInt(et_qty.getText().toString());
-                                newQty = new_qty;
+                        try {
+                            final int new_qty = Integer.parseInt(et_qty.getText().toString());
+                            newQty = new_qty;
 
-                                final double old_total = price * old_qty;
-                                final double new_total = price * new_qty;
-                                oldTotal = old_total;
-                                newTotal = new_total;
+                            final double old_total = price * old_qty;
+                            final double new_total = price * new_qty;
+                            oldTotal = old_total;
+                            newTotal = new_total;
 
-                                final Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
-                                basket.setQuantity(new_qty);
+                            final Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
+                            basket.setQuantity(new_qty);
 
-                                HashMap<String, String> hashMap = new HashMap();
-                                hashMap.put("product_id", String.valueOf(productId));
-                                hashMap.put("request", "crud");
-                                hashMap.put("quantity", String.valueOf(new_qty));
-                                hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
-                                hashMap.put("table", "baskets");
-                                hashMap.put("action", "update");
-                                hashMap.put("is_direct_update", "true");
-                                hashMap.put("id", String.valueOf(basketId));
+                            final HashMap<String, String> hashMap = new HashMap();
+                            hashMap.put("product_id", String.valueOf(productId));
+                            hashMap.put("request", "crud");
+                            hashMap.put("quantity", String.valueOf(new_qty));
+                            hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
+                            hashMap.put("table", "baskets");
+                            hashMap.put("action", "update");
+                            hashMap.put("is_direct_update", "true");
+                            hashMap.put("id", String.valueOf(basketId));
 
-                                final ProgressDialog pdialog = new ProgressDialog(getBaseContext());
-                                pdialog.setCancelable(false);
-                                pdialog.setMessage("Loading...");
-                                pdialog.show();
+                            final ProgressDialog pdialog = new ProgressDialog(getBaseContext());
+                            pdialog.setCancelable(false);
+                            pdialog.setMessage("Loading...");
+                            pdialog.show();
 
-                                PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
-                                    @Override
-                                    public void getResult(JSONObject response) {
-                                        try {
-                                            int success = response.getInt("success");
+                            PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                                @Override
+                                public void getResult(JSONObject response) {
+                                    try {
+                                        int success = response.getInt("success");
 
-                                            if (success == 1) {
-                                                if (dbHelper.updateBasket(basket)) {
+                                        if (success == 1) {
+                                            if (dbHelper.saveBasket(hashMap)) {
 
-                                                    tv_amount.setText(new_total + "");
+                                                tv_amount.setText(new_total + "");
 
-                                                    row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
-                                                    items.set(gbl_pos, row);
+                                                row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
+                                                items.set(gbl_pos, row);
 
-                                                    TotalAmount -= old_total;
-                                                    TotalAmount += new_total;
-                                                    total_amount.setText("\u20B1 " + TotalAmount);
+                                                TotalAmount -= old_total;
+                                                TotalAmount += new_total;
+                                                total_amount.setText("\u20B1 " + TotalAmount);
 
-                                                    adapter.notifyDataSetChanged();
-                                                } else
-                                                    Toast.makeText(context, "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                                adapter.notifyDataSetChanged();
                                             } else
-                                                Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                                                Toast.makeText(context, "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                        } else
+                                            Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-                                }, new ErrorListener<VolleyError>() {
-                                    public void getError(VolleyError error) {
-                                        Log.d("shoppingCart2", error + "");
-                                        Toast.makeText(context, "Couldn't update item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                pdialog.dismiss();
-                            } catch (Exception e) {
-                                Log.d("shoppingcart1", e + "");
-                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                            }
-                        } else
-                            Toast.makeText(getBaseContext(), "Please connect to the internet", Toast.LENGTH_SHORT).show();
+                                }
+                            }, new ErrorListener<VolleyError>() {
+                                public void getError(VolleyError error) {
+                                    Log.d("shoppingCart2", error + "");
+                                    Toast.makeText(context, "Couldn't update item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            pdialog.dismiss();
+                        } catch (Exception e) {
+                            Log.d("shoppingcart1", e + "");
+                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 alert.show();
                 break;
 
             case R.id.delete_context:
-                AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(getBaseContext());
+                AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(this);
                 confirmationDialog.setTitle("Delete item?");
                 confirmationDialog.setNegativeButton("No", null);
                 confirmationDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -310,7 +297,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                         hashMap.put("action", "delete");
                         hashMap.put("id", String.valueOf(row.get("basket_id")));
 
-                        final ProgressDialog pdialog = new ProgressDialog(getBaseContext());
+                        final ProgressDialog pdialog = new ProgressDialog(ShoppingCartActivity.this);
                         pdialog.setCancelable(false);
                         pdialog.setMessage("Loading...");
                         pdialog.show();

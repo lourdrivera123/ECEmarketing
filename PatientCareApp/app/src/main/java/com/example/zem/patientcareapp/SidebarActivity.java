@@ -61,7 +61,7 @@ public class SidebarActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     ImageView img_first;
-    Toolbar sidebar_toolbar;
+    Toolbar myToolBar;
 
     static com.example.zem.patientcareapp.GetterSetter.Patient patient;
     static DbHelper dbHelper;
@@ -81,11 +81,11 @@ public class SidebarActivity extends AppCompatActivity {
         for (int x = 0; x < hash_allProducts.size(); x++)
             products.add(hash_allProducts.get(x).get(dbHelper.PRODUCT_NAME));
 
-        sidebar_toolbar = (Toolbar) findViewById(R.id.sidebar_toolbar);
-        setSupportActionBar(sidebar_toolbar);
+        myToolBar = (Toolbar) findViewById(R.id.myToolBar);
+        setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        sidebar_toolbar.setNavigationIcon(R.drawable.ic_navigator);
+        myToolBar.setNavigationIcon(R.drawable.ic_navigator);
 
         //////////////FOR THE SIDEBAR///////////////////////////////
         //Header of the listview

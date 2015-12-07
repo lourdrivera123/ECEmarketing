@@ -504,29 +504,6 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     /////////////////////////////INSERT METHODS///////////////////////////////////////
-    public boolean insertBasket(Basket basket) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date();
-        String datenow = dateFormat.format(date);
-
-        int patient_id = this.getCurrentLoggedInPatient().getServerID();
-
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(SERVER_BASKET_ID, basket.getBasketId());
-        values.put(PATIENT_ID, patient_id);
-        values.put(BASKET_PRODUCT_ID, basket.getProductId());
-        values.put(BASKET_QUANTITY, basket.getQuantity());
-        values.put(BASKET_PRESCRIPTION_ID, basket.getPrescriptionId());
-        values.put(BASKET_IS_APPROVED, basket.getIsApproved());
-        values.put(CREATED_AT, datenow);
-
-        long row = db.insert(TBL_BASKETS, null, values);
-        db.close();
-        return row > 0;
-    }
-
     public boolean insertFaveProduct(int user_id, int product_id) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues val = new ContentValues();
@@ -969,6 +946,38 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
+    public boolean saveBasket(HashMap<String, String> map) {
+        int patient_id = this.getCurrentLoggedInPatient().getServerID();
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues val = new ContentValues();
+        long row;
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        String datenow = dateFormat.format(date);
+
+        if (map.get("action").equals("insert")) {
+            val.put(SERVER_BASKET_ID, map.get("server_id"));
+            val.put(PATIENT_ID, patient_id);
+            val.put(BASKET_PRODUCT_ID, map.get("product_id"));
+            val.put(BASKET_QUANTITY, map.get("quantity"));
+            val.put(BASKET_PRESCRIPTION_ID, map.get("prescription_id"));
+            val.put(BASKET_IS_APPROVED, map.get("is_approved"));
+            val.put(CREATED_AT, datenow);
+
+            row = db.insert(TBL_BASKETS, null, val);
+        } else {
+            val.put(BASKET_QUANTITY, map.get("quantity"));
+            val.put(UPDATED_AT, datenow);
+
+            row = db.update(TBL_BASKETS, val, SERVER_BASKET_ID + "=" + map.get("id"), null);
+        }
+
+        db.close();
+        return row > 0;
+    }
+
     /* PROMO TABLE */
     public boolean savePromo(Promo promo, String action) {
         SQLiteDatabase db = getWritableDatabase();
@@ -1176,36 +1185,34 @@ public class DbHelper extends SQLiteOpenHelper {
         return rowID > 0;
     }
 
-    public boolean saveProduct(Product product, String request) {
+    public boolean saveProduct(JSONObject json, String request) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        System.out.println(dateFormat.format(date));
-
-        values.put(SERVER_PRODUCT_ID, product.getProductId());
-        values.put(PRODUCT_SUBCATEGORY_ID, product.getSubCategoryId());
-        values.put(PRODUCT_NAME, product.getName());
-        values.put(PRODUCT_GENERIC_NAME, product.getGenericName());
-        values.put(PRODUCT_DESCRIPTION, product.getDescription());
-        values.put(PRODUCT_PRESCRIPTION_REQUIRED, product.getPrescriptionRequired());
-        values.put(PRODUCT_CRITICAL_STOCK, product.getPhoto());
-        values.put(PRODUCT_PRICE, product.getPrice());
-        values.put(PRODUCT_SKU, product.getSku());
-        values.put(PRODUCT_UNIT, product.getUnit());
-        values.put(PRODUCT_PACKING, product.getPacking());
-        values.put(PRODUCT_QTY_PER_PACKING, product.getQtyPerPacking());
-        values.put(CREATED_AT, product.getCreatedAt());
-        values.put(UPDATED_AT, product.getUpdatedAt());
-        values.put(DELETED_AT, product.getDeletedAt());
-
         long rowID = 0;
 
-        if (request.equals("insert")) {
-            rowID = db.insert(TBL_PRODUCTS, null, values);
-        } else if (request.equals("update")) {
-            rowID = db.update(TBL_PRODUCTS, values, AI_ID + "=" + product.getProductId(), null);
+        try {
+            values.put(PRODUCT_SUBCATEGORY_ID, json.getString(PRODUCT_SUBCATEGORY_ID));
+            values.put(PRODUCT_NAME, json.getString(PRODUCT_NAME));
+            values.put(PRODUCT_GENERIC_NAME, json.getString(PRODUCT_GENERIC_NAME));
+            values.put(PRODUCT_DESCRIPTION, json.getString(PRODUCT_DESCRIPTION));
+            values.put(PRODUCT_PRESCRIPTION_REQUIRED, json.getString("prescription_required"));
+            values.put(PRODUCT_PRICE, json.getString("price"));
+            values.put(PRODUCT_SKU, json.getString("sku"));
+            values.put(PRODUCT_UNIT, json.getString("unit"));
+            values.put(PRODUCT_PACKING, json.getString("packing"));
+            values.put(PRODUCT_QTY_PER_PACKING, json.getString("qty_per_packing"));
+            values.put(CREATED_AT, json.getString("created_at"));
+            values.put(UPDATED_AT, json.getString("updated_at"));
+            values.put(DELETED_AT, json.getString("deleted_at"));
+
+            if (request.equals("insert")) {
+                values.put(SERVER_PRODUCT_ID, json.getInt("id"));
+                rowID = db.insert(TBL_PRODUCTS, null, values);
+            } else if (request.equals("update")) {
+                rowID = db.update(TBL_PRODUCTS, values, SERVER_PRODUCT_ID + "=" + json.getInt("id"), null);
+            }
+        } catch (Exception e) {
+            Log.d("dbhelper1", e + "");
         }
 
         db.close();
@@ -1437,28 +1444,16 @@ public class DbHelper extends SQLiteOpenHelper {
         return basket;
     }
 
-    public ArrayList<HashMap<String, String>> getAllBasketItems(boolean onlyApprovedItems) {
-        ArrayList<HashMap<String, String>> items = new ArrayList<>();
-
-        String additionalWhere, sql;
-        additionalWhere = "";
-        if (onlyApprovedItems) {
-            additionalWhere = " and b.is_approved=1";
-        }
-
-        sql = "Select b.id, b.basket_id, b.is_approved, b.prescription_id, p.product_id, p.name, p.price, p.packing, p.qty_per_packing," +
+    public ArrayList<HashMap<String, String>> getAllBasketItems() {
+        ArrayList<HashMap<String, String>> items = new ArrayList();
+        String sql = "Select b.id, b.basket_id, b.is_approved, b.prescription_id, p.product_id, p.name, p.price, p.packing, p.qty_per_packing," +
                 " p.prescription_required, p.sku, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
-                "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where " +
-                "b.patient_id=" + this.getCurrentLoggedInPatient().getServerID() + additionalWhere;
+                "inner join " + TBL_PRODUCTS + " as p on p.product_id = b.product_id where b.patient_id=" + getCurrentLoggedInPatient().getServerID();
+        SQLiteDatabase sql_db = getWritableDatabase();
+        Cursor cur = sql_db.rawQuery(sql, null);
 
-        System.out.println("basket sql: " + sql);
-
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor cur = db.rawQuery(sql, null);
-
-        cur.moveToFirst();
-        while (!cur.isAfterLast()) {
-            HashMap<String, String> map = new HashMap<>();
+        while (cur.moveToNext()) {
+            HashMap<String, String> map = new HashMap();
             map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(SERVER_PRODUCT_ID)));
             map.put(SERVER_BASKET_ID, cur.getString(cur.getColumnIndex(SERVER_BASKET_ID)));
@@ -1473,11 +1468,10 @@ public class DbHelper extends SQLiteOpenHelper {
             map.put(BASKET_PRESCRIPTION_ID, cur.getString(cur.getColumnIndex(BASKET_PRESCRIPTION_ID)));
             map.put(BASKET_IS_APPROVED, cur.getString(cur.getColumnIndex(BASKET_IS_APPROVED)));
             items.add(map);
-            cur.moveToNext();
         }
 
+        sql_db.close();
         cur.close();
-        db.close();
         return items;
     }
 
@@ -1489,7 +1483,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap<>();
-//            map.put(ORDER_DETAILS_ID, cur.getString(cur.getColumnIndex(ORDER_DETAILS_ID)));
             map.put(SERVER_ORDER_DETAILS_ID, cur.getString(cur.getColumnIndex(SERVER_ORDER_DETAILS_ID)));
             map.put(PRODUCT_NAME, cur.getString(cur.getColumnIndex("product_name")));
             map.put(PRODUCT_PRICE, cur.getString(cur.getColumnIndex("price")));
@@ -2033,22 +2026,6 @@ public class DbHelper extends SQLiteOpenHelper {
     /////////////////////////END OF GET METHODS/////////////////////////////////
 
     /////////////////////////UPDATE METHODS////////////////////////////////////
-    public boolean updateBasket(Basket basket) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        String datenow = dateFormat.format(date);
-
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(BASKET_QUANTITY, basket.getQuantity());
-        values.put(UPDATED_AT, datenow);
-
-        long row = db.update(TBL_BASKETS, values, SERVER_BASKET_ID + "=" + basket.getBasketId(), null);
-        db.close();
-        return row > 0;
-    }
-
     public boolean updatePatientImage(String patient_image, int id) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();

@@ -121,6 +121,16 @@
         <!-- Set AppCompat’s color theming attrs -->
         <item name="colorAccent">@color/LightGreen</item>
         <item name="colorPrimaryDark">@color/DarkGreen</item>
+
+        <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
+    </style>
+
+    <style name="CustomCirclePageIndicator">
+        <item name="fillColor">@color/ColorPrimary</item>
+        <item name="strokeColor">@color/counter_text_bg</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="radius">3dp</item>
+        <item name="centered">true</item>
     </style>
 
     <style name="ProgressBarStyle" parent="@android:style/Widget.ProgressBar.Horizontal" />

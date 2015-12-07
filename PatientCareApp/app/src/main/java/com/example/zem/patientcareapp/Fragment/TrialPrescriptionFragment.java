@@ -32,6 +32,7 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.ProductsActivity;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SelectedProductActivity;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
 import com.example.zem.patientcareapp.SidebarActivity;
 import com.example.zem.patientcareapp.ViewPagerActivity;
@@ -92,6 +93,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     @Override
     public void onResume() {
         ProductsActivity.is_finish = 0;
+        SelectedProductActivity.is_resumed = 0;
         arrayOfPrescriptions = refreshPrescriptionList();
         gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
         super.onResume();
