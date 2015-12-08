@@ -13,23 +13,23 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Step 3/4"-->
-        <!--android:textSize="18sp"-->
-        <!--android:textColor="@color/LightGreen"-->
-        <!--android:gravity="center"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:id="@+id/stepping_stone"/>-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Step 3/4"
+        android:textSize="18sp"
+        android:textColor="@color/LightGreen"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:id="@+id/stepping_stone"/>
 
-    <!--<SeekBar-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/blood_seeker"-->
-        <!--android:progress="50"-->
-        <!--android:enabled="false"-->
-        <!--android:backgroundTint="@color/LightGreen" />-->
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/blood_seeker"
+        android:progress="50"
+        android:enabled="false"
+        android:backgroundTint="@color/LightGreen" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -41,21 +41,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:orientation="vertical"
                 android:background="@drawable/rectback"
-                android:layout_marginBottom="20dp">
+                android:padding="10dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:padding="5dp"
-                    android:text="Your current referral point/s is 100 \n(1 point = 1 peso)\nClick 'Redeem Points' to use your points"
+                    android:text="What contact number shall be used ?"
                     android:textColor="@color/ColorPrimary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -66,66 +64,67 @@
                     android:layout_marginBottom="10dp"
                     android:background="@color/LightGreen" />
 
-                <LinearLayout
+                <RadioGroup
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/to_me"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight=".5"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:text="Use my own contact number \n (09095331440)"
+                        android:textColor="@color/ColorPrimary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Or"
+                        android:textColor="@color/ColorPrimary"
+                        android:textSize="15sp" />
+
+                    <RadioButton
+                        android:id="@+id/to_others"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight=".5"
+                        android:checked="false"
+                        android:gravity="center"
+                        android:text="I will specify the contact number"
+                        android:textColor="@color/ColorPrimary"
+                        android:textSize="15sp" />
+                </RadioGroup>
+
+                <LinearLayout
+                    android:id="@+id/hideLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/rectback"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Reedem Points"
-                        android:background="@color/ColorPrimary"
-                        android:textColor="@color/white"
-                        android:id="@+id/redeem_points"
-                        android:clickable="true"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            1<LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:orientation="vertical"
-                android:background="@drawable/rectback">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:padding="5dp"
-                    android:text="If you have a coupon code, enter it below"
-                    android:textColor="@color/ColorPrimary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dip"
-                    android:layout_marginBottom="10dp"
-                    android:background="@color/LightGreen" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rectback"
-                    android:padding="10dp"
-                    android:focusable="true" android:focusableInTouchMode="true">
 
                     <EditText
+                        android:id="@+id/recipientContactNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/coupon"
                         android:layout_marginTop="5dp"
                         android:gravity="top|left"
-                        android:hint="Enter coupon code here"
-                        android:textSize="13sp"/>
+                        android:hint="Contact number of Recepient"
+                        android:scrollbars="vertical"
+                        android:textSize="13sp" />
+
 
                 </LinearLayout>
-
             </LinearLayout>
 
             <Button

@@ -31,7 +31,7 @@ public class DosageController extends DbHelper {
     }
 
     public boolean insertDosage(Dosage dosage) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(SERVER_DOSAGE_ID, dosage.getDosage_id());

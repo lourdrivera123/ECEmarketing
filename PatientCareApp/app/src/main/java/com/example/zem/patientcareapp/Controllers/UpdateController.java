@@ -30,7 +30,7 @@ public class UpdateController extends DbHelper {
     }
 
     public boolean updateLastUpdatedTable(String table_name, String server_timestamp) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(UPDATE_TIMESTAMP, server_timestamp);
 
@@ -40,7 +40,7 @@ public class UpdateController extends DbHelper {
     }
 
     public String getLastUpdate(String table_name) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbHelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_UPDATES + " WHERE " + UPDATE_TBL_NAME + "= '" + table_name + "'";
         String last_update_date = "";
         Cursor cur = sql_db.rawQuery(sql, null);
@@ -54,7 +54,7 @@ public class UpdateController extends DbHelper {
     }
 
     public boolean updateIsRead_table(int serverID, String table_name, String column_serverID) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(IS_READ, 1);

@@ -29,7 +29,7 @@ public class SpecialtyController extends DbHelper {
 
     public boolean saveSpecialty(Specialty specialty, String request) {
         long rowID = 0;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(SERVER_SPECIALTY_ID, specialty.getSpecialty_id());

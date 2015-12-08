@@ -21,11 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 
 import com.example.zem.patientcareapp.Controllers.OrderController;
 import com.example.zem.patientcareapp.Controllers.OrderDetailController;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
@@ -64,6 +66,9 @@ public class LazyAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     public ImageLoader imageLoader;
     DbHelper dbHelper;
+    ProductController pc;
+    BasketController bc;
+    PatientController ptc;
     Helpers helpers;
 
     int productQty, prescriptionId = 0;
@@ -77,6 +82,10 @@ public class LazyAdapter extends BaseAdapter {
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         imageLoader = new ImageLoader(activity.getApplicationContext());
         helpers = new Helpers();
+
+        pc = new ProductController(activity);
+        bc = new BasketController(activity);
+        ptc = new PatientController(activity);
 
         notifyDataSetChanged();
     }
@@ -109,7 +118,6 @@ public class LazyAdapter extends BaseAdapter {
             // Setting all values in listview
             title.setText("Dr. " + doctor.get("fullname"));
             specialty.setText(doctor.get("name"));
-
         } else if (list_type.equals("basket_items")) {
             try {
                 vi = inflater.inflate(R.layout.list_row_basket_items, null);
@@ -262,15 +270,11 @@ public class LazyAdapter extends BaseAdapter {
 
             product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount));
 
-
-//            product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount) + " \nQuantity: " + quantity + "  (" + helpers.getPluralForm(unit, quantity) + ") (" + num + " " + helpers.getPluralForm(packing, num) + ")" +
-//                    "\nPrice: \u20B1 " + String.format("%.2f", price) + " / " + (!unit.equals("0") ? unit : ""));
-
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             /*String str1 = "12/10/2013";*/
             try {
-                Date date1 = formatter.parse(order_item.get(DbHelper.CREATED_AT));
+                Date date1 = formatter.parse(order_item.get(OrderController.ORDERS_CREATED_AT));
 
                 //format to date only
                 SimpleDateFormat fd = new SimpleDateFormat("MMM d");

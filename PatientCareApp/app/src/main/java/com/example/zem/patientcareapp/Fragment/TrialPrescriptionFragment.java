@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,6 +26,10 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.Activities.SelectedProductActivity;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
+import com.example.zem.patientcareapp.ImageHandlingModule.AndroidMultipartEntity;
 import com.example.zem.patientcareapp.ConfigurationModule.Config;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
@@ -42,8 +47,20 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -56,24 +73,30 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
     Helpers helper;
     ImageAdapter imgAdapter;
+    DbHelper dbhelper;
+    PatientController pc;
+    PatientPrescriptionController ppc;
     ServerRequest serverRequest;
     View rootView;
 
-    PatientPrescriptionController ppc;
-
     int patientID;
+    String imageFileUri, filePath = null;
+    long totalSize = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_trial_prescription_fragment, container, false);
 
-        helper = new Helpers();
+        dbhelper = new DbHelper(getActivity());
+        pc = new PatientController(getActivity());
         ppc = new PatientPrescriptionController(getActivity());
+        helper = new Helpers();
 
         gridView = (GridView) rootView.findViewById(R.id.gridView);
         add_pres = (ImageButton) rootView.findViewById(R.id.add_pres);
 
         patientID = SidebarActivity.getUserID();
+        arrayOfPrescriptions = refreshPrescriptionList();
 
         add_pres.setOnClickListener(this);
 
@@ -187,16 +210,6 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
         startActivity(intent);
     }
 
-    public ArrayList<String> refreshPrescriptionList() {
-        uploadsByUser = ppc.getPrescriptionByUserID(patientID);
-        ArrayList<String> prescriptionArray = new ArrayList();
-
-        for (int x = 0; x < uploadsByUser.size(); x++) {
-            prescriptionArray.add(uploadsByUser.get(x).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME));
-        }
-        return prescriptionArray;
-    }
-
     private class ImageAdapter extends ArrayAdapter<String> {
         String[] image_urls;
         private LayoutInflater inflater;
@@ -265,5 +278,15 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
             return view;
         }
+    }
+
+    public ArrayList<String> refreshPrescriptionList() {
+        uploadsByUser = ppc.getPrescriptionByUserID(patientID);
+        ArrayList<String> prescriptionArray = new ArrayList();
+
+        for (int x = 0; x < uploadsByUser.size(); x++) {
+            prescriptionArray.add(uploadsByUser.get(x).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME));
+        }
+        return prescriptionArray;
     }
 }

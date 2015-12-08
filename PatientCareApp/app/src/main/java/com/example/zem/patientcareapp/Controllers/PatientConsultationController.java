@@ -47,7 +47,7 @@ public class PatientConsultationController extends DbHelper {
     }
 
     public boolean savePatientConsultation(Consultation consult, String request) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         long rowID = 0;
 
@@ -78,7 +78,7 @@ public class PatientConsultationController extends DbHelper {
 
     public ArrayList<HashMap<String, String>> getAllConsultationsByUserId(int userID) {
         ArrayList<HashMap<String, String>> listOfAllConsultations = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT c.*, d.fname, d.lname, d.mname, cn.name FROM consultations as c inner join doctors as d " +
                 "on c.doctor_id = d.id inner join clinics as cn on c.clinic_id = cn.id where c.patient_id = " + userID + " ORDER BY c.date ASC";
         Cursor cur = sql_db.rawQuery(sql, null);
@@ -110,7 +110,7 @@ public class PatientConsultationController extends DbHelper {
     }
 
     public boolean updateSomeConsultation(JSONObject json) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         long updated_id = 0;
 
@@ -130,7 +130,7 @@ public class PatientConsultationController extends DbHelper {
     }
 
     public boolean AcceptRejectConsultation(HashMap<String, String> map, String operation) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues val = new ContentValues();
 
         val.put(CONSULT_SERVER_ID, Integer.parseInt(map.get("id")));
@@ -150,7 +150,7 @@ public class PatientConsultationController extends DbHelper {
     }
 
     public boolean removeFromSQLite(int AI_id) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         long deletedID = sql_db.delete(TBL_PATIENT_CONSULTATIONS, AI_ID + " = " + AI_id, null);
 
         Log.d("delete", deletedID + "");

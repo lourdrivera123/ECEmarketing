@@ -28,6 +28,8 @@ import android.widget.ListView;
 
 import com.example.zem.patientcareapp.AlarmModule.AlarmService;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
 import com.example.zem.patientcareapp.Fragment.MessagesFragment;
@@ -69,6 +71,8 @@ public class SidebarActivity extends AppCompatActivity {
 
     static com.example.zem.patientcareapp.Model.Patient patient;
     static DbHelper dbHelper;
+    static PatientController pc;
+    static ProductController prc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +83,13 @@ public class SidebarActivity extends AppCompatActivity {
         editor = sharedpreferences.edit();
 
         dbHelper = new DbHelper(this);
-        hash_allProducts = dbHelper.getAllProducts();
+        pc = new PatientController(this);
+        prc = new ProductController(this);
+        hash_allProducts = prc.getAllProducts();
         products = new ArrayList();
 
         for (int x = 0; x < hash_allProducts.size(); x++)
-            products.add(hash_allProducts.get(x).get(dbHelper.PRODUCT_NAME));
+            products.add(hash_allProducts.get(x).get(ProductController.PRODUCT_NAME));
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         setSupportActionBar(myToolBar);
@@ -150,7 +156,7 @@ public class SidebarActivity extends AppCompatActivity {
         android.app.FragmentManager fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
 
-        if (dbHelper.checkUserIfRegistered(getUname()) > 0) {
+        if (pc.checkUserIfRegistered(getUname()) > 0) {
             // start consultation schedules reminder
 //            alarmService = new AlarmService(this);
 //            alarmService.patientConsultationReminder();
@@ -173,7 +179,7 @@ public class SidebarActivity extends AppCompatActivity {
     }
 
     public static int getUserID() {
-        patient = dbHelper.getloginPatient(getUname());
+        patient = pc.getloginPatient(getUname());
         userID = patient.getServerID();
 
         return userID;

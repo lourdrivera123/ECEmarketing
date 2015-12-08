@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.R;
@@ -36,6 +38,7 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
     Patient patient;
     EditText recipientName,recipientContactNumber;
     DbHelper db;
+    PatientController pc;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,12 +46,13 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
         setContentView(R.layout.recipient_for_delivery);
 
         get_intent = getIntent();
-        Bundle bundle= get_intent.getExtras();
+//        Bundle bundle= get_intent.getExtras();
 
         db = new DbHelper(this);
-        patient = db.getCurrentLoggedInPatient();
+        pc = new PatientController(this);
+        patient = pc.getCurrentLoggedInPatient();
 
-        order_model = (OrderModel) bundle.getSerializable("order_model");
+        order_model = (OrderModel) get_intent.getSerializableExtra("order_model");
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         next_btn = (Button) findViewById(R.id.next_btn);
@@ -61,8 +65,13 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
         blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
         stepping_stone = (TextView) findViewById(R.id.stepping_stone);
 
-        stepping_stone.setText("Step 3/5");
-        blood_seeker.setProgress(60);
+        if(order_model.getMode_of_delivery().equals("delivery")){
+            stepping_stone.setText("Step 3/4");
+            blood_seeker.setProgress(60);
+        } else {
+            stepping_stone.setText("Step 2/3");
+            blood_seeker.setProgress(60);
+        }
 
         blood_seeker.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -73,7 +82,7 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
 
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Recipient of delivery");
+        getSupportActionBar().setTitle("Recipient");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
         to_me.setOnCheckedChangeListener(this);
@@ -81,6 +90,15 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
         next_btn.setOnClickListener(this);
 
         hideLayout.setVisibility(View.GONE);
+        if(!order_model.getRecipient_name().equals("") && !order_model.getRecipient_name().equals(patient.getFname() + " " + patient.getLname())){
+            to_others.setChecked(true);
+            recipientName.setText(order_model.getRecipient_name());
+        }
+
+        if(!order_model.getRecipient_contactNumber().equals("") && !order_model.getRecipient_contactNumber().equals(patient.getMobile_no())){
+            to_others.setChecked(true);
+            recipientContactNumber.setText(order_model.getRecipient_contactNumber());
+        }
     }
 
     @Override
@@ -97,22 +115,23 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if(to_me.isChecked()) {
             hideLayout.setVisibility(View.GONE);
-            order_model.setRecipient_name(patient.getFname() + " " + patient.getLname());
-            order_model.setRecipient_contactNumber(patient.getMobile_no());
         } else if( to_others.isChecked() ){
-            order_model.setRecipient_name(recipientName.getText().toString());
-            order_model.setRecipient_contactNumber(recipientContactNumber.getText().toString());
             hideLayout.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onClick(View v) {
-        Intent payment_method_intent = new Intent(this, PromosDiscounts.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("order_model", order_model);
-        payment_method_intent.putExtras(bundle);
+        if(to_me.isChecked()){
+            order_model.setRecipient_name(patient.getFname() + " " + patient.getLname());
+            order_model.setRecipient_contactNumber(patient.getMobile_no());
+        } else {
+            order_model.setRecipient_name(recipientName.getText().toString());
+            order_model.setRecipient_contactNumber(recipientContactNumber.getText().toString());
+        }
+
+        Intent payment_method_intent = new Intent(this, PaymentMethod.class);
+        payment_method_intent.putExtra("order_model", order_model);
         startActivity(payment_method_intent);
     }
-
 }

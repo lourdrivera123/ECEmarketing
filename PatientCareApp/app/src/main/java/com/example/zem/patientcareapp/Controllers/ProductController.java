@@ -85,7 +85,7 @@ public class ProductController extends DbHelper {
 
     public ArrayList<HashMap<String, String>> getProductsBySubCategory(int subCategoryId) {
         ArrayList<HashMap<String, String>> products = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql;
 
         if (subCategoryId == 0) {
@@ -122,7 +122,7 @@ public class ProductController extends DbHelper {
 
     public Product getProductById(int id) {
         Product prod = new Product();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "Select * from " + TBL_PRODUCTS + " where product_id='" + id + "'";
 
         Cursor cur = sql_db.rawQuery(sql, null);
@@ -151,7 +151,7 @@ public class ProductController extends DbHelper {
     }
 
     public int getProductServerIdById(int id) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "Select * from " + TBL_PRODUCTS + " where id='" + id + "'";
 
         Cursor cur = sql_db.rawQuery(sql, null);
@@ -168,7 +168,7 @@ public class ProductController extends DbHelper {
 
     public ArrayList<HashMap<String, String>> getAllProducts() {
         ArrayList<HashMap<String, String>> products = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PRODUCTS;
         Cursor cur = sql_db.rawQuery(sql, null);
 
@@ -197,7 +197,7 @@ public class ProductController extends DbHelper {
     public ArrayList<String> getMedicine() {
         ArrayList<String> medicine = new ArrayList();
         String sql = "SELECT p.name, generic_name, d.name FROM products as p LEFT OUTER JOIN dosage_format_and_strength as d ON d.product_id = p.product_id";
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         Cursor cur = sql_db.rawQuery(sql, null);
         String med, name, joinedMedicine = "";
 
@@ -218,7 +218,7 @@ public class ProductController extends DbHelper {
 
     public Medicine getSpecificMedicine(String med_name) {
         Medicine medicine = new Medicine();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PRODUCTS + " WHERE " + PRODUCT_NAME + " = '" + med_name + "'";
         Cursor cur = sql_db.rawQuery(sql, null);
 

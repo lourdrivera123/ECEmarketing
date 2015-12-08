@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.SwipeTabsModule.EditTabsActivity;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
@@ -23,6 +24,7 @@ import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 public class PatientProfileFragment extends Fragment {
     ImageView image_holder;
     DbHelper dbhelper;
+    PatientController pc;
     Helpers helpers;
 
     TextView patient_name, username, birthdate, civil_status, height_weight, occupation, address_first_line, address_second_line, email, cp_no;
@@ -37,6 +39,7 @@ public class PatientProfileFragment extends Fragment {
 
         helpers = new Helpers();
         dbhelper = new DbHelper(getActivity());
+        pc = new PatientController(getActivity());
         image_holder = (ImageView) rootView.findViewById(R.id.image_holder);
         patient_name = (TextView) rootView.findViewById(R.id.patient_name);
         patient_name = (TextView) rootView.findViewById(R.id.patient_name);
@@ -84,7 +87,7 @@ public class PatientProfileFragment extends Fragment {
 
     private void loadData() {
         patient_uname = SidebarActivity.getUname();
-        Patient loginUser = dbhelper.getloginPatient(patient_uname);
+        Patient loginUser = pc.getloginPatient(patient_uname);
 
         ptnt_name = loginUser.getFname() + " " + loginUser.getLname();
         username.setText("username: " + patient_uname);

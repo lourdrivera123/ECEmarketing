@@ -25,13 +25,18 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.CheckoutModule.DeliverPickupOption;
+import com.example.zem.patientcareapp.CheckoutModule.SummaryActivity;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OrderController;
+import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
@@ -39,7 +44,6 @@ import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,6 +56,9 @@ import java.util.HashMap;
 public class ShoppingCartActivity extends AppCompatActivity implements View.OnClickListener {
     LazyAdapter adapter;
     DbHelper dbHelper;
+    OrderController oc;
+    OrderPreferenceController opc;
+
     Helpers helper;
     ServerRequest serverRequest;
 
@@ -84,6 +91,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         queue = Volley.newRequestQueue(this);
         dbHelper = new DbHelper(this);
+        pc = new ProductController(this);
+        bc = new BasketController(this);
+        oc = new OrderController(this);
+        opc = new OrderPreferenceController(this);
+
         helper = new Helpers();
         serverRequest = new ServerRequest();
 
@@ -93,22 +105,32 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle("Shopping Cart");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
-        bc = new BasketController(this);
-        pc = new ProductController(this);
+        String url_raw = "get_basket_items&patient_id=" + SidebarActivity.getUserID() + "&table=baskets";
+        GetRequest.getJSONobj(this, url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
 
-        items = bc.getAllBasketItems();
+                items = bc.getAllBasketItems(); // returns all basket items for the currently loggedin patient
 
-        for (HashMap<String, String> item : items) {
-            double price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
-            double quantity = Double.parseDouble(item.get(BasketController.BASKET_QUANTITY));
-            double total = price * quantity;
-            TotalAmount += total;
-        }
+                for (HashMap<String, String> item : items) {
+                    double price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
+                    double quantity = Double.parseDouble(item.get(BasketController.BASKET_QUANTITY));
+                    double total = price * quantity;
+                    TotalAmount += total;
+                }
+                items = bc.getAllBasketItems(); // returns all basket items for the currently loggedin patient
 
-        adapter = new LazyAdapter(this, items, "basket_items");
-        lv_items.setAdapter(adapter);
+                adapter = new LazyAdapter(ShoppingCartActivity.this, items, "basket_items");
+                lv_items.setAdapter(adapter);
 
-        total_amount.setText("\u20B1 " + TotalAmount);
+                total_amount.setText("\u20B1 " + TotalAmount);
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError object) {
+                Toast.makeText(ShoppingCartActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+            }
+        });
         btnCheckout.setOnClickListener(this);
         lv_items.setOnCreateContextMenuListener(this);
     }
@@ -131,7 +153,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         final int pos = menuInfo.position;
 
@@ -141,7 +163,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         switch (item.getItemId()) {
             case R.id.update_cart:
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                final AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 LayoutInflater inflater = getLayoutInflater();
 
                 @SuppressLint("InflateParams") final View layout = inflater.inflate(R.layout._partials_update_cart, null);
@@ -271,12 +293,10 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                                                 total_amount.setText("\u20B1 " + TotalAmount);
 
                                                 adapter.notifyDataSetChanged();
-                                            } else
-                                                Toast.makeText(context, "Sorry, we can't update your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
-                                        } else
-                                            Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+                                            }
+                                        }
+                                    } catch (Exception e) {
+
                                     }
                                 }
                             }, new ErrorListener<VolleyError>() {
@@ -285,13 +305,12 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                                     Toast.makeText(context, "Couldn't update item. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            pdialog.dismiss();
                         } catch (Exception e) {
-                            Log.d("shoppingcart1", e + "");
-                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+
                         }
                     }
                 });
+
                 alert.show();
                 break;
 
@@ -348,7 +367,10 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 confirmationDialog.show();
                 break;
         }
-        return super.onContextItemSelected(item);
+
+        return super.
+
+                onContextItemSelected(item);
     }
 
     @SuppressLint("NewApi")
@@ -356,7 +378,14 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_checkout_ready:
-                startActivity(new Intent(this, DeliverPickupOption.class));
+                OrderModel order_model = opc.getOrderPreference();
+                if (order_model.isValid()) {
+                    Intent summary_intent = new Intent(this, SummaryActivity.class);
+                    summary_intent.putExtra("order_model", order_model);
+                    startActivity(summary_intent);
+                } else {
+                    startActivity(new Intent(this, DeliverPickupOption.class));
+                }
                 break;
         }
     }

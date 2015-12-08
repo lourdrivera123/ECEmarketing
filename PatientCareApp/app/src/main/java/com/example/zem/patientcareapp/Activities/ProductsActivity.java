@@ -69,6 +69,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
     static ProductController pc;
     BasketController bc;
+
     static OverlayController oc;
 
     public static Map<String, HashMap<String, String>> productQuantity;
@@ -82,8 +83,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gridview_products_layout);
-
-        showOverLay(this);
 
         results_layout = (LinearLayout) findViewById(R.id.results_layout);
         noOfResults = (TextView) findViewById(R.id.noOfResults);
@@ -108,6 +107,29 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         map = new HashMap();
         productQuantity = new HashMap();
         temp_products_items = new ArrayList();
+
+        products_items = pc.getAllProducts();
+        temp_products_items.addAll(products_items);
+
+        showOverLay(this);
+
+        for (HashMap<String, String> map : products_items) {
+            HashMap<String, String> tempMap = new HashMap();
+            tempMap.put("id", map.get("id"));
+            tempMap.put("product_id", map.get("product_id"));
+            tempMap.put("qty_per_packing", map.get("qty_per_packing"));
+            tempMap.put("packing", map.get("packing"));
+            tempMap.put("temp_basket_qty", "0");
+            tempMap.put("prescription_required", map.get("prescription_required"));
+            productQuantity.put(map.get("product_id"), tempMap);
+
+            HashMap<Integer, HashMap<String, String>> hash = new HashMap();
+            HashMap<String, String> temp = new HashMap();
+            temp.put("product_name", map.get("name"));
+            temp.put("generic_name", map.get("generic_name"));
+            hash.put(Integer.parseInt(tempMap.get("product_id")), temp);
+            searchProducts.add(hash);
+        }
 
         final ProgressDialog progress1 = new ProgressDialog(this);
         progress1.setMessage("Please wait...");
@@ -293,7 +315,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     }
 
     public static void showOverLay(Context context) {
-
         if (!oc.checkOverlay("Products", "check")) {
             final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
             dialog.setContentView(R.layout.products_overlay);
@@ -330,7 +351,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     void getAllBasketItems() {
         String url_raw = "get_basket_items&patient_id=" + SidebarActivity.getUserID() + "&table=baskets";
 
-        ListOfPatientsRequest.getJSONobj(ProductsActivity.this, url_raw, new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(ProductsActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {

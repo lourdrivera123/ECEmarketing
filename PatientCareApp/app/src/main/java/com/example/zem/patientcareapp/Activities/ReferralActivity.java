@@ -229,7 +229,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                         String name = autoUname.getText().toString();
                         String pass = autoPassword.getText().toString();
 
-                        ListOfPatientsRequest.getJSONobj(ReferralActivity.this, "get_clinic_patients&username=" + name + "&password=" + pass, new RespondListener<JSONObject>() {
+                        ListOfPatientsRequest.getJSONobj(ReferralActivity.this, "get_clinic_patients&username=" + name + "&password=" + pass, "clinic_patients",  new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
                                 try {
@@ -366,7 +366,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
         }
 
         //for patients
-        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_patients", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_patients", "patients", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {

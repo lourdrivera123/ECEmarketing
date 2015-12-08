@@ -228,6 +228,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/order_receiving_option"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight=".5"
@@ -246,6 +247,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+                        android:id="@+id/address_or_branch"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight=".5"
@@ -254,6 +256,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/address_option"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight=".5"
@@ -276,15 +279,44 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight=".5"
-                        android:text="Recipient of delivery"
+                        android:text="Recipient Name"
                         android:textSize="15sp"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/recipient_option"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".5"
+                        android:text="Zemiel Asma"
+                        android:textSize="15sp"
+                        android:textStyle="italic" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:background="@color/LightGreen" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight=".5"
-                        android:text="Zemiel Asma"
+                        android:text="Recipient Contact #"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/recipient_contact_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".5"
+                        android:text="09095331440"
                         android:textSize="15sp"
                         android:textStyle="italic" />
 
@@ -308,6 +340,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/payment_option"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight=".5"
@@ -320,6 +353,7 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/order_now_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"

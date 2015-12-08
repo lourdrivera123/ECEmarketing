@@ -6,7 +6,7 @@ package com.example.zem.patientcareapp.ConfigurationModule;
 public class Constants {
     // PayPal server urls
 
-    public static final String URL_VERIFY_PAYMENT = "http://159.203.111.108/db/verifypayment.php";
+    public static final String URL_VERIFY_PAYMENT = "http://159.203.111.108/verifypayment";
 
     // File upload url (replace the ip with your server address)
     public static final String FILE_UPLOAD_URL = "http://159.203.111.108/db/fileupload.php";

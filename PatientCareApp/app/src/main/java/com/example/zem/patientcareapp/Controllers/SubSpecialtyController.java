@@ -30,6 +30,7 @@ public class SubSpecialtyController extends DbHelper {
     }
 
     public boolean saveSubSpecialty(SubSpecialty sub_specialty, String request) {
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         long rowID = 0;
         ContentValues values = new ContentValues();
 

@@ -33,6 +33,8 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.PatientRecordController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
@@ -66,6 +68,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public int view_record_id = 0;
 
     DbHelper dbHelper;
+    PatientRecordController prc;
     Helpers helpers;
     Dialog dialog;
     ServerRequest serverRequest;
@@ -75,16 +78,17 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_patient_records, container, false);
         dbHelper = new DbHelper(getActivity());
+        prc = new PatientRecordController(getActivity());
         helpers = new Helpers();
 
-        hashHistory = dbHelper.getPatientRecord(SidebarActivity.getUserID());
+        hashHistory = prc.getPatientRecord(SidebarActivity.getUserID());
         medRecords = new ArrayList();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
         serverRequest = new ServerRequest();
 
         for (int x = 0; x < hashHistory.size(); x++)
-            medRecords.add(hashHistory.get(x).get(DbHelper.RECORDS_DOCTOR_NAME));
+            medRecords.add(hashHistory.get(x).get(PatientRecordController.RECORDS_DOCTOR_NAME));
 
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
@@ -242,7 +246,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                     String pword = password.getText().toString();
                                     String url = "get_clinic_records&username=" + uname + "&password=" + pword + "&patient_id=" + SidebarActivity.getUserID();
 
-                                    ListOfPatientsRequest.getJSONobj(getActivity(), url, new RespondListener<JSONObject>() {
+                                    ListOfPatientsRequest.getJSONobj(getActivity(), url, "records", new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
                                             try {
@@ -448,11 +452,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
             recordSource.setVisibility(View.GONE);
 
-            doctor.setText("Dr. " + hashHistory.get(position).get(DbHelper.RECORDS_DOCTOR_NAME));
+            doctor.setText("Dr. " + hashHistory.get(position).get(PatientRecordController.RECORDS_DOCTOR_NAME));
             doctor.setTag(position);
-            record_date.setText(hashHistory.get(position).get(DbHelper.RECORDS_DATE));
+            record_date.setText(hashHistory.get(position).get(PatientRecordController.RECORDS_DATE));
             record_date.setTag(position);
-            findings.setText(hashHistory.get(position).get(DbHelper.RECORDS_FINDINGS));
+            findings.setText(hashHistory.get(position).get(PatientRecordController.RECORDS_FINDINGS));
             findings.setTag(position);
 
             if (mSelection.get(position) != null)

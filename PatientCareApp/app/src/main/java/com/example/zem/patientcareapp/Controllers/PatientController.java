@@ -75,7 +75,7 @@ public class PatientController extends DbHelper {
             }
         }
 
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(PATIENT_ID, patient_id);
@@ -124,7 +124,7 @@ public class PatientController extends DbHelper {
 
     public boolean LoginUser(String uname, String password) {
         int login = 0;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql1 = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + uname + "' and " + PTNT_PASSWORD + " = '" + helper.md5(password) + "'";
         Cursor cur = sql_db.rawQuery(sql1, null);
         cur.moveToFirst();
@@ -139,7 +139,7 @@ public class PatientController extends DbHelper {
     }
 
     public int checkUserIfRegistered(String username) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + username + "'";
         Cursor cur = sql_db.rawQuery(sql, null);
         cur.moveToFirst();
@@ -160,7 +160,7 @@ public class PatientController extends DbHelper {
     }
 
     public Patient getloginPatient(String username) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         Patient patient = new Patient();
 
         String sql = "SELECT * FROM " + TBL_PATIENTS + " WHERE " + PTNT_USERNAME + " = '" + username + "'";
@@ -202,7 +202,7 @@ public class PatientController extends DbHelper {
     }
 
     public boolean updatePatientImage(String patient_image, int id) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(PTNT_PHOTO, patient_image);

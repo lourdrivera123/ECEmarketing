@@ -110,7 +110,10 @@
         <activity
             android:name=".Activities.SplashActivity"
             android:screenOrientation="portrait">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ShowPrescriptionDialog"
@@ -120,10 +123,6 @@
             android:name=".Activities.GoogleMapsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
-        <activity
-            android:name=".ImageHandlingModule.UploadActivity"
-            android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activities.ProductsActivity"
             android:launchMode="singleTop"
@@ -173,6 +172,12 @@
             android:name=".CheckoutModule.SummaryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
+
+        <activity
+            android:name=".CheckoutModule.ContactForDelivery"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme">
+        </activity>
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"

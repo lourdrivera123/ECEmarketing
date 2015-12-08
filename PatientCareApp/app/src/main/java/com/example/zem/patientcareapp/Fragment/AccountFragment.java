@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.SwipeTabsModule.EditTabsActivity;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
@@ -29,6 +30,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     Button btn_save, save, cancel;
 
     DbHelper dbhelper;
+    PatientController pc;
     static Helpers helpers;
 
     Dialog dialog;
@@ -48,6 +50,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
 
         int edit = EditTabsActivity.edit_int;
         dbhelper = new DbHelper(getActivity());
+        pc = new PatientController(getActivity());
         helpers = new Helpers();
 
         if (edit > 0) {
@@ -55,7 +58,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
             password.setVisibility(View.GONE);
 
             String edit_uname = SidebarActivity.getUname();
-            Patient patient = dbhelper.getloginPatient(edit_uname);
+            Patient patient = pc.getloginPatient(edit_uname);
 
             username.setText(patient.getUsername());
             String imgFile = patient.getPhoto();

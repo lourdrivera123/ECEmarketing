@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.Controllers.PromoController;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.R;
 
@@ -24,6 +25,7 @@ public class PromoFragment extends Fragment {
     ListView promoItems;
     Helpers helpers;
     DbHelper dbHelper;
+    PromoController pc;
     LazyAdapter adapter;
     ArrayList<HashMap<String, String>> promoDiscounts;
 
@@ -36,8 +38,9 @@ public class PromoFragment extends Fragment {
 
         helpers = new Helpers();
         dbHelper = new DbHelper(getActivity());
+        pc = new PromoController(getActivity());
 
-        promoDiscounts = dbHelper.getPromo();
+        promoDiscounts = pc.getPromo();
 
         adapter = new LazyAdapter(getActivity(), promoDiscounts, "promo_items");
         promoItems.setAdapter(adapter);

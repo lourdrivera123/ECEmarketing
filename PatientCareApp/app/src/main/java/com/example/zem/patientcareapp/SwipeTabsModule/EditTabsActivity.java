@@ -43,6 +43,8 @@ import com.android.volley.VolleyError;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OverlayController;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.Fragment.ContactsFragment;
 import com.example.zem.patientcareapp.Fragment.SignUpFragment;
@@ -81,6 +83,9 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     RequestQueue queue;
     Patient editUser;
     DbHelper dbHelper;
+    PatientController pc;
+    OverlayController oc;
+
     Helpers helpers;
     SignUpFragment fragment;
     ServerRequest serverRequest;
@@ -134,6 +139,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         setContentView(R.layout.edit_profile_layout);
 
         dbHelper = new DbHelper(this);
+        oc = new OverlayController(this);
         helpers = new Helpers();
         patient = new Patient();
         fragment = new SignUpFragment();
@@ -228,7 +234,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                                         if (edit_int > 0) {
                                             pDialog.show();
-                                            editUser = dbHelper.getloginPatient(SidebarActivity.getUname());
+                                            editUser = pc.getloginPatient(SidebarActivity.getUname());
 
                                             patient.setServerID(editUser.getServerID());
                                             HashMap<String, String> params = setParams("update");
@@ -245,7 +251,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                     }
 
                                                     if (success == 1) {
-                                                        if (dbHelper.savePatient(patient_json_object_mysql, patient, "update")) {
+                                                        if (pc.savePatient(patient_json_object_mysql, patient, "update")) {
                                                             SharedPreferences.Editor editor = sharedpreferences.edit();
                                                             editor.putString(MainActivity.name, patient.getUsername());
                                                             editor.putString(MainActivity.pass, patient.getPassword());
@@ -321,7 +327,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
                                                                         });
                                                                     }
 
-                                                                    if (dbHelper.savePatient(patient_json_object_mysql, patient, "insert")) {
+                                                                    if (pc.savePatient(patient_json_object_mysql, patient, "insert")) {
                                                                         SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                                                                         SharedPreferences.Editor editor = sharedpreferences.edit();
                                                                         editor.putString(MainActivity.name, patient.getUsername());
@@ -738,7 +744,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         private String uploadFile() {
             String responseString;
 
-            int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
+            int patientID = pc.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL + "?patient_id=" + patientID);
@@ -790,7 +796,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
                 ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
-                if (dbHelper.updatePatientImage(image_url, SidebarActivity.getUserID()))
+                if (pc.updatePatientImage(image_url, SidebarActivity.getUserID()))
                     Log.d("updated photo", "true");
                 else
                     Log.d("updated photo", "false");
@@ -807,7 +813,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     private void showOverLay() {
-        if (dbHelper.checkOverlay("EditTabs", "check")) {
+        if (oc.checkOverlay("EditTabs", "check")) {
 
         } else {
             final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
@@ -819,7 +825,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    if (dbHelper.checkOverlay("EditTabs", "insert"))
+                    if (oc.checkOverlay("EditTabs", "insert"))
                         dialog.dismiss();
                 }
             });

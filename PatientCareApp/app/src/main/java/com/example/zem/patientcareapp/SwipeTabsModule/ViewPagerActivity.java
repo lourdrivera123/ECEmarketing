@@ -25,6 +25,8 @@ import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.ConfigurationModule.Config;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Activities.MainActivity;
@@ -53,6 +55,8 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
     MyPagerAdapter pagerAdapter;
     ServerRequest serverRequest;
     DbHelper dbhelper;
+    PatientController pc;
+    PatientPrescriptionController ppc;
     Intent intent;
 
     int selectedPosition;
@@ -63,6 +67,8 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
         setContentView(R.layout.img_full_screen);
 
         dbhelper = new DbHelper(this);
+        pc = new PatientController(this);
+        ppc = new PatientPrescriptionController(this);
         uploadsByUser = new ArrayList();
         intent = getIntent();
 
@@ -70,12 +76,12 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
         MainActivity.setCustomActionBar(actionbar);
         actionbar.setDisplayHomeAsUpEnabled(true);
 
-        int patientID = dbhelper.getCurrentLoggedInPatient().getServerID();
-        hashPrescriptions = dbhelper.getPrescriptionByUserID(patientID);
+        int patientID = pc.getCurrentLoggedInPatient().getServerID();
+        hashPrescriptions = ppc.getPrescriptionByUserID(patientID);
         selectedPosition = intent.getIntExtra(Config.IMAGE_POSITION, 0);
 
         for (int x = 0; x < hashPrescriptions.size(); x++) {
-            uploadsByUser.add(hashPrescriptions.get(x).get(dbhelper.PRESCRIPTIONS_FILENAME));
+            uploadsByUser.add(hashPrescriptions.get(x).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME));
         }
 
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -106,7 +112,7 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                 delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final int serverID = Integer.parseInt(hashPrescriptions.get(selectedPosition).get(dbhelper.PRESCRIPTIONS_SERVER_ID));
+                        final int serverID = Integer.parseInt(hashPrescriptions.get(selectedPosition).get(PatientPrescriptionController.PRESCRIPTIONS_SERVER_ID));
                         serverRequest = new ServerRequest();
                         HashMap<String, String> hashMap = new HashMap();
                         hashMap.put("table", "patient_prescriptions");
@@ -128,7 +134,7 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
                                     int success = response.getInt("success");
 
                                     if (success == 1) {
-                                        if (dbhelper.deletePrescriptionByServerID(serverID)) {
+                                        if (ppc.deletePrescriptionByServerID(serverID)) {
                                             pagerAdapter.removeView(viewPager, selectedPosition);
                                             pdialog.dismiss();
                                         } else {

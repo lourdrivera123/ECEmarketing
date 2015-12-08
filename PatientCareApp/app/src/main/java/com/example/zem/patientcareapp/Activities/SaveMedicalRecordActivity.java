@@ -23,8 +23,12 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
+import com.example.zem.patientcareapp.Controllers.ClinicController;
 import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientRecordController;
+import com.example.zem.patientcareapp.Controllers.PatientTreatmentsController;
+import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.Medicine;
@@ -68,6 +72,10 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
     PatientRecord record;
     ServerRequest serverRequest;
     DoctorController doctor_controller;
+    ClinicController cc;
+    ProductController pc;
+    PatientRecordController prc;
+    PatientTreatmentsController ptc;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,12 +99,16 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
         view_record_id = intent.getIntExtra("viewRecord", 0);
 
         db = new DbHelper(this);
+        cc = new ClinicController(this);
         doctor_controller = new DoctorController(this);
+        pc = new ProductController(this);
+        prc = new PatientRecordController(this);
+        ptc = new PatientTreatmentsController(this);
 
         serverRequest = new ServerRequest();
 
         arrayOfDoctors = doctor_controller.getDoctorName();
-        arrayOfClinics = db.getAllClinics();
+        arrayOfClinics = cc.getAllClinics();
         listOfDoctors = new ArrayList();
         listOfClinics = new ArrayList();
         listOfTreatments = new ArrayList();
@@ -310,7 +322,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
         Button save_treatment = (Button) dialog.findViewById(R.id.save_treatment);
         Button cancel_treatment = (Button) dialog.findViewById(R.id.cancel_treatment);
 
-        listOfMedicines = db.getMedicine();
+        listOfMedicines = pc.getMedicine();
 
         medicineAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfMedicines);
         search_medicine.setAdapter(medicineAdapter);
@@ -328,7 +340,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                     medicine = parent.getItemAtPosition(position).toString();
                 }
 
-                med = db.getSpecificMedicine(medicine);
+                med = pc.getSpecificMedicine(medicine);
                 generic_name.setText(med.getGeneric_name());
             }
         });
@@ -407,7 +419,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                         Log.d("response", response + "");
 
                         if (success == 1) {
-                            if (db.savePatientRecord(record, "insert")) {
+                            if (prc.savePatientRecord(record, "insert")) {
                                 int start_id = response.getInt("last_inserted_id");
                                 ArrayList<HashMap<String, String>> newTreatments = new ArrayList();
 
@@ -422,7 +434,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                                     start_id = start_id + 1;
                                 }
 
-                                if (db.savePatientTreatments(newTreatments, "insert")) {
+                                if (ptc.savePatientTreatments(newTreatments, "insert")) {
                                     SaveMedicalRecordActivity.this.finish();
                                     Toast.makeText(SaveMedicalRecordActivity.this, "Successfully saved", Toast.LENGTH_LONG).show();
                                 } else

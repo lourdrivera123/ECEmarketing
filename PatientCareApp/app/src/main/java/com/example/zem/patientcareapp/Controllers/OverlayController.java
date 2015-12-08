@@ -27,7 +27,7 @@ public class OverlayController extends DbHelper {
     }
 
     public boolean checkOverlay(String title, String request) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         long check = 0;
 
         if (request.equals("check")) {

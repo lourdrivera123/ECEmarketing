@@ -37,7 +37,7 @@ public class MessageController extends DbHelper {
     }
 
     public boolean saveMessages(JSONObject json, String request) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues val = new ContentValues();
         long rowID = 0;
 
@@ -66,7 +66,7 @@ public class MessageController extends DbHelper {
 
     public ArrayList<HashMap<String, String>> getAllMessages(int patientID) {
         ArrayList<HashMap<String, String>> array = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBl_MSGS + " WHERE " + PATIENT_ID + " = " + patientID;
         Cursor cur = sql_db.rawQuery(sql, null);
 
@@ -88,7 +88,7 @@ public class MessageController extends DbHelper {
     public Messages getSpecificMessage(int serverID) {
         Messages messages = new Messages();
         String sql = "SELECT * FROM " + TBl_MSGS + " WHERE " + MSGS_SERVER_ID + " = " + serverID;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         Cursor cur = sql_db.rawQuery(sql, null);
         cur.moveToFirst();
 

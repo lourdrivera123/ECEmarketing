@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONException;
@@ -47,7 +48,7 @@ public class OrderController extends DbHelper {
 
     public boolean saveOrders(JSONObject object) {
         long rowID = 0;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         try {
@@ -75,7 +76,7 @@ public class OrderController extends DbHelper {
 
     public ArrayList<String> getAllOrderItems() {
         ArrayList<String> order_items = new ArrayList<>();
-//        SQLiteDatabase asdas = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * from orders where patient_id = " + SidebarActivity.getUserID() + " order by created_at DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
 
@@ -88,4 +89,6 @@ public class OrderController extends DbHelper {
         sql_db.close();
         return order_items;
     }
+
+
 }

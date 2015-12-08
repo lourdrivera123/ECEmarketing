@@ -31,6 +31,7 @@ import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFra
 import com.example.zem.patientcareapp.AlarmModule.AlarmService;
 import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
 import com.example.zem.patientcareapp.Model.Consultation;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -48,6 +49,7 @@ import java.util.TimeZone;
 
 public class PatientConsultationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher, CompoundButton.OnCheckedChangeListener, CalendarDatePickerDialogFragment.OnDateSetListener, RadialTimePickerDialogFragment.OnTimeSetListener {
     DbHelper dbhelper;
+    PatientConsultationController pcc;
     Consultation consult;
     AlarmService alarmService;
     ServerRequest serverRequest;
@@ -81,6 +83,7 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
 
         serverRequest = new ServerRequest();
         dbhelper = new DbHelper(this);
+        pcc = new PatientConsultationController(this);
         alarmService = new AlarmService(this);
         Intent getIntent = getIntent();
         listOfDoctors = new ArrayList();
@@ -217,7 +220,7 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
                                 consult.setServerID(response.getInt("last_inserted_id"));
                                 consult.setCreated_at(response.getString("created_at"));
 
-                                if (dbhelper.savePatientConsultation(consult, request)) {
+                                if (pcc.savePatientConsultation(consult, request)) {
                                     alarmService.patientConsultationReminder();
                                     PatientConsultationActivity.this.finish();
                                     Toast.makeText(getBaseContext(), "Your request has been submitted. Please wait for your confirmation.", Toast.LENGTH_SHORT).show();

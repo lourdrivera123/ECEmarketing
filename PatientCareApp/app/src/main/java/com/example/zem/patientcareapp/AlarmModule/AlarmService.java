@@ -19,6 +19,8 @@ import java.util.HashMap;
 import android.app.PendingIntent;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 
 public class AlarmService {
     Context context;
@@ -104,7 +106,9 @@ public class AlarmService {
 
     public void patientConsultationReminder(){
         dbHelper = new DbHelper(this.context);
-        listOfAllConsultations = dbHelper.getAllConsultationsByUserId(dbHelper.getCurrentLoggedInPatient().getServerID());
+        PatientConsultationController pc = new PatientConsultationController(this.context);
+        PatientController ptc = new PatientController(this.context);
+        listOfAllConsultations = pc.getAllConsultationsByUserId(ptc.getCurrentLoggedInPatient().getServerID());
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
 
         try{

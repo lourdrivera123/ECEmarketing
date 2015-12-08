@@ -14,6 +14,7 @@ import android.widget.Spinner;
 
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.SwipeTabsModule.EditTabsActivity;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.R;
@@ -38,6 +39,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
     String get_birthdate;
 
     DbHelper dbhelper;
+    PatientController pc;
 
     Intent intent;
 
@@ -46,6 +48,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
         rootView = inflater.inflate(R.layout.fragment_signup_fragment, container, false);
 
         dbhelper = new DbHelper(getActivity());
+        pc = new PatientController(getActivity());
         int edit = EditTabsActivity.edit_int;
         int signup = EditTabsActivity.signup_int;
         intent = EditTabsActivity.intent;
@@ -69,7 +72,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
 
         if (edit > 0) {
             String edit_uname = SidebarActivity.getUname();
-            Patient patient = dbhelper.getloginPatient(edit_uname);
+            Patient patient = pc.getloginPatient(edit_uname);
             get_birthdate = patient.getBirthdate();
 
             fname.setText(patient.getFname());

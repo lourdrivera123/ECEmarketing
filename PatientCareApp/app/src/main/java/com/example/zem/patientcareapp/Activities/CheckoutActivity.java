@@ -28,29 +28,30 @@ import java.util.HashMap;
  */
 
 public class CheckoutActivity extends AppCompatActivity implements View.OnClickListener {
-    LinearLayout hideLayout;
-    TextView customerName, customerContactNumber, customerAddress;
-    EditText recipientName, recipientAddress, recipientContactNumber;
-    RadioButton pickup, deliver, paypal, visa_or_mastercard, cod;
-    Spinner listOfECEBranches;
-    CheckBox check;
-    Button proceed;
+//    LinearLayout hideLayout;
+//    TextView customerName, customerContactNumber, customerAddress;
+//    EditText recipientName, recipientAddress, recipientContactNumber;
+//    RadioButton pickup, deliver, paypal, visa_or_mastercard, cod;
+//    Spinner listOfECEBranches;
+//    CheckBox check;
+//    Button proceed;
+
+//    String senderName, senderAddress, senderContactNumber, receiverName, receiverAddress, receiverContactNumber,
+//            modeOfDelivery, eceBranch, payment_option;
+//    String ptnt_completeAddress, ptnt_fullname, ptnt_contactNumber;
+//    ArrayAdapter adapter;
+//
+//    ArrayList<String> arrayOfECEBranches;
+//    ArrayList<HashMap<String, String>> getBranchesFromDB;
+//
+//    DbHelper db;
+//    Patient patient;
+//    Context context;
+//
+//    int billing_id = 0, branch_server_id = 0;
+//    int p_year, p_month, p_day;
+
     Toolbar myToolBar;
-
-    String senderName, senderAddress, senderContactNumber, receiverName, receiverAddress, receiverContactNumber,
-            modeOfDelivery, eceBranch, payment_option;
-    String ptnt_completeAddress, ptnt_fullname, ptnt_contactNumber;
-    ArrayAdapter adapter;
-
-    ArrayList<String> arrayOfECEBranches;
-    ArrayList<HashMap<String, String>> getBranchesFromDB;
-
-    DbHelper db;
-    Patient patient;
-    Context context;
-
-    int billing_id = 0, branch_server_id = 0;
-    int p_year, p_month, p_day;
     ServerRequest serverRequest;
 
     @Override

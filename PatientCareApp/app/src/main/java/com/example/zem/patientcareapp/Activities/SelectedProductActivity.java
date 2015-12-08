@@ -28,6 +28,7 @@ import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.ImageGallery.CirclePageIndicator;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Model.Product;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -37,7 +38,6 @@ import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.adapter.CircleFragmentAdapter;
-import com.google.android.gms.maps.model.Circle;
 import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 
@@ -66,14 +66,15 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     TextView prod_name, prod_generic, prod_unit, prod_price, qty_cart, prod_description;
 
     Handler handler;
+    DbHelper dbhelper;
+    BasketController bc;
+    PatientController ptc;
+    ProductController pc;
     Product prod;
     Helpers helpers;
     ServerRequest serverRequest;
     CircleFragmentAdapter adapter;
     ProgressDialog pDialog;
-
-    ProductController pc;
-    BasketController bc;
 
     public HashMap<String, String> map;
 
@@ -83,6 +84,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         setContentView(R.layout.selected_product_layout);
 
         handler = new Handler();
+        dbhelper = new DbHelper(this);
+        pc = new ProductController(this);
+        bc = new BasketController(this);
+        ptc = new PatientController(this);
+
         prod = new Product();
         helpers = new Helpers();
         serverRequest = new ServerRequest();
@@ -399,7 +405,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         dialog.setMessage("Please wait...");
         dialog.show();
 
-        ListOfPatientsRequest.getJSONobj(this, "get_products_gallery&product_id=" + productID, new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(this, "get_products_gallery&product_id=" + productID, "products_gallery", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {

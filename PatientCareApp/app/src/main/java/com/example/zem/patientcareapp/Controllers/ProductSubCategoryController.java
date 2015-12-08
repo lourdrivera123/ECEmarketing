@@ -35,7 +35,7 @@ public class ProductSubCategoryController extends DbHelper {
     }
 
     public boolean insertProductSubCategory(ProductSubCategory subCategory) {
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(PROD_SUBCAT_NAME, subCategory.getName());
@@ -45,16 +45,16 @@ public class ProductSubCategoryController extends DbHelper {
         values.put(UPDATED_AT, subCategory.getUpdatedAt());
         values.put(DELETED_AT, subCategory.getDeletedAt());
 
-        long rowID = db.insert(TBL_PRODUCT_SUBCATEGORIES, null, values);
-        db.close();
+        long rowID = sql_db.insert(TBL_PRODUCT_SUBCATEGORIES, null, values);
+        sql_db.close();
         return rowID > 0;
     }
 
     public String[] getAllProductSubCategoriesArray(int categoryId) {
         List<String> list = new ArrayList();
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbHelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " WHERE category_id='" + categoryId + "' ORDER BY name";
-        Cursor cur = db.rawQuery(sql, null);
+        Cursor cur = sql_db.rawQuery(sql, null);
         int x = 0;
 
         cur.moveToFirst();
@@ -63,7 +63,7 @@ public class ProductSubCategoryController extends DbHelper {
             x++;
             cur.moveToNext();
         }
-        db.close();
+        sql_db.close();
         cur.close();
         String[] arr = new String[list.size()];
         return list.toArray(arr);
@@ -72,10 +72,10 @@ public class ProductSubCategoryController extends DbHelper {
     //for subcategory
     public ProductSubCategory getSubCategoryByName(String name, int categoryId) {
         ProductSubCategory subCategory = new ProductSubCategory();
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbHelper.getWritableDatabase();
         name = name.replace("'", "''");
         String sql = "SELECT * FROM " + TBL_PRODUCT_SUBCATEGORIES + " where name='" + name + "' and category_id='" + categoryId + "'";
-        Cursor cur = db.rawQuery(sql, null);
+        Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
             subCategory.setId(cur.getInt(cur.getColumnIndex(AI_ID)));
@@ -86,7 +86,7 @@ public class ProductSubCategoryController extends DbHelper {
             subCategory.setDeletedAt(cur.getString(cur.getColumnIndex(DELETED_AT)));
         }
 
-        db.close();
+        sql_db.close();
         cur.close();
         return subCategory;
     }

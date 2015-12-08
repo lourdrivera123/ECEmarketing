@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
 import com.example.zem.patientcareapp.Customizations.GlowingText;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.R;
@@ -37,35 +39,38 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         redeem_points = (Button) findViewById(R.id.redeem_points);
-        blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
+//        blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
         nxt_btn = (Button) findViewById(R.id.next_btn);
-        stepping_stone = (TextView) findViewById(R.id.stepping_stone);
+//        stepping_stone = (TextView) findViewById(R.id.stepping_stone);
 
-        stepping_stone.setText("Step 4/5");
-        blood_seeker.setProgress(80);
+//        stepping_stone.setText("Step 4/5");
+//        blood_seeker.setProgress(80);
 
         Intent get_intent = getIntent();
         Bundle bundle= get_intent.getExtras();
 
-        order_model = (OrderModel) bundle.getSerializable("order_model");
+        order_model = (OrderModel) get_intent.getSerializableExtra("order_model");
 
-        if(order_model.getMode_of_delivery().equals("delivery")){
-            stepping_stone.setText("Step 4/5");
-            blood_seeker.setProgress(80);
-        } else {
-            stepping_stone.setText("Step 2/3");
-            blood_seeker.setProgress(67);
-        }
+//        if(order_model.getMode_of_delivery().equals("delivery")){
+//            stepping_stone.setText("Step 4/5");
+//            blood_seeker.setProgress(80);
+//        } else {
+//            stepping_stone.setText("Step 2/3");
+//            blood_seeker.setProgress(67);
+//        }
 
         order_model.setCoupon_discount(0.1);
         order_model.setPoints_discount(0.1);
 
-        blood_seeker.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+//        blood_seeker.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                return true;
+//            }
+//        });
+
+        Log.d("putangina", order_model.getMode_of_delivery() + " " + order_model.getRecipient_address() + " " + order_model.getRecipient_name() + " " + order_model.getRecipient_contactNumber());
+
 
         glowButton = new GlowingText(
                 PromosDiscounts.this,               // Pass activity Object
@@ -89,6 +94,7 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                startActivity(new Intent(this, ShoppingCartActivity.class));
                 this.finish();
                 break;
         }
@@ -97,10 +103,10 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, PaymentMethod.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("order_model", order_model);
-        intent.putExtras(bundle);
+        Intent intent = new Intent(this, SummaryActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("order_model", order_model);
+        intent.putExtra("order_model", order_model);
         startActivity(intent);
     }
 

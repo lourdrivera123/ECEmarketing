@@ -18,12 +18,14 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Activities.GoogleMapsActivity;
+import com.example.zem.patientcareapp.Controllers.OverlayController;
+import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.SwipeTabsModule.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.ProductsActivity;
+import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
@@ -41,6 +43,8 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
 
     ServerRequest serverRequest;
     DbHelper db;
+    PatientConsultationController pcc;
+    OverlayController oc;
 
     static int patientID;
     Context context;
@@ -51,6 +55,9 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
 
         context = getActivity();
         db = new DbHelper(context);
+        pcc = new PatientConsultationController(context);
+        oc = new OverlayController(context);
+
         showOverLay();
 
         orderLayout = (LinearLayout) rootView.findViewById(R.id.orderLayout);
@@ -74,7 +81,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
-        ListOfPatientsRequest.getJSONobj(getActivity(), "get_consultations_notif&patient_ID=" + patientID, new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getActivity(), "get_consultations_notif&patient_ID=" + patientID, "consultations", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
@@ -87,7 +94,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                         for (int x = 0; x < json_mysql.length(); x++) {
                             JSONObject obj = json_mysql.getJSONObject(x);
 
-                            if (!db.updateSomeConsultation(obj))
+                            if (!pcc.updateSomeConsultation(obj))
                                 Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
                         }
                     } else
@@ -171,7 +178,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showOverLay() {
-        if (db.checkOverlay("HomeTile", "check")) {
+        if (oc.checkOverlay("HomeTile", "check")) {
 
         } else {
             final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
@@ -184,7 +191,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
             sideBar_overlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    if (db.checkOverlay("HomeTile", "insert"))
+                    if (oc.checkOverlay("HomeTile", "insert"))
                         dialog.dismiss();
                 }
             });
