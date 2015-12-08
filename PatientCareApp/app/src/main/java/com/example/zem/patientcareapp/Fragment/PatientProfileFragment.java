@@ -12,14 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.EditTabsActivity;
-import com.example.zem.patientcareapp.GetterSetter.Patient;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.SwipeTabsModule.EditTabsActivity;
+import com.example.zem.patientcareapp.Model.Patient;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.SidebarActivity;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 public class PatientProfileFragment extends Fragment {
     ImageView image_holder;

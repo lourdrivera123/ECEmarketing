@@ -23,20 +23,20 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.Config;
-import com.example.zem.patientcareapp.Constants;
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Activities.ProductsActivity;
+import com.example.zem.patientcareapp.Activities.SelectedProductActivity;
+import com.example.zem.patientcareapp.ConfigurationModule.Config;
+import com.example.zem.patientcareapp.ConfigurationModule.Constants;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.ProductsActivity;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.SelectedProductActivity;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
-import com.example.zem.patientcareapp.SidebarActivity;
-import com.example.zem.patientcareapp.ViewPagerActivity;
-import com.example.zem.patientcareapp.ServerRequest;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
+import com.example.zem.patientcareapp.SwipeTabsModule.ViewPagerActivity;
+import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -56,9 +56,10 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
     Helpers helper;
     ImageAdapter imgAdapter;
-    DbHelper dbhelper;
     ServerRequest serverRequest;
     View rootView;
+
+    PatientPrescriptionController ppc;
 
     int patientID;
 
@@ -66,8 +67,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_trial_prescription_fragment, container, false);
 
-        dbhelper = new DbHelper(getActivity());
         helper = new Helpers();
+        ppc = new PatientPrescriptionController(getActivity());
 
         gridView = (GridView) rootView.findViewById(R.id.gridView);
         add_pres = (ImageButton) rootView.findViewById(R.id.add_pres);
@@ -116,8 +117,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(DbHelper.PRESCRIPTIONS_SERVER_ID));
-                    final String filename = uploadsByUser.get(menuInfo.position).get(DbHelper.PRESCRIPTIONS_FILENAME);
+                    final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(PatientPrescriptionController.PRESCRIPTIONS_SERVER_ID));
+                    final String filename = uploadsByUser.get(menuInfo.position).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME);
                     Log.d("filename log", filename);
                     serverRequest = new ServerRequest();
                     HashMap<String, String> hashMap = new HashMap();
@@ -141,7 +142,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                                 Log.d("success is", success + "");
 
                                 if (success == 1) {
-                                    if (dbhelper.deletePrescriptionByServerID(serverID)) {
+                                    if (ppc.deletePrescriptionByServerID(serverID)) {
                                         arrayOfPrescriptions = refreshPrescriptionList();
                                         gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
                                     } else {
@@ -187,11 +188,11 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     }
 
     public ArrayList<String> refreshPrescriptionList() {
-        uploadsByUser = dbhelper.getPrescriptionByUserID(patientID);
+        uploadsByUser = ppc.getPrescriptionByUserID(patientID);
         ArrayList<String> prescriptionArray = new ArrayList();
 
         for (int x = 0; x < uploadsByUser.size(); x++) {
-            prescriptionArray.add(uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_FILENAME));
+            prescriptionArray.add(uploadsByUser.get(x).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME));
         }
         return prescriptionArray;
     }

@@ -20,23 +20,22 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.ProductsActivity;
+import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.ServerRequest;
+import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
-import com.example.zem.patientcareapp.SidebarActivity;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,8 +50,8 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
     Context context;
 
+    BasketController bc;
     ServerRequest serverRequest;
-    DbHelper dbHelper;
 
     ArrayList<HashMap<String, String>> products_items, basket_items;
     Map<String, HashMap<String, String>> productQuantity;
@@ -81,8 +80,8 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
         add_to_cart.setOnClickListener(this);
 
-        dbHelper = new DbHelper(context);
         serverRequest = new ServerRequest();
+        bc = new BasketController(context);
         products_items = ProductsActivity.products_items;
         productQuantity = ProductsActivity.productQuantity;
         basket_items = ProductsActivity.basket_items;
@@ -151,7 +150,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                                 int success = response.getInt("success");
 
                                 if (success == 1) {
-                                    if (!dbHelper.saveBasket(hashMap))
+                                    if (!bc.saveBasket(hashMap))
                                         Toast.makeText(context, "Error occurred", Toast.LENGTH_SHORT).show();
                                     ProductsActivity.transferHashMap(hashMap);
                                     Toast.makeText(context, "Your cart has been updated", Toast.LENGTH_SHORT).show();
@@ -203,7 +202,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
                                                 if (success == 1) {
                                                     hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
-                                                    if (dbHelper.saveBasket(hashMap))
+                                                    if (bc.saveBasket(hashMap))
                                                         Toast.makeText(context, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
                                                     else
                                                         Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -258,7 +257,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                                     if (success == 1) {
                                         hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
 
-                                        if (dbHelper.saveBasket(hashMap))
+                                        if (bc.saveBasket(hashMap))
                                             Toast.makeText(context, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
                                         else
                                             Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();

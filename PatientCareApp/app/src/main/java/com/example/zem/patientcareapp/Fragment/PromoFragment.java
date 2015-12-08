@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.R;
 

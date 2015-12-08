@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.example.zem.patientcareapp.DbHelper;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 

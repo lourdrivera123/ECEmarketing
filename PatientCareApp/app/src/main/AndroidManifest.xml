@@ -39,7 +39,7 @@
         android:required="false" />
 
     <application
-        android:name=".PatientCareApplication"
+        android:name=".Network.PatientCareApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
         android:label="@string/app_name"
@@ -55,37 +55,77 @@
 
         <!--Activities-->
         <activity
-            android:name=".ShoppingCartActivity"
+            android:name=".Activities.ShoppingCartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".DoctorActivity"
+            android:name=".Activities.DoctorActivity"
             launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".ViewPagerActivity"
+            android:name=".SwipeTabsModule.ViewPagerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
         <activity
-            android:name=".MasterTabActivity"
+            android:name=".SwipeTabsModule.MasterTabActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyFancyTheme" />
+
         <activity
-            android:name=".EditTabsActivity"
+            android:name=".SwipeTabsModule.EditTabsActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light" />
+
         <activity
-            android:name=".SaveMedicalRecordActivity"
+            android:name=".Activities.SaveMedicalRecordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+
+        <activity
+            android:name=".Activities.SelectedProductActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity
-            android:name=".ProductsActivity"
+            android:name=".Activities.ReferralActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyFancyTheme" />
+        <activity
+            android:name=".Activities.CheckoutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+        <activity
+            android:name=".Activities.PatientConsultationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+        <activity
+            android:name=".Activities.MessageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+        <activity
+            android:name=".Activities.SplashActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".ShowPrescriptionDialog"
+            android:excludeFromRecents="true"
+            android:theme="@style/ForDialogTheme" />
+        <activity
+            android:name=".Activities.GoogleMapsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+        <activity
+            android:name=".ImageHandlingModule.UploadActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".Activities.ProductsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme">
@@ -98,47 +138,39 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".SelectedProductActivity"
+            android:name=".SidebarModule.SidebarActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
+
         <activity
-            android:name=".ReferralActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyFancyTheme" />
-        <activity
-            android:name=".CheckoutActivity"
+            android:name=".CheckoutModule.DeliverPickupOption"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
+
         <activity
-            android:name=".PatientConsultationActivity"
+            android:name=".CheckoutModule.AddressForDelivery"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
+
         <activity
-            android:name=".MessageActivity"
+            android:name=".CheckoutModule.RecipientForDelivery"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
+
         <activity
-            android:name=".SplashActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ShowPrescriptionDialog"
-            android:excludeFromRecents="true"
-            android:theme="@style/ForDialogTheme" />
-        <activity
-            android:name=".GoogleMapsActivity"
+            android:name=".CheckoutModule.PaymentMethod"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
+
         <activity
-            android:name=".UploadActivity"
-            android:screenOrientation="portrait" />
+            android:name=".CheckoutModule.PromosDiscounts"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyTheme" />
+
         <activity
-            android:name=".SidebarActivity"
+            android:name=".CheckoutModule.SummaryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
 
@@ -162,20 +194,20 @@
             android:name="io.card.payment.DataEntryActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".samplepaypal"
+            android:name=".CheckoutModule.PayPalCheckout"
             android:screenOrientation="portrait" />
 
 
         <!-- Will not be called unless the application explicitly enables it -->
         <receiver
-            android:name=".DeviceBootReceiver"
+            android:name=".AlarmModule.DeviceBootReceiver"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.example.zem.patientcareapp.AlarmReceiver"
+            android:name=".AlarmModule.AlarmReceiver"
             android:enabled="true" />
 
     </application>

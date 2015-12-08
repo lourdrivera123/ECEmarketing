@@ -2,18 +2,16 @@ package com.example.zem.patientcareapp.Network;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.zem.patientcareapp.DbHelper;
-import com.example.zem.patientcareapp.Helpers;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Sync;
 
 import org.json.JSONObject;
 

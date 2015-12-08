@@ -18,6 +18,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.zem.patientcareapp.Activities.ProductsActivity;
+import com.example.zem.patientcareapp.Activities.SelectedProductActivity;
+import com.example.zem.patientcareapp.ConfigurationModule.Constants;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
+import com.example.zem.patientcareapp.ImageHandlingModule.AndroidMultipartEntity;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -46,7 +54,7 @@ public class ShowPrescriptionDialog extends Activity implements View.OnClickList
     ArrayList<String> arrayOfPrescriptions;
 
     Helpers helper;
-    DbHelper dbhelper;
+    PatientPrescriptionController ppc;
 
     String imageFileUri;
     String filePath = null;
@@ -64,8 +72,8 @@ public class ShowPrescriptionDialog extends Activity implements View.OnClickList
         pick_camera_layout.setOnClickListener(this);
         pick_gallery_layout.setOnClickListener(this);
 
-        dbhelper = new DbHelper(this);
         helper = new Helpers();
+        ppc = new PatientPrescriptionController(this);
         patientID = SidebarActivity.getUserID();
         arrayOfPrescriptions = refreshPrescriptionList();
 
@@ -160,11 +168,11 @@ public class ShowPrescriptionDialog extends Activity implements View.OnClickList
     }
 
     public ArrayList<String> refreshPrescriptionList() {
-        uploadsByUser = dbhelper.getPrescriptionByUserID(patientID);
+        uploadsByUser = ppc.getPrescriptionByUserID(patientID);
         ArrayList<String> prescriptionArray = new ArrayList();
 
         for (int x = 0; x < uploadsByUser.size(); x++) {
-            prescriptionArray.add(uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_FILENAME));
+            prescriptionArray.add(uploadsByUser.get(x).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME));
         }
         return prescriptionArray;
     }
@@ -249,7 +257,7 @@ public class ShowPrescriptionDialog extends Activity implements View.OnClickList
             }
 
             //put the refresh grid here or the display newly added image here
-            if (dbhelper.insertUploadOnPrescription(patientID, image_url, serverID)) {
+            if (ppc.insertUploadOnPrescription(patientID, image_url, serverID)) {
                 arrayOfPrescriptions = refreshPrescriptionList();
                 ShowPrescriptionDialog.this.finish();
                 ProductsActivity.is_finish = serverID;

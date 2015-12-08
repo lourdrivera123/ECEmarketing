@@ -2,7 +2,6 @@ package com.example.zem.patientcareapp.Network;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.example.zem.patientcareapp.PatientCareApplication;
 
 /**
  * Created by Zem on 8/3/2015.
