@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.SettingController;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Model.Settings;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -58,6 +60,9 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
     Patient patient;
     Settings settings;
     DbHelper db;
+    PatientController pc;
+    SettingController sc;
+
 
     ProgressDialog dialog;
     View root;
@@ -75,7 +80,9 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
         referralsLvlLimit = (TextView) root.findViewById(R.id.referralsLvlLimit);
 
         db = new DbHelper(getActivity());
-        patient = db.getCurrentLoggedInPatient();
+        pc = new PatientController(getActivity());
+        sc = new SettingController(getActivity());
+        patient = pc.getCurrentLoggedInPatient();
 
         list_myReferrals = new ArrayList();
         hash_myReferrals = new ArrayList();
@@ -92,7 +99,7 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
 
         checkForSettingsUpdate();
 
-        ListOfPatientsRequest.getJSONobj(getActivity(), "get_referrals_by_user", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getActivity(), "get_referrals_by_user", "patients", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
@@ -157,14 +164,14 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
         GetRequest.getJSONobj(getActivity(), "get_settings", "settings", "serverID", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                settings = db.getAllSettings();
+                settings = sc.getAllSettings();
                 lvl = settings.getLvl_limit();
                 referralsLvlLimit.setText("Referrals Level Limit: " + lvl + " level/s");
 
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                settings = db.getAllSettings();
+                settings = sc.getAllSettings();
                 lvl = settings.getLvl_limit();
                 referralsLvlLimit.setText("Referrals Level Limit: " + lvl + " level/s");
 

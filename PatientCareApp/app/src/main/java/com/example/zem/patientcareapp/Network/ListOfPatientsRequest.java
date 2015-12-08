@@ -19,14 +19,14 @@ import org.json.JSONObject;
  */
 public class ListOfPatientsRequest {
 
-    public static void getJSONobj(final Context c, final String q, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
+    public static void getJSONobj(final Context c, final String q, String table_name, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
         RequestQueue queue;
         Helpers helpers;
 
         queue = VolleySingleton.getInstance().getRequestQueue();
         helpers = new Helpers();
 
-        JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q, table_name), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 

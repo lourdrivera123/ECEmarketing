@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.example.zem.patientcareapp.CheckoutModule.AddressForDelivery;
 import com.example.zem.patientcareapp.CheckoutModule.PromosDiscounts;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 /**
  * Created by Zem on 11/18/2015.
@@ -39,7 +41,15 @@ public class DeliverPickupOption extends AppCompatActivity implements View.OnCli
         blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
         stepping_stone = (TextView) findViewById(R.id.stepping_stone);
 
-        order_model = new OrderModel();
+        if(getIntent().getSerializableExtra("order_model") != null){
+            order_model = (OrderModel) getIntent().getSerializableExtra("order_model");
+            order_model.setAction("update");
+        } else {
+            order_model = new OrderModel();
+            order_model.setAction("insert");
+        }
+        order_model.setPatient_id(SidebarActivity.getUserID());
+
 
         stepping_stone.setText("Step 1");
         blood_seeker.setProgress(0);
@@ -79,7 +89,7 @@ public class DeliverPickupOption extends AppCompatActivity implements View.OnCli
                 break;
 
             case R.id.pickup_btn:
-                intent = new Intent(this, PromosDiscounts.class);
+                intent = new Intent(this, RecipientForDelivery.class);
                 order_model.setMode_of_delivery("pickup");
                 go_on();
                 break;
@@ -90,10 +100,9 @@ public class DeliverPickupOption extends AppCompatActivity implements View.OnCli
     }
 
     public void go_on(){
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("order_model", order_model);
-        intent.putExtras(bundle);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("order_model", order_model);
+        intent.putExtra("order_model", order_model);
         startActivity(intent);
     }
-
 }

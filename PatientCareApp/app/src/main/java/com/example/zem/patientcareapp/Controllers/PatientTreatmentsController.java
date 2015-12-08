@@ -35,7 +35,7 @@ public class PatientTreatmentsController extends DbHelper {
     }
 
     public boolean savePatientTreatments(ArrayList<HashMap<String, String>> listOfTreatments, String request) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues val = new ContentValues();
         long rowID = 0;
 

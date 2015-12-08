@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OrderController;
+import com.example.zem.patientcareapp.Controllers.OrderDetailController;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
 
@@ -25,6 +27,8 @@ public class OrdersFragment extends Fragment {
     ArrayList<String> order_items;
     ArrayList<HashMap<String, String>> items;
     DbHelper dbHelper;
+    OrderController oc;
+    OrderDetailController odc;
     Context context;
 
     @Override
@@ -34,9 +38,11 @@ public class OrdersFragment extends Fragment {
         lv_items = (ListView) rootView.findViewById(R.id.lv_items);
 
         dbHelper = new DbHelper(getActivity());
+        oc = new OrderController(getActivity());
+        odc = new OrderDetailController(getActivity());
 
-        order_items = dbHelper.getAllOrderItems();
-        items = dbHelper.getAllOrderDetailItems(); // returns all basket items for the currently loggedin patient
+        order_items = oc.getAllOrderItems();
+        items = odc.getAllOrderDetailItems(); // returns all basket items for the currently loggedin patient
 
         adapter = new LazyAdapter(getActivity(), items, "order_items");
         lv_items.setAdapter(adapter);

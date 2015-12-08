@@ -73,7 +73,7 @@ public class SettingController extends DbHelper {
     public Settings getAllSettings() {
         Settings settings = new Settings();
 
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_SETTINGS;
         Cursor cur = sql_db.rawQuery(sql, null);
 

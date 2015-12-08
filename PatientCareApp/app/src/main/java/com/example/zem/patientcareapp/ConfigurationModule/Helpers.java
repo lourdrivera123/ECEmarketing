@@ -96,8 +96,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
-    public String get_url(String request) {
-        return Constants.GET_REQUEST_URL + request;
+    public String get_url(String request, String tbl_name) {
+        return Constants.GET_REQUEST_URL + request + "&tbl_name="+ tbl_name;
     }
 
     public String get_api_url(String request) {

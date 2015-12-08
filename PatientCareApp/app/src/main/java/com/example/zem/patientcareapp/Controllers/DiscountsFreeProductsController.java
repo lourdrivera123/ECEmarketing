@@ -35,7 +35,7 @@ public class DiscountsFreeProductsController extends DbHelper {
 
     /* DISCOUNTS & FREE PRODUCTS TABLE TABLE */
     public boolean saveDiscountsFreeProducts(DiscountsFreeProducts discountsFreeProducts, String action) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(SERVER_DFP_ID, discountsFreeProducts.getDfpId());

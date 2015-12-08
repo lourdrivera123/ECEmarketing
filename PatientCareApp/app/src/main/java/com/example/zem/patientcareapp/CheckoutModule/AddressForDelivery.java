@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.R;
@@ -34,6 +36,7 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
     Intent get_intent;
     OrderModel order_model;
     DbHelper db;
+    PatientController pc;
     Patient patient;
     EditText recipientAddress;
 
@@ -46,9 +49,10 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
         Bundle bundle= get_intent.getExtras();
 
         db = new DbHelper(this);
-        patient = db.getCurrentLoggedInPatient();
+        pc = new PatientController(this);
+        patient = pc.getCurrentLoggedInPatient();
 
-        order_model = (OrderModel) bundle.getSerializable("order_model");
+        order_model = (OrderModel) get_intent.getSerializableExtra("order_model");
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         next_btn = (Button) findViewById(R.id.next_btn);
@@ -60,8 +64,9 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
         blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
         stepping_stone = (TextView) findViewById(R.id.stepping_stone);
 
-        stepping_stone.setText("Step 2/5");
+        stepping_stone.setText("Step 2/4");
         blood_seeker.setProgress(40);
+
 
         blood_seeker.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -80,6 +85,11 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
         next_btn.setOnClickListener(this);
 
         hideLayout.setVisibility(View.GONE);
+
+        if(!order_model.getRecipient_address().equals("") && !order_model.getRecipient_address().equals(patient.getComplete_address())){
+            to_others.setChecked(true);
+            recipientAddress.setText(order_model.getRecipient_address());
+        }
     }
 
     @Override
@@ -96,19 +106,21 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if(to_me.isChecked()) {
             hideLayout.setVisibility(View.GONE);
-            order_model.setRecipient_address(patient.getComplete_address());
         } else if( to_others.isChecked() ){
-            order_model.setRecipient_address(recipientAddress.getText().toString());
             hideLayout.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onClick(View v) {
+        if(to_me.isChecked()) {
+            order_model.setRecipient_address(patient.getComplete_address());
+        }else if(to_others.isChecked()) {
+            order_model.setRecipient_address(recipientAddress.getText().toString());
+        }
+
         Intent recipientfordelivery_intent = new Intent(this, RecipientForDelivery.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("order_model", order_model);
-        recipientfordelivery_intent.putExtras(bundle);
+        recipientfordelivery_intent.putExtra("order_model", order_model);
         startActivity(recipientfordelivery_intent);
     }
 }

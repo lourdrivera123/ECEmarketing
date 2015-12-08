@@ -43,7 +43,7 @@ public class OrderDetailController extends DbHelper {
 
     public boolean saveOrderDetails(JSONObject object) {
         long rowID = 0;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         try {
             values.put(SERVER_ORDER_DETAILS_ID, object.getInt("id"));
@@ -68,7 +68,7 @@ public class OrderDetailController extends DbHelper {
 
     public ArrayList<HashMap<String, String>> getAllOrderDetailItems() {
         ArrayList<HashMap<String, String>> stfu = new ArrayList<>();
-//        SQLiteDatabase asdas = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT od.order_details_id, p.name as product_name, p.price, od.quantity, o.created_at as ordered_on, o.status,  p.packing, p.qty_per_packing, p.unit from order_details as od inner join orders as o on od.order_id = o.orders_id inner join products as p on od.product_id = p.product_id inner join branches as br on o.branch_id = br.branches_id where o.patient_id = " + SidebarActivity.getUserID() + " order by od.created_at DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
 

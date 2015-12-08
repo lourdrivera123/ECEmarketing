@@ -47,7 +47,7 @@ public class ClinicController extends DbHelper {
     }
 
     public boolean saveClinic(Clinic clinic, String type) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(SERVER_CLINICS_ID, clinic.getClinicsId());
@@ -83,7 +83,7 @@ public class ClinicController extends DbHelper {
 
     public ArrayList<HashMap<String, String>> getAllClinics() {
         ArrayList<HashMap<String, String>> listOfClinics = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
 
         String sql = "SELECT * FROM " + TBL_CLINICS;
         Cursor cur = sql_db.rawQuery(sql, null);
@@ -105,7 +105,7 @@ public class ClinicController extends DbHelper {
 
         String sql = "SELECT c.*, cd.clinic_sched  FROM " + TBL_CLINICS + " as c INNER JOIN " + ClinicDoctorController.TBL_CLINIC_DOCTOR + " as cd ON c." + SERVER_CLINICS_ID +
                 " = cd." + ClinicDoctorController.CD_CLINIC_ID + " WHERE cd." + ClinicDoctorController.CD_DOCTOR_ID + " = " + doctorID;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {

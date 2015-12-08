@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.SwipeTabsModule.EditTabsActivity;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -34,6 +35,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
     public static Spinner address_region, address_province, address_city_municipality, address_barangay;
     EditText optional_address_line, address_street, email, tel_no, cell_no;
     DbHelper dbhelper;
+    PatientController pc;
 
     public static ArrayList<HashMap<String, String>> hashOfBarangays, hashOfProvinces, hashOfMunicipalities, hashOfRegions;
     ArrayList<String> listOfRegions, listOfProvinces, listOfMunicipalities, listOfBarangays;
@@ -62,12 +64,13 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
 
         intent = EditTabsActivity.intent;
         dbhelper = new DbHelper(getActivity());
+        pc = new PatientController(getActivity());
 
         Log.d("intent", intent.getExtras() + "");
 
         if (intent.getIntExtra("edit", 0) > 0) {
             String edit_uname = SidebarActivity.getUname();
-            patient = dbhelper.getloginPatient(edit_uname);
+            patient = pc.getloginPatient(edit_uname);
 
             address_street.setText(patient.getAddress_street());
             email.setText(patient.getEmail());
@@ -82,7 +85,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
             }
         }
 
-        ListOfPatientsRequest.getJSONobj(getActivity(), "get_regions", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getActivity(), "get_regions", "regions", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
@@ -174,7 +177,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     address_province.setAdapter(provinces_adapter);
                 } else {
 
-                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_provinces&region_id=" + region_server_id, new RespondListener<JSONObject>() {
+                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_provinces&region_id=" + region_server_id, "provinces", new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {
@@ -243,7 +246,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     municipalities_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfMunicipalities);
                     address_city_municipality.setAdapter(municipalities_adapter);
                 } else {
-                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_municipalities&province_id=" + province_server_id, new RespondListener<JSONObject>() {
+                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_municipalities&province_id=" + province_server_id, "municipalities",  new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {
@@ -313,7 +316,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     barangays_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfBarangays);
                     address_barangay.setAdapter(barangays_adapter);
                 } else {
-                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_barangays&municipality_id=" + municipality_server_id, new RespondListener<JSONObject>() {
+                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_barangays&municipality_id=" + municipality_server_id, "barangays", new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {

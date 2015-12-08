@@ -25,11 +25,18 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.CheckoutModule.DeliverPickupOption;
+import com.example.zem.patientcareapp.CheckoutModule.SummaryActivity;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OrderController;
+import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
@@ -48,6 +55,11 @@ import java.util.HashMap;
 public class ShoppingCartActivity extends AppCompatActivity implements View.OnClickListener {
     LazyAdapter adapter;
     DbHelper dbHelper;
+    PatientController pc;
+    BasketController bc;
+    OrderController oc;
+    OrderPreferenceController opc;
+
     Helpers helper;
     ServerRequest serverRequest;
 
@@ -77,6 +89,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         queue = Volley.newRequestQueue(this);
         dbHelper = new DbHelper(this);
+        pc = new PatientController(this);
+        bc = new BasketController(this);
+        oc = new OrderController(this);
+        opc = new OrderPreferenceController(this);
+
         helper = new Helpers();
         serverRequest = new ServerRequest();
 
@@ -86,21 +103,21 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle("Shopping Cart");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
-        String url_raw = "get_basket_items&patient_id=" + dbHelper.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
+        String url_raw = "get_basket_items&patient_id=" + pc.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
 
         GetRequest.getJSONobj(this, url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
 
-                items = dbHelper.getAllBasketItems(true); // returns all basket items for the currently loggedin patient
+                items = bc.getAllBasketItems(true); // returns all basket items for the currently loggedin patient
 
                 for (HashMap<String, String> item : items) {
-                    double price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
-                    double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
+                    double price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
+                    double quantity = Double.parseDouble(item.get(BasketController.BASKET_QUANTITY));
                     double total = price * quantity;
                     TotalAmount += total;
                 }
-                items = dbHelper.getAllBasketItems(false); // returns all basket items for the currently loggedin patient
+                items = bc.getAllBasketItems(false); // returns all basket items for the currently loggedin patient
 
                 adapter = new LazyAdapter(ShoppingCartActivity.this, items, "basket_items");
                 lv_items.setAdapter(adapter);
@@ -139,7 +156,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         row = items.get(pos);
         gbl_pos = pos;
-        old_qty = Integer.parseInt(row.get(DbHelper.BASKET_QUANTITY));
+        old_qty = Integer.parseInt(row.get(BasketController.BASKET_QUANTITY));
 
         switch (item.getItemId()) {
             case R.id.update_cart:
@@ -154,7 +171,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
                 et_qty = (TextView) layout.findViewById(R.id.update_qty);
                 tv_amount = (TextView) layout.findViewById(R.id.new_total);
-                et_qty.setText(row.get(DbHelper.BASKET_QUANTITY));
+                et_qty.setText(row.get(BasketController.BASKET_QUANTITY));
                 p_name = (TextView) layout.findViewById(R.id.product_name);
                 p_total = (TextView) layout.findViewById(R.id.new_total);
                 p_price = (TextView) layout.findViewById(R.id.product_price);
@@ -162,18 +179,18 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 ImageButton btnMinusQty = (ImageButton) layout.findViewById(R.id.minus_qty);
                 ImageButton btnAddQty = (ImageButton) layout.findViewById(R.id.add_qty);
 
-                final double price = Double.parseDouble(row.get(DbHelper.PRODUCT_PRICE));
+                final double price = Double.parseDouble(row.get(ProductController.PRODUCT_PRICE));
                 final String productPacking, productUnit, productName;
                 final int productQtyPerPacking, productId, basketId;
 
-                productPacking = row.get(DbHelper.PRODUCT_PACKING);
-                productQtyPerPacking = Integer.parseInt(row.get(DbHelper.PRODUCT_QTY_PER_PACKING));
-                productUnit = row.get(DbHelper.PRODUCT_UNIT);
-                productName = row.get(DbHelper.PRODUCT_NAME);
-                productId = Integer.parseInt(row.get(DbHelper.SERVER_PRODUCT_ID));
-                basketId = Integer.parseInt(row.get(DbHelper.SERVER_BASKET_ID));
+                productPacking = row.get(ProductController.PRODUCT_PACKING);
+                productQtyPerPacking = Integer.parseInt(row.get(ProductController.PRODUCT_QTY_PER_PACKING));
+                productUnit = row.get(ProductController.PRODUCT_UNIT);
+                productName = row.get(ProductController.PRODUCT_NAME);
+                productId = Integer.parseInt(row.get(ProductController.SERVER_PRODUCT_ID));
+                basketId = Integer.parseInt(row.get(BasketController.SERVER_BASKET_ID));
                 et_qty.setText(productQtyPerPacking + "");
-                basktQty = Integer.parseInt(row.get(DbHelper.BASKET_QUANTITY));
+                basktQty = Integer.parseInt(row.get(BasketController.BASKET_QUANTITY));
 
                 btnAddQty.setOnClickListener(new View.OnClickListener() {
                     @SuppressLint("NewApi")
@@ -237,14 +254,14 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                                 oldTotal = old_total;
                                 newTotal = new_total;
 
-                                final Basket basket = dbHelper.getBasket(Integer.parseInt(row.get("product_id")));
+                                final Basket basket = bc.getBasket(Integer.parseInt(row.get("product_id")));
                                 basket.setQuantity(new_qty);
 
                                 HashMap<String, String> hashMap = new HashMap();
                                 hashMap.put("product_id", String.valueOf(productId));
                                 hashMap.put("request", "crud");
                                 hashMap.put("quantity", String.valueOf(new_qty));
-                                hashMap.put("patient_id", String.valueOf(dbHelper.getCurrentLoggedInPatient().getServerID()));
+                                hashMap.put("patient_id", String.valueOf(pc.getCurrentLoggedInPatient().getServerID()));
                                 hashMap.put("table", "baskets");
                                 hashMap.put("action", "update");
                                 hashMap.put("is_direct_update", "true");
@@ -262,11 +279,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                                             int success = response.getInt("success");
 
                                             if (success == 1) {
-                                                if (dbHelper.updateBasket(basket)) {
+                                                if (bc.updateBasket(basket)) {
 
                                                     tv_amount.setText(new_total + "");
 
-                                                    row.put(DbHelper.BASKET_QUANTITY, new_qty + "");
+                                                    row.put(BasketController.BASKET_QUANTITY, new_qty + "");
                                                     items.set(gbl_pos, row);
 
                                                     TotalAmount -= old_total;
@@ -361,7 +378,14 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_checkout_ready:
-                startActivity(new Intent(this, DeliverPickupOption.class));
+                OrderModel order_model = opc.getOrderPreference();
+                if(order_model.isValid()) {
+                    Intent summary_intent = new Intent(this, SummaryActivity.class);
+                    summary_intent.putExtra("order_model", order_model);
+                    startActivity(summary_intent);
+                } else {
+                    startActivity(new Intent(this, DeliverPickupOption.class));
+                }
                 break;
         }
     }

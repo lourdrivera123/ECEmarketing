@@ -10,6 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.Controllers.UpdateController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 
@@ -24,18 +25,20 @@ public class GetRequest {
         RequestQueue queue;
         Helpers helpers;
         final DbHelper dbHelper;
+        final UpdateController upc;
 
         queue = VolleySingleton.getInstance().getRequestQueue();
         helpers = new Helpers();
         dbHelper = new DbHelper(c);
+        upc = new UpdateController(c);
 
-        JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q, table_name), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Sync sync = new Sync();
                 sync.init(c, q, table_name, table_id, response);
                 try {
-                    dbHelper.updateLastUpdatedTable(table_name, response.getString("latest_updated_at"));
+                    upc.updateLastUpdatedTable(table_name, response.getString("latest_updated_at"));
                 } catch (Exception e) {
                     System.out.print("<GetRequest> something wrong with json: " + e);
                 }

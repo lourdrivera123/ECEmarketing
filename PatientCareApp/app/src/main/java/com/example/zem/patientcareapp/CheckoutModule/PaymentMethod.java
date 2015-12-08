@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.R;
 
@@ -28,7 +30,7 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
     OrderModel order_model;
     LinearLayout cash, visa_or_mastercard, paypal;
     Intent intent;
-
+    String payment_method;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,9 +38,9 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.payment_method_layout);
 
         get_intent = getIntent();
-        Bundle bundle= get_intent.getExtras();
+//        Bundle bundle= get_intent.getExtras();
 
-        order_model = (OrderModel) bundle.getSerializable("order_model");
+        order_model = (OrderModel) get_intent.getSerializableExtra("order_model");
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
@@ -48,7 +50,7 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
         paypal = (LinearLayout) findViewById(R.id.paypal);
 
         if(order_model.getMode_of_delivery().equals("delivery")){
-            stepping_stone.setText("Step 5/5");
+            stepping_stone.setText("Step 4/4");
             blood_seeker.setProgress(100);
         } else {
             stepping_stone.setText("Step 3/3");
@@ -86,15 +88,18 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.cash:
-                order_model.setPayment_method("cash");
+//                order_model.setPayment_method("cash");
+                payment_method = "cash";
                 ok_lets_go();
                 break;
             case R.id.visa_or_mastercard:
-                order_model.setPayment_method("visa_or_mastercard");
+                payment_method = "visa_or_mastercard";
+//                order_model.setPayment_method("visa_or_mastercard");
                 ok_lets_go();
                 break;
             case R.id.paypal:
-                order_model.setPayment_method("order_model");
+                payment_method = "paypal";
+//                order_model.setPayment_method("order_model");
                 ok_lets_go();
                 break;
             default:
@@ -103,10 +108,14 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
     }
 
     public void ok_lets_go(){
-        intent = new Intent(this, SummaryActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("order_model", order_model);
-        intent.putExtras(bundle);
-        startActivity(intent);
+        order_model.setPayment_method(payment_method);
+        OrderPreferenceController opc = new OrderPreferenceController(this);
+        if(opc.savePreference(order_model)){
+            intent = new Intent(this, PromosDiscounts.class);
+            intent.putExtra("order_model", order_model);
+            startActivity(intent);
+        } else {
+            Log.d("ot","what  the fuck is wrong ?");
+        }
     }
 }

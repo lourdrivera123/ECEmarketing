@@ -18,7 +18,10 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Model.Product;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -50,6 +53,9 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
 
     Handler handler;
     DbHelper dbhelper;
+    ProductController pc;
+    BasketController bc;
+    PatientController ptc;
     Product prod;
     Helpers helpers;
     ServerRequest serverRequest;
@@ -62,6 +68,9 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
 
         handler = new Handler();
         dbhelper = new DbHelper(this);
+        pc = new ProductController(this);
+        bc = new BasketController(this);
+        ptc = new PatientController(this);
         prod = new Product();
         helpers = new Helpers();
         serverRequest = new ServerRequest();
@@ -70,7 +79,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
 
         Intent intent = getIntent();
         get_productID = intent.getIntExtra(PRODUCT_ID, 0);
-        prod = dbhelper.getProductById(get_productID);
+        prod = pc.getProductById(get_productID);
 
         prod_name = (TextView) findViewById(R.id.prod_name);
         prod_generic = (TextView) findViewById(R.id.prod_generic);
@@ -162,13 +171,13 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                     int new_qty;
                     new_qty = Integer.parseInt(String.valueOf(temp_qty));
 
-                    final Basket basket = dbhelper.getBasket(get_productID);
+                    final Basket basket = bc.getBasket(get_productID);
 
                     if (basket.getBasketId() > 0) {
                         HashMap<String, String> hashMap = new HashMap();
                         hashMap.put("product_id", String.valueOf(get_productID));
 
-                        hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
+                        hashMap.put("patient_id", String.valueOf(ptc.getCurrentLoggedInPatient().getServerID()));
                         hashMap.put("table", "baskets");
                         hashMap.put("request", "crud");
 
@@ -192,7 +201,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                     success = response.getInt("success");
 
                                     if (success == 1) {
-                                        if (dbhelper.updateBasket(basket)) {
+                                        if (bc.updateBasket(basket)) {
                                             Toast.makeText(getBaseContext(), "Your cart has been updated.", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(getBaseContext(), "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
@@ -215,7 +224,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                         final HashMap<String, String> hashMap = new HashMap();
                         hashMap.put("product_id", String.valueOf(get_productID));
                         hashMap.put("quantity", String.valueOf(new_qty));
-                        hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
+                        hashMap.put("patient_id", String.valueOf(ptc.getCurrentLoggedInPatient().getServerID()));
                         hashMap.put("table", "baskets");
                         hashMap.put("request", "crud");
                         hashMap.put("action", "insert");

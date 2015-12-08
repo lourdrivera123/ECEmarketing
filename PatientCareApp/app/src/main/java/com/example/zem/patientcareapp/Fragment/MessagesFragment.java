@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.MessageController;
+import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Activities.MessageActivity;
@@ -54,6 +56,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     private MessagesAdapter adapter;
     ServerRequest serverRequest;
     DbHelper db;
+    OverlayController oc;
+    MessageController mc;
 
     ProgressDialog dialog;
 
@@ -72,6 +76,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         patient_id = SidebarActivity.getUserID();
         serverRequest = new ServerRequest();
         db = new DbHelper(getActivity());
+        oc = new OverlayController(getActivity());
+        mc = new MessageController(getActivity());
 
         showOverLay();
 
@@ -91,7 +97,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private void showOverLay() {
-        if (db.checkOverlay("Messages", "check")) {
+        if (oc.checkOverlay("Messages", "check")) {
 
         } else {
             final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
@@ -103,7 +109,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    if (db.checkOverlay("Messages", "insert"))
+                    if (oc.checkOverlay("Messages", "insert"))
                         dialog.dismiss();
                 }
             });
@@ -135,7 +141,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                             map.put("serverID", String.valueOf(obj.getInt("id")));
                             hashOfMessages.add(map);
 
-                            if (db.saveMessages(obj, "insert")) {
+                            if (mc.saveMessages(obj, "insert")) {
 
                             } else
                                 Toast.makeText(getActivity(), "Failed to save", Toast.LENGTH_SHORT).show();
@@ -154,7 +160,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                hashOfMessages = db.getAllMessages(patient_id);
+                hashOfMessages = mc.getAllMessages(patient_id);
 
                 adapter = new MessagesAdapter(getActivity(), R.layout.list_item_messages_fragment, hashOfMessages);
                 listOfMessages.setAdapter(adapter);
@@ -326,7 +332,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         }
 
         public void remove(int position) {
-            int serverID = Integer.parseInt(hashOfMessages.get(position).get(db.MSGS_SERVER_ID));
+            int serverID = Integer.parseInt(hashOfMessages.get(position).get(MessageController.MSGS_SERVER_ID));
 
             if (db.deleteFromTable(serverID, "messages", "serverID")) {
                 hashOfMessages.remove(position);

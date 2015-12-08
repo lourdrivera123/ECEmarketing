@@ -45,13 +45,13 @@ public class BasketController extends DbHelper {
 
     /////////////////////////////INSERT METHODS///////////////////////////////////////
     public boolean insertBasket(Basket basket) {
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         String datenow = dateFormat.format(date);
 
         int patient_id = patient_controller.getCurrentLoggedInPatient().getServerID();
 
-//        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(SERVER_BASKET_ID, basket.getBasketId());
@@ -68,11 +68,11 @@ public class BasketController extends DbHelper {
     }
 
     public Basket getBasket(int productId) {
-        Basket basket = new Basket();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
 
+        Basket basket = new Basket();
         String sql = "Select * from " + TBL_BASKETS + " where product_id=" + productId + " and patient_id=" + patient_controller.getCurrentLoggedInPatient().getServerID();
         System.out.println("\ngetBasket: " + sql);
-//        SQLiteDatabase db = getWritableDatabase();
         Cursor cur = sql_db.rawQuery(sql, null);
 
         cur.moveToFirst();
@@ -109,8 +109,9 @@ public class BasketController extends DbHelper {
 
         System.out.println("basket sql: " + sql);
 
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor cur = db.rawQuery(sql, null);
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
+
+        Cursor cur = sql_db.rawQuery(sql, null);
 
         cur.moveToFirst();
         while (!cur.isAfterLast()) {
@@ -135,7 +136,7 @@ public class BasketController extends DbHelper {
         }
 
         cur.close();
-        db.close();
+        sql_db.close();
         return items;
     }
 
@@ -144,7 +145,7 @@ public class BasketController extends DbHelper {
         Date date = new Date();
         String datenow = dateFormat.format(date);
 
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(BASKET_QUANTITY, basket.getQuantity());
@@ -156,7 +157,7 @@ public class BasketController extends DbHelper {
     }
 
     public boolean emptyBasket(int patient_id) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         long row = sql_db.delete(TBL_BASKETS, PATIENT_ID + "=" + patient_id, null);
         sql_db.close();
         return row > 0;

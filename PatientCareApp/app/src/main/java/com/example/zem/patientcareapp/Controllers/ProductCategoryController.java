@@ -35,7 +35,7 @@ public class ProductCategoryController extends DbHelper {
     }
 
     public boolean insertProductCategory(ProductCategory category) throws SQLiteConstraintException {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         long rowID = 0;
         try {
@@ -56,7 +56,7 @@ public class ProductCategoryController extends DbHelper {
     //for category
     public int getCategoryIdByName(String name) {
         int id = 0;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT id FROM " + TBL_PRODUCT_CATEGORIES + " WHERE name='" + name + "'";
         Cursor cur = sql_db.rawQuery(sql, null);
 
@@ -72,7 +72,7 @@ public class ProductCategoryController extends DbHelper {
 
     public List<String> getAllProductCategoriesArray() {
         List<String> list = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PRODUCT_CATEGORIES;
         Cursor cur = sql_db.rawQuery(sql, null);
         int x = 0;

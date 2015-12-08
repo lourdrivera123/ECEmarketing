@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.MessageController;
+import com.example.zem.patientcareapp.Controllers.UpdateController;
 import com.example.zem.patientcareapp.Model.Messages;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -50,11 +52,12 @@ public class MessageActivity extends Activity {
         actionbar.setDisplayHomeAsUpEnabled(true);
 
         db = new DbHelper(this);
+        MessageController mc = new MessageController(this);
         serverRequest = new ServerRequest();
         Intent intent = getIntent();
         int server_id = intent.getIntExtra("serverID", 0);
 
-        msg = db.getSpecificMessage(server_id);
+        msg = mc.getSpecificMessage(server_id);
 
         if (msg.getIsRead() == 0) {
             HashMap<String, String> hashMap = new HashMap();
@@ -77,7 +80,8 @@ public class MessageActivity extends Activity {
                         int success = response.getInt("success");
 
                         if (success == 1) {
-                            if (db.updateIsRead_table(msg.getServerID(), "messages", "serverID") == false)
+                            UpdateController uc = new UpdateController(getBaseContext());
+                            if (uc.updateIsRead_table(msg.getServerID(), "messages", "serverID") == false)
                                 Toast.makeText(getBaseContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {

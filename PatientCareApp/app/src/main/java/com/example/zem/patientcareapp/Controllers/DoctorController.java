@@ -42,7 +42,7 @@ public class DoctorController extends DbHelper {
 
     public boolean saveDoctor(Doctor doctor, String request) {
         long rowID = 0;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(DOC_DOC_ID, doctor.getServer_doc_id());
@@ -70,7 +70,7 @@ public class DoctorController extends DbHelper {
     }
 
     public ArrayList<HashMap<String, String>> getDoctorName() {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_DOCTORS;
         Cursor cur = sql_db.rawQuery(sql, null);
         HashMap<String, String> map;
@@ -96,7 +96,7 @@ public class DoctorController extends DbHelper {
     public ArrayList<HashMap<String, String>> getAllDoctors() {
         ArrayList<HashMap<String, String>> doctors = new ArrayList();
 
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT d.*, s.name FROM " + TBL_DOCTORS + " as d inner join " + SubSpecialtyController.TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + SpecialtyController.TBL_SPECIALTIES + " as s on ss.specialty_id = s.specialty_id";
         Cursor cur = sql_db.rawQuery(sql, null);
 
@@ -124,7 +124,7 @@ public class DoctorController extends DbHelper {
 
     public ArrayList<HashMap<Integer, ArrayList<String>>> getSearchDoctors() {
         ArrayList<HashMap<Integer, ArrayList<String>>> doctors = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "select d.*, s.name as specialty, ss.name as sub_specialty from " + SpecialtyController.TBL_SPECIALTIES + " as s" +
                 " inner join " + SubSpecialtyController.TBL_SUB_SPECIALTIES + " as ss on s.specialty_id = ss.specialty_id inner join " + TBL_DOCTORS + " as d on ss.sub_specialty_id = d.sub_specialty_id";
         Cursor cur = sql_db.rawQuery(sql, null);
@@ -149,6 +149,7 @@ public class DoctorController extends DbHelper {
     }
 
     public Doctor getDoctorByID(int doctorID) {
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sqlgetDoctorByID = "SELECT d.*, s.name , ss.name as sub_name FROM " + TBL_DOCTORS + " as d inner join " +
                 SubSpecialtyController.TBL_SUB_SPECIALTIES + " as ss on d.sub_specialty_id = ss.sub_specialty_id inner join " + SpecialtyController.TBL_SPECIALTIES +
                 " as s on ss.specialty_id = s.specialty_id where d.doc_id = " + doctorID;
@@ -179,7 +180,7 @@ public class DoctorController extends DbHelper {
 
     public ArrayList<HashMap<String, String>> getDoctorsInnerJoinClinics() {
         ArrayList<HashMap<String, String>> listOfDoctorClinic = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
 
         String sql = "select d.lname, d.mname, d.fname, c.name, c.clinics_id, cd.clinic_sched from " + TBL_DOCTORS + " as d INNER JOIN " +
                 ClinicDoctorController.TBL_CLINIC_DOCTOR + " as cd on " + "d.doc_id = cd.doctor_id INNER JOIN " + ClinicController.TBL_CLINICS + " as c on cd.clinic_id = " +

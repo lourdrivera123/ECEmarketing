@@ -35,7 +35,7 @@ public class PatientPrescriptionController extends DbHelper {
     }
 
     public boolean insertUploadOnPrescription(Integer patientID, String filename, int serverID) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(PRESCRIPTIONS_SERVER_ID, serverID);
@@ -50,7 +50,7 @@ public class PatientPrescriptionController extends DbHelper {
 
     public boolean savePrescription(JSONObject object) {
         long rowID = 0;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         try {
@@ -72,7 +72,7 @@ public class PatientPrescriptionController extends DbHelper {
     //for prescription
     public ArrayList<HashMap<String, String>> getPrescriptionByUserID(int patientID) {
         ArrayList<HashMap<String, String>> listOfFilename = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PATIENT_PRESCRIPTIONS + " WHERE " + PATIENT_ID + " = " + patientID;
         Cursor cur = sql_db.rawQuery(sql, null);
 
@@ -90,7 +90,7 @@ public class PatientPrescriptionController extends DbHelper {
     }
 
     public boolean deletePrescriptionByServerID(int serverID) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         long deletedPrescriptionID = sql_db.delete(TBL_PATIENT_PRESCRIPTIONS, PRESCRIPTIONS_SERVER_ID + " = " + serverID, null);
         sql_db.close();
 

@@ -40,7 +40,7 @@ public class PatientRecordController extends DbHelper {
     }
 
     public boolean savePatientRecord(PatientRecord record, String request) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         long rowID = 0;
 
@@ -66,7 +66,7 @@ public class PatientRecordController extends DbHelper {
     }
 
     public ArrayList<HashMap<String, String>> getPatientRecord(int patientID) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "select * FROM " + TBL_PATIENT_RECORDS + " WHERE " + PATIENT_ID + " = " + patientID + " ORDER BY " + RECORDS_DATE + " DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
         ArrayList<HashMap<String, String>> arrayOfRecords = new ArrayList();
@@ -89,7 +89,7 @@ public class PatientRecordController extends DbHelper {
     }
 
     public PatientRecord getPatientRecordByRecordID(int recordID, int userID) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PATIENT_RECORDS + " WHERE " + PATIENT_ID + " = " + userID + " AND " + AI_ID + " = " + recordID;
         Cursor cur = sql_db.rawQuery(sql, null);
         cur.moveToFirst();
@@ -111,7 +111,7 @@ public class PatientRecordController extends DbHelper {
     }
 
     public long deletePatientRecord(int recordID) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         long deleted_record_ID = sql_db.delete(TBL_PATIENT_RECORDS, AI_ID + " = " + recordID, null);
         sql_db.close();
 

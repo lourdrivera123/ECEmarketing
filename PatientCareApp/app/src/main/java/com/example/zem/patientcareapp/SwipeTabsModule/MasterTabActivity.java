@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Activities.MainActivity;
+import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
@@ -27,6 +28,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     ImageView swipeLeftRight;
 
     DbHelper dbHelper;
+    OverlayController oc;
     Intent intent;
     int unselected = 0;
     int pos = 0;
@@ -36,6 +38,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         super.onCreate(savedInstanceState);
         setContentView(R.layout.master_tab_layout);
         dbHelper = new DbHelper(this);
+        oc = new OverlayController(this);
 
         actionBar = getActionBar();
         MainActivity.setCustomActionBar(actionBar);
@@ -98,7 +101,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
         dialog.setContentView(R.layout.mastertabs_overlay);
 
-        if (dbHelper.checkOverlay("MasterTabs", "check") == false) {
+        if (oc.checkOverlay("MasterTabs", "check") == false) {
             swipeLeftRight = (ImageView) dialog.findViewById(R.id.swipeLeftRight);
             LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.masterTabsLayout);
             layout.setAlpha((float) 0.8);
@@ -106,7 +109,7 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
             swipeLeftRight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (dbHelper.checkOverlay("MasterTabs", "insert"))
+                    if (oc.checkOverlay("MasterTabs", "insert"))
                         dialog.dismiss();
                 }
             });

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Controllers.BasketController;
+import com.example.zem.patientcareapp.Controllers.BranchController;
 import com.example.zem.patientcareapp.Controllers.ClinicController;
 import com.example.zem.patientcareapp.Controllers.ClinicDoctorController;
 import com.example.zem.patientcareapp.Controllers.DiscountsFreeProductsController;
@@ -12,6 +13,11 @@ import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.DosageController;
 import com.example.zem.patientcareapp.Controllers.FreeProductsController;
+import com.example.zem.patientcareapp.Controllers.MessageController;
+import com.example.zem.patientcareapp.Controllers.OrderController;
+import com.example.zem.patientcareapp.Controllers.OrderDetailController;
+import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
 import com.example.zem.patientcareapp.Controllers.PatientRecordController;
 import com.example.zem.patientcareapp.Controllers.PatientTreatmentsController;
@@ -19,8 +25,10 @@ import com.example.zem.patientcareapp.Controllers.ProductCategoryController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Controllers.ProductSubCategoryController;
 import com.example.zem.patientcareapp.Controllers.PromoController;
+import com.example.zem.patientcareapp.Controllers.SettingController;
 import com.example.zem.patientcareapp.Controllers.SpecialtyController;
 import com.example.zem.patientcareapp.Controllers.SubSpecialtyController;
+import com.example.zem.patientcareapp.Controllers.UpdateController;
 import com.example.zem.patientcareapp.Model.DiscountsFreeProducts;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Model.Clinic;
@@ -76,6 +84,13 @@ public class Sync {
     ClinicController clinic_controller;
     ClinicDoctorController cdc;
     PatientPrescriptionController ppc;
+    SettingController sc;
+    BranchController brc;
+    OrderController oc;
+    OrderDetailController odc;
+    MessageController mc;
+    PatientConsultationController ptcc;
+    UpdateController uc;
     Context context;
 
     public void init(Context c, String request, String table_name, String table_id, JSONObject response) {
@@ -100,6 +115,14 @@ public class Sync {
         clinic_controller = new ClinicController(context);
         cdc = new ClinicDoctorController(context);
         ppc = new PatientPrescriptionController(context);
+        sc = new SettingController(context);
+        brc = new BranchController(context);
+        oc = new OrderController(context);
+        odc = new OrderDetailController(context);
+        mc = new MessageController(context);
+        ptcc = new PatientConsultationController(context);
+        uc = new UpdateController(context);
+
         try {
             int success = response.getInt("success");
             if (success == 1) {
@@ -168,22 +191,22 @@ public class Sync {
                                 if (!ppc.savePrescription(json_object))
                                     Log.d("sync_7", "wala na save");
                             } else if (tableName.equals("settings")) {
-                                if (!dbHelper.saveSettings(json_object, "insert"))
+                                if (!sc.saveSettings(json_object, "insert"))
                                     Log.d("sync_6", "wala na save");
                             } else if (tableName.equals("branches")) {
-                                if (!dbHelper.saveBranches(json_object))
+                                if (!brc.saveBranches(json_object))
                                     Log.d("sync_5", "wala na save");
                             } else if (tableName.equals("orders")) {
-                                if (!dbHelper.saveOrders(json_object))
+                                if (!oc.saveOrders(json_object))
                                     Log.d("sync_4", "wala na save");
                             } else if (tableName.equals("order_details")) {
-                                if (!dbHelper.saveOrderDetails(json_object))
+                                if (!odc.saveOrderDetails(json_object))
                                     Log.d("sync_3", "wala na save");
                             } else if (tableName.equals("messages")) {
-                                if (!dbHelper.saveMessages(json_object, "insert"))
+                                if (!mc.saveMessages(json_object, "insert"))
                                     Log.d("sync_2", "wala na save");
                             } else if (tableName.equals("consultations")) {
-                                if (!dbHelper.savePatientConsultation(setConsultation(json_object), "add"))
+                                if (!ptcc.savePatientConsultation(setConsultation(json_object), "add"))
                                     Log.d("sync_1", "wala na save");
                             }
                         }
@@ -200,16 +223,16 @@ public class Sync {
                                 if (!doctor_controller.saveDoctor(setDoctor(json_object), "update"))
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                             } else if (tableName.equals("products")) {
-                                if (!dbHelper.saveProduct(setProduct(json_object), "update"))
+                                if (!pc.saveProduct(setProduct(json_object), "update"))
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                             } else if (tableName.equals("settings")) {
-                                if (!dbHelper.saveSettings(json_object, "update"))
+                                if (!sc.saveSettings(json_object, "update"))
                                     System.out.print("referral_settings FAILED TO SAVE <src: Sync.java>");
                             } else if (tableName.equals("messages")) {
-                                if (!dbHelper.saveMessages(json_object, "update"))
+                                if (!mc.saveMessages(json_object, "update"))
                                     System.out.print("messages FAILED TO SAVE <src: Sync.java>");
                             } else if (tableName.equals("consultations")) {
-                                if (!dbHelper.savePatientConsultation(setConsultation(json_object), "update"))
+                                if (!ptcc.savePatientConsultation(setConsultation(json_object), "update"))
                                     System.out.print("consultations FAILED TO SAVE <src: Sync.java>");
                             }
                         }
@@ -335,7 +358,7 @@ public class Sync {
     public JSONArray checkWhatToUpdate(JSONArray json_array_mysql, String tblname, String latest_updated_at) {
         JSONArray doctors_json_array_final_storage = new JSONArray();
         try {
-            if (!dbHelper.getLastUpdate(tblname).equals(latest_updated_at)) {
+            if (!uc.getLastUpdate(tblname).equals(latest_updated_at)) {
 
                 for (int i = 0; i < json_array_mysql.length(); i++) {
 
@@ -343,7 +366,7 @@ public class Sync {
 
                     if (!json_object_mysql.getString("updated_at").equals("null") && json_object_mysql.getString("updated_at") != null) {
 
-                        if (checkDateTime(dbHelper.getLastUpdate(tblname), json_object_mysql.getString("updated_at"))) { //to be repared
+                        if (checkDateTime(uc.getLastUpdate(tblname), json_object_mysql.getString("updated_at"))) { //to be repared
                             //the sqlite last update is lesser than from mysql
                             //put your json object into final array here.
 
@@ -416,12 +439,12 @@ public class Sync {
             clinic.setName(json.getString("name"));
             clinic.setClinicsId(json.getInt("id"));
             clinic.setContactNumber(json.getString("contact_no"));
-            clinic.setFullAddress(json.getString(DbHelper.CLINIC_UNIT_NO), json.getString(DbHelper.CLINIC_BUILDING),
-                    json.getString(DbHelper.CLINIC_LOT_NO), json.getString(DbHelper.CLINIC_BLOCK_NO), json.getString(DbHelper.CLINIC_PHASE_NO),
-                    json.getString(DbHelper.CLINIC_HOUSE_NO), json.getString(DbHelper.CLINIC_STREET),
-                    json.getString(DbHelper.CLINIC_BARANGAY), json.getString(DbHelper.CLINIC_CITY),
-                    json.getString(DbHelper.CLINIC_PROVINCE), json.getString(DbHelper.CLINIC_REGION),
-                    json.getString(DbHelper.CLINIC_ZIP));
+            clinic.setFullAddress(json.getString(ClinicController.CLINIC_UNIT_NO), json.getString(ClinicController.CLINIC_BUILDING),
+                    json.getString(ClinicController.CLINIC_LOT_NO), json.getString(ClinicController.CLINIC_BLOCK_NO), json.getString(ClinicController.CLINIC_PHASE_NO),
+                    json.getString(ClinicController.CLINIC_HOUSE_NO), json.getString(ClinicController.CLINIC_STREET),
+                    json.getString(ClinicController.CLINIC_BARANGAY), json.getString(ClinicController.CLINIC_CITY),
+                    json.getString(ClinicController.CLINIC_PROVINCE), json.getString(ClinicController.CLINIC_REGION),
+                    json.getString(ClinicController.CLINIC_ZIP));
             clinic.setCreatedAt(json.getString("created_at"));
             clinic.setUpdatedAt(json.getString("updated_at"));
             clinic.setDeletedAt(json.getString("deleted_at"));
@@ -516,28 +539,28 @@ public class Sync {
         Patient patient = new Patient();
         try {
             patient.setServerID(json.getInt("id"));
-            patient.setUsername(json.getString(DbHelper.PTNT_USERNAME));
-            patient.setPassword(json.getString(DbHelper.PTNT_PASSWORD));
-            patient.setOccupation(json.getString(DbHelper.PTNT_OCCUPATION));
-            patient.setBirthdate(json.getString(DbHelper.PTNT_BIRTHDATE));
-            patient.setSex(json.getString(DbHelper.PTNT_SEX));
-            patient.setCivil_status(json.getString(DbHelper.PTNT_CIVIL_STATUS));
-            patient.setHeight(json.getString(DbHelper.PTNT_HEIGHT));
-            patient.setWeight(json.getString(DbHelper.PTNT_WEIGHT));
-            patient.setFullname(json.getString(DbHelper.PTNT_FNAME), json.getString(DbHelper.PTNT_MNAME), json.getString(DbHelper.PTNT_LNAME));
-            patient.setAddress_street(json.getString(DbHelper.PTNT_STREET));
+            patient.setUsername(json.getString(PatientController.PTNT_USERNAME));
+            patient.setPassword(json.getString(PatientController.PTNT_PASSWORD));
+            patient.setOccupation(json.getString(PatientController.PTNT_OCCUPATION));
+            patient.setBirthdate(json.getString(PatientController.PTNT_BIRTHDATE));
+            patient.setSex(json.getString(PatientController.PTNT_SEX));
+            patient.setCivil_status(json.getString(PatientController.PTNT_CIVIL_STATUS));
+            patient.setHeight(json.getString(PatientController.PTNT_HEIGHT));
+            patient.setWeight(json.getString(PatientController.PTNT_WEIGHT));
+            patient.setFullname(json.getString(PatientController.PTNT_FNAME), json.getString(PatientController.PTNT_MNAME), json.getString(PatientController.PTNT_LNAME));
+            patient.setAddress_street(json.getString(PatientController.PTNT_STREET));
             patient.setBarangay_id(json.getInt("address_barangay_id"));
             patient.setBarangay(json.getString("address_barangay"));
             patient.setMunicipality(json.getString("address_city_municipality"));
             patient.setProvince(json.getString("address_province"));
             patient.setRegion(json.getString("address_region"));
-            patient.setTel_no(json.getString(DbHelper.PTNT_TEL_NO));
-            patient.setMobile_no(json.getString(DbHelper.PTNT_MOBILE_NO));
-            patient.setEmail(json.getString(DbHelper.PTNT_EMAIL));
-            patient.setPhoto(json.getString(DbHelper.PTNT_PHOTO));
-            patient.setReferral_id(json.getString(DbHelper.PTNT_REFERRAL_ID));
-            patient.setReferred_byUser(json.getString(DbHelper.PTNT_REFERRED_BY_USER));
-            patient.setReferred_byDoctor(json.getString(DbHelper.PTNT_REFERRED_BY_DOCTOR));
+            patient.setTel_no(json.getString(PatientController.PTNT_TEL_NO));
+            patient.setMobile_no(json.getString(PatientController.PTNT_MOBILE_NO));
+            patient.setEmail(json.getString(PatientController.PTNT_EMAIL));
+            patient.setPhoto(json.getString(PatientController.PTNT_PHOTO));
+            patient.setReferral_id(json.getString(PatientController.PTNT_REFERRAL_ID));
+            patient.setReferred_byUser(json.getString(PatientController.PTNT_REFERRED_BY_USER));
+            patient.setReferred_byDoctor(json.getString(PatientController.PTNT_REFERRED_BY_DOCTOR));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -549,10 +572,10 @@ public class Sync {
 
         try {
             product.setProductId(json.getInt("id"));
-            product.setName(json.getString(DbHelper.PRODUCT_NAME));
-            product.setSubCategoryId(Integer.parseInt(json.getString(DbHelper.PRODUCT_SUBCATEGORY_ID)));
-            product.setGenericName(json.getString(DbHelper.PRODUCT_GENERIC_NAME));
-            product.setDescription(json.getString(DbHelper.PRODUCT_DESCRIPTION));
+            product.setName(json.getString(ProductController.PRODUCT_NAME));
+            product.setSubCategoryId(Integer.parseInt(json.getString(ProductController.PRODUCT_SUBCATEGORY_ID)));
+            product.setGenericName(json.getString(ProductController.PRODUCT_GENERIC_NAME));
+            product.setDescription(json.getString(ProductController.PRODUCT_DESCRIPTION));
             product.setPrescriptionRequired(Integer.parseInt(json.getString("prescription_required")));
             product.setPrice(Double.parseDouble(json.getString("price")));
             product.setUnit(json.getString("unit"));
@@ -573,12 +596,12 @@ public class Sync {
     public Basket setBasket(JSONObject json) throws JSONException {
         Basket basket = new Basket();
         basket.setBasketId(json.getInt("id"));
-        basket.setQuantity(Integer.parseInt(json.getString(DbHelper.BASKET_QUANTITY)));
+        basket.setQuantity(Integer.parseInt(json.getString(BasketController.BASKET_QUANTITY)));
         basket.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
         basket.setPatienId(json.getInt(DbHelper.PATIENT_ID));
-        basket.setProductId(json.getInt(DbHelper.BASKET_PRODUCT_ID));
-        basket.setPrescriptionId(json.getInt(DbHelper.BASKET_PRESCRIPTION_ID));
-        basket.setIsApproved(json.getInt(DbHelper.BASKET_IS_APPROVED));
+        basket.setProductId(json.getInt(BasketController.BASKET_PRODUCT_ID));
+        basket.setPrescriptionId(json.getInt(BasketController.BASKET_PRESCRIPTION_ID));
+        basket.setIsApproved(json.getInt(BasketController.BASKET_IS_APPROVED));
         return basket;
     }
 
@@ -586,11 +609,11 @@ public class Sync {
         DiscountsFreeProducts discountsFreeProducts = new DiscountsFreeProducts();
 
         discountsFreeProducts.setDfpId(json.getInt("id"));
-        discountsFreeProducts.setProductId(json.getInt(DbHelper.DFP_PRODUCT_ID));
-        discountsFreeProducts.setPromoId(json.getInt(DbHelper.DFP_PROMO_ID));
-        discountsFreeProducts.setLess(json.getDouble(DbHelper.DFP_LESS));
-        discountsFreeProducts.setQuantityRequired(json.getInt(DbHelper.DFP_QUANTITY_REQUIRED));
-        discountsFreeProducts.setType(json.getInt(DbHelper.DFP_TYPE));
+        discountsFreeProducts.setProductId(json.getInt(DiscountsFreeProductsController.DFP_PRODUCT_ID));
+        discountsFreeProducts.setPromoId(json.getInt(DiscountsFreeProductsController.DFP_PROMO_ID));
+        discountsFreeProducts.setLess(json.getDouble(DiscountsFreeProductsController.DFP_LESS));
+        discountsFreeProducts.setQuantityRequired(json.getInt(DiscountsFreeProductsController.DFP_QUANTITY_REQUIRED));
+        discountsFreeProducts.setType(json.getInt(DiscountsFreeProductsController.DFP_TYPE));
         discountsFreeProducts.setCreatedAt(json.getString(DbHelper.CREATED_AT));
         discountsFreeProducts.setUpdatedAt(json.getString(DbHelper.UPDATED_AT));
         discountsFreeProducts.setDeletedAt(json.getString(DbHelper.DELETED_AT));
@@ -602,11 +625,11 @@ public class Sync {
         FreeProducts freeProducts = new FreeProducts();
 
         freeProducts.setFreeProductsId(json.getInt("id"));
-        freeProducts.setDfpId(json.getInt(DbHelper.FP_DFP_ID));
-        freeProducts.setQuantityFree(json.getInt(DbHelper.FP_QTY_FREE));
-        freeProducts.setCreatedAt(json.getString(DbHelper.FP_CREATED_AT));
-        freeProducts.setUpdatedAt(json.getString(DbHelper.FP_UPDATED_AT));
-        freeProducts.setDeletedAt(json.getString(DbHelper.FP_DELETED_AT));
+        freeProducts.setDfpId(json.getInt(FreeProductsController.FP_DFP_ID));
+        freeProducts.setQuantityFree(json.getInt(FreeProductsController.FP_QTY_FREE));
+        freeProducts.setCreatedAt(json.getString(FreeProductsController.FP_CREATED_AT));
+        freeProducts.setUpdatedAt(json.getString(FreeProductsController.FP_UPDATED_AT));
+        freeProducts.setDeletedAt(json.getString(FreeProductsController.FP_DELETED_AT));
 
         return freeProducts;
     }
@@ -615,12 +638,12 @@ public class Sync {
         Promo promo = new Promo();
 
         promo.setServerPromoId(json.getInt("id"));
-        promo.setName(json.getString(DbHelper.PROMO_NAME));
-        promo.setStartDate(json.getString(DbHelper.PROMO_START_DATE));
-        promo.setEndDate(json.getString(DbHelper.PROMO_END_DATE));
-        promo.setCreatedAt(json.getString(DbHelper.PROMO_CREATED_AT));
-        promo.setUpdatedAt(json.getString(DbHelper.PROMO_UPDATED_AT));
-        promo.setDeletedAt(json.getString(DbHelper.PROMO_DELETED_AT));
+        promo.setName(json.getString(PromoController.PROMO_NAME));
+        promo.setStartDate(json.getString(PromoController.PROMO_START_DATE));
+        promo.setEndDate(json.getString(PromoController.PROMO_END_DATE));
+        promo.setCreatedAt(json.getString(PromoController.PROMO_CREATED_AT));
+        promo.setUpdatedAt(json.getString(PromoController.PROMO_UPDATED_AT));
+        promo.setDeletedAt(json.getString(PromoController.PROMO_DELETED_AT));
 
         return promo;
     }

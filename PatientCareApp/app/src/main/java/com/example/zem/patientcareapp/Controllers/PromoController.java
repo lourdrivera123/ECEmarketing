@@ -40,7 +40,7 @@ public class PromoController extends DbHelper {
 
     /* PROMO TABLE */
     public boolean savePromo(Promo promo, String action) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(SERVER_PROMO_ID, promo.getServerPromoId());
@@ -68,7 +68,7 @@ public class PromoController extends DbHelper {
                 "where dfp.promo_id = pr.promo_id and dfp.type=0) as min_discount, " +
                 " (Select max(dfp.less) from discounts_free_products as dfp where dfp.promo_id = pr.promo_id and dfp.type=0) as max_discount from promo as pr " +
                 "where  datetime('now') <= datetime(pr.end_date) and datetime('now') >= datetime(pr.start_date)";
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         Cursor cur = sql_db.rawQuery(sql, null);
 
         ArrayList<HashMap<String, String>> promo = new ArrayList<>();
@@ -92,7 +92,7 @@ public class PromoController extends DbHelper {
     }
 
     public ArrayList<HashMap<String, String>> getPromoFreeProducts(int promoId) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "Select pfp.*, p.name as product_name, pd.name as promo_name, pd.quantity_required from promo_free_products " +
                 "as pfp inner join promo_discounts as pd inner join products as p on p.product_id=pd.product_id where pfp.promo_id=" + promoId +
                 " and datetime(pd.end_date) >= datetime('now')";

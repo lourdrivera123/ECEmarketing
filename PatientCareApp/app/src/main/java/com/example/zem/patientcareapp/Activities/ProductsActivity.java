@@ -22,6 +22,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OverlayController;
+import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Model.Product;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.LazyAdapter;
@@ -45,6 +47,8 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     Helpers helpers;
     RequestQueue queue;
     static DbHelper dbHelper;
+    ProductController pc;
+    static OverlayController oc;
 
     public static Map<String, HashMap<String, String>> productQuantity;
     public static ArrayList<HashMap<String, String>> products_items;
@@ -69,13 +73,15 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         products_toolbar.setNavigationIcon(R.drawable.ic_back);
 
         dbHelper = new DbHelper(getBaseContext());
+        pc = new ProductController(getBaseContext());
+        oc = new OverlayController(getBaseContext());
         queue = Volley.newRequestQueue(getBaseContext());
         helpers = new Helpers();
 
         searchProducts = new ArrayList();
         productQuantity = new HashMap();
         temp_products_items = new ArrayList();
-        products_items = dbHelper.getAllProducts();
+        products_items = pc.getAllProducts();
         temp_products_items.addAll(products_items);
 
         for (HashMap<String, String> map : products_items) {
@@ -122,7 +128,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                 results_layout.setVisibility(View.GONE);
 
                 products_items = new ArrayList();
-                products_items = dbHelper.getAllProducts();
+                products_items = pc.getAllProducts();
 
                 adapter = new LazyAdapter(ProductsActivity.this, products_items, "product_lists");
                 list_of_products.setAdapter(adapter);
@@ -151,7 +157,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Product prod;
-        prod = dbHelper.getProductById(Integer.parseInt(view.getTag().toString()));
+        prod = pc.getProductById(Integer.parseInt(view.getTag().toString()));
 
         Intent intent = new Intent(getBaseContext(), SelectedProductActivity.class);
         intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getProductId());
@@ -161,7 +167,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     public static void showOverLay(Context context) {
         dbHelper = new DbHelper(context);
 
-        if (!dbHelper.checkOverlay("Products", "check")) {
+        if (!oc.checkOverlay("Products", "check")) {
             final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
             dialog.setContentView(R.layout.products_overlay);
 
@@ -171,7 +177,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (dbHelper.checkOverlay("Products", "insert"))
+                    if (oc.checkOverlay("Products", "insert"))
                         dialog.dismiss();
                 }
             });

@@ -32,6 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
 import com.example.zem.patientcareapp.ImageHandlingModule.AndroidMultipartEntity;
 import com.example.zem.patientcareapp.ConfigurationModule.Config;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
@@ -81,6 +83,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     Helpers helper;
     ImageAdapter imgAdapter;
     DbHelper dbhelper;
+    PatientController pc;
+    PatientPrescriptionController ppc;
     ServerRequest serverRequest;
     View rootView;
 
@@ -94,12 +98,14 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
         rootView = inflater.inflate(R.layout.fragment_trial_prescription_fragment, container, false);
 
         dbhelper = new DbHelper(getActivity());
+        pc = new PatientController(getActivity());
+        ppc = new PatientPrescriptionController(getActivity());
         helper = new Helpers();
 
         gridView = (GridView) rootView.findViewById(R.id.gridView);
         add_pres = (ImageButton) rootView.findViewById(R.id.add_pres);
 
-        patientID = dbhelper.getCurrentLoggedInPatient().getServerID();
+        patientID = pc.getCurrentLoggedInPatient().getServerID();
         arrayOfPrescriptions = refreshPrescriptionList();
 
         add_pres.setOnClickListener(this);
@@ -148,8 +154,8 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(DbHelper.PRESCRIPTIONS_SERVER_ID));
-                    final String filename = uploadsByUser.get(menuInfo.position).get(DbHelper.PRESCRIPTIONS_FILENAME);
+                    final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(PatientPrescriptionController.PRESCRIPTIONS_SERVER_ID));
+                    final String filename = uploadsByUser.get(menuInfo.position).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME);
                     Log.d("filename log", filename);
                     serverRequest = new ServerRequest();
                     HashMap<String, String> hashMap = new HashMap();
@@ -173,7 +179,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                                 Log.d("success is", success + "");
 
                                 if (success == 1) {
-                                    if (dbhelper.deletePrescriptionByServerID(serverID)) {
+                                    if (ppc.deletePrescriptionByServerID(serverID)) {
                                         arrayOfPrescriptions = refreshPrescriptionList();
                                         gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
                                     } else {
@@ -320,7 +326,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             String responseString;
 
             DbHelper dbHelper = new DbHelper(getActivity());
-            int patientID = dbHelper.getCurrentLoggedInPatient().getServerID();
+            int patientID = pc.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL + "?patient_id=" + patientID);
@@ -377,7 +383,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
             }
 
             //put the refresh grid here or the display newly added image here
-            if (dbhelper.insertUploadOnPrescription(patientID, image_url, serverID)) {
+            if (ppc.insertUploadOnPrescription(patientID, image_url, serverID)) {
                 arrayOfPrescriptions = refreshPrescriptionList();
                 gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
             } else {
@@ -470,11 +476,11 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     }
 
     public ArrayList<String> refreshPrescriptionList() {
-        uploadsByUser = dbhelper.getPrescriptionByUserID(patientID);
+        uploadsByUser = ppc.getPrescriptionByUserID(patientID);
         ArrayList<String> prescriptionArray = new ArrayList();
 
         for (int x = 0; x < uploadsByUser.size(); x++) {
-            prescriptionArray.add(uploadsByUser.get(x).get(DbHelper.PRESCRIPTIONS_FILENAME));
+            prescriptionArray.add(uploadsByUser.get(x).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME));
         }
         return prescriptionArray;
     }

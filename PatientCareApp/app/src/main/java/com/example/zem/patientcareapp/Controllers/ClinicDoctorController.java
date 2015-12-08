@@ -33,7 +33,7 @@ public class ClinicDoctorController extends DbHelper {
     }
 
     public boolean saveClinicDoctor(ClinicDoctor cd, String request) {
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(CD_SERVER_ID, cd.getServerID());

@@ -44,7 +44,7 @@ public class BranchController extends DbHelper {
 
     public boolean saveBranches(JSONObject object) {
         long rowID = 0;
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         try {
@@ -70,7 +70,7 @@ public class BranchController extends DbHelper {
 
     public ArrayList<HashMap<String, String>> getECEBranches() {
         ArrayList<HashMap<String, String>> listOfBranches = new ArrayList();
-//        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_BRANCHES;
         Cursor cur = sql_db.rawQuery(sql, null);
 

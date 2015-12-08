@@ -17,8 +17,12 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.ConfigurationModule.Config;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
+import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Activities.MainActivity;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.ProductController;
+import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -59,6 +63,8 @@ public class PayPalCheckout extends Activity {
     private List<PayPalItem> productsInCart = new ArrayList<PayPalItem>();
 
     DbHelper dbHelper;
+    BasketController bc;
+    PatientController pc;
 
     PayPalItem[] items;
     PayPalPaymentDetails paymentDetails;
@@ -82,16 +88,20 @@ public class PayPalCheckout extends Activity {
         super.onCreate(savedInstanceState);
 
         dbHelper = new DbHelper(this);
+        bc = new BasketController(this);
+        pc = new PatientController(this);
         pDialog = new ProgressDialog(this);
         queue = Volley.newRequestQueue(this);
 
         Intent ckintent = getIntent();
-        branch_server_id = ckintent.getIntExtra("branch_server_id", 0);
-        recipient_name = ckintent.getStringExtra("recipient_name");
-        recipient_address = ckintent.getStringExtra("recipient_address");
-        recipient_contactNumber = ckintent.getStringExtra("recipient_contactNumber");
-        modeOfDelivery = ckintent.getStringExtra("modeOfDelivery");
-        payment_method = ckintent.getStringExtra("payment_method");
+        OrderModel om = (OrderModel) ckintent.getSerializableExtra("order_model");
+
+        branch_server_id = 1;
+        recipient_name = om.getRecipient_name();
+        recipient_address = om.getRecipient_address();
+        recipient_contactNumber = om.getRecipient_contactNumber();
+        modeOfDelivery = om.getMode_of_delivery();
+        payment_method = om.getPayment_method();
 
         PayPalConfiguration object = new PayPalConfiguration();
         object = object.acceptCreditCards(false);
@@ -190,7 +200,7 @@ public class PayPalCheckout extends Activity {
 
     public void populateProductsInCart() {
 
-        ArrayList<HashMap<String, String>> items = dbHelper.getAllBasketItems(true);
+        ArrayList<HashMap<String, String>> items = bc.getAllBasketItems(true);
 
         String name = "", sku = "";
 
@@ -198,11 +208,11 @@ public class PayPalCheckout extends Activity {
         BigDecimal initial_price = null;
 
         for (HashMap<String, String> item : items) {
-            price = Double.parseDouble(item.get(DbHelper.PRODUCT_PRICE));
-            double quantity = Double.parseDouble(item.get(DbHelper.BASKET_QUANTITY));
+            price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
+            double quantity = Double.parseDouble(item.get(BasketController.BASKET_QUANTITY));
             double total = price * quantity;
-            name = item.get(DbHelper.PRODUCT_NAME);
-            sku = item.get(DbHelper.PRODUCT_SKU);
+            name = item.get(ProductController.PRODUCT_NAME);
+            sku = item.get(ProductController.PRODUCT_SKU);
 //            TotalAmount+= total;
 
             PayPalItem paypal_item = new PayPalItem(name, 1, new BigDecimal(String.format("%.2f", total)), Config.DEFAULT_CURRENCY, sku);
@@ -258,7 +268,7 @@ public class PayPalCheckout extends Activity {
                     String message = res.getString("message");
 
 
-                    if (dbHelper.emptyBasket(SidebarActivity.getUserID())) {
+                    if (bc.emptyBasket(SidebarActivity.getUserID())) {
                         //request for orders request
                         GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
                             @Override
@@ -325,7 +335,7 @@ public class PayPalCheckout extends Activity {
 
             @Override
             protected Map<String, String> getParams() {
-                Patient patient = dbHelper.getloginPatient(SidebarActivity.getUname());
+                Patient patient = pc.getloginPatient(SidebarActivity.getUname());
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("paymentId", paymentId);

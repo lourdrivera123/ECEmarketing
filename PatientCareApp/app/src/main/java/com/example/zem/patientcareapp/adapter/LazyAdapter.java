@@ -21,8 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 
+import com.example.zem.patientcareapp.Controllers.OrderController;
+import com.example.zem.patientcareapp.Controllers.OrderDetailController;
+import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.ImageHandlingModule.ImageLoader;
@@ -61,6 +66,9 @@ public class LazyAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
     public ImageLoader imageLoader;
     DbHelper dbHelper;
+    ProductController pc;
+    BasketController bc;
+    PatientController ptc;
     Helpers helpers;
 
     int productQty, prescriptionId = 0;
@@ -74,6 +82,10 @@ public class LazyAdapter extends BaseAdapter {
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         imageLoader = new ImageLoader(activity.getApplicationContext());
         helpers = new Helpers();
+
+        pc = new ProductController(activity);
+        bc = new BasketController(activity);
+        ptc = new PatientController(activity);
 
         notifyDataSetChanged();
     }
@@ -135,7 +147,7 @@ public class LazyAdapter extends BaseAdapter {
 
             product_quantity.setText(productQtyPerPacking + "");
 
-            int PID = dbHelper.getProductServerIdById(productId);
+            int PID = pc.getProductServerIdById(productId);
 
             product_quantity.setId(PID);
             product_description.setTag(PID);
@@ -202,9 +214,9 @@ public class LazyAdapter extends BaseAdapter {
 
             // Setting all values in listview
             vi.setTag(PID);
-            product_name.setText(map.get(DbHelper.PRODUCT_NAME));
+            product_name.setText(map.get(ProductController.PRODUCT_NAME));
             product_description.setText("1 " + productUnit + " x " + productQtyPerPacking + "(1 " + productPacking + ")");
-            product_price.setText("\u20B1 " + map.get(DbHelper.PRODUCT_PRICE));
+            product_price.setText("\u20B1 " + map.get(ProductController.PRODUCT_PRICE));
 
             final int tempPID = PID;
 
@@ -219,7 +231,7 @@ public class LazyAdapter extends BaseAdapter {
                         int q = Integer.parseInt(productQuantity.get(productId + "").get("temp_basket_qty"));
                         int p = Integer.parseInt(productQuantity.get(productId + "").get("qty_per_packing"));
                         productQty = q != 0 ? q : p;
-                        final Basket basket = dbhelper.getBasket(tempPID);
+                        final Basket basket = bc.getBasket(tempPID);
 
                         final ProgressDialog pdialog = new ProgressDialog(activity);
                         pdialog.setCancelable(false);
@@ -230,7 +242,7 @@ public class LazyAdapter extends BaseAdapter {
                             HashMap<String, String> hashMap = new HashMap();
                             hashMap.put("id", String.valueOf(tempPID));
 
-                            hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
+                            hashMap.put("patient_id", String.valueOf(ptc.getCurrentLoggedInPatient().getServerID()));
                             hashMap.put("table", "baskets");
                             hashMap.put("request", "crud");
 
@@ -247,7 +259,7 @@ public class LazyAdapter extends BaseAdapter {
                                         int success = response.getInt("success");
 
                                         if (success == 1) {
-                                            if (dbhelper.updateBasket(basket)) {
+                                            if (bc.updateBasket(basket)) {
                                                 Toast.makeText(activity, "Your cart has been updated.", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(activity, "Sorry, we can't update your cart this time.", Toast.LENGTH_SHORT).show();
@@ -274,7 +286,7 @@ public class LazyAdapter extends BaseAdapter {
                             final HashMap<String, String> hashMap = new HashMap();
                             hashMap.put("product_id", String.valueOf(tempPID));
                             hashMap.put("quantity", String.valueOf(productQty));
-                            hashMap.put("patient_id", String.valueOf(dbhelper.getCurrentLoggedInPatient().getServerID()));
+                            hashMap.put("patient_id", String.valueOf(ptc.getCurrentLoggedInPatient().getServerID()));
                             hashMap.put("prescription_id", "0");
                             hashMap.put("is_approved", "1");
                             hashMap.put("table", "baskets");
@@ -382,21 +394,21 @@ public class LazyAdapter extends BaseAdapter {
                 total = (TextView) vi.findViewById(R.id.total);
 
                 // Do stuffs here
-                price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
-                quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
+                price = Double.parseDouble(basket_items.get(ProductController.PRODUCT_PRICE));
+                quantity = Integer.parseInt(basket_items.get(BasketController.BASKET_QUANTITY));
 
-                unit = basket_items.get(DbHelper.PRODUCT_UNIT);
-                basketId = Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID));
-                packing = basket_items.get(DbHelper.PRODUCT_PACKING);
-                qtyPerPacking = Integer.parseInt(basket_items.get(DbHelper.PRODUCT_QTY_PER_PACKING));
-                isApproved = Integer.parseInt(basket_items.get(DbHelper.BASKET_IS_APPROVED));
+                unit = basket_items.get(ProductController.PRODUCT_UNIT);
+                basketId = Integer.parseInt(basket_items.get(BasketController.SERVER_BASKET_ID));
+                packing = basket_items.get(ProductController.PRODUCT_PACKING);
+                qtyPerPacking = Integer.parseInt(basket_items.get(ProductController.PRODUCT_QTY_PER_PACKING));
+                isApproved = Integer.parseInt(basket_items.get(BasketController.BASKET_IS_APPROVED));
 
                 // Setting all values in listview
                 basketIsApproved.setText("");
                 if (isApproved == 0)
                     basketIsApproved.setText("Original Prescription must be presented upon delivery/pickup");
 
-                productName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
+                productName.setText(basket_items.get(ProductController.PRODUCT_NAME));
                 total_amount = price * quantity;
 
                 total.setText("\u20B1 " + total_amount + "");
@@ -406,8 +418,8 @@ public class LazyAdapter extends BaseAdapter {
                         "\nPrice: \u20B1 " + String.format("%.2f", price) + " / " + (!unit.equals("0") ? unit : ""));
 
                 qty.setId(basketId);
-                total.setId(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
-                total.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+                total.setId(Integer.parseInt(basket_items.get(BasketController.SERVER_BASKET_ID)));
+                total.setTag(Integer.parseInt(basket_items.get(BasketController.SERVER_BASKET_ID)));
             } catch (Exception e) {
                 Log.d("lazyAdapter4", "error");
                 e.printStackTrace();
@@ -433,12 +445,12 @@ public class LazyAdapter extends BaseAdapter {
             String unit, packing;
 
             // Setting all values in listview
-            price = Double.parseDouble(basket_items.get(DbHelper.PRODUCT_PRICE));
-            quantity = Integer.parseInt(basket_items.get(DbHelper.BASKET_QUANTITY));
-            unit = basket_items.get(DbHelper.PRODUCT_UNIT);
-            qtyPerPacking = Integer.parseInt(basket_items.get(DbHelper.PRODUCT_QTY_PER_PACKING));
-            packing = basket_items.get(DbHelper.PRODUCT_PACKING);
-            isApproved = Integer.parseInt(basket_items.get(DbHelper.BASKET_IS_APPROVED));
+            price = Double.parseDouble(basket_items.get(ProductController.PRODUCT_PRICE));
+            quantity = Integer.parseInt(basket_items.get(BasketController.BASKET_QUANTITY));
+            unit = basket_items.get(ProductController.PRODUCT_UNIT);
+            qtyPerPacking = Integer.parseInt(basket_items.get(ProductController.PRODUCT_QTY_PER_PACKING));
+            packing = basket_items.get(ProductController.PRODUCT_PACKING);
+            isApproved = Integer.parseInt(basket_items.get(BasketController.BASKET_IS_APPROVED));
 
             total_amount = price * quantity;
             unit = !unit.equals("0") ? unit : "";
@@ -448,14 +460,14 @@ public class LazyAdapter extends BaseAdapter {
             if (isApproved == 0)
                 itemIsApproved.setText("Waiting for approval...");
 
-            itemName.setText(basket_items.get(DbHelper.PRODUCT_NAME));
+            itemName.setText(basket_items.get(ProductController.PRODUCT_NAME));
             itemAmount.setText("\u20B1 " + total_amount + "");
             itemDetails.setText("Price: \u20B1 " + price + " / " + unit);
             itemQuantity.setText("Quantity: " + quantity + " " + helpers.getPluralForm(unit, quantity) +
                     " (" + packingCount + " " + helpers.getPluralForm(packing, packingCount) + ")");
 
-            itemName.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
-            itemAmount.setTag(Integer.parseInt(basket_items.get(DbHelper.SERVER_BASKET_ID)));
+            itemName.setTag(Integer.parseInt(basket_items.get(BasketController.SERVER_BASKET_ID)));
+            itemAmount.setTag(Integer.parseInt(basket_items.get(BasketController.SERVER_BASKET_ID)));
 
         } else if (list_type.equals("promo_items")) {
             vi = inflater.inflate(R.layout.list_row_promo_item, null);
@@ -502,11 +514,11 @@ public class LazyAdapter extends BaseAdapter {
             time_status = (TextView) vi.findViewById(R.id.time_status);
             order_detail_items = (TextView) vi.findViewById(R.id.order_detail_items);
 
-            unit = order_item.get(DbHelper.PRODUCT_UNIT);
-            packing = order_item.get(DbHelper.PRODUCT_PACKING);
-            quantity = Integer.parseInt(order_item.get(DbHelper.ORDER_DETAILS_QUANTITY));
-            qtyPerPacking = Integer.parseInt(order_item.get(DbHelper.PRODUCT_QTY_PER_PACKING));
-            price = Double.parseDouble(order_item.get(DbHelper.PRODUCT_PRICE));
+            unit = order_item.get(ProductController.PRODUCT_UNIT);
+            packing = order_item.get(ProductController.PRODUCT_PACKING);
+            quantity = Integer.parseInt(order_item.get(OrderDetailController.ORDER_DETAILS_QUANTITY));
+            qtyPerPacking = Integer.parseInt(order_item.get(ProductController.PRODUCT_QTY_PER_PACKING));
+            price = Double.parseDouble(order_item.get(ProductController.PRODUCT_PRICE));
             total_amount = price * quantity;
 
             int num = quantity / qtyPerPacking;
@@ -515,7 +527,7 @@ public class LazyAdapter extends BaseAdapter {
             product_name.setText("4 item(s) for Doe, John");
 //            product_qty_price.setText(order_item.get(DbHelper.PRODUCT_PRICE) + " - " + order_item.get(DbHelper.ORDER_DETAILS_QUANTITY));
 //            ordered_on.setText(order_item.get(DbHelper.CREATED_AT));
-            status.setText(order_item.get(DbHelper.ORDERS_STATUS));
+            status.setText(order_item.get(OrderController.ORDERS_STATUS));
 
             product_qty_price.setText("Total: \u20B1 " + String.format("%.2f", total_amount));
 
@@ -527,7 +539,7 @@ public class LazyAdapter extends BaseAdapter {
 
             /*String str1 = "12/10/2013";*/
             try {
-                Date date1 = formatter.parse(order_item.get(DbHelper.ORDERS_CREATED_AT));
+                Date date1 = formatter.parse(order_item.get(OrderController.ORDERS_CREATED_AT));
 
                 //format to date only
                 SimpleDateFormat fd = new SimpleDateFormat("MMM d");

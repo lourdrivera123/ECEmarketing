@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
 import com.example.zem.patientcareapp.Model.Consultation;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -51,6 +52,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
     private ConsultationAdapter consultAdapter;
     Consultation consult;
     DbHelper dbhelper;
+    PatientConsultationController pcc;
     ServerRequest serverRequest;
 
     ArrayList<HashMap<String, String>> listOfAllConsultations;
@@ -77,7 +79,8 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
     @Override
     public void onResume() {
         dbhelper = new DbHelper(getActivity());
-        listOfAllConsultations = dbhelper.getAllConsultationsByUserId(SidebarActivity.getUserID());
+        pcc = new PatientConsultationController(getActivity());
+        listOfAllConsultations = pcc.getAllConsultationsByUserId(SidebarActivity.getUserID());
         consultationDoctors = new ArrayList();
         consult = new Consultation();
 
@@ -118,7 +121,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
                         int success = response.getInt("success");
 
                         if (success == 1) {
-                            if (dbhelper.removeFromSQLite(Integer.parseInt(listOfAllConsultations.get(pos).get("id")))) {
+                            if (pcc.removeFromSQLite(Integer.parseInt(listOfAllConsultations.get(pos).get("id")))) {
                                 listOfAllConsultations.remove(pos);
                                 consultAdapter.notifyDataSetChanged();
                             }
@@ -285,7 +288,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
             doctor_name.setText("Dr. " + listOfAllConsultations.get(pos).get("doctor_name"));
             clinic_address.setText(listOfAllConsultations.get(pos).get("clinic_name"));
-            consultation_schedule.setText(listOfAllConsultations.get(pos).get(DbHelper.CONSULT_DATE));
+            consultation_schedule.setText(listOfAllConsultations.get(pos).get(PatientConsultationController.CONSULT_DATE));
 
             return v;
         }
@@ -305,7 +308,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
                         success = response.getInt("success");
 
                         if (success == 1) {
-                            if (!dbhelper.AcceptRejectConsultation(map, operation))
+                            if (!pcc.AcceptRejectConsultation(map, operation))
                                 Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
                             onResume();
                         } else

@@ -51,8 +51,8 @@ public class OrdersActivity extends AppCompatActivity {
         context = getBaseContext();
         dbHelper = new DbHelper(OrdersActivity.this);
 
-        order_items = dbHelper.getAllOrderItems();
-        items = dbHelper.getAllOrderDetailItems(); // returns all basket items for the currently loggedin patient
+//        order_items = dbHelper.getAllOrderItems();
+//        items = dbHelper.getAllOrderDetailItems(); // returns all basket items for the currently loggedin patient
 
         //experiment on expandable listview
 
