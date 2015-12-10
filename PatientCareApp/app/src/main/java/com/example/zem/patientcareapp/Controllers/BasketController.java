@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.zem.patientcareapp.Model.Basket;
 
@@ -45,12 +46,12 @@ public class BasketController extends DbHelper {
 
     /////////////////////////////INSERT METHODS///////////////////////////////////////
     public boolean insertBasket(Basket basket) {
-        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         String datenow = dateFormat.format(date);
 
         int patient_id = patient_controller.getCurrentLoggedInPatient().getServerID();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
@@ -149,6 +150,8 @@ public class BasketController extends DbHelper {
 
             row = sql_db.update(TBL_BASKETS, val, SERVER_BASKET_ID + "=" + map.get("id"), null);
         }
+
+        Log.d("row", row + "");
 
         sql_db.close();
         return row > 0;

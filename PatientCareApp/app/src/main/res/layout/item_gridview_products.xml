@@ -64,9 +64,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Php 300.00"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:text="Php 300.00/bottle"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"

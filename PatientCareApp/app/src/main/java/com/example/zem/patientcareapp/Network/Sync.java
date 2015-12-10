@@ -135,10 +135,7 @@ public class Sync {
                         JSONObject json_object = json_array_final.getJSONObject(i);
 
                         if (json_object != null) {
-                            if (tableName.equals("products")) {
-                                if (!pc.saveProduct(json_object, "insert"))
-                                    Log.d("sync_22", "wala na save");
-                            } else if (tableName.equals("doctors")) {
+                            if (tableName.equals("doctors")) {
                                 if (!doctor_controller.saveDoctor(setDoctor(json_object), "insert"))
                                     Log.d("sync_21", "wala na save");
                             } else if (tableName.equals("specialties")) {
@@ -218,9 +215,6 @@ public class Sync {
                         if (!json_object.equals("null") && !json_object.equals(null)) {
                             if (tableName.equals("doctors")) {
                                 if (!doctor_controller.saveDoctor(setDoctor(json_object), "update"))
-                                    Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
-                            } else if (tableName.equals("products")) {
-                                if (!pc.saveProduct(json_object, "update"))
                                     Toast.makeText(context, "failed to save ", Toast.LENGTH_SHORT).show();
                             } else if (tableName.equals("settings")) {
                                 if (!sc.saveSettings(json_object, "update"))

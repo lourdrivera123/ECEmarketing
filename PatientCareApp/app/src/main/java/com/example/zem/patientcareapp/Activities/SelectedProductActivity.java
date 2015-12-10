@@ -70,11 +70,12 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     BasketController bc;
     PatientController ptc;
     ProductController pc;
-    Product prod;
+    Product product;
     Helpers helpers;
     ServerRequest serverRequest;
     CircleFragmentAdapter adapter;
-    ProgressDialog pDialog;
+
+    ProgressDialog dialog;
 
     public HashMap<String, String> map;
 
@@ -89,21 +90,12 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         bc = new BasketController(this);
         ptc = new PatientController(this);
 
-        prod = new Product();
         helpers = new Helpers();
         serverRequest = new ServerRequest();
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
         map = new HashMap();
 
         pc = new ProductController(this);
         bc = new BasketController(this);
-
-        Intent intent = getIntent();
-        get_productID = intent.getIntExtra(PRODUCT_ID, 0);
-        prod = pc.getProductById(get_productID);
-
-        getImagesFromServer(get_productID);
 
         prod_name = (TextView) findViewById(R.id.prod_name);
         prod_generic = (TextView) findViewById(R.id.prod_generic);
@@ -121,21 +113,20 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         add_qty.setOnClickListener(this);
         add_to_cart.setOnClickListener(this);
 
-        prod_name.setText(prod.getName());
-        prod_generic.setText(prod.getGenericName());
-        prod_description.setText(prod.getDescription());
-
-        prod_price.setText("\u20B1" + prod.getPrice());
-        qtyPerPacking = prod.getQtyPerPacking();
-
         qty_cart.setText("" + temp_qty);
-        prod_unit.setText("1 " + prod.getUnit() + " x " + qtyPerPacking + "(1 " + prod.getPacking() + ")");
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(prod.getName());
         myToolBar.setNavigationIcon(R.drawable.ic_back);
+
+        Intent intent = getIntent();
+        get_productID = intent.getIntExtra(PRODUCT_ID, 0);
+
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Please wait...");
+        dialog.show();
+        product = getProductWithImage(get_productID);
     }
 
 
@@ -173,7 +164,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                 } else
                     qty_cart.setText("" + temp_qty);
 
-                prod_unit.setText("1 " + prod.getUnit() + " x " + (qtyPerPacking * temp_qty) + "(" + temp_qty + " " + prod.getPacking() + ")");
+                prod_unit.setText("1 " + product.getPacking() + " x " + temp_qty + "(" + (temp_qty * product.getQtyPerPacking()) + " " + product.getUnit() + ")");
 
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -187,7 +178,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                 temp_qty += 1;
                 add_qty.setImageResource(R.drawable.ic_plus_dead);
                 qty_cart.setText("" + temp_qty);
-                prod_unit.setText("1 " + prod.getUnit() + " x " + (qtyPerPacking * temp_qty) + "(" + temp_qty + " " + prod.getPacking() + ")");
+                prod_unit.setText("1 " + product.getPacking() + " x " + temp_qty + "(" + (temp_qty * product.getQtyPerPacking()) + " " + product.getUnit() + ")");
 
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -253,7 +244,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                         pdialog.setCancelable(false);
                         pdialog.setMessage("Loading...");
 
-                        if (prod.getPrescriptionRequired() == 1) { //IF PRODUCT REQUIRES PRESCRIPTION
+                        if (product.getPrescriptionRequired() == 1) { //IF PRODUCT REQUIRES PRESCRIPTION
                             GridView gridView;
                             final Dialog builder;
                             HashMap<GridView, Dialog> map = helpers.showPrescriptionDialog(this);
@@ -399,35 +390,57 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         is_resumed = 0;
     }
 
-    public void getImagesFromServer(int productID) {
+    public Product getProductWithImage(int product_id) {
         final ArrayList<String> filenames = new ArrayList();
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("Please wait...");
-        dialog.show();
+        final Product prod = new Product();
 
-        ListOfPatientsRequest.getJSONobj(this, "get_products_gallery&product_id=" + productID, "products_gallery", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(this, "get_selected_product_with_image&product_id=" + product_id, "products", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
                     int success = response.getInt("success");
 
                     if (success == 1) {
-                        JSONArray json_mysql = response.getJSONArray("products_gallery");
+                        JSONArray json_mysql = response.getJSONArray("products");
 
                         for (int x = 0; x < json_mysql.length(); x++) {
                             JSONObject obj = json_mysql.getJSONObject(x);
-                            filenames.add(obj.getString("filename"));
-                        }
-                    } else
-                        filenames.add("default");
 
-                    CircleFragmentAdapter.CONTENT.addAll(filenames);
-                    adapter = new CircleFragmentAdapter(getSupportFragmentManager());
-                    pager.setAdapter(adapter);
-                    indicator.setViewPager(pager);
+                            if (!obj.getString("filename").equals("")) {
+                                filenames.add(obj.getString("filename"));
+                            } else
+                                filenames.add("default");
+                        }
+
+                        JSONObject obj = json_mysql.getJSONObject(0);
+                        prod.setId(obj.getInt("id"));
+                        prod.setName(obj.getString("name"));
+                        prod.setGenericName(obj.getString("generic_name"));
+                        prod.setDescription(obj.getString("description"));
+                        prod.setPrescriptionRequired(obj.getInt("prescription_required"));
+                        prod.setPrice(obj.getDouble("price"));
+                        prod.setUnit(obj.getString("unit"));
+                        prod.setPacking(obj.getString("packing"));
+                        prod.setQtyPerPacking(obj.getInt("qty_per_packing"));
+                        prod.setSku(obj.getString("sku"));
+                    }
                 } catch (Exception e) {
                     Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();
                 }
+
+                prod_name.setText(prod.getName());
+                prod_generic.setText(prod.getGenericName());
+                prod_description.setText(prod.getDescription());
+                prod_price.setText("\u20B1" + prod.getPrice());
+                qtyPerPacking = prod.getQtyPerPacking();
+                prod_unit.setText("1 " + prod.getPacking() + " x " + temp_qty + "(" + prod.getQtyPerPacking() + " " + prod.getUnit() + ")");
+                getSupportActionBar().setTitle(prod.getName());
+
+                CircleFragmentAdapter.CONTENT.addAll(filenames);
+                adapter = new CircleFragmentAdapter(getSupportFragmentManager());
+                pager.setAdapter(adapter);
+                indicator.setViewPager(pager);
+
                 dialog.dismiss();
             }
         }, new ErrorListener<VolleyError>() {
@@ -438,5 +451,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                 Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
+
+        return prod;
     }
 }

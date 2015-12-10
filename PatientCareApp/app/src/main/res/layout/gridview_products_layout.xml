@@ -23,7 +23,6 @@
         android:id="@+id/shadow"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_below="@+id/selected_product_toolbar"
         android:background="@drawable/shadow_toolbar" />
 
     <LinearLayout

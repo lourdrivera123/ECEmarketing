@@ -10,7 +10,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.BasketController;
-import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Model.Basket;
 
@@ -31,7 +30,6 @@ public class ServerRequest {
     HashMap<String, String> params;
     String url = "http://192.168.177.1/db/post.php";
 
-    DbHelper dbHelper;
     boolean isSuccessful;
     Context activity;
     ProgressDialog pDialog;
@@ -44,7 +42,6 @@ public class ServerRequest {
         activity = getActivity;
         queue = VolleySingleton.getInstance().getRequestQueue();
         params = parameters;
-        dbHelper = new DbHelper(activity);
         helpers = new Helpers();
         isSuccessful = false;
 

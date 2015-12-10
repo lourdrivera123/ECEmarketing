@@ -1,20 +1,24 @@
 package com.example.zem.patientcareapp.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by Dexter B. on 5/14/2015.
  */
-public class Product {
-    String name, genericName, description, unit,packing, photo, sku, createdAt, updatedAt, deletedAt;
-    int id, prescriptionRequired, productId,subCategoryId, qtyPerPacking;
+public class Product implements Serializable {
+    String name, genericName, description, unit, packing, photo, sku, createdAt, updatedAt, deletedAt;
+    int id, prescriptionRequired, productId, subCategoryId, qtyPerPacking;
     double price;
-    public Product(){
+
+    public Product() {
 
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
-    public int getId(){
+
+    public int getId() {
         return id;
     }
 
@@ -30,19 +34,19 @@ public class Product {
         this.subCategoryId = subCategoryId;
     }
 
-    public String getGenericName(){
+    public String getGenericName() {
         return genericName;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
-    public int getPrescriptionRequired(){
+    public int getPrescriptionRequired() {
         return prescriptionRequired;
     }
 
-    public String getUnit(){
+    public String getUnit() {
         return unit;
     }
 
@@ -54,15 +58,15 @@ public class Product {
         return qtyPerPacking;
     }
 
-    public double getPrice(){
+    public double getPrice() {
         return price;
     }
 
-    public String getSku(){
+    public String getSku() {
         return sku;
     }
 
-    public String getPhoto(){
+    public String getPhoto() {
         return photo;
     }
 
@@ -98,11 +102,11 @@ public class Product {
         this.genericName = genericName;
     }
 
-    public void setDescription(String description){
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setPrescriptionRequired(int prescriptionRequired){
+    public void setPrescriptionRequired(int prescriptionRequired) {
         this.prescriptionRequired = prescriptionRequired;
     }
 
@@ -122,9 +126,11 @@ public class Product {
         this.price = price;
     }
 
-    public void setSku(String sku) { this.sku = sku; }
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
 
-    public void setPhoto(String photo){
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 
@@ -132,7 +138,7 @@ public class Product {
         this.productId = productId;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 }

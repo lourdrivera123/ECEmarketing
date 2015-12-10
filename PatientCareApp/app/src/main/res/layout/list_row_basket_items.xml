@@ -5,12 +5,13 @@
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector"
     android:orientation="horizontal"
-    android:padding="5dip">
+    android:padding="10dp">
 
     <LinearLayout
         android:id="@+id/item_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:longClickable="true">
 
         <!-- Product Name-->
@@ -23,7 +24,6 @@
             android:descendantFocusability="blocksDescendants"
             android:maxWidth="60dp"
             android:minWidth="48dp"
-            android:padding="10dp"
             android:singleLine="false"
             android:text="Biogesic"
             android:textColor="#ff040404"
@@ -54,31 +54,24 @@
             android:singleLine="false"
             android:text="Php 1008273.98"
             android:textSize="18sp" />
-
     </LinearLayout>
 
     <!-- Price -->
-        <TextView
-            android:id="@+id/product_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Price: 10.00 / pc"
-            android:layout_below="@+id/item_details"
-            android:textSize="12sp"
-            tools:ignore="RtlCompat" />
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_details"
+        android:text="Price: 10.00 / pc"
+        android:textSize="12sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Waiting for Approval"
-            android:id="@+id/is_approved"
-            android:layout_marginStart="10dp"
-            tools:ignore="RtlCompat"
-            android:textColor="#93f70303"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/product_price"/>
-
+    <TextView
+        android:id="@+id/is_approved"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/product_price"
+        android:text="Waiting for Approval"
+        android:textColor="#93f70303"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 </RelativeLayout>
