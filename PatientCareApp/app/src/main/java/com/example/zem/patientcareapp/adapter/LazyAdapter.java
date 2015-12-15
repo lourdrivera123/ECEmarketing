@@ -1,27 +1,15 @@
 package com.example.zem.patientcareapp.adapter;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 
@@ -29,25 +17,15 @@ import com.example.zem.patientcareapp.Controllers.OrderController;
 import com.example.zem.patientcareapp.Controllers.OrderDetailController;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
-import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.ImageHandlingModule.ImageLoader;
-import com.example.zem.patientcareapp.Interface.ErrorListener;
-import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.SwipeTabsModule.MasterTabActivity;
-import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Network.ServerRequest;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Dexter B. on 5/4/2015.
@@ -58,8 +36,6 @@ public class LazyAdapter extends BaseAdapter {
     public static double total_amount, price = 0;
     public static TextView qty;
     public static TextView total;
-    TextView product_name, product_description, product_price, product_quantity;
-    ImageButton btnAddQty;
 
     private Activity activity;
     private ArrayList<HashMap<String, String>> data;
@@ -71,7 +47,6 @@ public class LazyAdapter extends BaseAdapter {
     PatientController ptc;
     Helpers helpers;
 
-    int productQty, prescriptionId = 0;
     private String list_type;
 
     public LazyAdapter(Activity a, ArrayList<HashMap<String, String>> d, String listType) {

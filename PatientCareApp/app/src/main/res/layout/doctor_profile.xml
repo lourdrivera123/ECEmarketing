@@ -10,8 +10,8 @@
         android:id="@+id/doctorsToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="@color/toolbar"
         android:minHeight="?attr/actionBarSize"
-        android:background="@color/ColorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -82,7 +82,7 @@
                     android:id="@+id/scheduleConsultation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/ColorPrimary"
+                    android:background="@color/partner_toolbar"
                     android:drawableLeft="@mipmap/ic_add_new_schedule"
                     android:gravity="center_vertical"
                     android:text="Schedule Consultation"

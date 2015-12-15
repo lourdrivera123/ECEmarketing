@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ColorPrimary">#5B9A68</color>
-    <color name="LightGreen">#63AB62</color>
-    <color name="DarkGreen">#33562e</color>
+    <color name="lightGreen">#93F9B9</color>
+    <color name="Accent">#92CCA6</color>
+    <color name="toolbar">#1D976C</color>
+    <color name="partner_toolbar">#458B74</color>
+    <color name="DarkGreen">#4A766E</color>
+
     <color name="white">#FFFFFF</color>
     <color name="shadow">#D6D6D6</color>
     <color name="black">#000000</color>

@@ -56,10 +56,10 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
     ServerRequest serverRequest;
     DbHelper db;
 
-    ArrayList<HashMap<String, String>> products_items, basket_items;
+    ArrayList<Map<String, String>> products_items, basket_items;
     ArrayList<Integer> list_favorites;
 
-    public ProductsAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
+    public ProductsAdapter(Context context, int resource, ArrayList<Map<String, String>> objects) {
         super(context, resource, objects);
         inflater = LayoutInflater.from(context);
         this.context = context;

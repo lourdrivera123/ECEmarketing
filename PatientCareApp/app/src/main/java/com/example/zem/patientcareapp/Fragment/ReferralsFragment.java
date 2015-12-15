@@ -52,10 +52,7 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
     ArrayAdapter adapter;
     ArrayList<String> list_myReferrals;
     ArrayList<Integer> listOfIndexes;
-    ArrayList<HashMap<String, String>> hash_myReferrals;
-    ArrayList<HashMap<String, String>> hash_AllUsers;
-    ArrayList<HashMap<String, String>> hash_temp;
-    ArrayList<HashMap<String, String>> hash_hash;
+    ArrayList<HashMap<String, String>> hash_myReferrals, hash_AllUsers, hash_temp, hash_hash;
 
     Patient patient;
     Settings settings;
@@ -114,6 +111,8 @@ public class ReferralsFragment extends Fragment implements AdapterView.OnItemCli
 
                         for (int x = 0; x < json_array_mysql.length(); x++) {
                             JSONObject json_obj = json_array_mysql.getJSONObject(x);
+                            Log.d("obj", json_obj + "");
+
                             String name = json_obj.get("fname") + " " + json_obj.get("lname");
 
                             HashMap<String, String> hash = new HashMap();

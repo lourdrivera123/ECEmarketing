@@ -49,7 +49,9 @@ import com.example.zem.patientcareapp.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by User PC on 11/20/2015.
@@ -76,7 +78,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
     ProgressDialog progress1;
 
-    public static ArrayList<HashMap<String, String>> temp_products_items, products_items, basket_items;
+    public static ArrayList<Map<String, String>> temp_products_items, products_items, basket_items;
     public static HashMap<String, String> map;
     ArrayList<HashMap<Integer, HashMap<String, String>>> searchProducts = new ArrayList();
     ArrayList<String> categories = new ArrayList();
@@ -111,13 +113,11 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         map = new HashMap();
         products_items = new ArrayList();
         temp_products_items = new ArrayList();
-
-        showOverLay(this);
-
         progress1 = new ProgressDialog(this);
         progress1.setMessage("Please wait...");
-        progress1.show();
+        progress1.setCancelable(false);
 
+        showOverLay(this);
         getProductCategories();
         getAllBasketItems();
 
@@ -198,6 +198,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 results_layout.setVisibility(View.GONE);
+                spinner_categories.setSelection(0);
                 adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, temp_products_items);
                 listOfProducts.setAdapter(adapter);
                 return true;
@@ -209,7 +210,8 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        int product_id = Integer.parseInt(temp_products_items.get(position).get("product_id"));
+        Map<String, String> ss = (Map<String, String>) adapter.getItem(position);
+        int product_id = Integer.parseInt(ss.get("product_id"));
 
         Intent intent = new Intent(this, SelectedProductActivity.class);
         intent.putExtra(SelectedProductActivity.PRODUCT_ID, product_id);
@@ -243,13 +245,14 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                     HashMap<String, String> values = ee.getValue();
 
                     if (values.get("product_name").toLowerCase().contains(query.toLowerCase()) || values.get("generic_name").toLowerCase().contains(query.toLowerCase())) {
-                        HashMap<String, String> details = temp_products_items.get(x);
+                        Map<String, String> details = temp_products_items.get(x);
                         products_items.add(details);
                         ctr += 1;
                     }
                 }
             }
-            adapter.notifyDataSetChanged();
+            adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, products_items);
+            listOfProducts.setAdapter(adapter);
             noOfResults.setText(ctr + "");
 
             if (ctr == 0)
@@ -358,8 +361,13 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
         final String category = categories.get(position);
+        products_items.clear();
+        searchProducts.clear();
+        temp_products_items.clear();
+
+        progress1.show();
 
         ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products", "products", new RespondListener<JSONObject>() {
                     @Override
@@ -397,17 +405,35 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                     hash.put(obj.getInt("id"), temp);
                                     searchProducts.add(hash);
                                 }
+                                temp_products_items.addAll(products_items);
+
+                                ArrayList<Map<String, String>> newMap = new ArrayList();
 
                                 if (category.equals("Favorites")) {
+                                    ArrayList<Integer> fave_IDs = db.getFavoritesByUserID(SidebarActivity.getUserID());
 
+                                    if (fave_IDs.size() > 0) {
+                                        for (int x = 0; x < fave_IDs.size(); x++) {
+                                            String product_id = String.valueOf(fave_IDs.get(x));
+
+                                            for (Map<String, String> map : products_items) {
+                                                if (map.get("product_id").equals(product_id))
+                                                    newMap.add(map);
+                                            }
+                                        }
+                                    } else
+                                        Toast.makeText(ProductsActivity.this, "wala kay favorites", Toast.LENGTH_SHORT).show();
                                 } else if (category.equals("All")) {
-                                    adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, products_items);
-                                    listOfProducts.setAdapter(adapter);
+                                    newMap.addAll(products_items);
                                 } else {
-
+                                    for (Map<String, String> map : products_items) {
+                                        if (map.containsValue(category))
+                                            newMap.add(map);
+                                    }
                                 }
 
-                                temp_products_items.addAll(products_items);
+                                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, newMap);
+                                listOfProducts.setAdapter(adapter);
                             }
                         } catch (Exception e) {
                             Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();

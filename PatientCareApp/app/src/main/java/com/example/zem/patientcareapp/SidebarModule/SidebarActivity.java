@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.zem.patientcareapp.AlarmModule.AlarmService;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
@@ -90,6 +91,8 @@ public class SidebarActivity extends AppCompatActivity {
         //Header of the listview
         View header = getLayoutInflater().inflate(R.layout.header_sidebar, null);
         img_first = (ImageView) header.findViewById(R.id.img_first);
+        TextView username = (TextView) header.findViewById(R.id.username);
+        username.setText(getUname());
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.temp_user);
         img_first.setImageBitmap(ImageHelper.getRoundedCornerBitmap(bm, 300));

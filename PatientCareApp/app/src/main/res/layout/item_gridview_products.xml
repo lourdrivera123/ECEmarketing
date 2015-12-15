@@ -98,7 +98,7 @@
                     android:layout_gravity="center_horizontal"
                     android:gravity="center"
                     android:text="Add to Cart"
-                    android:textColor="@color/ColorPrimary"
+                    android:textColor="@color/partner_toolbar"
                     android:textSize="15sp" />
             </LinearLayout>
 

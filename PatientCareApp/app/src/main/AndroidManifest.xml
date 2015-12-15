@@ -80,7 +80,8 @@
         <activity
             android:name=".SwipeTabsModule.EditTabsActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.MyTheme"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".Activities.SaveMedicalRecordActivity"
@@ -94,7 +95,7 @@
         <activity
             android:name=".Activities.ReferralActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".Activities.CheckoutActivity"
             android:screenOrientation="portrait"
@@ -176,8 +177,7 @@
         <activity
             android:name=".CheckoutModule.ContactForDelivery"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyTheme">
-        </activity>
+            android:theme="@style/Theme.MyTheme"></activity>
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"

@@ -28,7 +28,9 @@ import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
+import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalItem;
 import com.paypal.android.sdk.payments.PayPalPayment;
@@ -37,6 +39,7 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -199,28 +202,49 @@ public class PayPalCheckout extends Activity {
     }
 
     public void populateProductsInCart() {
-        ArrayList<HashMap<String, String>> items = bc.getAllBasketItems();
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Please wait...");
+        dialog.setCancelable(false);
+        dialog.show();
 
-        String name = "", sku = "";
+        String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID();
+        ListOfPatientsRequest.getJSONobj(this, url_raw, "baskets", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    String name, sku;
+                    double price;
+                    int success = response.getInt("success");
 
-        double price = 0;
-        BigDecimal initial_price = null;
+                    if (success == 1) {
+                        JSONArray json_mysql = response.getJSONArray("baskets");
+                        ArrayList<HashMap<String, String>> items = bc.convertFromJson(PayPalCheckout.this, json_mysql);
 
-        for (HashMap<String, String> item : items) {
-            price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
-            double quantity = Double.parseDouble(item.get(BasketController.BASKET_QUANTITY));
-            double total = price * quantity;
-            name = item.get(ProductController.PRODUCT_NAME);
-            sku = item.get(ProductController.PRODUCT_SKU);
-//            TotalAmount+= total;
+                        for (HashMap<String, String> item : items) {
+                            price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
+                            double quantity = Double.parseDouble(item.get(BasketController.BASKET_QUANTITY));
+                            double total = price * quantity;
+                            name = item.get(ProductController.PRODUCT_NAME);
+                            sku = item.get(ProductController.PRODUCT_SKU);
 
-            PayPalItem paypal_item = new PayPalItem(name, 1, new BigDecimal(String.format("%.2f", total)), Config.DEFAULT_CURRENCY, sku);
+                            PayPalItem paypal_item = new PayPalItem(name, 1, new BigDecimal(String.format("%.2f", total)), Config.DEFAULT_CURRENCY, sku);
+                            productsInCart.add(paypal_item);
 
-            productsInCart.add(paypal_item);
-
-            Toast.makeText(getApplicationContext(),
-                    paypal_item.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
-        }
+                            Toast.makeText(getApplicationContext(), paypal_item.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(PayPalCheckout.this, e + "", Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError e) {
+                dialog.dismiss();
+                Toast.makeText(PayPalCheckout.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**

@@ -1,26 +1,22 @@
 package com.example.zem.patientcareapp.SwipeTabsModule;
 
-import android.app.ActionBar;
 import android.app.Dialog;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -77,7 +73,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EditTabsActivity extends FragmentActivity implements ActionBar.TabListener, View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener {
+public class EditTabsActivity extends AppCompatActivity implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener, ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener {
 
     public static Patient patient;
     RequestQueue queue;
@@ -91,9 +87,8 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     ServerRequest serverRequest;
 
     private ViewPager viewPager;
-    private TabsPagerAdapter mAdapter;
-    private ActionBar actionBar;
-    private String[] tabs = {"Gen. Info", "Contact & Addr.", "Acct. Info"};
+    TabLayout tab_layout;
+    Toolbar toolbar;
     public boolean hasError = true, hasError2 = true, hasError3 = true;
 
     // SIGN UP FRAGMENT
@@ -111,7 +106,6 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     // ACCOUNT INFO FRAGMENT
     String username = "", pass = "", s_filepath = "";
     ImageView image_holder;
-    Drawable d;
 
     public static final String SIGNUP_REQUEST = "signup", EDIT_REQUEST = "edit";
     String purpose = "", image_url = "", url;
@@ -127,16 +121,13 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
 
     ProgressBar progressBar;
     public static ProgressDialog public_progress;
-    ProgressDialog pDialog;
     Dialog upload_dialog;
     public static Intent intent;
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_ACTION_BAR);
-        setContentView(R.layout.edit_profile_layout);
+        setContentView(R.layout.edit_tabs_layout);
 
         dbHelper = new DbHelper(this);
         oc = new OverlayController(this);
@@ -145,11 +136,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         fragment = new SignUpFragment();
         serverRequest = new ServerRequest();
 
-        actionBar = getActionBar();
-        actionBar.setHomeButtonEnabled(false);
-        MainActivity.setCustomActionBar(actionBar);
         showOverLay();
-
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
 
         intent = getIntent();
@@ -159,224 +146,21 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         queue = VolleySingleton.getInstance().getRequestQueue();
         url = Constants.POST_URL;
 
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Please wait...");
-
         public_progress = new ProgressDialog(this);
         public_progress.setMessage("Please wait...");
         public_progress.show();
 
         // Initilization
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        tab_layout = (TabLayout) findViewById(R.id.tab_layout);
         viewPager = (ViewPager) findViewById(R.id.pager);
-        mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
-
-        viewPager.setAdapter(mAdapter);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // Adding Tabs
-        for (String tab_name : tabs) {
-            actionBar.addTab(actionBar.newTab().setText(tab_name).setTabListener(this));
-        }
-
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-                if (position == 0) {
-                    readFromSignUp();
-
-                } else if (position == 1) {
-                    if (unselected == 0)
-                        readFromSignUp();
-                    validateAtPosition2();
-
-                } else if (position == 2) {
-                    Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
-                    image_holder = (ImageView) findViewById(R.id.image_holder);
-                    TextView changePassword = (TextView) findViewById(R.id.changePassword);
-
-                    if (signup_int > 0)
-                        changePassword.setVisibility(View.GONE);
-
-                    choose_image_btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(intent, 111);
-                        }
-                    });
-
-                    if (unselected == 1)
-                        validateAtPosition2();
-                    else if (unselected == 0)
-                        readFromSignUp();
-
-                    Button btn_submit = (Button) findViewById(R.id.btn_save);
-                    btn_submit.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            validateUserAccountInfo();
-
-                            if (hasError) {
-                                viewPager.setCurrentItem(0);
-                            } else if (hasError2) {
-                                viewPager.setCurrentItem(1);
-                            } else {
-                                if (!hasError && !hasError2) {
-                                    validateUserAccountInfo();
-
-                                    if (!hasError3) {
-                                        patient.setBarangay_id(Integer.parseInt(ContactsFragment.barangay_id));
-                                        patient.setBarangay(ContactsFragment.address_barangay.getSelectedItem().toString());
-                                        patient.setMunicipality(ContactsFragment.address_city_municipality.getSelectedItem().toString());
-                                        patient.setProvince(ContactsFragment.address_province.getSelectedItem().toString());
-                                        patient.setRegion(ContactsFragment.address_region.getSelectedItem().toString());
-
-                                        if (edit_int > 0) {
-                                            pDialog.show();
-                                            editUser = pc.getloginPatient(SidebarActivity.getUname());
-
-                                            patient.setServerID(editUser.getServerID());
-                                            HashMap<String, String> params = setParams("update");
-
-                                            PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
-                                                @Override
-                                                public void getResult(JSONObject response) {
-                                                    int success = 0;
-
-                                                    try {
-                                                        success = response.getInt("success");
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-                                                    if (success == 1) {
-                                                        if (pc.savePatient(patient_json_object_mysql, patient, "update")) {
-                                                            SharedPreferences.Editor editor = sharedpreferences.edit();
-                                                            editor.putString(MainActivity.name, patient.getUsername());
-                                                            editor.putString(MainActivity.pass, patient.getPassword());
-                                                            editor.commit();
-
-                                                            Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
-                                                            EditTabsActivity.this.finish();
-                                                        } else
-                                                            Toast.makeText(getBaseContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                                    } else
-                                                        Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
-                                                    pDialog.dismiss();
-                                                }
-                                            }, new ErrorListener<VolleyError>() {
-                                                public void getError(VolleyError error) {
-                                                    pDialog.dismiss();
-                                                    Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
-                                                    System.out.print("src <EditTabsActivity>: " + error);
-                                                }
-                                            });
-                                        } else {
-                                            pDialog.show();
-
-                                            final HashMap<String, String> params = setParams("register");
-
-                                            StringRequests.getString(EditTabsActivity.this, "generate/referral_id", new StringRespondListener<String>() {
-
-                                                @Override
-                                                public void getResult(String response) {
-                                                    patient.setReferral_id(response);
-                                                    params.put("referral_id", patient.getReferral_id());
-
-                                                    PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
-                                                        @Override
-                                                        public void getResult(JSONObject response) {
-                                                            try {
-                                                                int success = response.getInt("success");
-
-                                                                if (success == 2) {
-                                                                    Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
-                                                                } else if (success == 1) {
-                                                                    patient_json_array_mysql = response.getJSONArray("patient");
-                                                                    patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
-
-                                                                    if (ReferralActivity.cpd_id > 0) {
-                                                                        HashMap<String, String> map = new HashMap();
-                                                                        map.put("request", "crud");
-                                                                        map.put("action", "update");
-                                                                        map.put("table", "clinic_patient_doctor");
-                                                                        map.put("id", String.valueOf(ReferralActivity.cpd_id));
-                                                                        map.put("patient_id", String.valueOf(patient_json_object_mysql.getInt("id")));
-
-                                                                        PostRequest.send(EditTabsActivity.this, map, serverRequest, new RespondListener<JSONObject>() {
-                                                                            @Override
-                                                                            public void getResult(JSONObject response) {
-                                                                                try {
-                                                                                    int success = response.getInt("success");
-
-                                                                                    if (success == 1) {
-
-                                                                                    } else
-                                                                                        Toast.makeText(EditTabsActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
-
-                                                                                } catch (JSONException e) {
-                                                                                    e.printStackTrace();
-                                                                                }
-                                                                            }
-                                                                        }, new ErrorListener<VolleyError>() {
-                                                                            public void getError(VolleyError error) {
-                                                                                Log.d("EditTabs3", error + "");
-                                                                                Toast.makeText(EditTabsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                                                            }
-                                                                        });
-                                                                    }
-
-                                                                    if (pc.savePatient(patient_json_object_mysql, patient, "insert")) {
-                                                                        SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-                                                                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                                                                        editor.putString(MainActivity.name, patient.getUsername());
-                                                                        editor.putString(MainActivity.pass, patient.getPassword());
-                                                                        editor.commit();
-
-                                                                        startActivity(new Intent(getBaseContext(), SidebarActivity.class));
-                                                                        EditTabsActivity.this.finish();
-                                                                    } else
-                                                                        Toast.makeText(EditTabsActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            } catch (JSONException e) {
-                                                                Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
-                                                                Log.d("EditTabs2", e + "");
-                                                            }
-                                                            pDialog.dismiss();
-                                                        }
-                                                    }, new ErrorListener<VolleyError>() {
-                                                        public void getError(VolleyError error) {
-                                                            pDialog.dismiss();
-                                                            Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                                            Log.d("EditTabs1", error + "");
-                                                        }
-                                                    });
-                                                }
-                                            }, new ErrorListener<VolleyError>() {
-                                                public void getError(VolleyError error) {
-                                                    pDialog.dismiss();
-                                                    Log.d("EditTabs0", error + "");
-                                                    Toast.makeText(EditTabsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-            }
-        });
+        setupViewPager(viewPager);
+        tab_layout.setupWithViewPager(viewPager);
+        viewPager.addOnPageChangeListener(this);
+        tab_layout.setOnTabSelectedListener(this);
 
         if (signup_int > 0) {
             patient.setReferred_byUser(intent.getStringExtra("referred_by_User"));
@@ -384,32 +168,12 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.close_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        this.finish();
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        int pos = tab.getPosition();
-        viewPager.setCurrentItem(pos);
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        unselected = tab.getPosition();
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+    private void setupViewPager(ViewPager viewPager) {
+        TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new SignUpFragment(), "Gen. Info");
+        adapter.addFragment(new ContactsFragment(), "Contact & Addr.");
+        adapter.addFragment(new AccountFragment(), "Acct. Info");
+        viewPager.setAdapter(adapter);
     }
 
     public HashMap<String, String> setParams(String request) {
@@ -721,6 +485,225 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
         upload_dialog.show();
     }
 
+    //////////////////////ViewPager Listener/////////////////////////////////////
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (position == 0) {
+            readFromSignUp();
+
+        } else if (position == 1) {
+            if (unselected == 0)
+                readFromSignUp();
+            validateAtPosition2();
+
+        } else if (position == 2) {
+            Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
+            image_holder = (ImageView) findViewById(R.id.image_holder);
+            TextView changePassword = (TextView) findViewById(R.id.changePassword);
+
+            final ProgressDialog pDialog = new ProgressDialog(EditTabsActivity.this);
+            pDialog.setMessage("Please wait...");
+
+            if (signup_int > 0)
+                changePassword.setVisibility(View.GONE);
+
+            choose_image_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, 111);
+                }
+            });
+
+            if (unselected == 1)
+                validateAtPosition2();
+            else if (unselected == 0)
+                readFromSignUp();
+
+            Button btn_submit = (Button) findViewById(R.id.btn_save);
+            btn_submit.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    validateUserAccountInfo();
+
+                    if (hasError) {
+                        viewPager.setCurrentItem(0);
+                    } else if (hasError2) {
+                        viewPager.setCurrentItem(1);
+                    } else {
+                        if (!hasError && !hasError2) {
+                            validateUserAccountInfo();
+
+                            if (!hasError3) {
+                                patient.setBarangay_id(Integer.parseInt(ContactsFragment.barangay_id));
+                                patient.setBarangay(ContactsFragment.address_barangay.getSelectedItem().toString());
+                                patient.setMunicipality(ContactsFragment.address_city_municipality.getSelectedItem().toString());
+                                patient.setProvince(ContactsFragment.address_province.getSelectedItem().toString());
+                                patient.setRegion(ContactsFragment.address_region.getSelectedItem().toString());
+
+                                if (edit_int > 0) {
+                                    pDialog.show();
+                                    editUser = pc.getloginPatient(SidebarActivity.getUname());
+
+                                    patient.setServerID(editUser.getServerID());
+                                    HashMap<String, String> params = setParams("update");
+
+                                    PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
+                                        @Override
+                                        public void getResult(JSONObject response) {
+                                            int success = 0;
+
+                                            try {
+                                                success = response.getInt("success");
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            if (success == 1) {
+                                                if (pc.savePatient(patient_json_object_mysql, patient, "update")) {
+                                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                    editor.putString(MainActivity.name, patient.getUsername());
+                                                    editor.putString(MainActivity.pass, patient.getPassword());
+                                                    editor.commit();
+
+                                                    Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
+                                                    EditTabsActivity.this.finish();
+                                                } else
+                                                    Toast.makeText(getBaseContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                            } else
+                                                Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
+                                            pDialog.dismiss();
+                                        }
+                                    }, new ErrorListener<VolleyError>() {
+                                        public void getError(VolleyError error) {
+                                            pDialog.dismiss();
+                                            Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                                            System.out.print("src <EditTabsActivity>: " + error);
+                                        }
+                                    });
+                                } else {
+                                    pDialog.show();
+
+                                    final HashMap<String, String> params = setParams("register");
+
+                                    StringRequests.getString(EditTabsActivity.this, "generate/referral_id", new StringRespondListener<String>() {
+
+                                        @Override
+                                        public void getResult(String response) {
+                                            patient.setReferral_id(response);
+                                            params.put("referral_id", patient.getReferral_id());
+
+                                            PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
+                                                @Override
+                                                public void getResult(JSONObject response) {
+                                                    try {
+                                                        int success = response.getInt("success");
+
+                                                        if (success == 2) {
+                                                            Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
+                                                        } else if (success == 1) {
+                                                            patient_json_array_mysql = response.getJSONArray("patient");
+                                                            patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
+
+                                                            if (ReferralActivity.cpd_id > 0) {
+                                                                HashMap<String, String> map = new HashMap();
+                                                                map.put("request", "crud");
+                                                                map.put("action", "update");
+                                                                map.put("table", "clinic_patient_doctor");
+                                                                map.put("id", String.valueOf(ReferralActivity.cpd_id));
+                                                                map.put("patient_id", String.valueOf(patient_json_object_mysql.getInt("id")));
+
+                                                                PostRequest.send(EditTabsActivity.this, map, serverRequest, new RespondListener<JSONObject>() {
+                                                                    @Override
+                                                                    public void getResult(JSONObject response) {
+                                                                        try {
+                                                                            int success = response.getInt("success");
+
+                                                                            if (success == 1) {
+
+                                                                            } else
+                                                                                Toast.makeText(EditTabsActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
+
+                                                                        } catch (JSONException e) {
+                                                                            e.printStackTrace();
+                                                                        }
+                                                                    }
+                                                                }, new ErrorListener<VolleyError>() {
+                                                                    public void getError(VolleyError error) {
+                                                                        Log.d("EditTabs3", error + "");
+                                                                        Toast.makeText(EditTabsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            if (pc.savePatient(patient_json_object_mysql, patient, "insert")) {
+                                                                SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                                                                SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                                editor.putString(MainActivity.name, patient.getUsername());
+                                                                editor.putString(MainActivity.pass, patient.getPassword());
+                                                                editor.commit();
+
+                                                                startActivity(new Intent(getBaseContext(), SidebarActivity.class));
+                                                                EditTabsActivity.this.finish();
+                                                            } else
+                                                                Toast.makeText(EditTabsActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    } catch (JSONException e) {
+                                                        Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                                                        Log.d("EditTabs2", e + "");
+                                                    }
+                                                    pDialog.dismiss();
+                                                }
+                                            }, new ErrorListener<VolleyError>() {
+                                                public void getError(VolleyError error) {
+                                                    pDialog.dismiss();
+                                                    Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                    Log.d("EditTabs1", error + "");
+                                                }
+                                            });
+                                        }
+                                    }, new ErrorListener<VolleyError>() {
+                                        public void getError(VolleyError error) {
+                                            pDialog.dismiss();
+                                            Log.d("EditTabs0", error + "");
+                                            Toast.makeText(EditTabsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    ///////////////////////////////////////////TabLayout Listener///////////////////////////
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+        unselected = tab.getPosition();
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+
+    /////////////////////////////////////////////////////
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         @Override
         protected void onPreExecute() {
@@ -813,9 +796,7 @@ public class EditTabsActivity extends FragmentActivity implements ActionBar.TabL
     }
 
     private void showOverLay() {
-        if (oc.checkOverlay("EditTabs", "check")) {
-
-        } else {
+        if (!oc.checkOverlay("EditTabs", "check")) {
             final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
             dialog.setContentView(R.layout.edittabs_overlay);
 

@@ -7,8 +7,8 @@
     <color name="default_button_background_pressed_dark">#46c5c1ff</color>
     <color name="default_keyboard_indicator_color_dark">#63AB62</color>
 
-    <color name="ColorPrimary">#5B9A68</color>
-    <color name="LightGreen">#63AB62</color>
+    <color name="darkerGreen">#458B74</color>
+    <color name="lighterGreen">#93F9B9</color>
 
     <color name="default_text_color_holo_light">#ff000000</color>
     <color name="default_text_color_holo_light_disabled">#ffb2b2b2</color>

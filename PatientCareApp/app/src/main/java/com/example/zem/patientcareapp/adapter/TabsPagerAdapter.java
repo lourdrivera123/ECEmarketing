@@ -4,36 +4,35 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.zem.patientcareapp.Fragment.AccountFragment;
-import com.example.zem.patientcareapp.Fragment.ContactsFragment;
-import com.example.zem.patientcareapp.Fragment.SignUpFragment;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter {
+    private final List<Fragment> mFragmentList = new ArrayList();
+    private final List<String> mFragmentTitleList = new ArrayList();
 
     public TabsPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
-    public Fragment getItem(int index) {
+    public int getCount() {
+        return mFragmentList.size();
+    }
 
-        switch (index) {
-            case 0:
-                return new SignUpFragment();
-            case 1:
-                return new ContactsFragment();
-            case 2:
-                return new AccountFragment();
-
-        }
-
-        return null;
+    public void addFragment(Fragment fragment, String title) {
+        mFragmentList.add(fragment);
+        mFragmentTitleList.add(title);
     }
 
     @Override
-    public int getCount() {
-        // get item count - equal to number of tabs
-        return 3;
+    public CharSequence getPageTitle(int position) {
+        return mFragmentTitleList.get(position);
     }
 
+    @Override
+    public Fragment getItem(int position) {
+        return mFragmentList.get(position);
+    }
 }
+

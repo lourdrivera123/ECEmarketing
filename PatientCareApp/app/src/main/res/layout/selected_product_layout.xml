@@ -151,7 +151,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="2dp"
                             android:layout_marginBottom="@dimen/d20"
-                            android:background="@color/ColorPrimary" />
+                            android:background="@color/partner_toolbar" />
 
                         <TextView
                             android:id="@+id/prod_description"
@@ -176,7 +176,7 @@
             android:id="@+id/add_to_cart"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/ColorPrimary"
+            android:background="@color/partner_toolbar"
             android:clickable="true"
             android:gravity="center">
 

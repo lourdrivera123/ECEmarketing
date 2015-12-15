@@ -54,7 +54,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/d10"
-            android:hint="Username" />
+            android:hint="Username"
+            android:textSize="15sp" />
 
         <EditText
             android:id="@+id/password"
@@ -62,6 +63,7 @@
             android:layout_height="wrap_content"
             android:hint="Password"
             android:inputType="textPassword"
+            android:textSize="15sp"
             android:visibility="gone" />
 
         <TextView
@@ -72,7 +74,8 @@
             android:background="?android:attr/selectableItemBackground"
             android:drawableLeft="@mipmap/ic_update"
             android:gravity="center_vertical"
-            android:text="Change Password" />
+            android:text="Change Password"
+            android:textSize="15sp" />
 
 
         <LinearLayout
@@ -84,7 +87,7 @@
                 android:id="@+id/btn_save"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#5B9A68"
+                android:background="@color/partner_toolbar"
                 android:text="Save"
                 android:textColor="@color/white" />
         </LinearLayout>
