@@ -1,6 +1,8 @@
 package com.example.zem.patientcareapp.CheckoutModule;
 
+
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +35,11 @@ import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONException;
+import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
+import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
@@ -96,52 +103,66 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         bc = new BasketController(this);
         helper  = new Helpers();
 
-        String url_raw = "get_basket_items&patient_id=" + pc.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Please wait...");
+        dialog.setCancelable(false);
+        dialog.show();
 
-        GetRequest.getJSONobj(this, url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
+        String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID();
+        ListOfPatientsRequest.getJSONobj(this, url_raw, "baskets", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                items = bc.getAllBasketItems(); // returns all basket items for the currently loggedin patient
+                try {
+                    int success = response.getInt("success");
 
-                for (HashMap<String, String> item : items) {
-                    totalAmount = totalAmount + Double.parseDouble(item.get("item_subtotal"));
-                }
+                    if (success == 1) {
+                        JSONArray json_mysql = response.getJSONArray("baskets");
 
-                double coupon_discount = order_model.getCoupon_discount() * totalAmount;
-                double points_discount = order_model.getPoints_discount() * totalAmount;
-                double discounted_total = totalAmount - points_discount - coupon_discount;
+                        items = bc.convertFromJson(SummaryActivity.this, json_mysql);
 
-                /* discounts and total block*/
+                        for (HashMap<String, String> item : items) {
+                            totalAmount = totalAmount + Double.parseDouble(item.get("item_subtotal"));
+                        }
+
+                        double coupon_discount = order_model.getCoupon_discount() * totalAmount;
+                        double points_discount = order_model.getPoints_discount() * totalAmount;
+                        double discounted_total = totalAmount - points_discount - coupon_discount;
 
                 order_model.setCoupon_discount(coupon_discount);
                 order_model.setPoints_discount(points_discount);
 
-                if (coupon_discount == 0.0)
-                    coupon_layout.setVisibility(View.GONE);
+                        /* discounts and total block*/
+                        if (coupon_discount == 0.0)
+                            coupon_layout.setVisibility(View.GONE);
 
-                if (points_discount == 0.0)
-                    points_layout.setVisibility(View.GONE);
+                        if (points_discount == 0.0)
+                            points_layout.setVisibility(View.GONE);
 
-                if (coupon_discount == 0.0 && points_discount == 0.0)
-                    subtotal_layout.setVisibility(View.GONE);
+                        if (coupon_discount == 0.0 && points_discount == 0.0)
+                            subtotal_layout.setVisibility(View.GONE);
 
                 amount_subtotal.setText("\u20B1 " + String.valueOf(totalAmount));
                 amount_of_coupon_discount.setText("\u20B1 " + String.format("%.2f", coupon_discount));
                 amount_of_points_discount.setText("\u20B1 " + String.format("%.2f", points_discount));
                 total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
-                /* discounts and total block*/
 
-                SummaryAdapter adapter = new SummaryAdapter(SummaryActivity.this, items);
-                order_summary.setAdapter(adapter);
+                        /* discounts and total block*/
+                        SummaryAdapter adapter = new SummaryAdapter(SummaryActivity.this, items);
+                        order_summary.setAdapter(adapter);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(SummaryActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Log.d("shoppingcart0", error + "");
-                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
 
-        if(order_model.getMode_of_delivery().equals("pickup")){
+        if (order_model.getMode_of_delivery().equals("pickup")) {
             address_or_branch.setText("Branch to pickup order");
             address_option.setText("ECE NAGA");
         } else {
@@ -176,14 +197,14 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.change_id:
                 Intent intent = new Intent(this, DeliverPickupOption.class);
                 intent.putExtra("order_model", order_model);
                 startActivity(intent);
                 break;
             case R.id.order_now_btn:
-                if(order_model.getPayment_method().equals("paypal")){
+                if (order_model.getPayment_method().equals("paypal")) {
                     Intent paypal_intent = new Intent(this, PayPalCheckout.class);
                     paypal_intent.putExtra("order_model", order_model);
                     startActivity(paypal_intent);

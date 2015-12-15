@@ -10,7 +10,7 @@
         android:id="@+id/myToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ColorPrimary"
+        android:background="@color/toolbar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -31,7 +31,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/ColorPrimary"
+                android:background="@color/partner_toolbar"
                 android:padding="3dp"
                 android:text="Customer Ordering"
                 android:textColor="@color/white"
@@ -66,7 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:background="@color/ColorPrimary"
+                android:background="@color/partner_toolbar"
                 android:padding="3dp"
                 android:text="Recipient of Order"
                 android:textColor="@color/white"
@@ -122,7 +122,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:background="@color/ColorPrimary"
+                android:background="@color/partner_toolbar"
                 android:padding="3dp"
                 android:text="Select ECE branch to serve you:"
                 android:textColor="@color/white"
@@ -138,7 +138,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:background="@color/ColorPrimary"
+                android:background="@color/partner_toolbar"
                 android:padding="3dp"
                 android:text="Delivery Options:"
                 android:textColor="@color/white"
@@ -164,16 +164,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight=".5"
+                    android:checked="false"
                     android:text="Deliver"
-                    android:textSize="13sp"
-                    android:checked="false" />
+                    android:textSize="13sp" />
             </RadioGroup>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d10"
-                android:background="@color/ColorPrimary"
+                android:background="@color/partner_toolbar"
                 android:padding="3dp"
                 android:text="Payment Options:"
                 android:textColor="@color/white"
@@ -212,7 +212,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@color/ColorPrimary"
+                android:background="@color/partner_toolbar"
                 android:text="Proceed"
                 android:textColor="@color/white" />
         </LinearLayout>

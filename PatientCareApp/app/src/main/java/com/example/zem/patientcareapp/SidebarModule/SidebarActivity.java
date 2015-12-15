@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp.SidebarModule;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -25,11 +24,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.zem.patientcareapp.AlarmModule.AlarmService;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientController;
-import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
 import com.example.zem.patientcareapp.Fragment.MessagesFragment;
@@ -51,8 +50,6 @@ public class SidebarActivity extends AppCompatActivity {
     private String[] navMenuTitles; // slide menu items
     private TypedArray navMenuIcons;
     private ArrayList<NavDrawerItem> navDrawerItems;
-    ArrayList<HashMap<String, String>> hash_allProducts;
-    ArrayList<String> products;
 
     public static String uname, pass;
     public static int userID;
@@ -72,7 +69,6 @@ public class SidebarActivity extends AppCompatActivity {
     static com.example.zem.patientcareapp.Model.Patient patient;
     static DbHelper dbHelper;
     static PatientController pc;
-    static ProductController prc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +80,6 @@ public class SidebarActivity extends AppCompatActivity {
 
         dbHelper = new DbHelper(this);
         pc = new PatientController(this);
-        prc = new ProductController(this);
-        hash_allProducts = prc.getAllProducts();
-        products = new ArrayList();
-
-        for (int x = 0; x < hash_allProducts.size(); x++)
-            products.add(hash_allProducts.get(x).get(ProductController.PRODUCT_NAME));
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         setSupportActionBar(myToolBar);
@@ -101,6 +91,8 @@ public class SidebarActivity extends AppCompatActivity {
         //Header of the listview
         View header = getLayoutInflater().inflate(R.layout.header_sidebar, null);
         img_first = (ImageView) header.findViewById(R.id.img_first);
+        TextView username = (TextView) header.findViewById(R.id.username);
+        username.setText(getUname());
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.temp_user);
         img_first.setImageBitmap(ImageHelper.getRoundedCornerBitmap(bm, 300));

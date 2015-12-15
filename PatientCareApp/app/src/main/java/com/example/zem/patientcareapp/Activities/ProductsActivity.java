@@ -15,10 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -29,10 +31,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
-import com.example.zem.patientcareapp.Model.Product;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Model.Product;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.Network.ServerRequest;
@@ -48,34 +49,39 @@ import com.example.zem.patientcareapp.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by User PC on 11/20/2015.
  */
 
-public class ProductsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class ProductsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemSelectedListener {
     ListView listOfProducts;
     Toolbar myToolBar;
     LinearLayout results_layout;
     TextView noOfResults, number_of_notif;
     ImageButton go_to_cart;
+    Spinner spinner_categories;
 
     ProductsAdapter adapter;
+    ArrayAdapter spinner_adapter;
+
     Helpers helpers;
     RequestQueue queue;
     ServerRequest serverRequest;
     static DbHelper db;
-
     static ProductController pc;
     BasketController bc;
-
     static OverlayController oc;
 
-    public static Map<String, HashMap<String, String>> productQuantity;
-    public static ArrayList<HashMap<String, String>> temp_products_items, products_items, basket_items;
-    ArrayList<HashMap<Integer, HashMap<String, String>>> searchProducts;
+    ProgressDialog progress1;
+
+    public static ArrayList<Map<String, String>> temp_products_items, products_items, basket_items;
     public static HashMap<String, String> map;
+    ArrayList<HashMap<Integer, HashMap<String, String>>> searchProducts = new ArrayList();
+    ArrayList<String> categories = new ArrayList();
 
     public static int is_finish;
 
@@ -87,11 +93,12 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         results_layout = (LinearLayout) findViewById(R.id.results_layout);
         noOfResults = (TextView) findViewById(R.id.noOfResults);
         listOfProducts = (ListView) findViewById(R.id.listOfProducts);
+        spinner_categories = (Spinner) findViewById(R.id.spinner_categories);
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Products");
+        getSupportActionBar().setTitle(null);
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
         db = new DbHelper(this);
@@ -102,77 +109,20 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         helpers = new Helpers();
         serverRequest = new ServerRequest();
 
-        searchProducts = new ArrayList();
         basket_items = new ArrayList();
         map = new HashMap();
-        productQuantity = new HashMap();
+        products_items = new ArrayList();
         temp_products_items = new ArrayList();
-
-        products_items = pc.getAllProducts();
-        temp_products_items.addAll(products_items);
+        progress1 = new ProgressDialog(this);
+        progress1.setMessage("Please wait...");
+        progress1.setCancelable(false);
 
         showOverLay(this);
-
-        for (HashMap<String, String> map : products_items) {
-            HashMap<String, String> tempMap = new HashMap();
-            tempMap.put("id", map.get("id"));
-            tempMap.put("product_id", map.get("product_id"));
-            tempMap.put("qty_per_packing", map.get("qty_per_packing"));
-            tempMap.put("packing", map.get("packing"));
-            tempMap.put("temp_basket_qty", "0");
-            tempMap.put("prescription_required", map.get("prescription_required"));
-            productQuantity.put(map.get("product_id"), tempMap);
-
-            HashMap<Integer, HashMap<String, String>> hash = new HashMap();
-            HashMap<String, String> temp = new HashMap();
-            temp.put("product_name", map.get("name"));
-            temp.put("generic_name", map.get("generic_name"));
-            hash.put(Integer.parseInt(tempMap.get("product_id")), temp);
-            searchProducts.add(hash);
-        }
-
-        final ProgressDialog progress1 = new ProgressDialog(this);
-        progress1.setMessage("Please wait...");
-        progress1.show();
-
-        GetRequest.getJSONobj(getBaseContext(), "get_products", "products", "product_id", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                products_items = pc.getAllProducts();
-                temp_products_items.addAll(products_items);
-
-                for (HashMap<String, String> map : products_items) {
-                    HashMap<String, String> tempMap = new HashMap();
-                    tempMap.put("id", map.get("id"));
-                    tempMap.put("product_id", map.get("product_id"));
-                    tempMap.put("qty_per_packing", map.get("qty_per_packing"));
-                    tempMap.put("packing", map.get("packing"));
-                    tempMap.put("temp_basket_qty", "0");
-                    tempMap.put("prescription_required", map.get("prescription_required"));
-                    productQuantity.put(map.get("product_id"), tempMap);
-
-                    HashMap<Integer, HashMap<String, String>> hash = new HashMap();
-                    HashMap<String, String> temp = new HashMap();
-                    temp.put("product_name", map.get("name"));
-                    temp.put("generic_name", map.get("generic_name"));
-                    hash.put(Integer.parseInt(map.get("product_id")), temp);
-                    searchProducts.add(hash);
-                }
-                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, products_items);
-                listOfProducts.setAdapter(adapter);
-                progress1.dismiss();
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                Log.d("Error", error + "");
-                progress1.dismiss();
-                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        getProductCategories();
         getAllBasketItems();
 
         listOfProducts.setOnItemClickListener(this);
+        spinner_categories.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -248,11 +198,8 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 results_layout.setVisibility(View.GONE);
-
-                products_items = new ArrayList();
-                products_items = pc.getAllProducts();
-
-                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, products_items);
+                spinner_categories.setSelection(0);
+                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, temp_products_items);
                 listOfProducts.setAdapter(adapter);
                 return true;
             }
@@ -263,13 +210,11 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        int product_id = Integer.parseInt(products_items.get(position).get("product_id"));
-
-        Product prod;
-        prod = pc.getProductById(product_id);
+        Map<String, String> ss = (Map<String, String>) adapter.getItem(position);
+        int product_id = Integer.parseInt(ss.get("product_id"));
 
         Intent intent = new Intent(this, SelectedProductActivity.class);
-        intent.putExtra(SelectedProductActivity.PRODUCT_ID, prod.getProductId());
+        intent.putExtra(SelectedProductActivity.PRODUCT_ID, product_id);
         startActivity(intent);
     }
 
@@ -300,13 +245,14 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                     HashMap<String, String> values = ee.getValue();
 
                     if (values.get("product_name").toLowerCase().contains(query.toLowerCase()) || values.get("generic_name").toLowerCase().contains(query.toLowerCase())) {
-                        HashMap<String, String> details = temp_products_items.get(x);
+                        Map<String, String> details = temp_products_items.get(x);
                         products_items.add(details);
                         ctr += 1;
                     }
                 }
             }
-            adapter.notifyDataSetChanged();
+            adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, products_items);
+            listOfProducts.setAdapter(adapter);
             noOfResults.setText(ctr + "");
 
             if (ctr == 0)
@@ -412,5 +358,135 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                 startActivity(new Intent(this, ShoppingCartActivity.class));
                 break;
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+        final String category = categories.get(position);
+        products_items.clear();
+        searchProducts.clear();
+        temp_products_items.clear();
+
+        progress1.show();
+
+        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products", "products", new RespondListener<JSONObject>() {
+                    @Override
+                    public void getResult(JSONObject response) {
+                        try {
+                            int success = response.getInt("success");
+
+                            if (success == 1) {
+                                JSONArray json_array = response.getJSONArray("products");
+
+                                for (int x = 0; x < json_array.length(); x++) {
+                                    JSONObject obj = json_array.getJSONObject(x);
+
+                                    HashMap<String, String> map = new HashMap();
+                                    map.put("product_id", String.valueOf(obj.getInt("id")));
+                                    map.put("subcategory_id", String.valueOf(obj.getInt("subcategory_id")));
+                                    map.put("name", obj.getString("name"));
+                                    map.put("generic_name", obj.getString("generic_name"));
+                                    map.put("description", obj.getString("description"));
+                                    map.put("prescription_required", String.valueOf(obj.getInt("prescription_required")));
+                                    map.put("price", String.valueOf(obj.getInt("price")));
+                                    map.put("unit", obj.getString("unit"));
+                                    map.put("packing", obj.getString("packing"));
+                                    map.put("qty_per_packing", String.valueOf(obj.getInt("qty_per_packing")));
+                                    map.put("sku", obj.getString("sku"));
+                                    map.put("temp_basket_qty", "0");
+                                    map.put("category_name", obj.getString("cat_name"));
+                                    map.put("category_id", String.valueOf(obj.getInt("cat_id")));
+                                    products_items.add(map);
+
+                                    HashMap<Integer, HashMap<String, String>> hash = new HashMap();
+                                    HashMap<String, String> temp = new HashMap();
+                                    temp.put("product_name", map.get("name"));
+                                    temp.put("generic_name", map.get("generic_name"));
+                                    hash.put(obj.getInt("id"), temp);
+                                    searchProducts.add(hash);
+                                }
+                                temp_products_items.addAll(products_items);
+
+                                ArrayList<Map<String, String>> newMap = new ArrayList();
+
+                                if (category.equals("Favorites")) {
+                                    ArrayList<Integer> fave_IDs = db.getFavoritesByUserID(SidebarActivity.getUserID());
+
+                                    if (fave_IDs.size() > 0) {
+                                        for (int x = 0; x < fave_IDs.size(); x++) {
+                                            String product_id = String.valueOf(fave_IDs.get(x));
+
+                                            for (Map<String, String> map : products_items) {
+                                                if (map.get("product_id").equals(product_id))
+                                                    newMap.add(map);
+                                            }
+                                        }
+                                    } else
+                                        Toast.makeText(ProductsActivity.this, "wala kay favorites", Toast.LENGTH_SHORT).show();
+                                } else if (category.equals("All")) {
+                                    newMap.addAll(products_items);
+                                } else {
+                                    for (Map<String, String> map : products_items) {
+                                        if (map.containsValue(category))
+                                            newMap.add(map);
+                                    }
+                                }
+
+                                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, newMap);
+                                listOfProducts.setAdapter(adapter);
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();
+                        }
+                        progress1.dismiss();
+                    }
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        Log.d("ProductsAct", error + "");
+                        progress1.dismiss();
+                        Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    public void getProductCategories() {
+        categories.add("All");
+        categories.add("Favorites");
+
+        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_product_categories", "product_categories", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    int success = response.getInt("success");
+
+                    if (success == 1) {
+                        JSONArray json_array = response.getJSONArray("product_categories");
+
+                        for (int x = 0; x < json_array.length(); x++) {
+                            JSONObject obj = json_array.getJSONObject(x);
+                            categories.add(obj.getString("name"));
+                        }
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();
+                }
+
+                spinner_adapter = new ArrayAdapter(ProductsActivity.this, R.layout.spinner_toolbar_item, categories);
+                spinner_categories.setAdapter(spinner_adapter);
+                progress1.dismiss();
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("ProductsAct1", error + "");
+                progress1.dismiss();
+                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

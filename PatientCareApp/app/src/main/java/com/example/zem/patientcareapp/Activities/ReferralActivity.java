@@ -1,13 +1,11 @@
 package com.example.zem.patientcareapp.Activities;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -45,7 +43,7 @@ import java.util.HashMap;
  * Created by User PC on 8/26/2015.
  */
 
-public class ReferralActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextWatcher, AdapterView.OnItemClickListener {
+public class ReferralActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextWatcher, AdapterView.OnItemClickListener {
     ArrayList<HashMap<String, String>> hashOfUsers, hashOfDoctors;
     ArrayList<String> tempReferrals;
     ArrayAdapter referredAdapter;
@@ -62,6 +60,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
     EditText referredBy, specifyOthers, autoUname, autoPassword;
     ListView listOfNames;
     Button continueBtn, continueBtn2;
+    Toolbar myToolbar;
 
     Dialog dialog1;
     ProgressDialog dialog, dialog_1;
@@ -71,12 +70,14 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.referral_activity_layout);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.referral_activity_layout);
 
-        ActionBar actionbar = getActionBar();
-        setCustomActionBar(actionbar);
-        actionbar.setDisplayHomeAsUpEnabled(true);
+        myToolbar = (Toolbar) findViewById(R.id.myToolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+        myToolbar.setNavigationIcon(R.drawable.ic_back);
 
         db = new DbHelper(this);
         doctor_controller = new DoctorController(this);
@@ -110,12 +111,6 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
     @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    public static void setCustomActionBar(ActionBar actionbar) {
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
-        actionbar.setBackgroundDrawable(colorDrawable);
-        actionbar.setDisplayShowTitleEnabled(false);
     }
 
     @Override
@@ -229,7 +224,7 @@ public class ReferralActivity extends Activity implements View.OnClickListener, 
                         String name = autoUname.getText().toString();
                         String pass = autoPassword.getText().toString();
 
-                        ListOfPatientsRequest.getJSONobj(ReferralActivity.this, "get_clinic_patients&username=" + name + "&password=" + pass, "clinic_patients",  new RespondListener<JSONObject>() {
+                        ListOfPatientsRequest.getJSONobj(ReferralActivity.this, "get_clinic_patients&username=" + name + "&password=" + pass, "clinic_patients", new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
                                 try {

@@ -4,8 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Model.Basket;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,12 +50,12 @@ public class BasketController extends DbHelper {
 
     /////////////////////////////INSERT METHODS///////////////////////////////////////
     public boolean insertBasket(Basket basket) {
-        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         String datenow = dateFormat.format(date);
 
         int patient_id = patient_controller.getCurrentLoggedInPatient().getServerID();
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
@@ -91,38 +96,34 @@ public class BasketController extends DbHelper {
         return basket;
     }
 
-    public ArrayList<HashMap<String, String>> getAllBasketItems() {
-        ArrayList<HashMap<String, String>> items = new ArrayList();
-        String sql = "Select b.id, b.basket_id, b.is_approved, b.prescription_id, p.product_id, p.name, p.price, p.packing, p.qty_per_packing," +
-                " p.prescription_required, p.sku, b.quantity, p.unit from " + TBL_BASKETS + " as b " +
-                "inner join " + ProductController.TBL_PRODUCTS + " as p on p.product_id = b.product_id where b.patient_id=" + patient_controller.getCurrentLoggedInPatient().getServerID();
-        SQLiteDatabase sql_db = getWritableDatabase();
-        Cursor cur = sql_db.rawQuery(sql, null);
+    public ArrayList<HashMap<String, String>> convertFromJson(Context context, JSONArray json_array) {
+        ArrayList<HashMap<String, String>> basketItems = new ArrayList();
 
-        while (cur.moveToNext()) {
-            double item_subtotal = cur.getInt(cur.getColumnIndex(BASKET_QUANTITY)) * cur.getDouble(cur.getColumnIndex(ProductController.PRODUCT_PRICE));
-            HashMap<String, String> map = new HashMap();
-            map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
-            map.put(ProductController.SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(ProductController.SERVER_PRODUCT_ID)));
-            map.put(SERVER_BASKET_ID, cur.getString(cur.getColumnIndex(SERVER_BASKET_ID)));
-            map.put(ProductController.PRODUCT_NAME, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_NAME)));
-            map.put(ProductController.PRODUCT_PRICE, String.valueOf(cur.getDouble(cur.getColumnIndex(ProductController.PRODUCT_PRICE))));
-            map.put(BASKET_QUANTITY, String.valueOf(cur.getInt(cur.getColumnIndex(BASKET_QUANTITY))));
-            map.put(ProductController.PRODUCT_UNIT, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_UNIT)));
-            map.put(ProductController.PRODUCT_SKU, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_SKU)));
-            map.put(ProductController.PRODUCT_PACKING, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_PACKING)));
-            map.put(ProductController.PRODUCT_QTY_PER_PACKING, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_QTY_PER_PACKING)));
-            map.put(ProductController.PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_PRESCRIPTION_REQUIRED)));
-            map.put(BASKET_PRESCRIPTION_ID, cur.getString(cur.getColumnIndex(BASKET_PRESCRIPTION_ID)));
-            map.put(BASKET_IS_APPROVED, cur.getString(cur.getColumnIndex(BASKET_IS_APPROVED)));
-            map.put("item_subtotal", String.valueOf(item_subtotal));
-            items.add(map);
+        try {
+            for (int x = 0; x < json_array.length(); x++) {
+                JSONObject obj = json_array.getJSONObject(x);
+
+                HashMap<String, String> map = new HashMap();
+                map.put(ProductController.SERVER_PRODUCT_ID, String.valueOf(obj.getInt("id")));
+                map.put(SERVER_BASKET_ID, String.valueOf(obj.getInt("basket_id")));
+                map.put(ProductController.PRODUCT_NAME, obj.getString("name"));
+                map.put(ProductController.PRODUCT_PRICE, String.valueOf(obj.getDouble("price")));
+                map.put(BASKET_QUANTITY, String.valueOf(obj.getInt("quantity")));
+                map.put(ProductController.PRODUCT_UNIT, obj.getString("unit"));
+                map.put(ProductController.PRODUCT_SKU, obj.getString("sku"));
+                map.put(ProductController.PRODUCT_PACKING, obj.getString("packing"));
+                map.put(ProductController.PRODUCT_QTY_PER_PACKING, String.valueOf(obj.getInt("qty_per_packing")));
+                map.put(ProductController.PRODUCT_PRESCRIPTION_REQUIRED, String.valueOf(obj.getInt("prescription_required")));
+                map.put(BASKET_PRESCRIPTION_ID, String.valueOf(obj.getInt("prescription_id")));
+                map.put(BASKET_IS_APPROVED, String.valueOf(obj.getInt("is_approved")));
+
+                basketItems.add(map);
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, e + "", Toast.LENGTH_SHORT).show();
         }
 
-        sql_db.close();
-        cur.close();
-
-        return items;
+        return basketItems;
     }
 
     public boolean saveBasket(HashMap<String, String> map) {
@@ -151,6 +152,8 @@ public class BasketController extends DbHelper {
 
             row = sql_db.update(TBL_BASKETS, val, SERVER_BASKET_ID + "=" + map.get("id"), null);
         }
+
+        Log.d("row", row + "");
 
         sql_db.close();
         return row > 0;

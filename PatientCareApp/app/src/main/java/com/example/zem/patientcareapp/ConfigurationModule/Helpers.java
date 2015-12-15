@@ -166,11 +166,9 @@ public class Helpers implements View.OnCreateContextMenuListener {
         ArrayList<HashMap<String, String>> arrayOfPrescriptions;
         HashMap<GridView, Dialog> map = new HashMap();
         int patientID;
-        DbHelper dbHelper = new DbHelper(context);
-        PatientController patient_controller = new PatientController(context);
         final Dialog builder = new Dialog(context);
 
-        patientID = patient_controller.getCurrentLoggedInPatient().getServerID();
+        patientID = SidebarActivity.getUserID();
         arrayOfPrescriptions = refreshPrescriptionList(context, patientID);
 
         if (arrayOfPrescriptions.size() > 0) {
@@ -191,7 +189,6 @@ public class Helpers implements View.OnCreateContextMenuListener {
     }
 
     public ArrayList<HashMap<String, String>> refreshPrescriptionList(Context context, int patientID) {
-        DbHelper dbHelper = new DbHelper(context);
         PatientPrescriptionController pres_con = new PatientPrescriptionController(context);
         ArrayList<HashMap<String, String>> uploadsByUser = pres_con.getPrescriptionByUserID(patientID);
         ArrayList<HashMap<String, String>> prescriptionArray = new ArrayList();

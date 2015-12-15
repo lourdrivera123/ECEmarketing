@@ -7,18 +7,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "PatientCare";
     public static final int DB_VERSION = 1;
-    Helpers helper = new Helpers();
-    private static DbHelper mInstance = null;
 
     public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at", AI_ID = "id",
             PATIENT_ID = "patient_id", IS_READ = "isRead";
@@ -28,16 +29,8 @@ public class DbHelper extends SQLiteOpenHelper {
             FAVE_PRODUCT_ID = "product_id",
             FAVE_USER_ID = "user_id";
 
-//    public static DbHelper getInstance(Context ctx) {
-//
-//        // Use the application context, which will ensure that you
-//        // don't accidentally leak an Activity's context.
-//        // See this article for more information: http://bit.ly/6LRzfx
-//        if (mInstance == null) {
-//            mInstance = new DbHelper(ctx.getApplicationContext());
-//        }
-//        return mInstance;
-//    }
+    String sql_favorites = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER)",
+            TBL_FAVORITES, AI_ID, FAVE_PRODUCT_ID, FAVE_USER_ID);
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -46,6 +39,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL(sql_favorites);
         db.execSQL(DoctorController.CREATE_TABLE);
         db.execSQL(SpecialtyController.CREATE_TABLE);
         db.execSQL(SubSpecialtyController.CREATE_TABLE);
@@ -180,5 +174,22 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.close();
         return deleted_id > 0;
+    }
+
+    /////////////////////////GET METHODS/////////////////////////////
+    public ArrayList<Integer> getFavoritesByUserID(int user_id) {
+        ArrayList<Integer> list = new ArrayList();
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT * FROM " + TBL_FAVORITES + " WHERE " + FAVE_USER_ID + " = " + user_id;
+        Cursor cur = db.rawQuery(sql, null);
+
+        while (cur.moveToNext()) {
+            list.add(cur.getInt(cur.getColumnIndex(FAVE_PRODUCT_ID)));
+        }
+
+        cur.close();
+        db.close();
+
+        return list;
     }
 }

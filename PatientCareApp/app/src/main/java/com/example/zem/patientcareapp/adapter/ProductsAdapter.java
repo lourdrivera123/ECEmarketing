@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.ToggleButton;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.BasketController;
+import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
@@ -52,14 +54,16 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
     BasketController bc;
     ServerRequest serverRequest;
+    DbHelper db;
 
-    ArrayList<HashMap<String, String>> products_items, basket_items;
-    Map<String, HashMap<String, String>> productQuantity;
+    ArrayList<Map<String, String>> products_items, basket_items;
+    ArrayList<Integer> list_favorites;
 
-    public ProductsAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
+    public ProductsAdapter(Context context, int resource, ArrayList<Map<String, String>> objects) {
         super(context, resource, objects);
         inflater = LayoutInflater.from(context);
         this.context = context;
+        products_items = objects;
     }
 
     @Override
@@ -82,21 +86,24 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
         serverRequest = new ServerRequest();
         bc = new BasketController(context);
-        products_items = ProductsActivity.products_items;
-        productQuantity = ProductsActivity.productQuantity;
         basket_items = ProductsActivity.basket_items;
+        db = new DbHelper(context);
+        list_favorites = db.getFavoritesByUserID(SidebarActivity.getUserID());
 
         try {
-            if (!products_items.get(position).get("is_favorite").equals(null)) {
-                add_to_favorite.setChecked(true);
+            int product_id = Integer.parseInt(products_items.get(position).get("product_id"));
+
+            for (int x = 0; x < list_favorites.size(); x++) {
+                if (list_favorites.get(x) == product_id)
+                    add_to_favorite.setChecked(true);
             }
         } catch (Exception e) {
-
+            Toast.makeText(context, e + "", Toast.LENGTH_SHORT).show();
         }
 
         original_price.setPaintFlags(original_price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         product_name.setText(products_items.get(position).get("name"));
-        rs_price.setText("Php " + products_items.get(position).get("price"));
+        rs_price.setText("Php " + products_items.get(position).get("price") + "/" + products_items.get(position).get("packing"));
 
         return view;
     }
@@ -112,13 +119,10 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                 final Helpers helpers = new Helpers();
                 int pos = Integer.parseInt(String.valueOf(v.getTag()));
                 int product_id = Integer.parseInt(products_items.get(pos).get("product_id"));
-                int productQty, check = 0, old_qty = 0;
+                int productQty = 1, check = 0, old_qty = 0;
                 String server_id = null;
 
                 int is_required = Integer.parseInt(products_items.get(pos).get("prescription_required"));
-                int q = Integer.parseInt(productQuantity.get(product_id + "").get("temp_basket_qty"));
-                int p = Integer.parseInt(productQuantity.get(product_id + "").get("qty_per_packing"));
-                productQty = q != 0 ? q : p;
 
                 final ProgressDialog pdialog = new ProgressDialog(context);
                 pdialog.setCancelable(false);

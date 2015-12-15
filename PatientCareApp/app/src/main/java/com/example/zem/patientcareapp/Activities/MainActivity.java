@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     EditText username_txtfield, password_txtfield;
     TextView signup, forgotpw;
-    Button login_btn;
+    LinearLayout login;
     Toolbar login_toolbar;
 
     public static final String MyPREFERENCES = "MyPrefs", name = "nameKey", pass = "passwordKey";
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
-        login_btn = (Button) findViewById(R.id.login_btn);
+        login = (LinearLayout) findViewById(R.id.login);
         username_txtfield = (EditText) findViewById(R.id.username_txtfield);
         password_txtfield = (EditText) findViewById(R.id.password_txtfield);
 
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         signup.setOnClickListener(this);
         forgotpw.setOnClickListener(this);
-        login_btn.setOnClickListener(this);
+        login.setOnClickListener(this);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.login_btn:
+            case R.id.login:
                 uname = username_txtfield.getText().toString();
                 password = password_txtfield.getText().toString();
 

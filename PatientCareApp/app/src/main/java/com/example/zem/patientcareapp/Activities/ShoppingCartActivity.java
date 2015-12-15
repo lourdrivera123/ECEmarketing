@@ -32,12 +32,12 @@ import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OrderController;
 import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
-import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Model.Basket;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
+import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
@@ -45,6 +45,7 @@ import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,7 +64,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     Helpers helper;
     ServerRequest serverRequest;
 
-    public ArrayList<HashMap<String, String>> items;
+    public ArrayList<HashMap<String, String>> items = new ArrayList();
     HashMap<String, String> row;
 
     public Double TotalAmount = 0.00, oldTotal = 0.00, newTotal = 0.00;
@@ -106,32 +107,46 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle("Shopping Cart");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
-        String url_raw = "get_basket_items&patient_id=" + SidebarActivity.getUserID() + "&table=baskets";
-        GetRequest.getJSONobj(this, url_raw, "baskets", "basket_id", new RespondListener<JSONObject>() {
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Please wait...");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID();
+        ListOfPatientsRequest.getJSONobj(this, url_raw, "baskets", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
+                try {
+                    int success = response.getInt("success");
 
-                items = bc.getAllBasketItems(); // returns all basket items for the currently loggedin patient
+                    if (success == 1) {
+                        JSONArray json_mysql = response.getJSONArray("baskets");
+                        items = bc.convertFromJson(ShoppingCartActivity.this, json_mysql);
 
-                for (HashMap<String, String> item : items) {
-                    double price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
-                    double quantity = Double.parseDouble(item.get(BasketController.BASKET_QUANTITY));
-                    double total = price * quantity;
-                    TotalAmount += total;
+                        for (HashMap<String, String> item : items) {
+                            double price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
+                            double quantity = Double.parseDouble(item.get(BasketController.BASKET_QUANTITY));
+                            double total = price * quantity;
+                            TotalAmount += total;
+                        }
+
+                        adapter = new LazyAdapter(ShoppingCartActivity.this, items, "basket_items");
+                        lv_items.setAdapter(adapter);
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(ShoppingCartActivity.this, e + "", Toast.LENGTH_SHORT).show();
                 }
-                items = bc.getAllBasketItems(); // returns all basket items for the currently loggedin patient
-
-                adapter = new LazyAdapter(ShoppingCartActivity.this, items, "basket_items");
-                lv_items.setAdapter(adapter);
-
-                total_amount.setText("\u20B1 " + TotalAmount);
+                total_amount.setText(TotalAmount + "");
+                dialog.dismiss();
             }
         }, new ErrorListener<VolleyError>() {
             @Override
-            public void getError(VolleyError object) {
-                Toast.makeText(ShoppingCartActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+            public void getError(VolleyError e) {
+                dialog.dismiss();
+                Toast.makeText(context, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
+
         btnCheckout.setOnClickListener(this);
         lv_items.setOnCreateContextMenuListener(this);
     }
