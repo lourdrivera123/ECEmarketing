@@ -25,6 +25,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.CheckoutModule.DeliverPickupOption;
+import com.example.zem.patientcareapp.CheckoutModule.PromosDiscounts;
 import com.example.zem.patientcareapp.CheckoutModule.SummaryActivity;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.BasketController;
@@ -380,11 +381,13 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             case R.id.btn_checkout_ready:
                 OrderModel order_model = opc.getOrderPreference();
                 if (order_model.isValid()) {
-                    Intent summary_intent = new Intent(this, SummaryActivity.class);
+                    Intent summary_intent = new Intent(this, PromosDiscounts.class);
                     summary_intent.putExtra("order_model", order_model);
                     startActivity(summary_intent);
+                    this.finish();
                 } else {
                     startActivity(new Intent(this, DeliverPickupOption.class));
+                    this.finish();
                 }
                 break;
         }

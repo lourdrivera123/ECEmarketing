@@ -100,6 +100,7 @@ public class BasketController extends DbHelper {
         Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
+            double item_subtotal = cur.getInt(cur.getColumnIndex(BASKET_QUANTITY)) * cur.getDouble(cur.getColumnIndex(ProductController.PRODUCT_PRICE));
             HashMap<String, String> map = new HashMap();
             map.put(AI_ID, cur.getString(cur.getColumnIndex(AI_ID)));
             map.put(ProductController.SERVER_PRODUCT_ID, cur.getString(cur.getColumnIndex(ProductController.SERVER_PRODUCT_ID)));
@@ -114,6 +115,7 @@ public class BasketController extends DbHelper {
             map.put(ProductController.PRODUCT_PRESCRIPTION_REQUIRED, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_PRESCRIPTION_REQUIRED)));
             map.put(BASKET_PRESCRIPTION_ID, cur.getString(cur.getColumnIndex(BASKET_PRESCRIPTION_ID)));
             map.put(BASKET_IS_APPROVED, cur.getString(cur.getColumnIndex(BASKET_IS_APPROVED)));
+            map.put("item_subtotal", String.valueOf(item_subtotal));
             items.add(map);
         }
 

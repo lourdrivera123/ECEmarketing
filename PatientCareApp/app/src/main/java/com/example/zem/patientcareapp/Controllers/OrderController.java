@@ -74,15 +74,22 @@ public class OrderController extends DbHelper {
         return rowID > 0;
     }
 
-    public ArrayList<String> getAllOrderItems() {
-        ArrayList<String> order_items = new ArrayList<>();
+    public ArrayList<HashMap<String, String>> getAllOrderItems() {
+        ArrayList<HashMap<String, String>> order_items = new ArrayList<>();
+
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
-        String sql = "SELECT * from orders where patient_id = " + SidebarActivity.getUserID() + " order by created_at DESC";
+        String sql = "SELECT count(od.order_details_id) as num_of_items, o.recipient_name, b.total, o.created_at as date_ordered, o.orders_id as order_id, o.status from orders as o inner join billings as b on o.orders_id = b.order_id inner join order_details as od on b.order_id = od.order_id where o.patient_id = " + SidebarActivity.getUserID() + " order by o.created_at DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap<>();
-            order_items.add("Order #" + cur.getString(cur.getColumnIndex(SERVER_ORDERS_ID)) + " - " + cur.getString(cur.getColumnIndex(CREATED_AT)));
+            map.put("recipient_name", cur.getString(cur.getColumnIndex(ORDERS_RECIPIENT_NAME)));
+            map.put("num_of_items", cur.getString(cur.getColumnIndex("num_of_items")));
+            map.put("total", cur.getString(cur.getColumnIndex(BillingController.BILLINGS_TOTAL)));
+            map.put("date_ordered", cur.getString(cur.getColumnIndex("date_ordered")));
+            map.put("order_id", cur.getString(cur.getColumnIndex("order_id")));
+            map.put("order_status", cur.getString(cur.getColumnIndex("status")));
+            order_items.add(map);
         }
 
         cur.close();

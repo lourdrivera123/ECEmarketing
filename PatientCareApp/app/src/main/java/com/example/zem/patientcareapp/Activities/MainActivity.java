@@ -190,6 +190,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         });
 
+                                        //request for order_billings
+                                        GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + syncedPatient.getServerID(), "billings", "billings_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                Log.d("mainact_consult", error + "");
+                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
                                         //request for order_details
                                         GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + syncedPatient.getServerID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                             @Override

@@ -108,6 +108,7 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
 //        bundle.putSerializable("order_model", order_model);
         intent.putExtra("order_model", order_model);
         startActivity(intent);
+        this.finish();
     }
 
     @Override

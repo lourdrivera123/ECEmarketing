@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_selector"
+    android:background="@drawable/rectback"
     android:orientation="horizontal"
     android:padding="5dip">
 
@@ -15,7 +15,7 @@
 
         <!-- Product Name-->
         <TextView
-            android:id="@+id/product_name"
+            android:id="@+id/num_of_items_and_to_whom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -25,21 +25,33 @@
             android:minWidth="48dp"
             android:padding="10dp"
             android:singleLine="false"
-            android:text="Google Play"
+            android:text="4 Items for John Doe"
             android:textColor="#ff040404"
             android:textSize="15sp" />
-
-
     </LinearLayout>
+
+
+
+
+    <!-- Price -->
+    <TextView
+        android:id="@+id/order_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_details"
+        android:layout_marginStart="10dp"
+        android:text="Order #1"
+        android:textSize="12sp"
+        tools:ignore="RtlCompat" />
 
     <!-- Price -->
     <TextView
         android:id="@+id/product_qty_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/item_details"
+        android:layout_below="@+id/order_id"
         android:layout_marginStart="10dp"
-        android:text="$42.45 - 1 item"
+        android:text="Total - P 100"
         android:textSize="12sp"
         tools:ignore="RtlCompat" />
 
@@ -50,17 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/product_qty_price"
         android:layout_marginStart="10dp"
-        android:text="Ordered on Feb 23"
-        android:textSize="12sp"
-        tools:ignore="RtlCompat" />
-
-    <TextView
-        android:id="@+id/order_detail_items"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ordered_on"
-        android:layout_marginStart="10dp"
-        android:text="Item 1, Item 2, Item 3"
+        android:text="Ordered on Feb 23, 2015"
         android:textSize="12sp"
         tools:ignore="RtlCompat" />
 
@@ -86,7 +88,6 @@
             android:textColor="#ff040404"
             android:textSize="15sp" />
 
-
         <!-- Amount -->
         <TextView
             android:id="@+id/status"
@@ -97,46 +98,8 @@
             android:minWidth="40dp"
             android:paddingRight="10dp"
             android:singleLine="false"
-            android:text="Out for Delivery"
-            android:textColor="#93f70303"
-            android:textSize="12sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/item_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:longClickable="true"
-        android:layout_below="@+id/item_status">
-
-        <!-- Product Name-->
-        <TextView
-            android:id="@+id/nothing2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="4"
-            android:descendantFocusability="blocksDescendants"
-            android:maxWidth="60dp"
-            android:minWidth="48dp"
-            android:singleLine="false"
-            android:text=""
-            android:textColor="#ff040404"
-            android:textSize="15sp" />
-
-
-        <!-- Amount -->
-        <TextView
-            android:id="@+id/time_status"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:descendantFocusability="blocksDescendants"
-            android:gravity="center"
-            android:minWidth="40dp"
-            android:singleLine="false"
-            android:paddingRight="10dp"
-            android:text="11:00 am"
+            android:text="Pending"
+            android:textColor="#ffa500"
             android:textSize="12sp" />
 
     </LinearLayout>

@@ -1,18 +1,23 @@
 package com.example.zem.patientcareapp.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.zem.patientcareapp.Activities.OrderDetailsActivity;
+import com.example.zem.patientcareapp.Controllers.BillingController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OrderController;
 import com.example.zem.patientcareapp.Controllers.OrderDetailController;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.adapter.LazyAdapter;
+import com.example.zem.patientcareapp.adapter.OrdersAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,15 +25,15 @@ import java.util.HashMap;
 /**
  * Created by Zem on 10/2/2015.
  */
-public class OrdersFragment extends Fragment {
+public class OrdersFragment extends Fragment implements AdapterView.OnItemClickListener {
     ListView lv_items;
 
-    LazyAdapter adapter;
-    ArrayList<String> order_items;
-    ArrayList<HashMap<String, String>> items;
+    OrdersAdapter adapter;
+    ArrayList<HashMap<String, String>> order_items;
     DbHelper dbHelper;
     OrderController oc;
     OrderDetailController odc;
+    BillingController blc;
     Context context;
 
     @Override
@@ -40,13 +45,14 @@ public class OrdersFragment extends Fragment {
         dbHelper = new DbHelper(getActivity());
         oc = new OrderController(getActivity());
         odc = new OrderDetailController(getActivity());
+        blc = new BillingController(getActivity());
 
         order_items = oc.getAllOrderItems();
-        items = odc.getAllOrderDetailItems(); // returns all basket items for the currently loggedin patient
 
-        adapter = new LazyAdapter(getActivity(), items, "order_items");
+        adapter = new OrdersAdapter(getActivity(), order_items);
+
         lv_items.setAdapter(adapter);
-
+        lv_items.setOnItemClickListener(this);
 //        Intent intent = getIntent();
 //        String timestamp_ordered = intent.getStringExtra("timestamp_ordered");
 //        String payment_from = intent.getStringExtra("payment_from");
@@ -85,5 +91,14 @@ public class OrdersFragment extends Fragment {
 //            }
 //        }
         return rootView;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int order_id = Integer.parseInt(order_items.get(position).get("order_id"));
+
+        Intent intent = new Intent(getActivity(), OrderDetailsActivity.class);
+        intent.putExtra("order_id", order_id);
+        startActivity(intent);
     }
 }

@@ -67,6 +67,7 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
         stepping_stone.setText("Step 2/4");
         blood_seeker.setProgress(40);
 
+        to_me.setText("Use my own address \n ("+patient.getComplete_address()+")");
 
         blood_seeker.setOnTouchListener(new View.OnTouchListener() {
             @Override

@@ -58,6 +58,8 @@ public class PayPalCheckout extends Activity {
 
     RequestQueue queue;
 
+    OrderModel order_model;
+
     private static final int REQUEST_CODE_PAYMENT = 1;
 
     private List<PayPalItem> productsInCart = new ArrayList<PayPalItem>();
@@ -92,6 +94,7 @@ public class PayPalCheckout extends Activity {
         pc = new PatientController(this);
         pDialog = new ProgressDialog(this);
         queue = Volley.newRequestQueue(this);
+        order_model = (OrderModel) getIntent().getSerializableExtra("order_model");
 
         Intent ckintent = getIntent();
         OrderModel om = (OrderModel) ckintent.getSerializableExtra("order_model");
@@ -231,7 +234,9 @@ public class PayPalCheckout extends Activity {
         paymentDetails = new PayPalPaymentDetails(
                 shipping, subtotal, tax);
 
-        amount = subtotal.add(shipping).add(tax);
+        BigDecimal coupon_discount = new BigDecimal(order_model.getCoupon_discount()) ;
+        BigDecimal points_discount = new BigDecimal(order_model.getPoints_discount());
+        amount = subtotal.add(shipping).add(tax).subtract(coupon_discount).subtract(points_discount);
 
         payment = new PayPalPayment(
                 amount,
@@ -239,7 +244,7 @@ public class PayPalCheckout extends Activity {
                 "You will be paying - ",
                 Config.PAYMENT_INTENT);
 
-        payment.items(items).paymentDetails(paymentDetails);
+//        payment.items(items).paymentDetails(paymentDetails);
 
         return payment;
 
@@ -263,7 +268,7 @@ public class PayPalCheckout extends Activity {
 
                 try {
                     JSONObject res = new JSONObject(response);
-                    boolean error = res.getBoolean("error");
+//                    boolean error = res.getBoolean("error");
                     String message = res.getString("message");
 
 
@@ -276,17 +281,32 @@ public class PayPalCheckout extends Activity {
                                 GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                     @Override
                                     public void getResult(JSONObject response) {
-                                        try {
-                                            String timestamp_ordered = response.getString("server_timestamp");
 
-                                            Intent order_intent = new Intent(getBaseContext(), OrdersFragment.class);
-                                            order_intent.putExtra("payment_from", "paypal");
-                                            order_intent.putExtra("timestamp_ordered", timestamp_ordered);
-                                            startActivity(order_intent);
+                                        //request for order_details request
+                                        GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + SidebarActivity.getUserID(), "billings", "billings_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+                                                try {
+                                                    productsInCart.clear();
+                                                    String timestamp_ordered = response.getString("server_timestamp");
 
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                                                    Intent order_intent = new Intent(getBaseContext(), SidebarActivity.class);
+                                                    order_intent.putExtra("payment_from", "paypal");
+                                                    order_intent.putExtra("timestamp_ordered", timestamp_ordered);
+                                                    order_intent.putExtra("select", 5);
+                                                    startActivity(order_intent);
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                Log.d("Error", error + "");
+                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
 
                                     }
                                 }, new ErrorListener<VolleyError>() {
@@ -305,10 +325,10 @@ public class PayPalCheckout extends Activity {
                         });
                     }
 
-                    if (!error) {
-                        // empty the cart
-                        productsInCart.clear();
-                    }
+//                    if (!error) {
+//                        // empty the cart
+//                        productsInCart.clear();
+//                    }
 
                     finish();
 

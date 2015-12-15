@@ -89,7 +89,7 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
         switch (v.getId()){
             case R.id.cash:
 //                order_model.setPayment_method("cash");
-                payment_method = "cash";
+                payment_method = "cash_on_delivery";
                 ok_lets_go();
                 break;
             case R.id.visa_or_mastercard:

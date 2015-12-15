@@ -23,7 +23,7 @@ public class GetRequest {
 
     public static void getJSONobj(final Context c, final String q, final String table_name, final String table_id, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
         RequestQueue queue;
-        Helpers helpers;
+        final Helpers helpers;
         final DbHelper dbHelper;
         final UpdateController upc;
 
@@ -31,10 +31,12 @@ public class GetRequest {
         helpers = new Helpers();
         dbHelper = new DbHelper(c);
         upc = new UpdateController(c);
+        final String url = helpers.get_url(q, table_name);
 
         JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q, table_name), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Log.d("url", url);
                 Sync sync = new Sync();
                 sync.init(c, q, table_name, table_id, response);
                 try {

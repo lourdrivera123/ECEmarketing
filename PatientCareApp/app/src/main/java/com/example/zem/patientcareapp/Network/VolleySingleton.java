@@ -28,5 +28,6 @@ public class VolleySingleton {
         return mRequestQueue;
     }
 
+
     //Request queue = VolleySingleton.getInstance().getRequestQueue();
 }

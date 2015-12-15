@@ -79,6 +79,7 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
                 return true;
             }
         });
+        to_me.setText("Me ("+patient.getFname()+" "+patient.getLname()+")");
 
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -153,6 +153,8 @@ public class SidebarActivity extends AppCompatActivity {
             displayView(0); // on first time display view for first nav item
         }
 
+        displayView(getIntent().getIntExtra("select", 0));
+
         android.app.FragmentManager fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
 

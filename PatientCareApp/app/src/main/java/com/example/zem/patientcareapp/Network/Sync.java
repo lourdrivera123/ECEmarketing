@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Controllers.BasketController;
+import com.example.zem.patientcareapp.Controllers.BillingController;
 import com.example.zem.patientcareapp.Controllers.BranchController;
 import com.example.zem.patientcareapp.Controllers.ClinicController;
 import com.example.zem.patientcareapp.Controllers.ClinicDoctorController;
@@ -89,6 +90,7 @@ public class Sync {
     MessageController mc;
     PatientConsultationController ptcc;
     UpdateController uc;
+    BillingController blc;
     Context context;
 
     public void init(Context c, String request, String table_name, String table_id, JSONObject response) {
@@ -120,6 +122,7 @@ public class Sync {
         mc = new MessageController(context);
         ptcc = new PatientConsultationController(context);
         uc = new UpdateController(context);
+        blc = new BillingController(context);
 
         try {
             int success = response.getInt("success");
@@ -205,6 +208,9 @@ public class Sync {
                             } else if (tableName.equals("consultations")) {
                                 if (!ptcc.savePatientConsultation(setConsultation(json_object), "add"))
                                     Log.d("sync_1", "wala na save");
+                            } else if( tableName.equals("billings") ){
+                                if(!blc.saveBillings(json_object))
+                                    Log.d("sync_0", "wala na save");
                             }
                         }
                     }

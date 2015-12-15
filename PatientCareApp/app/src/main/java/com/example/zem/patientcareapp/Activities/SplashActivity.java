@@ -1,12 +1,17 @@
 package com.example.zem.patientcareapp.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
@@ -14,7 +19,9 @@ import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;
 
 import org.json.JSONObject;
@@ -27,7 +34,13 @@ public class SplashActivity extends Activity {
     Helpers helpers;
     RequestQueue queue;
     DbHelper dbHelper;
+    LinearLayout splash_layout;
     public static final String PREFS_NAME = "firstTimeUsePref";
+    int identifier = 0;
+    //identifier in future runs must be 13 since we made 13 network requests, if you want to add a network request in splash activity please add the max identifier too
+    int max_identifier = 13;
+    String[] requestsArray, tableNamesArray, serverIdsArray;
+//    boolean onPauseisFired = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,185 +49,94 @@ public class SplashActivity extends Activity {
 
         dbHelper = new DbHelper(this);
         helpers = new Helpers();
+        requestsArray = getResources().getStringArray(R.array.requests);
+        tableNamesArray = getResources().getStringArray(R.array.table_names);
+        serverIdsArray = getResources().getStringArray(R.array.server_ids);
+        splash_layout  = (LinearLayout) findViewById(R.id.splash_layout);
 
-        queue = Volley.newRequestQueue(this);
+        queue = VolleySingleton.getInstance().getRequestQueue();
 
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        if(identifier < max_identifier)
+            for_loop_splash();
+         else
+            checker();
+    }
 
-        if (settings.getBoolean("my_first_time", true)) {
-            // first time task
-            if (helpers.isNetworkAvailable(this)) {
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        Log.d("onpause fired", "yes");
+//        onPauseisFired = true;
+//    }
+//
+//        @Override
+//    protected void onResume() {
+//        super.onResume();
+//            if(onPauseisFired){
+//                if(identifier < max_identifier)
+//                    for_loop_splash();
+//                else
+//                    checker();
+//            }
+//    }
 
-                //request for clinic
-                GetRequest.getJSONobj(SplashActivity.this, "get_clinics", "clinics", "clinics_id", new RespondListener<JSONObject>() {
+    public void for_loop_splash(){
+        final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        identifier = settings.getInt("identifier", 0);
+        Log.d("max_identifier_forls", max_identifier+"");
+        Log.d("identifier_forls", identifier+"");
+        if(identifier < max_identifier) {
+            for(int x = identifier; x < max_identifier; x++ ){
+                GetRequest.getJSONobj(SplashActivity.this, requestsArray[x], tableNamesArray[x], serverIdsArray[x], new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
+                        int pref_identifier = identifier + 1;
+                        settings.edit().putInt("identifier", pref_identifier).commit();
+                        checker();
                     }
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
+
+                        queue.cancelAll(new RequestQueue.RequestFilter() {
+                            @Override
+                            public boolean apply(Request<?> request) {
+                                return true;
+                            }
+                        });
                         Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder no_connection_dialog = new AlertDialog.Builder(SplashActivity.this);
+                        no_connection_dialog.setTitle("Warning");
+                        no_connection_dialog.setMessage("Looks like you don't have internet, please check your connection.");
+                        no_connection_dialog.setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for_loop_splash();
+                            }
+                        });
+                        no_connection_dialog.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        });
+                        no_connection_dialog.show();
                     }
                 });
-
-                //request for clinic doctor request
-                GetRequest.getJSONobj(SplashActivity.this, "get_clinic_doctor", "clinic_doctor", "clinic_doctor_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for doctor request
-                GetRequest.getJSONobj(SplashActivity.this, "get_doctors", "doctors", "doc_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for doctor specialties request
-                GetRequest.getJSONobj(SplashActivity.this, "get_doctor_specialties", "specialties", "specialty_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for doctor subspecialties request
-                GetRequest.getJSONobj(SplashActivity.this, "get_doctor_sub_specialties", "sub_specialties", "sub_specialty_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for product categories request
-                GetRequest.getJSONobj(SplashActivity.this, "get_product_categories", "product_categories", "product_category_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for product subcategories request
-                GetRequest.getJSONobj(SplashActivity.this, "get_product_subcategories&cat=all", "product_subcategories", "product_subcategory_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for products
-                GetRequest.getJSONobj(SplashActivity.this, "get_products", "products", "product_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for promos request
-                GetRequest.getJSONobj(SplashActivity.this, "get_promo", "promo", "promo_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for discounts_free_products request
-                GetRequest.getJSONobj(SplashActivity.this, "get_discounts_free_products", "discounts_free_products", "dfp_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for branches request
-                GetRequest.getJSONobj(SplashActivity.this, "get_branches", "branches", "branches_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for free_products request
-                GetRequest.getJSONobj(SplashActivity.this, "get_free_products", "free_products", "free_products_id", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                //request for referral_settings
-                GetRequest.getJSONobj(SplashActivity.this, "get_settings", "settings", "serverID", new RespondListener<JSONObject>() {
-                    @Override
-                    public void getResult(JSONObject response) {
-                    }
-                }, new ErrorListener<VolleyError>() {
-                    public void getError(VolleyError error) {
-                        Log.d("Error", error + "");
-                        Toast.makeText(SplashActivity.this, "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                Intent mainactivity = new Intent(getBaseContext(), MainActivity.class);
-                startActivity(mainactivity);
-                finish();
-
-                settings.edit().putBoolean("my_first_time", false).commit();
-            } else {
-                Log.d("<SplashActivity>", "no internet");
-                Toast.makeText(this, "You must have Internet to be able to use the App properly", Toast.LENGTH_SHORT).show();
+                Log.d("x_occurences", x+"");
             }
-            // record the fact that the app has been started at least once
         } else {
+           checker();
+        }
+    }
+
+    public void checker(){
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        identifier = settings.getInt("identifier", 0);
+        if(identifier == max_identifier){
             Intent mainactivity = new Intent(getBaseContext(), MainActivity.class);
-            startActivity(mainactivity);
-            finish();
+                    startActivity(mainactivity);
+                    finish();
         }
     }
 }

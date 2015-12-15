@@ -1,5 +1,7 @@
 package com.example.zem.patientcareapp.CheckoutModule;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,16 +15,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
+import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Customizations.NonScrollListView;
+import com.example.zem.patientcareapp.Network.PaymentRequest;
+import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
@@ -39,6 +49,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
     OrderModel order_model;
     Intent get_intent;
     DbHelper dbHelper;
+    Helpers helper;
     PatientController pc;
     BasketController bc;
 
@@ -83,6 +94,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         dbHelper = new DbHelper(this);
         pc = new PatientController(this);
         bc = new BasketController(this);
+        helper  = new Helpers();
 
         String url_raw = "get_basket_items&patient_id=" + pc.getCurrentLoggedInPatient().getServerID() + "&table=baskets";
 
@@ -101,6 +113,9 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
                 /* discounts and total block*/
 
+                order_model.setCoupon_discount(coupon_discount);
+                order_model.setPoints_discount(points_discount);
+
                 if (coupon_discount == 0.0)
                     coupon_layout.setVisibility(View.GONE);
 
@@ -111,9 +126,9 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     subtotal_layout.setVisibility(View.GONE);
 
                 amount_subtotal.setText("\u20B1 " + String.valueOf(totalAmount));
-                amount_of_coupon_discount.setText("\u20B1 " + String.valueOf(coupon_discount));
-                amount_of_points_discount.setText("\u20B1 " + String.valueOf(points_discount));
-                total_amount.setText("\u20B1 " + String.valueOf(discounted_total));
+                amount_of_coupon_discount.setText("\u20B1 " + String.format("%.2f", coupon_discount));
+                amount_of_points_discount.setText("\u20B1 " + String.format("%.2f", points_discount));
+                total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
                 /* discounts and total block*/
 
                 SummaryAdapter adapter = new SummaryAdapter(SummaryActivity.this, items);
@@ -135,7 +150,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         }
         order_receiving_option.setText(order_model.getMode_of_delivery());
         recipient_option.setText(order_model.getRecipient_name());
-        payment_option.setText(order_model.getPayment_method());
+        payment_option.setText(helper.decodePaymentCode(order_model.getPayment_method(), order_model.getMode_of_delivery()));
         recipient_contact_number.setText(order_model.getRecipient_contactNumber());
 
         setSupportActionBar(myToolBar);
@@ -151,6 +166,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                Intent shopping_cart_activity = new Intent(SummaryActivity.this, ShoppingCartActivity.class);
+                startActivity(shopping_cart_activity);
                 this.finish();
                 break;
         }
@@ -170,6 +187,101 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     Intent paypal_intent = new Intent(this, PayPalCheckout.class);
                     paypal_intent.putExtra("order_model", order_model);
                     startActivity(paypal_intent);
+                } else if(order_model.getPayment_method().equals("cash_on_delivery")){
+                    AlertDialog.Builder order_confirmation_dialog = new AlertDialog.Builder(SummaryActivity.this);
+                    order_confirmation_dialog.setTitle("Confirmation");
+                    order_confirmation_dialog.setMessage("Have you carefully reviewed your order and ready to checkout ?");
+                    order_confirmation_dialog.setPositiveButton("Yes, I'm ready", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            HashMap<String, String> map = new HashMap();
+                            map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
+                            map.put("recipient_name", order_model.getRecipient_name());
+                            map.put("recipient_address", order_model.getRecipient_address());
+                            map.put("recipient_contactNumber", order_model.getRecipient_contactNumber());
+                            map.put("branch_server_id", String.valueOf(1)); //needs to be the id of the selected combobox
+                            map.put("modeOfDelivery", order_model.getMode_of_delivery());
+                            map.put("payment_method", order_model.getPayment_method());
+                            map.put("status", "Pending");
+
+                            Log.d("mappings", map.toString());
+
+                    PaymentRequest.send(getBaseContext(), map, new RespondListener<JSONObject>() {
+                        @Override
+                        public void getResult(JSONObject response) {
+                            try {
+                                if (bc.emptyBasket(SidebarActivity.getUserID())) {
+                                    //request for orders request
+                                    GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
+                                        @Override
+                                        public void getResult(JSONObject response) {
+
+                                            GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
+                                                @Override
+                                                public void getResult(JSONObject response) {
+
+                                                    GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + SidebarActivity.getUserID(), "billings", "billings_id", new RespondListener<JSONObject>() {
+                                                        @Override
+                                                        public void getResult(JSONObject response) {
+
+                                                            try {
+                                                                String timestamp_ordered = response.getString("server_timestamp");
+
+                                                                Intent order_intent = new Intent(getBaseContext(), SidebarActivity.class);
+                                                                order_intent.putExtra("payment_from", "cod");
+                                                                order_intent.putExtra("timestamp_ordered", timestamp_ordered);
+                                                                order_intent.putExtra("select", 5);
+                                                                startActivity(order_intent);
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                        }
+                                                    }, new ErrorListener<VolleyError>() {
+                                                        public void getError(VolleyError error) {
+                                                            Log.d("Error", error + "");
+                                                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+
+                                                }
+                                            }, new ErrorListener<VolleyError>() {
+                                                public void getError(VolleyError error) {
+                                                    Log.d("Error", error + "");
+                                                    Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                        }
+                                    }, new ErrorListener<VolleyError>() {
+                                        public void getError(VolleyError error) {
+                                            Log.d("Error", error + "");
+                                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            } catch (Exception e) {
+                                System.out.print("src: <ShoppingCartActivity > " + e.toString());
+                            }
+                        }
+                    }, new ErrorListener<VolleyError>() {
+                        @Override
+                        public void getError(VolleyError error) {
+                            System.out.print("src: <HomeTileActivityClone>: " + error.toString());
+                            Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                        }
+                    });
+                    order_confirmation_dialog.setNegativeButton("No, wait I'll check", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    order_confirmation_dialog.show();
                 }
                 break;
             default:

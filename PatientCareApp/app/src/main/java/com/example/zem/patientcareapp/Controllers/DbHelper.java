@@ -18,6 +18,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "PatientCare";
     public static final int DB_VERSION = 1;
     Helpers helper = new Helpers();
+    private static DbHelper mInstance = null;
 
     public static final String CREATED_AT = "created_at", DELETED_AT = "deleted_at", UPDATED_AT = "updated_at", AI_ID = "id",
             PATIENT_ID = "patient_id", IS_READ = "isRead";
@@ -27,9 +28,21 @@ public class DbHelper extends SQLiteOpenHelper {
             FAVE_PRODUCT_ID = "product_id",
             FAVE_USER_ID = "user_id";
 
+//    public static DbHelper getInstance(Context ctx) {
+//
+//        // Use the application context, which will ensure that you
+//        // don't accidentally leak an Activity's context.
+//        // See this article for more information: http://bit.ly/6LRzfx
+//        if (mInstance == null) {
+//            mInstance = new DbHelper(ctx.getApplicationContext());
+//        }
+//        return mInstance;
+//    }
+
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -59,6 +72,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(SettingController.CREATE_TABLE);
         db.execSQL(BranchController.CREATE_TABLE);
         db.execSQL(OrderDetailController.CREATE_TABLE);
+        db.execSQL(BillingController.CREATE_TABLE);
         db.execSQL(MessageController.CREATE_TABLE);
         db.execSQL(PatientTreatmentsController.CREATE_TABLE);
         db.execSQL(OrderPreferenceController.CREATE_TABLE);
@@ -81,6 +95,8 @@ public class DbHelper extends SQLiteOpenHelper {
         insertTableNamesToUpdates(PatientConsultationController.TBL_PATIENT_CONSULTATIONS, db);
         insertTableNamesToUpdates(PatientRecordController.TBL_PATIENT_RECORDS, db);
         insertTableNamesToUpdates(PatientTreatmentsController.TBL_PATIENT_TREATMENTS, db);
+        insertTableNamesToUpdates(BillingController.TBL_BILLINGS, db);
+        insertTableNamesToUpdates(OrderDetailController.TBL_ORDER_DETAILS, db);
     }
 
     @Override

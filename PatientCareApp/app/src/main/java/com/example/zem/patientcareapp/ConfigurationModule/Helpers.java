@@ -45,11 +45,16 @@ public class Helpers implements View.OnCreateContextMenuListener {
 
     }
 
-    public boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    public String decodePaymentCode(String code, String or_opt) {
+        String payment_text = "";
+            if(code.equals("paypal"))
+                payment_text = "PayPal";
+            else if(code.equals("cash_on_delivery"))
+                payment_text = "Cash On "+or_opt;
+            else
+                payment_text = "Credit/Debit Card";
+
+        return payment_text;
     }
 
     /* Returns db row column value */
