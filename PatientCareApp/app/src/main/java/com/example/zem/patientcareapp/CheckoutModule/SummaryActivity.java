@@ -26,6 +26,7 @@ import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
+import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Customizations.NonScrollListView;
 import com.example.zem.patientcareapp.Network.PaymentRequest;
@@ -215,6 +216,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     order_confirmation_dialog.setPositiveButton("Yes, I'm ready", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            Patient patient = pc.getloginPatient(SidebarActivity.getUname());
+
                             HashMap<String, String> map = new HashMap();
                             map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
                             map.put("recipient_name", order_model.getRecipient_name());
@@ -224,6 +227,9 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                             map.put("modeOfDelivery", order_model.getMode_of_delivery());
                             map.put("payment_method", order_model.getPayment_method());
                             map.put("status", "Pending");
+                            map.put("coupon_discount", String.valueOf(order_model.getCoupon_discount()));
+                            map.put("points_discount", String.valueOf(order_model.getPoints_discount()));
+                            map.put("email", patient.getEmail());
 
                             Log.d("mappings", map.toString());
 

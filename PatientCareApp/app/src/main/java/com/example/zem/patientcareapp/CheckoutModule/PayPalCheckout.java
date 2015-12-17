@@ -392,6 +392,9 @@ public class PayPalCheckout extends Activity {
                 params.put("modeOfDelivery", modeOfDelivery);
                 params.put("payment_method", payment_method);
                 params.put("status", "open");
+                params.put("coupon_discount", String.valueOf(order_model.getCoupon_discount()));
+                params.put("points_discount", String.valueOf(order_model.getPoints_discount()));
+                params.put("email", patient.getEmail());
 
                 Log.d("params shit", params + "");
 
