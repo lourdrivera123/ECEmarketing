@@ -77,7 +77,6 @@ public class ReferralActivity extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
-        myToolbar.setNavigationIcon(R.drawable.ic_back);
 
         db = new DbHelper(this);
         doctor_controller = new DoctorController(this);
@@ -164,7 +163,6 @@ public class ReferralActivity extends AppCompatActivity implements View.OnClickL
                         intent.putExtra("referred_by_User", getReferredByUser);
                         intent.putExtra("referred_by_Doctor", getReferredByDoctor);
                         startActivity(intent);
-                        this.finish();
                     }
                 }
                 break;

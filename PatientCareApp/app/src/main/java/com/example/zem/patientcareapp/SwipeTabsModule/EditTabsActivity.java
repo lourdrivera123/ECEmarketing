@@ -17,6 +17,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -166,6 +167,16 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
             patient.setReferred_byUser(intent.getStringExtra("referred_by_User"));
             patient.setReferred_byDoctor(intent.getStringExtra("referred_by_Doctor"));
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupViewPager(ViewPager viewPager) {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/myToolBar"
@@ -39,19 +39,19 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="Details"
                         android:textColor="@color/ColorPrimary"
                         android:textSize="17sp"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -78,7 +78,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -105,7 +105,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -132,7 +132,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -161,7 +161,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -189,7 +189,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -217,7 +217,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -245,7 +245,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -273,12 +273,12 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
+                    android:id="@+id/subtotal_block"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/subtotal_block">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -302,12 +302,12 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
+                    android:id="@+id/coupon_discounts_block"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/coupon_discounts_block">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -331,12 +331,12 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
+                    android:id="@+id/promo_discount_block"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/promo_discount_block">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -360,12 +360,12 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
-                    android:background="@color/LightGreen" />
+                    android:background="@color/partner_toolbar" />
 
                 <LinearLayout
+                    android:id="@+id/total_block"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/total_block">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -391,34 +391,34 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rectback"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginBottom="10dp"
-                android:padding="10dp"
-                android:orientation="vertical">
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/rectback"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Order/s"
-                        android:textColor="@color/ColorPrimary"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Order/s"
+                    android:textColor="@color/ColorPrimary"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dip"
-                        android:layout_marginBottom="10dp"
-                        android:background="@color/LightGreen" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dip"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/partner_toolbar" />
 
                 <com.example.zem.patientcareapp.Customizations.NonScrollListView
                     android:id="@+id/order_summary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:divider="@color/LightGreen"
-                    android:dividerHeight="1dp"/>
+                    android:divider="@color/partner_toolbar"
+                    android:dividerHeight="1dp" />
 
 
             </LinearLayout>

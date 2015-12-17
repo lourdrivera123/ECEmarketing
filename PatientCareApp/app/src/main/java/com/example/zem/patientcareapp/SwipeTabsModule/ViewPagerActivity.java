@@ -1,7 +1,5 @@
 package com.example.zem.patientcareapp.SwipeTabsModule;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,6 +9,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +29,6 @@ import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Activities.MainActivity;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.Network.ServerRequest;
@@ -45,9 +44,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ViewPagerActivity extends Activity implements ViewPager.OnPageChangeListener {
+public class ViewPagerActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     ViewPager viewPager;
     View v;
+    Toolbar myToolBar;
 
     ArrayList<String> uploadsByUser;
     ArrayList<HashMap<String, String>> hashPrescriptions;
@@ -72,9 +72,10 @@ public class ViewPagerActivity extends Activity implements ViewPager.OnPageChang
         uploadsByUser = new ArrayList();
         intent = getIntent();
 
-        ActionBar actionbar = getActionBar();
-        MainActivity.setCustomActionBar(actionbar);
-        actionbar.setDisplayHomeAsUpEnabled(true);
+        myToolBar = (Toolbar) findViewById(R.id.myToolBar);
+        setSupportActionBar(myToolBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
 
         int patientID = pc.getCurrentLoggedInPatient().getServerID();
         hashPrescriptions = ppc.getPrescriptionByUserID(patientID);

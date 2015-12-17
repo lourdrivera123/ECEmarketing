@@ -31,31 +31,35 @@
                 android:id="@+id/address_region"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp" />
-
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="5dp" />
 
             <Spinner
                 android:id="@+id/address_province"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="5dp" />
 
             <Spinner
                 android:id="@+id/address_city_municipality"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="5dp" />
 
             <Spinner
                 android:id="@+id/address_barangay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/d10" />
+                android:layout_marginBottom="@dimen/d10"
+                android:layout_marginLeft="5dp" />
 
             <EditText
                 android:id="@+id/optional_address_line"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:hint="Unit/Building/Lot/Block/Phase/House #"
                 android:paddingTop="5dp"
                 android:textSize="14sp" />
@@ -64,6 +68,7 @@
                 android:id="@+id/address_street"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:hint="Street"
                 android:paddingTop="5dp"
                 android:textSize="14sp" />
@@ -71,7 +76,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:text="Contact Information" />
 
             <View
@@ -84,6 +89,7 @@
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:textSize="15sp" />
@@ -92,6 +98,7 @@
                 android:id="@+id/tel_no"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:hint="Telephone Number"
                 android:textSize="15sp" />
 
@@ -99,6 +106,7 @@
                 android:id="@+id/cell_no"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:hint="Cellphone Number"
                 android:inputType="number"
                 android:textSize="15sp" />
