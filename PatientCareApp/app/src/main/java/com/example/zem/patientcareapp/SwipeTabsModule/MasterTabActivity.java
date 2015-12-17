@@ -1,37 +1,36 @@
 package com.example.zem.patientcareapp.SwipeTabsModule;
 
-import android.app.ActionBar;
 import android.app.Dialog;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.zem.patientcareapp.Controllers.DbHelper;
-import com.example.zem.patientcareapp.Activities.MainActivity;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
+import com.example.zem.patientcareapp.Fragment.PatientConsultationFragment;
+import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
+import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
 
-
-public class MasterTabActivity extends FragmentActivity implements ActionBar.TabListener {
-    private MasterTabsAdapter mAdapter;
-    private String[] tabs = {"Refills & Renewals", "Referral Points", "Prescription", "Consultation"};
+public class MasterTabActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
     private ViewPager viewPager;
-    private ActionBar actionBar;
 
     ImageView swipeLeftRight;
+    Toolbar toolbar;
+    TabLayout tab_layout;
 
     DbHelper dbHelper;
     OverlayController oc;
     Intent intent;
     int unselected = 0;
-    int pos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,40 +39,28 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
         dbHelper = new DbHelper(this);
         oc = new OverlayController(this);
 
-        actionBar = getActionBar();
-        MainActivity.setCustomActionBar(actionBar);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         showOverLay();
 
+        tab_layout = (TabLayout) findViewById(R.id.tab_layout);
         viewPager = (ViewPager) findViewById(R.id.pager);
-        mAdapter = new MasterTabsAdapter(getSupportFragmentManager());
-
-        viewPager.setAdapter(mAdapter);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        for (String tab_name : tabs) {
-            actionBar.addTab(actionBar.newTab().setText(tab_name)
-                    .setTabListener(this));
-        }
+        setupViewPager(viewPager);
+        tab_layout.setupWithViewPager(viewPager);
+        tab_layout.setOnTabSelectedListener(this);
 
         intent = getIntent();
-        actionBar.setSelectedNavigationItem(intent.getIntExtra("selected", 0));
+        viewPager.setCurrentItem(intent.getIntExtra("selected", 0));
+    }
 
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-            }
-        });
-
+    private void setupViewPager(ViewPager viewPager) {
+        MasterTabsAdapter adapter = new MasterTabsAdapter(getSupportFragmentManager());
+        adapter.addFragment(new ReferralsFragment(), "Refills & Renewals");
+        adapter.addFragment(new ReferralsFragment(), "Referral Points");
+        adapter.addFragment(new TrialPrescriptionFragment(), "Prescription");
+        adapter.addFragment(new PatientConsultationFragment(), "Consultation");
+        viewPager.setAdapter(adapter);
     }
 
     @Override
@@ -83,18 +70,18 @@ public class MasterTabActivity extends FragmentActivity implements ActionBar.Tab
     }
 
     @Override
-    public void onTabSelected(final ActionBar.Tab tab, FragmentTransaction ft) {
-        mAdapter.notifyDataSetChanged();
+    public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+    public void onTabUnselected(TabLayout.Tab tab) {
         unselected = tab.getPosition();
     }
 
     @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 
     private void showOverLay() {

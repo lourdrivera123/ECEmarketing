@@ -8,32 +8,37 @@ import com.example.zem.patientcareapp.Fragment.PatientConsultationFragment;
 import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
 import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Esel on 5/5/2015.
  */
 public class MasterTabsAdapter extends FragmentStatePagerAdapter {
+    private final List<Fragment> mFragmentList = new ArrayList();
+    private final List<String> mFragmentTitleList = new ArrayList();
 
     public MasterTabsAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
-    public Fragment getItem(int index) {
-        switch (index) {
-            case 0:
-                return new ReferralsFragment();
-            case 1:
-                return new ReferralsFragment();
-            case 2:
-                return new TrialPrescriptionFragment();
-            case 3:
-                return new PatientConsultationFragment();
-        }
-        return null;
+    public int getCount() {
+        return mFragmentList.size();
+    }
+
+    public void addFragment(Fragment fragment, String title) {
+        mFragmentList.add(fragment);
+        mFragmentTitleList.add(title);
     }
 
     @Override
-    public int getCount() {
-        return 4;
+    public CharSequence getPageTitle(int position) {
+        return mFragmentTitleList.get(position);
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        return mFragmentList.get(position);
     }
 }

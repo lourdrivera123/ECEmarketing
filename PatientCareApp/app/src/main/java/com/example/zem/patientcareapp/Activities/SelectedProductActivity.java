@@ -118,7 +118,6 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        myToolBar.setNavigationIcon(R.drawable.ic_back);
 
         Intent intent = getIntent();
         get_productID = intent.getIntExtra(PRODUCT_ID, 0);

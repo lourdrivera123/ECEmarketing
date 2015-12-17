@@ -15,10 +15,21 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gen. Info" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dip"
+                android:background="@color/partner_toolbar" />
+
             <EditText
                 android:id="@+id/fname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:hint="Firstname"
                 android:textSize="15sp" />
 
@@ -26,7 +37,8 @@
                 android:id="@+id/lname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/d10"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
                 android:hint="Lastname"
                 android:textSize="15sp" />
 
@@ -34,7 +46,8 @@
                 android:id="@+id/mname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/d10"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
                 android:hint="Middlename (Optional)"
                 android:textSize="15sp" />
 
@@ -42,7 +55,8 @@
                 android:id="@+id/birthdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/d10"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
                 android:hint="yyyy-mm-dd"
                 android:inputType="date"
                 android:textSize="15sp" />
@@ -51,7 +65,8 @@
                 android:id="@+id/occupation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/d10"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
                 android:hint="Occupation (Optional)"
                 android:textSize="15sp" />
 
@@ -69,7 +84,8 @@
             <Spinner
                 android:id="@+id/civil_status"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -91,6 +107,7 @@
                     android:id="@+id/sex"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:orientation="horizontal">
 
                     <RadioButton
@@ -125,7 +142,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/d10"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal">
 
                 <EditText
@@ -144,7 +162,6 @@
                     android:hint="Weight (Kg)"
                     android:inputType="numberDecimal"
                     android:textSize="15sp" />
-
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -113,10 +113,6 @@
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="Theme.MyFancyTheme" parent="android:Theme.Holo.Light">
-        <item name="android:homeAsUpIndicator">@drawable/ic_back</item>
-    </style>
-
     <style name="Theme.MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Set AppCompat’s color theming attrs -->
         <item name="colorAccent">@color/Accent</item>

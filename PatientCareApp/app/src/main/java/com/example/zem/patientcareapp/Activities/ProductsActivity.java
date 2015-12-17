@@ -99,7 +99,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
-        myToolBar.setNavigationIcon(R.drawable.ic_back);
 
         db = new DbHelper(this);
         pc = new ProductController(this);

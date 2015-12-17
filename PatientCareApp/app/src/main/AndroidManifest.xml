@@ -71,11 +71,11 @@
         <activity
             android:name=".SwipeTabsModule.ViewPagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:theme="@style/Theme.MyTheme" />
         <activity
             android:name=".SwipeTabsModule.MasterTabActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyFancyTheme" />
+            android:theme="@style/Theme.MyTheme" />
 
         <activity
             android:name=".SwipeTabsModule.EditTabsActivity"
@@ -182,7 +182,7 @@
         <activity
             android:name=".CheckoutModule.ContactForDelivery"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyTheme"/>
+            android:theme="@style/Theme.MyTheme" />
 
         <service
             android:name="com.paypal.android.sdk.payments.PayPalService"

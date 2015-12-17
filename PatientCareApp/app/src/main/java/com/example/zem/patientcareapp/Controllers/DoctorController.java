@@ -21,18 +21,18 @@ public class DoctorController extends DbHelper {
 
     //DOCTORS_TABLE
     public static final String TBL_DOCTORS = "doctors",
-    DOC_DOC_ID = "doc_id",
-    DOC_LNAME = "lname",
-    DOC_MNAME = "mname",
-    DOC_FNAME = "fname",
-    DOC_PRC_NO = "prc_no",
-    DOC_SUB_SPECIALTY_ID = "sub_specialty_id",
-    DOC_AFFILIATIONS = "affiliations",
-    DOC_EMAIL = "email",
-    DOC_REFERRAL_ID = "referral_id";
+            DOC_DOC_ID = "doc_id",
+            DOC_LNAME = "lname",
+            DOC_MNAME = "mname",
+            DOC_FNAME = "fname",
+            DOC_PRC_NO = "prc_no",
+            DOC_SUB_SPECIALTY_ID = "sub_specialty_id",
+            DOC_AFFILIATIONS = "affiliations",
+            DOC_EMAIL = "email",
+            DOC_REFERRAL_ID = "referral_id";
 
     public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER UNIQUE, %s TEXT, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-        TBL_DOCTORS, AI_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, DOC_EMAIL, DOC_REFERRAL_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
+            TBL_DOCTORS, AI_ID, DOC_DOC_ID, DOC_LNAME, DOC_MNAME, DOC_FNAME, DOC_PRC_NO, DOC_SUB_SPECIALTY_ID, DOC_AFFILIATIONS, DOC_EMAIL, DOC_REFERRAL_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public DoctorController(Context context) {
         super(context);
