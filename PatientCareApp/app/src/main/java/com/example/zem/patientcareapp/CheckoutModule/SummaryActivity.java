@@ -17,31 +17,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
+import com.example.zem.patientcareapp.Activities.ShoppingCart;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientController;
-import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Customizations.NonScrollListView;
 import com.example.zem.patientcareapp.Network.PaymentRequest;
-import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONException;
+
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
-import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,8 +95,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
         dbHelper = new DbHelper(this);
         pc = new PatientController(this);
-        bc = new BasketController(this);
-        helper  = new Helpers();
+        bc = new BasketController();
+        helper = new Helpers();
 
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.setMessage("Please wait...");
@@ -128,8 +123,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                         double points_discount = order_model.getPoints_discount() * totalAmount;
                         double discounted_total = totalAmount - points_discount - coupon_discount;
 
-                order_model.setCoupon_discount(coupon_discount);
-                order_model.setPoints_discount(points_discount);
+                        order_model.setCoupon_discount(coupon_discount);
+                        order_model.setPoints_discount(points_discount);
 
                         /* discounts and total block*/
                         if (coupon_discount == 0.0)
@@ -141,10 +136,10 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                         if (coupon_discount == 0.0 && points_discount == 0.0)
                             subtotal_layout.setVisibility(View.GONE);
 
-                amount_subtotal.setText("\u20B1 " + String.valueOf(totalAmount));
-                amount_of_coupon_discount.setText("\u20B1 " + String.format("%.2f", coupon_discount));
-                amount_of_points_discount.setText("\u20B1 " + String.format("%.2f", points_discount));
-                total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
+                        amount_subtotal.setText("\u20B1 " + String.valueOf(totalAmount));
+                        amount_of_coupon_discount.setText("\u20B1 " + String.format("%.2f", coupon_discount));
+                        amount_of_points_discount.setText("\u20B1 " + String.format("%.2f", points_discount));
+                        total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
 
                         /* discounts and total block*/
                         SummaryAdapter adapter = new SummaryAdapter(SummaryActivity.this, items);
@@ -187,7 +182,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent shopping_cart_activity = new Intent(SummaryActivity.this, ShoppingCartActivity.class);
+                Intent shopping_cart_activity = new Intent(SummaryActivity.this, ShoppingCart.class);
                 startActivity(shopping_cart_activity);
                 this.finish();
                 break;
@@ -208,7 +203,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     Intent paypal_intent = new Intent(this, PayPalCheckout.class);
                     paypal_intent.putExtra("order_model", order_model);
                     startActivity(paypal_intent);
-                } else if(order_model.getPayment_method().equals("cash_on_delivery")){
+                } else if (order_model.getPayment_method().equals("cash_on_delivery")) {
                     AlertDialog.Builder order_confirmation_dialog = new AlertDialog.Builder(SummaryActivity.this);
                     order_confirmation_dialog.setTitle("Confirmation");
                     order_confirmation_dialog.setMessage("Have you carefully reviewed your order and ready to checkout ?");
@@ -227,72 +222,70 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
                             Log.d("mappings", map.toString());
 
-                    PaymentRequest.send(getBaseContext(), map, new RespondListener<JSONObject>() {
-                        @Override
-                        public void getResult(JSONObject response) {
-                            try {
-                                if (bc.emptyBasket(SidebarActivity.getUserID())) {
-                                    //request for orders request
-                                    GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
-                                        @Override
-                                        public void getResult(JSONObject response) {
+                            PaymentRequest.send(getBaseContext(), map, new RespondListener<JSONObject>() {
+                                @Override
+                                public void getResult(JSONObject response) {
+                                    try {
+                                        //request for orders request
+                                        GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
 
-                                            GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
-                                                @Override
-                                                public void getResult(JSONObject response) {
+                                                GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
+                                                    @Override
+                                                    public void getResult(JSONObject response) {
 
-                                                    GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + SidebarActivity.getUserID(), "billings", "billings_id", new RespondListener<JSONObject>() {
-                                                        @Override
-                                                        public void getResult(JSONObject response) {
+                                                        GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + SidebarActivity.getUserID(), "billings", "billings_id", new RespondListener<JSONObject>() {
+                                                            @Override
+                                                            public void getResult(JSONObject response) {
 
-                                                            try {
-                                                                String timestamp_ordered = response.getString("server_timestamp");
+                                                                try {
+                                                                    String timestamp_ordered = response.getString("server_timestamp");
 
-                                                                Intent order_intent = new Intent(getBaseContext(), SidebarActivity.class);
-                                                                order_intent.putExtra("payment_from", "cod");
-                                                                order_intent.putExtra("timestamp_ordered", timestamp_ordered);
-                                                                order_intent.putExtra("select", 5);
-                                                                startActivity(order_intent);
+                                                                    Intent order_intent = new Intent(getBaseContext(), SidebarActivity.class);
+                                                                    order_intent.putExtra("payment_from", "cod");
+                                                                    order_intent.putExtra("timestamp_ordered", timestamp_ordered);
+                                                                    order_intent.putExtra("select", 5);
+                                                                    startActivity(order_intent);
 
-                                                            } catch (JSONException e) {
-                                                                e.printStackTrace();
+                                                                } catch (JSONException e) {
+                                                                    e.printStackTrace();
+                                                                }
+
                                                             }
+                                                        }, new ErrorListener<VolleyError>() {
+                                                            public void getError(VolleyError error) {
+                                                                Log.d("Error", error + "");
+                                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
 
-                                                        }
-                                                    }, new ErrorListener<VolleyError>() {
-                                                        public void getError(VolleyError error) {
-                                                            Log.d("Error", error + "");
-                                                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
+                                                    }
+                                                }, new ErrorListener<VolleyError>() {
+                                                    public void getError(VolleyError error) {
+                                                        Log.d("Error", error + "");
+                                                        Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
 
-                                                }
-                                            }, new ErrorListener<VolleyError>() {
-                                                public void getError(VolleyError error) {
-                                                    Log.d("Error", error + "");
-                                                    Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-
-                                        }
-                                    }, new ErrorListener<VolleyError>() {
-                                        public void getError(VolleyError error) {
-                                            Log.d("Error", error + "");
-                                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                Log.d("Error", error + "");
+                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    } catch (Exception e) {
+                                        System.out.print("src: <SummaryAct> " + e.toString());
+                                    }
                                 }
-                            } catch (Exception e) {
-                                System.out.print("src: <ShoppingCartActivity > " + e.toString());
-                            }
-                        }
-                    }, new ErrorListener<VolleyError>() {
-                        @Override
-                        public void getError(VolleyError error) {
-                            System.out.print("src: <HomeTileActivityClone>: " + error.toString());
-                            Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            }, new ErrorListener<VolleyError>() {
+                                @Override
+                                public void getError(VolleyError error) {
+                                    System.out.print("src: <HomeTileActivityClone>: " + error.toString());
+                                    Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     });
                     order_confirmation_dialog.setNegativeButton("No, wait I'll check", new DialogInterface.OnClickListener() {

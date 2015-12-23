@@ -29,8 +29,8 @@ public class PromoController extends DbHelper {
             PROMO_DELETED_AT = "deleted_at";
 
     // SQL to create table "promo"SQL_CREATE_PROMO_TABLE
-      public static final String CREATE_TABLE  = String.format("CREATE TABLE %s( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
-                TBL_PROMO, AI_ID, SERVER_PROMO_ID, PROMO_NAME, PROMO_START_DATE, PROMO_END_DATE, PROMO_CREATED_AT, PROMO_UPDATED_AT, PROMO_DELETED_AT);
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
+            TBL_PROMO, AI_ID, SERVER_PROMO_ID, PROMO_NAME, PROMO_START_DATE, PROMO_END_DATE, PROMO_CREATED_AT, PROMO_UPDATED_AT, PROMO_DELETED_AT);
 
     public PromoController(Context context) {
         super(context);

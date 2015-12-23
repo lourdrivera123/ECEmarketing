@@ -2,6 +2,7 @@ package com.example.zem.patientcareapp.SidebarModule;
 
 import java.util.ArrayList;
 
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -23,11 +24,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.zem.patientcareapp.Activities.ShoppingCart;
 import com.example.zem.patientcareapp.AlarmModule.AlarmService;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
@@ -39,7 +43,6 @@ import com.example.zem.patientcareapp.Fragment.PromoFragment;
 import com.example.zem.patientcareapp.ImageGallery.ImageHelper;
 import com.example.zem.patientcareapp.Activities.MainActivity;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
 import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
 
 /**
@@ -63,12 +66,13 @@ public class SidebarActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    ImageView img_first;
+    ImageView img_first, sideBar_overlay;
     Toolbar myToolBar;
 
     static com.example.zem.patientcareapp.Model.Patient patient;
     static DbHelper dbHelper;
     static PatientController pc;
+    OverlayController oc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,7 @@ public class SidebarActivity extends AppCompatActivity {
         editor = sharedpreferences.edit();
 
         dbHelper = new DbHelper(this);
+        oc = new OverlayController(this);
         pc = new PatientController(this);
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
@@ -86,6 +91,8 @@ public class SidebarActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         myToolBar.setNavigationIcon(R.drawable.ic_navigator);
+
+        showOverLay();
 
         //////////////FOR THE SIDEBAR///////////////////////////////
         //Header of the listview
@@ -204,9 +211,8 @@ public class SidebarActivity extends AppCompatActivity {
         if (mDrawerToggle.onOptionsItemSelected(item))
             return true;
 
-        if (item.getItemId() == R.id.go_to_cart) {
-            startActivity(new Intent(this, ShoppingCartActivity.class));
-        }
+        if (item.getItemId() == R.id.go_to_cart)
+            startActivity(new Intent(this, ShoppingCart.class));
 
         return super.onOptionsItemSelected(item);
     }
@@ -293,5 +299,25 @@ public class SidebarActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private void showOverLay() {
+        if (!oc.checkOverlay("HomeTile", "check")) {
+            final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+            dialog.setContentView(R.layout.overlay_hometile);
+
+            sideBar_overlay = (ImageView) dialog.findViewById(R.id.sideBar_overlay);
+            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.overLayHometile);
+            layout.setAlpha((float) 0.8);
+
+            sideBar_overlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    if (oc.checkOverlay("HomeTile", "insert"))
+                        dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
     }
 }

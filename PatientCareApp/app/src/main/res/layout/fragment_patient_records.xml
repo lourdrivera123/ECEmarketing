@@ -1,43 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/d10">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <View
+        android:id="@+id/shadow"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/selected_product_toolbar"
+        android:background="@drawable/shadow_toolbar" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:padding="10dp">
 
-        <TextView
-            android:id="@+id/noResults"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/noResults"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:gravity="center"
+                android:text="No records found"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="gone" />
+
+            <ListView
+                android:id="@+id/list_of_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:choiceMode="multipleChoice" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:gravity="center"
-            android:text="No records found"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:visibility="gone" />
+            android:layout_alignParentBottom="true"
+            android:gravity="bottom|right">
 
-        <ListView
-            android:id="@+id/list_of_history"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:choiceMode="multipleChoice" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="bottom|right">
-
-        <ImageButton
-            android:id="@+id/add_record"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/circle_selector"
-            android:src="@drawable/ic_action" />
-    </LinearLayout>
-</RelativeLayout>
+            <ImageButton
+                android:id="@+id/add_record"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/circle_selector"
+                android:src="@drawable/ic_action" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

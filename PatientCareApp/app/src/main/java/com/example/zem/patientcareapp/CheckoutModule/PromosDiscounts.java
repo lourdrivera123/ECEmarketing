@@ -7,13 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
+import com.example.zem.patientcareapp.Activities.ShoppingCart;
 import com.example.zem.patientcareapp.Customizations.GlowingText;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.R;
@@ -94,7 +93,7 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                startActivity(new Intent(this, ShoppingCartActivity.class));
+                startActivity(new Intent(this, ShoppingCart.class));
                 this.finish();
                 break;
         }
