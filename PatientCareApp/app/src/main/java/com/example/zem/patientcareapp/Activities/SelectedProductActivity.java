@@ -54,11 +54,11 @@ import java.util.Map;
  */
 
 public class SelectedProductActivity extends AppCompatActivity implements View.OnClickListener {
-    int get_productID = 0, temp_qty = 1, qtyPerPacking = 1;
+    int get_productID = 0, temp_qty = 1, qtyPerPacking = 1, available_qty = 0;
     public static int is_resumed = 0;
     public static final String PRODUCT_ID = "productID";
 
-    LinearLayout add_to_cart;
+    LinearLayout add_to_cart, out_of_stock, edit_layout;
     ImageButton minus_qty, add_qty;
     Toolbar myToolBar;
     ViewPager pager;
@@ -108,12 +108,13 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         prod_description = (TextView) findViewById(R.id.prod_description);
         pager = (ViewPager) findViewById(R.id.pager);
         indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+        out_of_stock = (LinearLayout) findViewById(R.id.out_of_stock);
+        edit_layout = (LinearLayout) findViewById(R.id.edit_layout);
 
         minus_qty.setOnClickListener(this);
         add_qty.setOnClickListener(this);
         add_to_cart.setOnClickListener(this);
 
-        qty_cart.setText("" + temp_qty);
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         setSupportActionBar(myToolBar);
@@ -126,6 +127,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         dialog.setMessage("Please wait...");
         dialog.show();
         product = getProductWithImage(get_productID);
+        qty_cart.setText("" + temp_qty);
     }
 
 
@@ -174,17 +176,21 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                 break;
 
             case R.id.add_qty:
-                temp_qty += 1;
-                add_qty.setImageResource(R.drawable.ic_plus_dead);
-                qty_cart.setText("" + temp_qty);
-                prod_unit.setText("1 " + product.getPacking() + " x " + temp_qty + "(" + (temp_qty * product.getQtyPerPacking()) + " " + product.getUnit() + ")");
+                if(temp_qty < available_qty){
+                    temp_qty += 1;
+                    add_qty.setImageResource(R.drawable.ic_plus_dead);
+                    qty_cart.setText("" + temp_qty);
+                    prod_unit.setText("1 " + product.getPacking() + " x " + temp_qty + "(" + (temp_qty * product.getQtyPerPacking()) + " " + product.getUnit() + ")");
 
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        add_qty.setImageResource(R.drawable.ic_plus);
-                    }
-                }, 100);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            add_qty.setImageResource(R.drawable.ic_plus);
+                        }
+                    }, 100);
+                } else {
+                    Toast.makeText(getBaseContext(), available_qty+" is the maximum available stock", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case R.id.add_to_cart:
@@ -201,7 +207,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
 
                     if (basket.getBasketId() > 0) {
                         int old_qty = basket.getQuantity();
-                        basket.setQuantity(new_qty + old_qty);
+                        basket.setQuantity(new_qty);
                         hashMap.put("quantity", String.valueOf(basket.getQuantity()));
                         hashMap.put("action", "update");
                         hashMap.put("id", String.valueOf(basket.getBasketId()));
@@ -422,10 +428,31 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                         prod.setPacking(obj.getString("packing"));
                         prod.setQtyPerPacking(obj.getInt("qty_per_packing"));
                         prod.setSku(obj.getString("sku"));
+                        prod.setAvailableQuantity(obj.getInt("available_quantity"));
                     }
                 } catch (Exception e) {
                     Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();
                 }
+
+                available_qty  = prod.getAvailableQuantity();
+
+                if(available_qty == 0){
+                    out_of_stock.setVisibility(View.VISIBLE);
+                    add_to_cart.setVisibility(View.GONE);
+                }  else {
+                    edit_layout.setVisibility(View.VISIBLE);
+                }
+
+                Basket basket = bc.getBasket(get_productID);
+                int basket_qty = basket.getQuantity();
+
+                if(basket_qty == 0)
+                    temp_qty = 1;
+                else
+                    temp_qty = basket.getQuantity();
+
+                qty_cart.setText("" + temp_qty);
+
 
                 prod_name.setText(prod.getName());
                 prod_generic.setText(prod.getGenericName());

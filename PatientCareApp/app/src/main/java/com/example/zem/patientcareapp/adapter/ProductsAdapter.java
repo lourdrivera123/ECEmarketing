@@ -5,7 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,10 +48,11 @@ import java.util.Map;
  */
 public class ProductsAdapter extends ArrayAdapter implements View.OnClickListener {
     LayoutInflater inflater;
-    TextView original_price, product_name, promo, rs_price;
+    TextView original_price, product_name, promo, rs_price, cart_text, out_of_stock;
     ImageView product_image;
     LinearLayout if_promo_layout, add_to_cart;
     ToggleButton add_to_favorite;
+    ImageView cart_icon;
 
     Context context;
 
@@ -78,10 +82,17 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         rs_price = (TextView) view.findViewById(R.id.rs_price);
         add_to_cart = (LinearLayout) view.findViewById(R.id.add_to_cart);
         add_to_favorite = (ToggleButton) view.findViewById(R.id.add_to_favorite);
+        cart_icon = (ImageView) view.findViewById(R.id.cart_icon);
+        cart_text = (TextView) view.findViewById(R.id.cart_text);
+        out_of_stock = (TextView) view.findViewById(R.id.out_of_stock);
 
         add_to_cart.setTag(position);
         add_to_favorite.setTag(position);
 
+        if(Integer.parseInt(products_items.get(position).get("available_quantity")) == 0) {
+            out_of_stock.setVisibility(View.VISIBLE);
+            add_to_cart.setVisibility(View.GONE);
+        }
         add_to_cart.setOnClickListener(this);
 
         serverRequest = new ServerRequest();

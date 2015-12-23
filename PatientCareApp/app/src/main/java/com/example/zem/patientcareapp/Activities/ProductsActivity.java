@@ -395,6 +395,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                     map.put("temp_basket_qty", "0");
                                     map.put("category_name", obj.getString("cat_name"));
                                     map.put("category_id", String.valueOf(obj.getInt("cat_id")));
+                                    map.put("available_quantity", String.valueOf(obj.getInt("available_quantity")));
                                     products_items.add(map);
 
                                     HashMap<Integer, HashMap<String, String>> hash = new HashMap();
