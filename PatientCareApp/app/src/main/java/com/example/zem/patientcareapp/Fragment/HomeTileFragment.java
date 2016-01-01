@@ -1,6 +1,5 @@
 package com.example.zem.patientcareapp.Fragment;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,15 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
-import com.example.zem.patientcareapp.Activities.GoogleMapsActivity;
-import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -38,13 +34,11 @@ import java.util.HashMap;
 
 public class HomeTileFragment extends Fragment implements View.OnClickListener {
     LinearLayout orderLayout, refillLayout, pointsLayout, prescriptionLayout, consultationLayout;
-    ImageView sideBar_overlay;
     TextView notifConsultation;
 
     ServerRequest serverRequest;
     DbHelper db;
     PatientConsultationController pcc;
-    OverlayController oc;
 
     static int patientID;
     Context context;
@@ -56,9 +50,6 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         context = getActivity();
         db = new DbHelper(context);
         pcc = new PatientConsultationController(context);
-        oc = new OverlayController(context);
-
-        showOverLay();
 
         orderLayout = (LinearLayout) rootView.findViewById(R.id.orderLayout);
         refillLayout = (LinearLayout) rootView.findViewById(R.id.refillLayout);
@@ -174,28 +165,6 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                 intent.putExtra("selected", 3);
                 startActivity(intent);
                 break;
-        }
-    }
-
-    private void showOverLay() {
-        if (oc.checkOverlay("HomeTile", "check")) {
-
-        } else {
-            final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
-            dialog.setContentView(R.layout.overlay_hometile);
-
-            sideBar_overlay = (ImageView) dialog.findViewById(R.id.sideBar_overlay);
-            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.overLayHometile);
-            layout.setAlpha((float) 0.8);
-
-            sideBar_overlay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    if (oc.checkOverlay("HomeTile", "insert"))
-                        dialog.dismiss();
-                }
-            });
-            dialog.show();
         }
     }
 }

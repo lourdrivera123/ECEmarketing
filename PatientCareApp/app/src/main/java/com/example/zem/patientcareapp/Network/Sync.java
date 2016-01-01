@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.BillingController;
 import com.example.zem.patientcareapp.Controllers.BranchController;
 import com.example.zem.patientcareapp.Controllers.ClinicController;
@@ -74,7 +73,6 @@ public class Sync {
     ProductCategoryController pcc;
     ProductSubCategoryController pscc;
     DosageController dc;
-    BasketController bc;
     PatientRecordController prc;
     PatientTreatmentsController ptc;
     DiscountsFreeProductsController dfpc;
@@ -105,7 +103,6 @@ public class Sync {
         pcc = new ProductCategoryController(context);
         pscc = new ProductSubCategoryController(context);
         dc = new DosageController(context);
-        bc = new BasketController(context);
         prc = new PatientRecordController(context);
         ptc = new PatientTreatmentsController(context);
         doctor_controller = new DoctorController(context);
@@ -160,9 +157,6 @@ public class Sync {
                             } else if (tableName.equals("dosage_format_and_strength")) {
                                 if (!dc.insertDosage(setDosage(json_object)))
                                     Log.d("sync_16", "wala na save");
-                            } else if (tableName.equals("baskets")) {
-                                if (!bc.saveBasket(setHashMapBasket(json_object)))
-                                    Log.d("sync_15", "wala na save");
                             } else if (tableName.equals("patient_records")) {
                                 if (prc.savePatientRecord(setPatientRecord(json_object), "insert"))
                                     Log.d("sync_14", "wala na save");
@@ -205,8 +199,8 @@ public class Sync {
                             } else if (tableName.equals("consultations")) {
                                 if (!ptcc.savePatientConsultation(setConsultation(json_object), "add"))
                                     Log.d("sync_1", "wala na save");
-                            } else if( tableName.equals("billings") ){
-                                if(!blc.saveBillings(json_object))
+                            } else if (tableName.equals("billings")) {
+                                if (!blc.saveBillings(json_object))
                                     Log.d("sync_0", "wala na save");
                             }
                         }
@@ -562,18 +556,6 @@ public class Sync {
             e.printStackTrace();
         }
         return patient;
-    }
-
-    public HashMap<String, String> setHashMapBasket(JSONObject json) throws JSONException {
-        HashMap<String, String> map = new HashMap();
-        map.put("server_id", String.valueOf(json.getInt("id")));
-        map.put("product_id", String.valueOf(json.getInt("product_id")));
-        map.put("quantity", String.valueOf(json.getInt("quantity")));
-        map.put("prescription_id", String.valueOf(json.getInt("prescription_id")));
-        map.put("is_approved", String.valueOf(json.getInt("is_approved")));
-        map.put("action", "insert");
-
-        return map;
     }
 
     public DiscountsFreeProducts setDiscountsFreeProducts(JSONObject json) throws JSONException {

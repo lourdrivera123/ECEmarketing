@@ -252,7 +252,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                             try {
                                                 int success = response.getInt("success");
                                                 int hasRecord = response.getInt("has_record");
-                                                Log.d("response 1", response + "");
 
                                                 if (success == 1) {
                                                     JSONArray json_mysql = response.getJSONArray("records");

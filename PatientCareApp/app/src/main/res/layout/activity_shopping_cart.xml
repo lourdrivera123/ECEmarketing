@@ -1,59 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/toolbar"
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar_layout" />
-
-    <LinearLayout
-        android:id="@+id/header"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/myToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
+        android:background="#00000000"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/upper_cart_total"
+        <ListView
+            android:id="@+id/lisOfItems"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:textSize="24dp" />
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            android:layout_weight=".9"
+            android:divider="@android:color/transparent" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/shadow_inverted" />
 
         <LinearLayout
-            android:id="@+id/tbl_head"
-            style="@style/tbl_th_tr"
-            android:layout_marginTop="5dp">
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"
+            android:orientation="horizontal">
 
             <TextView
-                style="@style/tbl_th"
-                android:layout_weight="0.7"
-                android:text="Item" />
+                android:id="@+id/total_amount"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".4"
+                android:background="@color/partner_toolbar"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="Php 1, 987.50"
+                android:textColor="@color/white" />
 
             <TextView
-                style="@style/tbl_th"
-                android:layout_gravity="end"
-                android:layout_weight="1.2"
-                android:gravity="end"
-                android:text="Total" />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".6"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="Proceed to Checkout"
+                android:textColor="#000000" />
         </LinearLayout>
     </LinearLayout>
-
-    <ListView
-        android:id="@+id/lv_items"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_controls"
-        android:layout_below="@+id/header" />
-
-    <LinearLayout
-        android:id="@+id/btn_controls"
-        style="@style/btn_controls_layout">
-
-        <Button
-            android:id="@+id/btn_checkout_ready"
-            style="@style/btn_controls"
-            android:text="Checkout" />
-    </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

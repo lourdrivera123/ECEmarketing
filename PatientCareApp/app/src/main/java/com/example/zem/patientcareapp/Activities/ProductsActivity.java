@@ -33,7 +33,6 @@ import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Model.Product;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.Network.ServerRequest;
@@ -49,9 +48,7 @@ import com.example.zem.patientcareapp.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by User PC on 11/20/2015.
@@ -102,7 +99,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
         db = new DbHelper(this);
         pc = new ProductController(this);
-        bc = new BasketController(this);
+        bc = new BasketController();
         oc = new OverlayController(this);
         queue = Volley.newRequestQueue(this);
         helpers = new Helpers();
@@ -149,10 +146,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                         if (success == 1) {
                             hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
                             transferHashMap(hashMap);
-                            if (bc.saveBasket(hashMap))
-                                Toast.makeText(ProductsActivity.this, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(ProductsActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         Toast.makeText(ProductsActivity.this, e + "", Toast.LENGTH_SHORT).show();
@@ -354,7 +347,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.go_to_cart:
-                startActivity(new Intent(this, ShoppingCartActivity.class));
+                startActivity(new Intent(this, ShoppingCart.class));
                 break;
         }
     }

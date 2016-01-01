@@ -66,8 +66,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         dbhelper = new DbHelper(getActivity());
         pc = new PatientController(getActivity());
 
-        Log.d("intent", intent.getExtras() + "");
-
         if (intent.getIntExtra("edit", 0) > 0) {
             String edit_uname = SidebarActivity.getUname();
             patient = pc.getloginPatient(edit_uname);

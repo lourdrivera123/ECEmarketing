@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -174,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("Error", error + "");
                                                 Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -186,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("Error", error + "");
                                                 Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -198,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("mainact_consult", error + "");
                                                 Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -210,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("mainact_consult", error + "");
                                                 Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -223,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("main_consult4", error + "");
                                                 Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -235,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("main_consult5", error + "");
                                                 Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -247,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("main_consult6", error + "");
                                                 Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                             }
                                         });

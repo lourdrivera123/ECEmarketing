@@ -326,9 +326,5 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
                 }
             });
         }
-
-        public void updateUI() {
-
-        }
     }
 }

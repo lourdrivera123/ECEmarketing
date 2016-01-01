@@ -55,7 +55,7 @@
 
         <!--Activities-->
         <activity
-            android:name=".Activities.ShoppingCartActivity"
+            android:name=".Activities.ShoppingCart"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MyTheme" />
         <activity

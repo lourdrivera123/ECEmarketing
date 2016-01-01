@@ -9,8 +9,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +20,10 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
-import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -46,17 +44,17 @@ import java.util.Map;
 /**
  * Created by User PC on 11/27/2015.
  */
+
 public class ProductsAdapter extends ArrayAdapter implements View.OnClickListener {
     LayoutInflater inflater;
     TextView original_price, product_name, promo, rs_price, cart_text, out_of_stock;
     ImageView product_image;
-    LinearLayout if_promo_layout, add_to_cart;
+    LinearLayout if_promo_layout, add_to_cart, root;
     ToggleButton add_to_favorite;
     ImageView cart_icon;
 
     Context context;
 
-    BasketController bc;
     ServerRequest serverRequest;
     DbHelper db;
 
@@ -85,6 +83,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         cart_icon = (ImageView) view.findViewById(R.id.cart_icon);
         cart_text = (TextView) view.findViewById(R.id.cart_text);
         out_of_stock = (TextView) view.findViewById(R.id.out_of_stock);
+        root = (LinearLayout) view.findViewById(R.id.root);
 
         add_to_cart.setTag(position);
         add_to_favorite.setTag(position);
@@ -96,7 +95,6 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         add_to_cart.setOnClickListener(this);
 
         serverRequest = new ServerRequest();
-        bc = new BasketController(context);
         basket_items = ProductsActivity.basket_items;
         db = new DbHelper(context);
         list_favorites = db.getFavoritesByUserID(SidebarActivity.getUserID());
@@ -109,7 +107,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                     add_to_favorite.setChecked(true);
             }
         } catch (Exception e) {
-            Toast.makeText(context, e + "", Toast.LENGTH_SHORT).show();
+            Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
         }
 
         original_price.setPaintFlags(original_price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -165,20 +163,18 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                                 int success = response.getInt("success");
 
                                 if (success == 1) {
-                                    if (!bc.saveBasket(hashMap))
-                                        Toast.makeText(context, "Error occurred", Toast.LENGTH_SHORT).show();
                                     ProductsActivity.transferHashMap(hashMap);
-                                    Toast.makeText(context, "Your cart has been updated", Toast.LENGTH_SHORT).show();
+                                    Snackbar.make(root, "Your cart has been updated", Snackbar.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
-                                Toast.makeText(context, e + "", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                             }
                             pdialog.dismiss();
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
                             pdialog.dismiss();
-                            Toast.makeText(context, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 } else { //ADD NEW SA BASKET
@@ -217,21 +213,18 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
                                                 if (success == 1) {
                                                     hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
-                                                    if (bc.saveBasket(hashMap))
-                                                        Toast.makeText(context, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
-                                                    else
-                                                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
                                                     ProductsActivity.transferHashMap(hashMap);
+                                                    Snackbar.make(root, "New item has been added to your cart", Snackbar.LENGTH_SHORT).show();
                                                 }
                                             } catch (JSONException e) {
-                                                Toast.makeText(context, e + "", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                                             }
                                             pdialog.dismiss();
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         public void getError(VolleyError error) {
                                             pdialog.dismiss();
-                                            Toast.makeText(context, "Couldn't add item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                                            Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });
                                     builder.dismiss();
@@ -271,22 +264,18 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
                                     if (success == 1) {
                                         hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
-
-                                        if (bc.saveBasket(hashMap))
-                                            Toast.makeText(context, "New item has been added to your cart", Toast.LENGTH_SHORT).show();
-                                        else
-                                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
                                         ProductsActivity.transferHashMap(hashMap);
+                                        Snackbar.make(root, "New item has been added to your cart", Snackbar.LENGTH_SHORT).show();
                                     }
                                 } catch (Exception e) {
-                                    Toast.makeText(context, e + "", Toast.LENGTH_SHORT).show();
+                                    Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                                 }
                                 pdialog.dismiss();
                             }
                         }, new ErrorListener<VolleyError>() {
                             public void getError(VolleyError error) {
                                 pdialog.dismiss();
-                                Toast.makeText(context, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                             }
                         });
                     }

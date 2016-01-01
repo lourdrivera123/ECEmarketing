@@ -5,5 +5,5 @@
     <dimen name="d30">30dp</dimen>
     <dimen name="d40">40dp</dimen>
     <dimen name="d50">50dp</dimen>
-
+    <dimen name="shadow_size">2dip</dimen>
 </resources>
