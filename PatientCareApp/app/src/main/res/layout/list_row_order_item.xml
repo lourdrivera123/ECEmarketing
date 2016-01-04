@@ -28,7 +28,7 @@
             android:text="4 Items for John Doe"
             android:textColor="#ff040404"
             android:textSize="15sp"
-            android:layout_marginStart="5dp"/>
+            android:layout_marginLeft="5dp"/>
     </LinearLayout>
 
 
