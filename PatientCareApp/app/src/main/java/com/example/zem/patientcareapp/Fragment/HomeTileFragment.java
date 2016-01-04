@@ -4,12 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,11 +24,9 @@ import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -35,8 +34,8 @@ import java.util.HashMap;
 public class HomeTileFragment extends Fragment implements View.OnClickListener {
     LinearLayout orderLayout, refillLayout, pointsLayout, prescriptionLayout, consultationLayout;
     TextView notifConsultation;
+    ScrollView root;
 
-    ServerRequest serverRequest;
     DbHelper db;
     PatientConsultationController pcc;
 
@@ -51,6 +50,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         db = new DbHelper(context);
         pcc = new PatientConsultationController(context);
 
+        root = (ScrollView) rootView.findViewById(R.id.root);
         orderLayout = (LinearLayout) rootView.findViewById(R.id.orderLayout);
         refillLayout = (LinearLayout) rootView.findViewById(R.id.refillLayout);
         pointsLayout = (LinearLayout) rootView.findViewById(R.id.pointsLayout);
@@ -65,7 +65,6 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         consultationLayout.setOnClickListener(this);
 
         patientID = SidebarActivity.getUserID();
-        serverRequest = new ServerRequest();
 
         return rootView;
     }
@@ -86,20 +85,18 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                             JSONObject obj = json_mysql.getJSONObject(x);
 
                             if (!pcc.updateSomeConsultation(obj))
-                                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                         }
                     } else
                         notifConsultation.setVisibility(View.INVISIBLE);
                 } catch (Exception e) {
-                    Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
-                    Log.d("hometilefrag 2", e + "");
+                    Toast.makeText(getActivity(), e + "", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new ErrorListener<VolleyError>() {
             @Override
             public void getError(VolleyError e) {
-                Log.d("hometilefrag3", e + "");
-                Toast.makeText(context, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                Snackbar.make(root, "Please check your Network connection", Snackbar.LENGTH_SHORT).show();
             }
         });
         super.onResume();
@@ -144,21 +141,15 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                 pdialog.setMessage("Loading...");
                 pdialog.show();
 
-                PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                PostRequest.send(getActivity(), hashMap, new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
-                        try {
-                            int success = response.getInt("success");
-                        } catch (JSONException e) {
-                            Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
-                            Log.d("hometilefrag", e + "");
-                        }
                         pdialog.dismiss();
                     }
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         pdialog.dismiss();
-                        Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(root, "Please check your Network connection", Snackbar.LENGTH_SHORT).show();
                     }
                 });
 

@@ -2,11 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_selector"
     android:orientation="horizontal"
     android:paddingBottom="@dimen/d10"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
     android:paddingTop="@dimen/d10">
 
     <!-- Doctor Name-->
@@ -38,5 +35,4 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:src="@drawable/arrow" />
-
 </RelativeLayout>

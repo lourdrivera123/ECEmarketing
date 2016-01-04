@@ -76,7 +76,7 @@ public class LazyAdapter extends BaseAdapter {
             doctor = data.get(position);
 
             // Setting all values in listview
-            title.setText("Dr. " + doctor.get("fullname"));
+            title.setText(doctor.get("fullname"));
             specialty.setText(doctor.get("name"));
         } else if (list_type.equals("ready_for_checkout_items")) {
             vi = inflater.inflate(R.layout.checkout_list_item, null);

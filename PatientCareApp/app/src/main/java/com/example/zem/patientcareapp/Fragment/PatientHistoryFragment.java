@@ -33,7 +33,6 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
-import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.PatientRecordController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -41,7 +40,6 @@ import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.Activities.SaveMedicalRecordActivity;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONArray;
@@ -71,7 +69,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     PatientRecordController prc;
     Helpers helpers;
     Dialog dialog;
-    ServerRequest serverRequest;
     ProgressDialog progress;
 
     @Override
@@ -85,7 +82,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         medRecords = new ArrayList();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
-        serverRequest = new ServerRequest();
 
         for (int x = 0; x < hashHistory.size(); x++)
             medRecords.add(hashHistory.get(x).get(PatientRecordController.RECORDS_DOCTOR_NAME));
@@ -314,7 +310,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             map.put("record_date", object.getString("record_date"));
             map.put("note", object.getString("note"));
 
-            PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
+            PostRequest.send(getActivity(), map, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     try {
@@ -356,21 +352,14 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                             hash.put("action", "multiple_insert");
                             hash.put("jsobj", json_to_be_passed.toString());
 
-                            PostRequest.send(getActivity(), hash, serverRequest, new RespondListener<JSONObject>() {
+                            PostRequest.send(getActivity(), hash, new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
-                                    try {
-                                        int success = response.getInt("success");
-                                        Log.d("response 3", response + "");
-                                    } catch (Exception e) {
-                                        Toast.makeText(getActivity(), e + "", Toast.LENGTH_SHORT).show();
-                                    }
                                     progress.dismiss();
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
                                     progress.dismiss();
-                                    Log.d("patienthistoryfrag2", error + "");
                                     Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                 }
                             });

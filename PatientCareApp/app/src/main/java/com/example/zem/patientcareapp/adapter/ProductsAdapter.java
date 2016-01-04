@@ -30,7 +30,6 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
@@ -55,7 +54,6 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
     Context context;
 
-    ServerRequest serverRequest;
     DbHelper db;
 
     ArrayList<Map<String, String>> products_items, basket_items;
@@ -94,7 +92,6 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         }
         add_to_cart.setOnClickListener(this);
 
-        serverRequest = new ServerRequest();
         basket_items = ProductsActivity.basket_items;
         db = new DbHelper(context);
         list_favorites = db.getFavoritesByUserID(SidebarActivity.getUserID());
@@ -156,7 +153,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                     hashMap.put("quantity", String.valueOf(new_qty));
 
                     pdialog.show();
-                    PostRequest.send(context, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                    PostRequest.send(context, hashMap, new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {
@@ -205,7 +202,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                                     hashMap.put("prescription_id", prescriptionId + "");
                                     hashMap.put("is_approved", "0");
 
-                                    PostRequest.send(context, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                                    PostRequest.send(context, hashMap, new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
                                             try {
@@ -256,7 +253,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                         hashMap.put("prescription_id", "0");
                         hashMap.put("is_approved", "1");
 
-                        PostRequest.send(context, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                        PostRequest.send(context, hashMap, new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
                                 try {

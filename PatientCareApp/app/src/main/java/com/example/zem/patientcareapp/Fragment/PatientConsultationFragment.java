@@ -32,7 +32,6 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.Activities.PatientConsultationActivity;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONException;
@@ -53,7 +52,6 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
     Consultation consult;
     DbHelper dbhelper;
     PatientConsultationController pcc;
-    ServerRequest serverRequest;
 
     ArrayList<HashMap<String, String>> listOfAllConsultations;
     ArrayList<String> consultationDoctors;
@@ -66,8 +64,6 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
         listOfConsultations = (ListView) rootView.findViewById(R.id.consultation_schedules);
         add_consultation = (ImageButton) rootView.findViewById(R.id.add_consultation);
-
-        serverRequest = new ServerRequest();
 
         add_consultation.setOnClickListener(this);
         listOfConsultations.setOnCreateContextMenuListener(this);
@@ -114,7 +110,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
             pdialog.setMessage("Loading...");
             pdialog.show();
 
-            PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+            PostRequest.send(getActivity(), hashMap, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     try {
@@ -299,7 +295,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
             pdialog.setMessage("Please wait...");
             pdialog.show();
 
-            PostRequest.send(getActivity(), map, serverRequest, new RespondListener<JSONObject>() {
+            PostRequest.send(getActivity(), map, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     int success = 0;

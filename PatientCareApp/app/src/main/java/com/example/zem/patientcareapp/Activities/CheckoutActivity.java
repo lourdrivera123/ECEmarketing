@@ -1,27 +1,14 @@
 package com.example.zem.patientcareapp.Activities;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-import com.example.zem.patientcareapp.Controllers.DbHelper;
-import com.example.zem.patientcareapp.Model.Patient;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by User PC on 9/21/2015.
@@ -52,7 +39,6 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
 //    int p_year, p_month, p_day;
 
     Toolbar myToolBar;
-    ServerRequest serverRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,9 +100,6 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
 //        customerName.setText("Name: " + ptnt_fullname);
 //        customerAddress.setText("Address: " + ptnt_completeAddress);
 //        customerContactNumber.setText("Contact No.: " + ptnt_contactNumber);
-
-        serverRequest = new ServerRequest();
-
     }
 
     public CheckoutActivity() {

@@ -8,7 +8,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.UpdateController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -24,19 +23,16 @@ public class GetRequest {
     public static void getJSONobj(final Context c, final String q, final String table_name, final String table_id, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
         RequestQueue queue;
         final Helpers helpers;
-        final DbHelper dbHelper;
         final UpdateController upc;
 
         queue = VolleySingleton.getInstance().getRequestQueue();
         helpers = new Helpers();
-        dbHelper = new DbHelper(c);
         upc = new UpdateController(c);
         final String url = helpers.get_url(q, table_name);
 
         JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q, table_name), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("url", url);
                 Sync sync = new Sync();
                 sync.init(c, q, table_name, table_id, response);
                 try {

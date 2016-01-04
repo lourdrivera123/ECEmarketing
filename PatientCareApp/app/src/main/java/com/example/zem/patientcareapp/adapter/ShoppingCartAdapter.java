@@ -24,7 +24,6 @@ import com.example.zem.patientcareapp.Customizations.RoundedAvatarDrawable;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 
 import org.json.JSONException;
@@ -44,7 +43,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
     Helpers helpers;
     DbHelper dbHelper;
-    ServerRequest serverRequest;
 
     ImageView prod_image;
     ImageButton delete, up_btn, down_btn;
@@ -61,7 +59,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
         helpers = new Helpers();
         dbHelper = new DbHelper(context);
-        serverRequest = new ServerRequest();
     }
 
     @Override
@@ -119,6 +116,10 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                 p_total.setText("Php " + total_per_item);
                 cart_total = cart_total + price;
                 ShoppingCart.total_amount.setText("Php " + cart_total);
+
+                HashMap<String, String> temp = objects.get(position);
+                temp.put("quantity", String.valueOf(lastQty));
+                objects.set(position, temp);
             }
         });
 
@@ -131,15 +132,21 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                 int lastQty = Integer.parseInt(txt.getText().toString());
                 lastQty = lastQty - 1;
 
-                if (lastQty < 1)
+                if (lastQty < 1) {
                     lastQty = 1;
-                double total_per_item = price * lastQty;
+                    ShoppingCart.total_amount.setText("Php " + cart_total);
+                } else {
+                    cart_total = cart_total - price;
+                    ShoppingCart.total_amount.setText("Php " + cart_total);
+                }
 
+                double total_per_item = price * lastQty;
                 txt.setText(lastQty + "");
                 p_total.setText("Php " + total_per_item);
-                cart_total = cart_total - price;
 
-                ShoppingCart.total_amount.setText("Php " + cart_total);
+                HashMap<String, String> temp = objects.get(position);
+                temp.put("quantity", String.valueOf(lastQty));
+                objects.set(position, temp);
             }
         });
 
@@ -171,7 +178,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                         pdialog.setMessage("Loading...");
                         pdialog.show();
 
-                        PostRequest.send(context, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                        PostRequest.send(context, hashMap, new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
                                 try {

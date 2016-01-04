@@ -57,7 +57,6 @@ import com.example.zem.patientcareapp.Network.StringRequests;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.Activities.ReferralActivity;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.adapter.TabsPagerAdapter;
 
@@ -85,7 +84,6 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
 
     Helpers helpers;
     SignUpFragment fragment;
-    ServerRequest serverRequest;
 
     private ViewPager viewPager;
     TabLayout tab_layout;
@@ -135,7 +133,6 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
         helpers = new Helpers();
         patient = new Patient();
         fragment = new SignUpFragment();
-        serverRequest = new ServerRequest();
 
         showOverLay();
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
@@ -568,7 +565,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                     patient.setServerID(editUser.getServerID());
                                     HashMap<String, String> params = setParams("update");
 
-                                    PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
+                                    PostRequest.send(getBaseContext(), params, new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
                                             int success = 0;
@@ -613,7 +610,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                             patient.setReferral_id(response);
                                             params.put("referral_id", patient.getReferral_id());
 
-                                            PostRequest.send(getBaseContext(), params, serverRequest, new RespondListener<JSONObject>() {
+                                            PostRequest.send(getBaseContext(), params, new RespondListener<JSONObject>() {
                                                 @Override
                                                 public void getResult(JSONObject response) {
                                                     try {
@@ -633,7 +630,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                                                 map.put("id", String.valueOf(ReferralActivity.cpd_id));
                                                                 map.put("patient_id", String.valueOf(patient_json_object_mysql.getInt("id")));
 
-                                                                PostRequest.send(EditTabsActivity.this, map, serverRequest, new RespondListener<JSONObject>() {
+                                                                PostRequest.send(EditTabsActivity.this, map, new RespondListener<JSONObject>() {
                                                                     @Override
                                                                     public void getResult(JSONObject response) {
                                                                         try {

@@ -51,16 +51,11 @@ public class PatientCareApplication extends Application {
         com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(config.build());
     }
 
-//    public void onCreate(){
-//        super.onCreate();
-//
-//    }
-
-    public static PatientCareApplication getInstance(){
+    public static PatientCareApplication getInstance() {
         return sInstance;
     }
 
-    public static Context getAppContext(){
+    public static Context getAppContext() {
         return sInstance.getApplicationContext();
     }
 }

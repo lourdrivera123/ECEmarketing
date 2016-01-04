@@ -3,7 +3,6 @@ package com.example.zem.patientcareapp.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +19,6 @@ import com.example.zem.patientcareapp.CheckoutModule.DeliverPickupOption;
 import com.example.zem.patientcareapp.CheckoutModule.PromosDiscounts;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
-import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
@@ -28,7 +26,6 @@ import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
-import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.adapter.ShoppingCartAdapter;
 
 import org.json.JSONArray;
@@ -128,17 +125,69 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.proceed_to_checkout:
-                OrderModel order_model = opc.getOrderPreference();
-                if (order_model.isValid()) {
-                    Intent summary_intent = new Intent(this, PromosDiscounts.class);
-                    summary_intent.putExtra("order_model", order_model);
-                    startActivity(summary_intent);
-                    this.finish();
-                } else {
-                    startActivity(new Intent(this, DeliverPickupOption.class));
-                    this.finish();
-                }
+               updateBasket(items);
                 break;
+        }
+    }
+    protected void onPause() {
+        updateBasket(items);
+        super.onPause();
+    }
+
+    void updateBasket(ArrayList<HashMap<String, String>> objects) {
+        try {
+            JSONArray master_arr = new JSONArray();
+            HashMap<String, String> hash = new HashMap();
+            JSONObject obj_for_server;
+
+            for (int x = 0; x < objects.size(); x++) {
+                hash.put("quantity", String.valueOf(objects.get(x).get("quantity")));
+                hash.put("id", String.valueOf(objects.get(x).get("basket_id")));
+                obj_for_server = new JSONObject(hash);
+                master_arr.put(obj_for_server);
+            }
+
+            final JSONObject json_to_be_passed = new JSONObject();
+            json_to_be_passed.put("jsobj", master_arr);
+
+            HashMap<String, String> params = new HashMap();
+            params.put("table", "baskets");
+            params.put("request", "crud");
+            params.put("action", "multiple_update_for_basket");
+            params.put("jsobj", json_to_be_passed.toString());
+
+            PostRequest.send(ShoppingCart.this, params, new RespondListener<JSONObject>() {
+                @Override
+                public void getResult(JSONObject response) {
+                    try {
+                        int success = response.getInt("success");
+                        Log.d("response", response + "");
+                        if(success == 1) {
+                            OrderModel order_model = opc.getOrderPreference();
+                            if (order_model.isValid()) {
+                                Intent summary_intent = new Intent(ShoppingCart.this, PromosDiscounts.class);
+                                summary_intent.putExtra("order_model", order_model);
+                                startActivity(summary_intent);
+                                finish();
+                            } else {
+                                startActivity(new Intent(ShoppingCart.this, DeliverPickupOption.class));
+                                finish();
+                            }
+                        } else {
+                            Snackbar.make(root, "Network error, cannot proceed", Snackbar.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(ShoppingCart.this, e + "", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, new ErrorListener<VolleyError>() {
+                public void getError(VolleyError error) {
+                    Snackbar.make(root, "Network Error", Snackbar.LENGTH_SHORT).show();
+                }
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

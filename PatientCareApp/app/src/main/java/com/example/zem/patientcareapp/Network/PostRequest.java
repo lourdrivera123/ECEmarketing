@@ -20,7 +20,7 @@ import java.util.HashMap;
  */
 public class PostRequest {
 
-    public static void send(final Context c, final HashMap<String, String> parameters, final ServerRequest serverRequest, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
+    public static void send(final Context c, final HashMap<String, String> parameters, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
         RequestQueue queue;
 
         queue = VolleySingleton.getInstance().getRequestQueue();
@@ -31,8 +31,6 @@ public class PostRequest {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        serverRequest.init(c, parameters, response);
-
                         listener.getResult(response);
                     }
                 }, new Response.ErrorListener() {

@@ -35,6 +35,7 @@
             android:background="@drawable/shadow_inverted" />
 
         <LinearLayout
+            android:id="@+id/checkout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".1"
@@ -48,7 +49,6 @@
                 android:background="@color/partner_toolbar"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="Php 1, 987.50"
                 android:textColor="@color/white" />
 
             <TextView

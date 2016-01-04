@@ -35,7 +35,6 @@ import com.example.zem.patientcareapp.Activities.MessageActivity;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONArray;
@@ -54,7 +53,6 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     TextView noMsgs;
 
     private MessagesAdapter adapter;
-    ServerRequest serverRequest;
     DbHelper db;
     OverlayController oc;
     MessageController mc;
@@ -74,7 +72,6 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         hashOfMessages = new ArrayList();
         listOfCheckedPositions = new ArrayList();
         patient_id = SidebarActivity.getUserID();
-        serverRequest = new ServerRequest();
         db = new DbHelper(getActivity());
         oc = new OverlayController(getActivity());
         mc = new MessageController(getActivity());
@@ -251,7 +248,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 pdialog.setMessage("Loading...");
                 pdialog.show();
 
-                PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                PostRequest.send(getActivity(), hashMap, new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
                         try {
