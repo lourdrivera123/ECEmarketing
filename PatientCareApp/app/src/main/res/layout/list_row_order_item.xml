@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rectback"
     android:orientation="horizontal"
-    android:padding="5dip">
+    android:padding="5dip"
+    android:background="@android:drawable/dialog_holo_light_frame">
 
     <LinearLayout
         android:id="@+id/item_details"
@@ -27,7 +27,8 @@
             android:singleLine="false"
             android:text="4 Items for John Doe"
             android:textColor="#ff040404"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:layout_marginStart="5dp"/>
     </LinearLayout>
 
 
@@ -39,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/item_details"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="15dp"
         android:text="Order #1"
         android:textSize="12sp"
         tools:ignore="RtlCompat" />
@@ -50,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/order_id"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="15dp"
         android:text="Total - P 100"
         android:textSize="12sp"
         tools:ignore="RtlCompat" />
@@ -61,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/product_qty_price"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="15dp"
         android:text="Ordered on Feb 23, 2015"
         android:textSize="12sp"
         tools:ignore="RtlCompat" />
@@ -71,7 +72,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:longClickable="true"
-        android:layout_below="@+id/ordered_on">
+        android:layout_below="@+id/ordered_on"
+        android:paddingBottom="10dp">
 
         <!-- Product Name-->
         <TextView
@@ -96,11 +98,11 @@
             android:descendantFocusability="blocksDescendants"
             android:gravity="center"
             android:minWidth="40dp"
-            android:paddingRight="10dp"
+            android:paddingRight="15dp"
             android:singleLine="false"
             android:text="Pending"
             android:textColor="#ffa500"
-            android:textSize="12sp" />
+            android:textSize="12sp"/>
 
     </LinearLayout>
 </RelativeLayout>
