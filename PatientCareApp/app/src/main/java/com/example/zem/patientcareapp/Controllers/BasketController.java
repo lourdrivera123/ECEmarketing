@@ -26,7 +26,10 @@ public class BasketController {
             for (int x = 0; x < json_array.length(); x++) {
                 JSONObject obj = json_array.getJSONObject(x);
 
+                double item_subtotal = Double.parseDouble(String.valueOf(obj.getDouble("price"))) * Double.parseDouble(String.valueOf(obj.getDouble("quantity")));
+
                 HashMap<String, String> map = new HashMap();
+                map.put("item_subtotal", String.valueOf(item_subtotal));
                 map.put(ProductController.SERVER_PRODUCT_ID, String.valueOf(obj.getInt("id")));
                 map.put("basket_id", String.valueOf(obj.getInt("basket_id")));
                 map.put(ProductController.PRODUCT_NAME, obj.getString("name"));

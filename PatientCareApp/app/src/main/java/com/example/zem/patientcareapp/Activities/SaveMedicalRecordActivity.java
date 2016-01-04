@@ -426,7 +426,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                                 for (int x = 0; x < treatments_items.size(); x++) {
                                     HashMap<String, String> map = new HashMap();
                                     map.put("patient_records_id", String.valueOf(last_inserted_id));
-                                    map.put("treatmentts_id", String.valueOf(start_id));
+                                    map.put("treatments_id", String.valueOf(start_id));
                                     map.put("medicine_name", treatments_items.get(x).get("medicine_name"));
                                     map.put("generic_name", treatments_items.get(x).get("generic_name"));
                                     map.put("dosage", treatments_items.get(x).get("dosage"));

@@ -191,7 +191,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 results_layout.setVisibility(View.GONE);
                 spinner_categories.setSelection(0);
-                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, temp_products_items);
+                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.product_item, temp_products_items);
                 listOfProducts.setAdapter(adapter);
                 return true;
             }
@@ -243,7 +243,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                     }
                 }
             }
-            adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, products_items);
+            adapter = new ProductsAdapter(ProductsActivity.this, R.layout.product_item, products_items);
             listOfProducts.setAdapter(adapter);
             noOfResults.setText(ctr + "");
 
@@ -425,7 +425,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                     }
                                 }
 
-                                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.item_gridview_products, newMap);
+                                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.product_item, newMap);
                                 listOfProducts.setAdapter(adapter);
                             }
                         } catch (Exception e) {

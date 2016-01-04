@@ -70,7 +70,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = inflater.inflate(R.layout.item_gridview_products, parent, false);
+        View view = inflater.inflate(R.layout.product_item, parent, false);
 
         original_price = (TextView) view.findViewById(R.id.original_price);
         product_image = (ImageView) view.findViewById(R.id.product_image);

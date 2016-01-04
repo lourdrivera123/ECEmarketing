@@ -455,15 +455,15 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                     edit_layout.setVisibility(View.VISIBLE);
                 }
 
-                Basket basket = bc.getBasket(get_productID);
-                int basket_qty = basket.getQuantity();
-
-                if(basket_qty == 0)
-                    temp_qty = 1;
-                else
-                    temp_qty = basket.getQuantity();
-
-                qty_cart.setText("" + temp_qty);
+//                Basket basket = bc.getBasket(get_productID);
+//                int basket_qty = basket.getQuantity();
+//
+//                if(basket_qty == 0)
+//                    temp_qty = 1;
+//                else
+//                    temp_qty = basket.getQuantity();
+//
+//                qty_cart.setText("" + temp_qty);
 
 
                 prod_name.setText(prod.getName());

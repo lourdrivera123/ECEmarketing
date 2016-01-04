@@ -109,6 +109,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void getResult(JSONObject response) {
                 try {
+                    Log.d("response_fs", response+ "");
                     int success = response.getInt("success");
 
                     if (success == 1) {
