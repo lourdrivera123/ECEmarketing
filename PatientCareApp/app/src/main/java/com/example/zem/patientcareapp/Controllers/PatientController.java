@@ -46,13 +46,14 @@ public class PatientController extends DbHelper {
             PTNT_MOBILE_NO = "mobile_no",
             PTNT_EMAIL = "email_address",
             PTNT_PHOTO = "photo",
+            PTNT_POINTS = "points",
             PTNT_REFERRAL_ID = "referral_id",
             PTNT_REFERRED_BY_USER = "referred_byUser",
             PTNT_REFERRED_BY_DOCTOR = "referred_byDoctor";
 
     // SQL to create table "patients"
-    public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-            TBL_PATIENTS, AI_ID, PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION, PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_OPTIONAL_ADDRESS, PTNT_STREET, PTNT_BRGY_ID, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_TEL_NO, PTNT_MOBILE_NO, PTNT_EMAIL, PTNT_PHOTO, PTNT_REFERRAL_ID, PTNT_REFERRED_BY_USER, PTNT_REFERRED_BY_DOCTOR, CREATED_AT, UPDATED_AT, DELETED_AT);
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+            TBL_PATIENTS, AI_ID, PATIENT_ID, PTNT_FNAME, PTNT_MNAME, PTNT_LNAME, PTNT_USERNAME, PTNT_PASSWORD, PTNT_OCCUPATION, PTNT_BIRTHDATE, PTNT_SEX, PTNT_CIVIL_STATUS, PTNT_HEIGHT, PTNT_WEIGHT, PTNT_OPTIONAL_ADDRESS, PTNT_STREET, PTNT_BRGY_ID, PTNT_BARANGAY, PTNT_CITY, PTNT_PROVINCE, PTNT_REGION, PTNT_TEL_NO, PTNT_MOBILE_NO, PTNT_EMAIL, PTNT_PHOTO, PTNT_POINTS, PTNT_REFERRAL_ID, PTNT_REFERRED_BY_USER, PTNT_REFERRED_BY_DOCTOR, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public PatientController(Context context) {
         super(context);
@@ -100,6 +101,7 @@ public class PatientController extends DbHelper {
         values.put(PTNT_MOBILE_NO, patient.getMobile_no());
         values.put(PTNT_EMAIL, patient.getEmail());
         values.put(PTNT_PHOTO, patient.getPhoto());
+        values.put(PTNT_POINTS, patient.getPoints());
         values.put(PTNT_REFERRAL_ID, patient.getReferral_id());
         values.put(PTNT_REFERRED_BY_USER, patient.getReferred_byUser());
         values.put(PTNT_REFERRED_BY_DOCTOR, patient.getReferred_byDoctor());
@@ -191,6 +193,7 @@ public class PatientController extends DbHelper {
             patient.setMobile_no(cur.getString(cur.getColumnIndex(PTNT_MOBILE_NO)));
             patient.setEmail(cur.getString(cur.getColumnIndex(PTNT_EMAIL)));
             patient.setPhoto(cur.getString(cur.getColumnIndex(PTNT_PHOTO)));
+            patient.setPoints(cur.getDouble(cur.getColumnIndex(PTNT_POINTS)));
             patient.setReferral_id(cur.getString(cur.getColumnIndex(PTNT_REFERRAL_ID)));
             patient.setReferred_byUser(cur.getString(cur.getColumnIndex(PTNT_REFERRED_BY_USER)));
             patient.setReferred_byDoctor(cur.getString(cur.getColumnIndex(PTNT_REFERRED_BY_DOCTOR)));
@@ -208,6 +211,18 @@ public class PatientController extends DbHelper {
         values.put(PTNT_PHOTO, patient_image);
 
         long row = sql_db.update(TBL_PATIENTS, values, PATIENT_ID + "=" + id, null);
+
+        sql_db.close();
+        return row > 0;
+    }
+
+    public boolean updatePoints(double points){
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(PTNT_POINTS, points);
+
+        long row = sql_db.update(TBL_PATIENTS, values, PATIENT_ID + "=" + SidebarActivity.getUserID(), null);
 
         sql_db.close();
         return row > 0;

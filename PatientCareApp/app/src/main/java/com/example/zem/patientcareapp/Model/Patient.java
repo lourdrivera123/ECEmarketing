@@ -15,6 +15,16 @@ public class Patient implements Serializable {
 
     int id = 0, serverID = 0, barangay_id = 0;
 
+    double points = 0;
+
+    public double getPoints() {
+        return points;
+    }
+
+    public void setPoints(double points) {
+        this.points = points;
+    }
+
     public Patient() {
 
     }

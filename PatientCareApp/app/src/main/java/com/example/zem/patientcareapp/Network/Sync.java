@@ -549,6 +549,7 @@ public class Sync {
             patient.setMobile_no(json.getString(PatientController.PTNT_MOBILE_NO));
             patient.setEmail(json.getString(PatientController.PTNT_EMAIL));
             patient.setPhoto(json.getString(PatientController.PTNT_PHOTO));
+            patient.setPoints(json.getDouble(PatientController.PTNT_POINTS));
             patient.setReferral_id(json.getString(PatientController.PTNT_REFERRAL_ID));
             patient.setReferred_byUser(json.getString(PatientController.PTNT_REFERRED_BY_USER));
             patient.setReferred_byDoctor(json.getString(PatientController.PTNT_REFERRED_BY_DOCTOR));
