@@ -34,7 +34,6 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.Medicine;
 import com.example.zem.patientcareapp.Model.PatientRecord;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
@@ -70,7 +69,6 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
 
     DbHelper db;
     PatientRecord record;
-    ServerRequest serverRequest;
     DoctorController doctor_controller;
     ClinicController cc;
     ProductController pc;
@@ -104,8 +102,6 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
         pc = new ProductController(this);
         prc = new PatientRecordController(this);
         ptc = new PatientTreatmentsController(this);
-
-        serverRequest = new ServerRequest();
 
         arrayOfDoctors = doctor_controller.getDoctorName();
         arrayOfClinics = cc.getAllClinics();
@@ -235,7 +231,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                     map.put("findings", s_diagnosis);
                     map.put("record_date", s_date);
 
-                    PostRequest.send(SaveMedicalRecordActivity.this, map, serverRequest, new RespondListener<JSONObject>() {
+                    PostRequest.send(SaveMedicalRecordActivity.this, map, new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {
@@ -411,7 +407,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
             hash.put("action", "multiple_insert");
             hash.put("jsobj", json_to_be_passed.toString());
 
-            PostRequest.send(SaveMedicalRecordActivity.this, hash, serverRequest, new RespondListener<JSONObject>() {
+            PostRequest.send(SaveMedicalRecordActivity.this, hash, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     try {

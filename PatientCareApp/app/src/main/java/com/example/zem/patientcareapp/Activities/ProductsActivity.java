@@ -35,7 +35,6 @@ import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.adapter.ProductsAdapter;
 
@@ -67,7 +66,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
     Helpers helpers;
     RequestQueue queue;
-    ServerRequest serverRequest;
     static DbHelper db;
     static ProductController pc;
     BasketController bc;
@@ -103,7 +101,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         oc = new OverlayController(this);
         queue = Volley.newRequestQueue(this);
         helpers = new Helpers();
-        serverRequest = new ServerRequest();
 
         basket_items = new ArrayList();
         map = new HashMap();
@@ -137,7 +134,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
             hashMap.put("prescription_id", prescriptionId + "");
             hashMap.put("is_approved", "0");
 
-            PostRequest.send(ProductsActivity.this, hashMap, serverRequest, new RespondListener<JSONObject>() {
+            PostRequest.send(ProductsActivity.this, hashMap, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     try {

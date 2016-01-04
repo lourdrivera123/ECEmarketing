@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -29,11 +28,9 @@ import com.example.zem.patientcareapp.Activities.SelectedProductActivity;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
-import com.example.zem.patientcareapp.ImageHandlingModule.AndroidMultipartEntity;
 import com.example.zem.patientcareapp.ConfigurationModule.Config;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
-import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
@@ -41,26 +38,13 @@ import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.SwipeTabsModule.ViewPagerActivity;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -76,12 +60,9 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
     DbHelper dbhelper;
     PatientController pc;
     PatientPrescriptionController ppc;
-    ServerRequest serverRequest;
     View rootView;
 
     int patientID;
-    String imageFileUri, filePath = null;
-    long totalSize = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -142,8 +123,6 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                 public void onClick(DialogInterface dialog, int which) {
                     final int serverID = Integer.parseInt(uploadsByUser.get(menuInfo.position).get(PatientPrescriptionController.PRESCRIPTIONS_SERVER_ID));
                     final String filename = uploadsByUser.get(menuInfo.position).get(PatientPrescriptionController.PRESCRIPTIONS_FILENAME);
-                    Log.d("filename log", filename);
-                    serverRequest = new ServerRequest();
                     HashMap<String, String> hashMap = new HashMap();
                     hashMap.put("table", "patient_prescriptions");
                     hashMap.put("request", "crud");
@@ -156,7 +135,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                     pdialog.setMessage("Deleting...");
                     pdialog.show();
 
-                    PostRequest.send(getActivity(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                    PostRequest.send(getActivity(), hashMap, new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {

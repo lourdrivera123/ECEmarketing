@@ -59,6 +59,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
         arrayOfSearchDoctors = new ArrayList();
         listOfSearchDoctors = new ArrayList();
 
+
         search_doctor = (EditText) rootView.findViewById(R.id.search_doctor);
         noUserFound = (TextView) rootView.findViewById(R.id.noUserFound);
 

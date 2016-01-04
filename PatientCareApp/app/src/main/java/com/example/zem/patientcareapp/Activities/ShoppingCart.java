@@ -2,10 +2,10 @@ package com.example.zem.patientcareapp.Activities;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -14,16 +14,16 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.BasketController;
-import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
+import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
-import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.example.zem.patientcareapp.adapter.ShoppingCartAdapter;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -107,5 +107,54 @@ public class ShoppingCart extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         this.finish();
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        updateBasket(items);
+        super.onPause();
+    }
+
+    void updateBasket(ArrayList<HashMap<String, String>> objects) {
+        try {
+            JSONArray master_arr = new JSONArray();
+            HashMap<String, String> hash = new HashMap();
+            JSONObject obj_for_server;
+
+            for (int x = 0; x < objects.size(); x++) {
+                hash.put("quantity", String.valueOf(objects.get(x).get("quantity")));
+                hash.put("id", String.valueOf(objects.get(x).get("basket_id")));
+                obj_for_server = new JSONObject(hash);
+                master_arr.put(obj_for_server);
+            }
+
+            final JSONObject json_to_be_passed = new JSONObject();
+            json_to_be_passed.put("jsobj", master_arr);
+
+            HashMap<String, String> params = new HashMap();
+            params.put("table", "baskets");
+            params.put("request", "crud");
+            params.put("action", "multiple_update_for_basket");
+            params.put("jsobj", json_to_be_passed.toString());
+
+            PostRequest.send(ShoppingCart.this, params, new RespondListener<JSONObject>() {
+                @Override
+                public void getResult(JSONObject response) {
+                    try {
+                        Log.d("response", response + "");
+
+                    } catch (Exception e) {
+                        Toast.makeText(ShoppingCart.this, e + "", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, new ErrorListener<VolleyError>() {
+                public void getError(VolleyError error) {
+                    Snackbar.make(root, "Network Error", Snackbar.LENGTH_SHORT).show();
+                }
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

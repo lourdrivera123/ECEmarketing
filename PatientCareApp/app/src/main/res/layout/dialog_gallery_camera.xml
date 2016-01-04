@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/d10"
-            android:src="@drawable/pick_camera" />
+            android:src="@mipmap/pick_camera" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/d10"
-            android:src="@drawable/pick_gallery" />
+            android:src="@mipmap/pick_gallery" />
 
         <TextView
             android:id="@+id/gallery"
@@ -54,5 +54,4 @@
             android:text="Gallery"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
-
 </LinearLayout>

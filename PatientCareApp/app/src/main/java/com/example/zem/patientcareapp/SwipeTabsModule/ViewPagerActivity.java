@@ -31,7 +31,6 @@ import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -53,7 +52,6 @@ public class ViewPagerActivity extends AppCompatActivity implements ViewPager.On
     ArrayList<HashMap<String, String>> hashPrescriptions;
 
     MyPagerAdapter pagerAdapter;
-    ServerRequest serverRequest;
     DbHelper dbhelper;
     PatientController pc;
     PatientPrescriptionController ppc;
@@ -114,7 +112,6 @@ public class ViewPagerActivity extends AppCompatActivity implements ViewPager.On
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final int serverID = Integer.parseInt(hashPrescriptions.get(selectedPosition).get(PatientPrescriptionController.PRESCRIPTIONS_SERVER_ID));
-                        serverRequest = new ServerRequest();
                         HashMap<String, String> hashMap = new HashMap();
                         hashMap.put("table", "patient_prescriptions");
                         hashMap.put("request", "crud");
@@ -126,7 +123,7 @@ public class ViewPagerActivity extends AppCompatActivity implements ViewPager.On
                         pdialog.setMessage("Deleting...");
                         pdialog.show();
 
-                        PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                        PostRequest.send(getBaseContext(), hashMap, new RespondListener<JSONObject>() {
                             @Override
                             public void getResult(JSONObject response) {
                                 System.out.print("response using interface <ViewPagerActivity.java>" + response);
@@ -175,7 +172,6 @@ public class ViewPagerActivity extends AppCompatActivity implements ViewPager.On
     }
 
     ///////////////////////ADAPTER FOR VIEWPAGER//////////////////////
-
     private class MyPagerAdapter extends PagerAdapter {
         private DisplayImageOptions options;
         private LayoutInflater inflater;

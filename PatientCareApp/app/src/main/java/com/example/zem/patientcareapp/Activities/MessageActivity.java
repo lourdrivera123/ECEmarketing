@@ -18,7 +18,6 @@ import com.example.zem.patientcareapp.Model.Messages;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
@@ -35,7 +34,6 @@ public class MessageActivity extends AppCompatActivity {
     TextView date, subject, message;
     Toolbar messages_toolbar;
 
-    ServerRequest serverRequest;
     DbHelper db;
     Messages msg;
 
@@ -56,7 +54,6 @@ public class MessageActivity extends AppCompatActivity {
 
         db = new DbHelper(this);
         MessageController mc = new MessageController(this);
-        serverRequest = new ServerRequest();
         Intent intent = getIntent();
         int server_id = intent.getIntExtra("serverID", 0);
 
@@ -76,7 +73,7 @@ public class MessageActivity extends AppCompatActivity {
             pdialog.setMessage("Loading...");
             pdialog.show();
 
-            PostRequest.send(this, hashMap, serverRequest, new RespondListener<JSONObject>() {
+            PostRequest.send(this, hashMap, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     try {

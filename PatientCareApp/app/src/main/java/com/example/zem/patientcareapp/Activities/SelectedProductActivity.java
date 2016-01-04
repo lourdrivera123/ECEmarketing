@@ -36,7 +36,6 @@ import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.adapter.CircleFragmentAdapter;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 
 import org.json.JSONArray;
@@ -70,7 +69,6 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     ProductController pc;
     Product product;
     Helpers helpers;
-    ServerRequest serverRequest;
     CircleFragmentAdapter adapter;
 
     ProgressDialog dialog;
@@ -88,7 +86,6 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         ptc = new PatientController(this);
 
         helpers = new Helpers();
-        serverRequest = new ServerRequest();
         map = new HashMap();
 
         pc = new ProductController(this);
@@ -228,7 +225,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                 hashMap.put("action", "update");
                                 hashMap.put("id", String.valueOf(old_basket.get("basket_id")));
 
-                                PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                                PostRequest.send(getBaseContext(), hashMap, new RespondListener<JSONObject>() {
                                     @Override
                                     public void getResult(JSONObject response) {
                                         try {
@@ -273,7 +270,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                                 hashMap.put("prescription_id", prescriptionId + "");
                                                 hashMap.put("is_approved", "0");
 
-                                                PostRequest.send(SelectedProductActivity.this, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                                                PostRequest.send(SelectedProductActivity.this, hashMap, new RespondListener<JSONObject>() {
                                                     @Override
                                                     public void getResult(JSONObject response) {
                                                         try {
@@ -323,7 +320,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                     hashMap.put("is_approved", "1");
                                     dialog.show();
 
-                                    PostRequest.send(getBaseContext(), hashMap, serverRequest, new RespondListener<JSONObject>() {
+                                    PostRequest.send(getBaseContext(), hashMap, new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
                                             try {
@@ -375,7 +372,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
             hashMap.put("prescription_id", prescriptionId + "");
             hashMap.put("is_approved", "0");
 
-            PostRequest.send(this, hashMap, serverRequest, new RespondListener<JSONObject>() {
+            PostRequest.send(this, hashMap, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     try {

@@ -36,7 +36,6 @@ import com.example.zem.patientcareapp.Model.Consultation;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.PostRequest;
-import com.example.zem.patientcareapp.Network.ServerRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
@@ -52,7 +51,6 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
     PatientConsultationController pcc;
     Consultation consult;
     AlarmService alarmService;
-    ServerRequest serverRequest;
 
     LinearLayout setDate, setAlarmedTime;
     TextView txtDate, txtAlarmedTime;
@@ -81,7 +79,6 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
         setSupportActionBar(myToolBar);
         getSupportActionBar().setTitle("Set Consultation");
 
-        serverRequest = new ServerRequest();
         dbhelper = new DbHelper(this);
         pcc = new PatientConsultationController(this);
         alarmService = new AlarmService(this);
@@ -210,7 +207,7 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
                 pdialog.setMessage("Please wait...");
                 pdialog.show();
 
-                PostRequest.send(this, hashMap, serverRequest, new RespondListener<JSONObject>() {
+                PostRequest.send(this, hashMap, new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
                         try {

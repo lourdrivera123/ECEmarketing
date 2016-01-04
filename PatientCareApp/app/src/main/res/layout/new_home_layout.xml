@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/toolbar"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <View
-            android:id="@+id/shadow"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_below="@+id/selected_product_toolbar"
-            android:background="@drawable/shadow_toolbar" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,12 +22,11 @@
                 android:id="@+id/orderLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="@dimen/d10"
                 android:layout_weight="1"
-                android:background="@drawable/button_selector"
+                android:background="@android:drawable/dialog_holo_light_frame"
                 android:clickable="true"
                 android:orientation="horizontal"
-                android:padding="5dp">
+                android:padding="20dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -50,7 +44,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Search and Order "
-                        android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -59,7 +52,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/d10"
                         android:text="Search your medicine here"
-                        android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -68,11 +60,10 @@
                 android:id="@+id/refillLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="@dimen/d10"
                 android:layout_weight="1"
-                android:background="@drawable/button_selector"
+                android:background="@android:drawable/dialog_holo_light_frame"
                 android:clickable="true"
-                android:padding="5dp">
+                android:padding="20dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -89,7 +80,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Refills and Renewals"
-                        android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -98,7 +88,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/d10"
                         android:text="Refill your medicines from your previous order"
-                        android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -107,11 +96,10 @@
                 android:id="@+id/pointsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="@dimen/d10"
                 android:layout_weight="1"
-                android:background="@drawable/button_selector"
+                android:background="@android:drawable/dialog_holo_light_frame"
                 android:clickable="true"
-                android:padding="5dp">
+                android:padding="20dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -128,7 +116,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Referral Points"
-                        android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -137,7 +124,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/d10"
                         android:text="Trace your earned Referral points"
-                        android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -146,11 +132,10 @@
                 android:id="@+id/prescriptionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="@dimen/d10"
                 android:layout_weight="1"
-                android:background="@drawable/button_selector"
+                android:background="@android:drawable/dialog_holo_light_frame"
                 android:clickable="true"
-                android:padding="5dp">
+                android:padding="20dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -167,7 +152,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Upload Prescription"
-                        android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -176,7 +160,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/d10"
                         android:text="Choose from Gallery or Camera"
-                        android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -186,9 +169,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_selector"
+                android:background="@android:drawable/dialog_holo_light_frame"
                 android:clickable="true"
-                android:padding="5dp">
+                android:padding="20dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -206,7 +189,6 @@
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/notifConsultation"
                         android:text="Set Up A Consultation"
-                        android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -228,7 +210,6 @@
                         android:layout_below="@+id/setup"
                         android:layout_marginTop="@dimen/d10"
                         android:text="Schedule an appointment with your Doctor"
-                        android:textColor="@color/white"
                         android:textSize="12sp" />
                 </RelativeLayout>
             </LinearLayout>
