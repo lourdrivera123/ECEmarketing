@@ -133,7 +133,7 @@ public class DoctorController extends DbHelper {
             HashMap<Integer, ArrayList<String>> map = new HashMap();
             ArrayList<String> list = new ArrayList();
 
-            list.add(cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_LNAME)));
+            list.add(cur.getString(cur.getColumnIndex(DOC_LNAME)) + ", " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1));
             list.add(cur.getString(cur.getColumnIndex(DOC_PRC_NO)));
             list.add(cur.getString(cur.getColumnIndex("specialty")));
             list.add(cur.getString(cur.getColumnIndex("sub_specialty")));

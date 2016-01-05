@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Fragment.PatientConsultationFragment;
-import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
+import com.example.zem.patientcareapp.Fragment.ReferralFragment;
 import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.MasterTabsAdapter;
@@ -56,8 +56,8 @@ public class MasterTabActivity extends AppCompatActivity implements TabLayout.On
 
     private void setupViewPager(ViewPager viewPager) {
         MasterTabsAdapter adapter = new MasterTabsAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ReferralsFragment(), "Refills & Renewals");
-        adapter.addFragment(new ReferralsFragment(), "Referral Points");
+        adapter.addFragment(new ReferralFragment(), "Refills & Renewals");
+        adapter.addFragment(new ReferralFragment(), "Referral Points");
         adapter.addFragment(new TrialPrescriptionFragment(), "Prescription");
         adapter.addFragment(new PatientConsultationFragment(), "Consultation");
         viewPager.setAdapter(adapter);
