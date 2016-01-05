@@ -28,7 +28,6 @@
             android:layout_weight=".9"
             android:divider="@android:color/transparent" />
 
-
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
@@ -53,6 +52,7 @@
                 android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/proceed_to_checkout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight=".6"

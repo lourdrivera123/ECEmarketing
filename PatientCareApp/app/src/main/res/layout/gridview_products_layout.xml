@@ -3,13 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/toolbar">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/myToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolbar"
+        android:background="#00000000"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -18,12 +19,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </android.support.v7.widget.Toolbar>
-
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/shadow_toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,8 +50,9 @@
         <ListView
             android:id="@+id/listOfProducts"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="10.0sp"/>
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            android:layout_weight=".9"
+            android:divider="@android:color/transparent"/>
     </LinearLayout>
 </LinearLayout>

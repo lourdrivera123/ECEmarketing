@@ -7,11 +7,19 @@ import java.io.Serializable;
  */
 public class Product implements Serializable {
     String name, genericName, description, unit, packing, photo, sku, createdAt, updatedAt, deletedAt;
-    int id, prescriptionRequired, productId, subCategoryId, qtyPerPacking;
+    int id, prescriptionRequired, productId, subCategoryId, qtyPerPacking, availableQuantity;
     double price;
 
     public Product() {
 
+    }
+
+    public int getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(int availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
     public String getName() {

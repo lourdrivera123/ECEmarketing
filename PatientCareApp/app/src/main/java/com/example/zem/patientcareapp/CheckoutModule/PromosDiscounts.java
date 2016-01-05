@@ -1,6 +1,8 @@
 package com.example.zem.patientcareapp.CheckoutModule;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,13 +11,31 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Activities.MainActivity;
+import com.example.zem.patientcareapp.Activities.ReferralActivity;
 import com.example.zem.patientcareapp.Activities.ShoppingCart;
+import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Customizations.GlowingText;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Interface.StringRespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
+import com.example.zem.patientcareapp.Model.Patient;
+import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.Network.StringRequests;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * Created by Zem on 11/19/2015.
@@ -30,6 +50,10 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
             minGlowRadius   = 2f,
             maxGlowRadius   = 16f;
     OrderModel order_model;
+    TextView points_text;
+    Patient patient;
+    PatientController pc;
+    LinearLayout points_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,48 +62,45 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         redeem_points = (Button) findViewById(R.id.redeem_points);
-//        blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
+        points_text = (TextView) findViewById(R.id.points_text);
         nxt_btn = (Button) findViewById(R.id.next_btn);
-//        stepping_stone = (TextView) findViewById(R.id.stepping_stone);
+        points_layout = (LinearLayout) findViewById(R.id.points_layout);
 
-//        stepping_stone.setText("Step 4/5");
-//        blood_seeker.setProgress(80);
+        pc = new PatientController(this);
+        patient = pc.getloginPatient(SidebarActivity.getUname());
+
+        StringRequests.getString(PromosDiscounts.this, "db/get.php?q=get_patient_points&patient_id="+patient.getServerID(), new StringRespondListener<String>() {
+            @Override
+            public void getResult(String response) {
+                patient.setPoints(Double.parseDouble(response));
+                pc.updatePoints(Double.parseDouble(response));
+
+                if(patient.getPoints() > 0){
+                    points_layout.setVisibility(View.VISIBLE);
+                    points_text.setText("Your current referral points is "+patient.getPoints()+" \n(1 point = 1 peso)\nClick 'Redeem Points' to use your points");
+                    glowButton = new GlowingText(
+                            PromosDiscounts.this,               // Pass activity Object
+                            getBaseContext(),       // Context
+                            redeem_points,                 // Button View
+                            minGlowRadius,          // Minimum Glow Radius
+                            maxGlowRadius,          // Maximum Glow Radius
+                            startGlowRadius,        // Start Glow Radius - Increases to MaxGlowRadius then decreases to MinGlowRadius.
+                            Color.WHITE,              // Glow Color (int)
+                            2);                     // Glowing Transition Speed (Range of 1 to 10)
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("error for sumrhing", error + "");
+            }
+        });
 
         Intent get_intent = getIntent();
-        Bundle bundle= get_intent.getExtras();
 
         order_model = (OrderModel) get_intent.getSerializableExtra("order_model");
 
-//        if(order_model.getMode_of_delivery().equals("delivery")){
-//            stepping_stone.setText("Step 4/5");
-//            blood_seeker.setProgress(80);
-//        } else {
-//            stepping_stone.setText("Step 2/3");
-//            blood_seeker.setProgress(67);
-//        }
-
         order_model.setCoupon_discount(0.1);
         order_model.setPoints_discount(0.1);
-
-//        blood_seeker.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                return true;
-//            }
-//        });
-
-        Log.d("putangina", order_model.getMode_of_delivery() + " " + order_model.getRecipient_address() + " " + order_model.getRecipient_name() + " " + order_model.getRecipient_contactNumber());
-
-
-        glowButton = new GlowingText(
-                PromosDiscounts.this,               // Pass activity Object
-                getBaseContext(),       // Context
-                redeem_points,                 // Button View
-                minGlowRadius,          // Minimum Glow Radius
-                maxGlowRadius,          // Maximum Glow Radius
-                startGlowRadius,        // Start Glow Radius - Increases to MaxGlowRadius then decreases to MinGlowRadius.
-                Color.WHITE,              // Glow Color (int)
-                2);                     // Glowing Transition Speed (Range of 1 to 10)
 
         nxt_btn.setOnClickListener(this);
 

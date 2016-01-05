@@ -71,7 +71,7 @@ public class PayPalCheckout extends Activity {
     BasketController bc;
     PatientController pc;
 
-    PayPalItem[] items;
+    PayPalItem[] items_paypal;
     PayPalPaymentDetails paymentDetails;
     PayPalPayment payment;
     BigDecimal subtotal;
@@ -120,22 +120,6 @@ public class PayPalCheckout extends Activity {
         startService(intent);
 
         populateProductsInCart();
-
-        if (productsInCart.size() > 0) {
-            items = new PayPalItem[productsInCart.size()];
-            items = productsInCart.toArray(items);
-
-            subtotal = PayPalItem.getItemTotal(items);
-
-            HashMap<String, String> hashMap = new HashMap();
-
-            hashMap.put("amount_in_php", String.valueOf(subtotal));
-
-            launchPayPalPayment();
-        } else {
-            Toast.makeText(getApplicationContext(), "Cart is empty! Please add few products to cart.",
-                    Toast.LENGTH_SHORT).show();
-        }
 
     }
 
@@ -234,6 +218,22 @@ public class PayPalCheckout extends Activity {
                             productsInCart.add(paypal_item);
 
                             Toast.makeText(getApplicationContext(), paypal_item.getName() + " added to cart!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        if (productsInCart.size() > 0) {
+                            items_paypal = new PayPalItem[productsInCart.size()];
+                            items_paypal = productsInCart.toArray(items_paypal);
+
+                            subtotal = PayPalItem.getItemTotal(items_paypal);
+
+                            HashMap<String, String> hashMap = new HashMap();
+
+                            hashMap.put("amount_in_php", String.valueOf(subtotal));
+
+                            launchPayPalPayment();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Cart is empty! Please add few products to cart.",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 } catch (Exception e) {

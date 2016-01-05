@@ -603,7 +603,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
 
                                     final HashMap<String, String> params = setParams("register");
 
-                                    StringRequests.getString(EditTabsActivity.this, "generate/referral_id", new StringRespondListener<String>() {
+                                    StringRequests.getString(EditTabsActivity.this, "api/generate/referral_id", new StringRespondListener<String>() {
 
                                         @Override
                                         public void getResult(String response) {

@@ -84,6 +84,19 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/out_of_stock"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight=".70"
+                android:focusable="false"
+                android:text="Out of stock"
+                android:textStyle="italic"
+                android:focusableInTouchMode="false"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:id="@+id/add_to_cart"
                 android:layout_width="0dp"
@@ -101,7 +114,8 @@
                     android:layout_marginRight="5dp"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:src="@drawable/green_add_to_cart" />
+                    android:src="@drawable/green_add_to_cart"
+                    android:id="@+id/cart_icon"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -110,7 +124,8 @@
                     android:gravity="center"
                     android:text="Add to Cart"
                     android:textColor="@color/partner_toolbar"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:id="@+id/cart_text"/>
             </LinearLayout>
 
             <View
