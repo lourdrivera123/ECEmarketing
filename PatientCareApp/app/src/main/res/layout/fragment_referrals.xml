@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/toolbar"
     android:orientation="vertical"
-    android:padding="@dimen/d10">
+    android:padding="10dp">
 
-    <TextView
-        android:id="@+id/referralsLvlLimit"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/d10" />
+        android:background="@android:drawable/dialog_holo_light_frame"
+        android:orientation="vertical">
 
-    <ScrollView
-        android:id="@+id/layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        <TextView
+            android:id="@+id/referralsLvlLimit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/d10"
+            android:padding="@dimen/d10"
+            android:textSize="15sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="@dimen/d20"
+            android:background="@color/toolbar" />
 
         <HorizontalScrollView
             android:id="@+id/horizontalView"
@@ -25,42 +35,54 @@
             android:scrollbars="horizontal|vertical">
 
             <TableLayout
+                android:id="@+id/table_parent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:stretchColumns="*">
 
                 <TableRow>
 
                     <TextView
                         android:layout_weight="1"
+                        android:background="@drawable/cell_border"
                         android:gravity="center"
+                        android:padding="5dp"
                         android:text="Lvl"
-                        android:textStyle="bold|italic" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:layout_weight="1"
+                        android:background="@drawable/cell_border"
                         android:gravity="center"
+                        android:padding="5dp"
                         android:text="ID"
-                        android:textStyle="bold|italic" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:layout_weight="1"
+                        android:background="@drawable/cell_border"
                         android:gravity="center"
+                        android:padding="5dp"
                         android:text="Name"
-                        android:textStyle="bold|italic" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:layout_weight="1"
+                        android:background="@drawable/cell_border"
                         android:gravity="center"
+                        android:padding="5dp"
                         android:text="Parent ID"
-                        android:textStyle="bold|italic" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:layout_weight="1"
+                        android:background="@drawable/cell_border"
                         android:gravity="center"
+                        android:padding="5dp"
                         android:text="Date"
-                        android:textStyle="bold|italic" />
+                        android:textSize="15sp" />
                 </TableRow>
             </TableLayout>
         </HorizontalScrollView>
-    </ScrollView>
+    </LinearLayout>
 </LinearLayout>

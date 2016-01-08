@@ -47,12 +47,12 @@ public class Helpers implements View.OnCreateContextMenuListener {
 
     public String decodePaymentCode(String code, String or_opt) {
         String payment_text = "";
-            if(code.equals("paypal"))
-                payment_text = "PayPal";
-            else if(code.equals("cash_on_delivery"))
-                payment_text = "Cash On "+or_opt;
-            else
-                payment_text = "Credit/Debit Card";
+        if (code.equals("paypal"))
+            payment_text = "PayPal";
+        else if (code.equals("cash_on_delivery"))
+            payment_text = "Cash On " + or_opt;
+        else
+            payment_text = "Credit/Debit Card";
 
         return payment_text;
     }
@@ -135,7 +135,7 @@ public class Helpers implements View.OnCreateContextMenuListener {
     }
 
     public String getPluralForm(String noun, int qty) {
-        String lastChar = "";
+        String lastChar;
 
         if (qty < 2) return noun;
 

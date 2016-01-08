@@ -125,10 +125,11 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.proceed_to_checkout:
-               updateBasket(items);
+                updateBasket(items);
                 break;
         }
     }
+
     protected void onPause() {
         updateBasket(items);
         super.onPause();
@@ -161,8 +162,7 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
                 public void getResult(JSONObject response) {
                     try {
                         int success = response.getInt("success");
-                        Log.d("response", response + "");
-                        if(success == 1) {
+                        if (success == 1) {
                             OrderModel order_model = opc.getOrderPreference();
                             if (order_model.isValid()) {
                                 Intent summary_intent = new Intent(ShoppingCart.this, PromosDiscounts.class);
@@ -173,8 +173,6 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
                                 startActivity(new Intent(ShoppingCart.this, DeliverPickupOption.class));
                                 finish();
                             }
-                        } else {
-                            Snackbar.make(root, "Network error, cannot proceed", Snackbar.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         Toast.makeText(ShoppingCart.this, e + "", Toast.LENGTH_SHORT).show();
@@ -185,9 +183,8 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
                     Snackbar.make(root, "Network Error", Snackbar.LENGTH_SHORT).show();
                 }
             });
-
         } catch (JSONException e) {
-            e.printStackTrace();
+            Toast.makeText(ShoppingCart.this, e + "", Toast.LENGTH_SHORT).show();
         }
     }
 }

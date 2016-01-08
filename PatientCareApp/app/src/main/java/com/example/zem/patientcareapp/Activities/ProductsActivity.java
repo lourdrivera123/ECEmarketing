@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -39,6 +40,7 @@ import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.adapter.ProductsAdapter;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
@@ -56,8 +58,8 @@ import java.util.Map;
 public class ProductsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemSelectedListener {
     ListView listOfProducts;
     Toolbar myToolBar;
-    LinearLayout results_layout;
-    TextView noOfResults, number_of_notif;
+    LinearLayout results_layout, root;
+    TextView noOfResults, number_of_notif, no_products;
     ImageButton go_to_cart;
     Spinner spinner_categories;
 
@@ -71,7 +73,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     BasketController bc;
     static OverlayController oc;
 
-    ProgressDialog progress1;
+    Intent get_intent;
 
     public static ArrayList<Map<String, String>> temp_products_items, products_items, basket_items;
     public static HashMap<String, String> map;
@@ -79,6 +81,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     ArrayList<String> categories = new ArrayList();
 
     public static int is_finish;
+    int promo_id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +89,11 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         setContentView(R.layout.gridview_products_layout);
 
         results_layout = (LinearLayout) findViewById(R.id.results_layout);
+        root = (LinearLayout) findViewById(R.id.root);
         noOfResults = (TextView) findViewById(R.id.noOfResults);
         listOfProducts = (ListView) findViewById(R.id.listOfProducts);
         spinner_categories = (Spinner) findViewById(R.id.spinner_categories);
+        no_products = (TextView) findViewById(R.id.no_products);
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         setSupportActionBar(myToolBar);
@@ -106,13 +111,13 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         map = new HashMap();
         products_items = new ArrayList();
         temp_products_items = new ArrayList();
-        progress1 = new ProgressDialog(this);
-        progress1.setMessage("Please wait...");
-        progress1.setCancelable(false);
 
         showOverLay(this);
         getProductCategories();
         getAllBasketItems();
+
+        get_intent = getIntent();
+        promo_id = get_intent.getIntExtra("promo_id", 0);
 
         listOfProducts.setOnItemClickListener(this);
         spinner_categories.setOnItemSelectedListener(this);
@@ -145,14 +150,15 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                             transferHashMap(hashMap);
                         }
                     } catch (Exception e) {
-                        Toast.makeText(ProductsActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                        Log.d("exception3", e + "");
+                        Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                     }
                     pdialog.dismiss();
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
                     pdialog.dismiss();
-                    Toast.makeText(ProductsActivity.this, "Couldn't add item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                    Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
         }
@@ -245,7 +251,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
             noOfResults.setText(ctr + "");
 
             if (ctr == 0)
-                Toast.makeText(this, "No Results", Toast.LENGTH_LONG).show();
+                Snackbar.make(root, "No results were found", Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -275,9 +281,9 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
         if (((ToggleButton) v).isChecked()) {
             if (db.insertFaveProduct(SidebarActivity.getUserID(), product_id))
-                Toast.makeText(getBaseContext(), prod_name + " is added to your favorites", Toast.LENGTH_SHORT).show();
+                Snackbar.make(root, prod_name + " is added to your favorites", Snackbar.LENGTH_SHORT).show();
             else
-                Toast.makeText(getBaseContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+                Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
         } else {
             db.removeFavorite(SidebarActivity.getUserID(), product_id);
         }
@@ -307,13 +313,14 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                         }
                     }
                 } catch (Exception e) {
-                    Toast.makeText(ProductsActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                    Log.d("exception4", e + "");
+                    Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                 }
             }
         }, new ErrorListener<VolleyError>() {
             @Override
             public void getError(VolleyError e) {
-                Toast.makeText(ProductsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
@@ -351,11 +358,16 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+        no_products.setVisibility(View.GONE);
+        listOfProducts.setVisibility(View.VISIBLE);
         final String category = categories.get(position);
         products_items.clear();
         searchProducts.clear();
         temp_products_items.clear();
 
+        final ProgressDialog progress1 = new ProgressDialog(this);
+        progress1.setMessage("Please wait...");
+        progress1.setCancelable(false);
         progress1.show();
 
         ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products", "products", new RespondListener<JSONObject>() {
@@ -371,7 +383,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                     JSONObject obj = json_array.getJSONObject(x);
 
                                     HashMap<String, String> map = new HashMap();
-                                    map.put("product_id", String.valueOf(obj.getInt("id")));
+                                    map.put("product_id", obj.getString("id"));
                                     map.put("subcategory_id", String.valueOf(obj.getInt("subcategory_id")));
                                     map.put("name", obj.getString("name"));
                                     map.put("generic_name", obj.getString("generic_name"));
@@ -381,11 +393,23 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                     map.put("unit", obj.getString("unit"));
                                     map.put("packing", obj.getString("packing"));
                                     map.put("qty_per_packing", String.valueOf(obj.getInt("qty_per_packing")));
-                                    map.put("sku", obj.getString("sku"));
                                     map.put("temp_basket_qty", "0");
                                     map.put("category_name", obj.getString("cat_name"));
                                     map.put("category_id", String.valueOf(obj.getInt("cat_id")));
                                     map.put("available_quantity", String.valueOf(obj.getInt("available_quantity")));
+                                    map.put("promo_id", obj.getString("promo_id"));
+                                    map.put("free_delivery", obj.getString("is_free_delivery"));
+                                    map.put("free_gifts", obj.getString("has_free_gifts"));
+                                    map.put("quantity_required", obj.getString("quantity_required"));
+                                    map.put("peso_discount", obj.getString("peso_discount"));
+                                    map.put("percentage_discount", obj.getString("percentage_discount"));
+                                    map.put("product_applicability", obj.getString("product_applicability"));
+                                    map.put("pr_quantity_required", obj.getString("pr_quantity_required"));
+                                    map.put("pr_minimum_purchase", obj.getString("minimum_purchase_amount"));
+                                    map.put("pr_percentage_discount", obj.getString("pr_percentage_discount"));
+                                    map.put("pr_peso_discount", obj.getString("pr_peso_discount"));
+                                    map.put("start_date", obj.getString("start_date"));
+                                    map.put("end_date", obj.getString("end_date"));
                                     products_items.add(map);
 
                                     HashMap<Integer, HashMap<String, String>> hash = new HashMap();
@@ -397,44 +421,56 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                 }
                                 temp_products_items.addAll(products_items);
 
-                                ArrayList<Map<String, String>> newMap = new ArrayList();
+                                if (promo_id > 0) { //IF GIKAN SA PROMOFRAGMENT
 
-                                if (category.equals("Favorites")) {
-                                    ArrayList<Integer> fave_IDs = db.getFavoritesByUserID(SidebarActivity.getUserID());
+                                } else { //IF GIKAN SA HOMETILEFRAGMENT
+                                    ArrayList<Map<String, String>> newMap = new ArrayList();
 
-                                    if (fave_IDs.size() > 0) {
-                                        for (int x = 0; x < fave_IDs.size(); x++) {
-                                            String product_id = String.valueOf(fave_IDs.get(x));
+                                    if (category.equals("Favorites")) {
+                                        ArrayList<Integer> fave_IDs = db.getFavoritesByUserID(SidebarActivity.getUserID());
 
-                                            for (Map<String, String> map : products_items) {
-                                                if (map.get("product_id").equals(product_id))
-                                                    newMap.add(map);
+                                        if (fave_IDs.size() > 0) {
+                                            for (int x = 0; x < fave_IDs.size(); x++) {
+                                                String product_id = String.valueOf(fave_IDs.get(x));
+
+                                                for (Map<String, String> map : products_items) {
+                                                    if (map.get("product_id").equals(product_id))
+                                                        newMap.add(map);
+                                                }
                                             }
+                                        } else {
+                                            no_products.setVisibility(View.VISIBLE);
+                                            listOfProducts.setVisibility(View.GONE);
                                         }
-                                    } else
-                                        Toast.makeText(ProductsActivity.this, "wala kay favorites", Toast.LENGTH_SHORT).show();
-                                } else if (category.equals("All")) {
-                                    newMap.addAll(products_items);
-                                } else {
-                                    for (Map<String, String> map : products_items) {
-                                        if (map.containsValue(category))
-                                            newMap.add(map);
-                                    }
-                                }
+                                    } else if (category.equals("All")) {
+                                        newMap.addAll(products_items);
+                                    } else {
+                                        for (Map<String, String> map : products_items) {
+                                            if (map.containsValue(category))
+                                                newMap.add(map);
+                                        }
 
-                                adapter = new ProductsAdapter(ProductsActivity.this, R.layout.product_item, newMap);
-                                listOfProducts.setAdapter(adapter);
+                                        if (newMap.size() == 0) {
+                                            no_products.setVisibility(View.VISIBLE);
+                                            listOfProducts.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    adapter = new ProductsAdapter(ProductsActivity.this, R.layout.product_item, newMap);
+                                    listOfProducts.setAdapter(adapter);
+                                    progress1.dismiss();
+                                }
                             }
                         } catch (Exception e) {
-                            Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();
+                            Log.d("exception1", e + "");
+                            Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                         }
                         progress1.dismiss();
                     }
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
-                        Log.d("ProductsAct", error + "");
                         progress1.dismiss();
-                        Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -464,18 +500,15 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                         }
                     }
                 } catch (Exception e) {
-                    Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();
+                    Log.d("exception2", e + "");
+                    Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                 }
-
                 spinner_adapter = new ArrayAdapter(ProductsActivity.this, R.layout.spinner_toolbar_item, categories);
                 spinner_categories.setAdapter(spinner_adapter);
-                progress1.dismiss();
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Log.d("ProductsAct1", error + "");
-                progress1.dismiss();
-                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
