@@ -212,7 +212,7 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
         } else {
 
-            Toast.makeText(this, "Can't get ur location", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Can't get your location", Toast.LENGTH_LONG).show();
         }
     }
 

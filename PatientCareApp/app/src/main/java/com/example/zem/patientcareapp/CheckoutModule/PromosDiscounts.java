@@ -43,17 +43,17 @@ import java.util.HashMap;
 public class PromosDiscounts extends AppCompatActivity implements View.OnClickListener {
     Toolbar myToolBar;
     GlowingText glowButton;
-    Button redeem_points, nxt_btn;
+    Button redeem_points, next_btn;
     SeekBar blood_seeker;
     TextView stepping_stone;
-    float 	startGlowRadius = 25f,
-            minGlowRadius   = 2f,
-            maxGlowRadius   = 16f;
+    float startGlowRadius = 25f,
+            minGlowRadius = 2f,
+            maxGlowRadius = 16f;
     OrderModel order_model;
     TextView points_text;
     Patient patient;
     PatientController pc;
-    LinearLayout points_layout;
+    LinearLayout points_layout, redeem_points_parent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,21 +63,22 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         redeem_points = (Button) findViewById(R.id.redeem_points);
         points_text = (TextView) findViewById(R.id.points_text);
-        nxt_btn = (Button) findViewById(R.id.next_btn);
+        next_btn = (Button) findViewById(R.id.next_btn);
         points_layout = (LinearLayout) findViewById(R.id.points_layout);
+        redeem_points_parent = (LinearLayout) findViewById(R.id.redeem_points_parent);
 
         pc = new PatientController(this);
         patient = pc.getloginPatient(SidebarActivity.getUname());
 
-        StringRequests.getString(PromosDiscounts.this, "db/get.php?q=get_patient_points&patient_id="+patient.getServerID(), new StringRespondListener<String>() {
+        StringRequests.getString(PromosDiscounts.this, "db/get.php?q=get_patient_points&patient_id=" + patient.getServerID(), new StringRespondListener<String>() {
             @Override
             public void getResult(String response) {
                 patient.setPoints(Double.parseDouble(response));
                 pc.updatePoints(Double.parseDouble(response));
 
-                if(patient.getPoints() > 0){
+                if (patient.getPoints() > 0) {
                     points_layout.setVisibility(View.VISIBLE);
-                    points_text.setText("Your current referral points is "+patient.getPoints()+" \n(1 point = 1 peso)\nClick 'Redeem Points' to use your points");
+                    points_text.setText("Your current referral points is " + patient.getPoints() + " \n(1 point = 1 peso)\nClick 'Redeem Points' to use your points");
                     glowButton = new GlowingText(
                             PromosDiscounts.this,               // Pass activity Object
                             getBaseContext(),       // Context
@@ -99,10 +100,8 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
 
         order_model = (OrderModel) get_intent.getSerializableExtra("order_model");
 
-        order_model.setCoupon_discount(0.1);
-        order_model.setPoints_discount(0.1);
-
-        nxt_btn.setOnClickListener(this);
+        next_btn.setOnClickListener(this);
+        redeem_points.setOnClickListener(this);
 
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -123,16 +122,24 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, SummaryActivity.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("order_model", order_model);
-        intent.putExtra("order_model", order_model);
-        startActivity(intent);
-        this.finish();
+        switch (v.getId()) {
+            case R.id.redeem_points:
+                order_model.setPoints_discount(patient.getPoints());
+                redeem_points.setVisibility(View.GONE);
+                redeem_points_parent.setVisibility(View.GONE);
+                points_text.setText("Your order total will be discounted ₱ "+patient.getPoints()+" upon checkout");
+                break;
+            case R.id.next_btn:
+                Intent intent = new Intent(this, SummaryActivity.class);
+                intent.putExtra("order_model", order_model);
+                startActivity(intent);
+                this.finish();
+                break;
+        }
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         // Don't forget to use this.
         glowButton.stopGlowing();

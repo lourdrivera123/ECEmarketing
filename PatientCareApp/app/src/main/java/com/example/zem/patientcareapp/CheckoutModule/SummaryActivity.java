@@ -121,8 +121,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                             totalAmount = totalAmount + Double.parseDouble(item.get("item_subtotal"));
                         }
 
-                        double coupon_discount = order_model.getCoupon_discount() * totalAmount;
-                        double points_discount = order_model.getPoints_discount() * totalAmount;
+                        double coupon_discount = order_model.getCoupon_discount();
+                        double points_discount = order_model.getPoints_discount();
                         double discounted_total = totalAmount - points_discount - coupon_discount;
 
                         order_model.setCoupon_discount(coupon_discount);

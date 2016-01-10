@@ -22,7 +22,7 @@ public class OrderController extends DbHelper {
     DbHelper dbhelper;
     SQLiteDatabase sql_db;
 
-     //ORDERS TABLE
+    //ORDERS TABLE
     public static final String TBL_ORDERS = "orders",
             SERVER_ORDERS_ID = "orders_id",
             ORDERS_RECIPIENT_NAME = "recipient_name",
@@ -34,11 +34,11 @@ public class OrderController extends DbHelper {
             ORDERS_STATUS = "status",
             ORDERS_CREATED_AT = "created_at";
 
-            public static final String CREATE_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT," +
-                        " %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_ORDERS, AI_ID, SERVER_ORDERS_ID, PATIENT_ID, ORDERS_RECIPIENT_NAME, ORDERS_RECIPIENT_ADDRESS,
-                ORDERS_RECIPIENT_NUMBER, ORDERS_DELIVERY_SCHED, ORDERS_ECE_BRANCH, ORDERS_MODE_OF_DELIVERY, ORDERS_STATUS, CREATED_AT,
-                UPDATED_AT, DELETED_AT);
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT," +
+                    " %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+            TBL_ORDERS, AI_ID, SERVER_ORDERS_ID, PATIENT_ID, ORDERS_RECIPIENT_NAME, ORDERS_RECIPIENT_ADDRESS,
+            ORDERS_RECIPIENT_NUMBER, ORDERS_DELIVERY_SCHED, ORDERS_ECE_BRANCH, ORDERS_MODE_OF_DELIVERY, ORDERS_STATUS, CREATED_AT,
+            UPDATED_AT, DELETED_AT);
 
     public OrderController(Context context) {
         super(context);
@@ -78,7 +78,7 @@ public class OrderController extends DbHelper {
         ArrayList<HashMap<String, String>> order_items = new ArrayList<>();
 
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
-        String sql = "SELECT count(od.order_details_id) as num_of_items, o.recipient_name, b.total, o.created_at as date_ordered, o.orders_id as order_id, o.status from orders as o inner join billings as b on o.orders_id = b.order_id inner join order_details as od on b.order_id = od.order_id where o.patient_id = " + SidebarActivity.getUserID() + " order by o.created_at DESC";
+        String sql = "SELECT count(od.order_details_id) as num_of_items, o.recipient_name, b.total, o.created_at as date_ordered, o.orders_id as order_id, o.status from orders as o inner join billings as b on o.orders_id = b.order_id inner join order_details as od on b.order_id = od.order_id where o.patient_id = " + SidebarActivity.getUserID() + " group by o.orders_id order by o.created_at DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
@@ -88,7 +88,6 @@ public class OrderController extends DbHelper {
             map.put("total", cur.getString(cur.getColumnIndex(BillingController.BILLINGS_TOTAL)));
             map.put("date_ordered", cur.getString(cur.getColumnIndex("date_ordered")));
             map.put("order_id", cur.getString(cur.getColumnIndex("order_id")));
-            map.put("order_status", cur.getString(cur.getColumnIndex("status")));
             order_items.add(map);
         }
 
@@ -97,5 +96,33 @@ public class OrderController extends DbHelper {
         return order_items;
     }
 
+    public ArrayList<HashMap<String, String>> getOrder(int order_id) {
+        ArrayList<HashMap<String, String>> order_items = new ArrayList<>();
+
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
+        String sql = "SELECT o.*, b.gross_total, b.total, b.coupon_discount, b.points_discount, b.payment_method, b.payment_status from orders as o inner join billings as b on o.orders_id = b.order_id where o.orders_id = " + order_id;
+        Cursor cur = sql_db.rawQuery(sql, null);
+        cur.moveToFirst();
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("order_id", String.valueOf(cur.getInt(cur.getColumnIndex(SERVER_ORDERS_ID))));
+        map.put("orderred_on", cur.getString(cur.getColumnIndex(ORDERS_CREATED_AT)));
+        map.put("order_receiving_option", cur.getString(cur.getColumnIndex(ORDERS_MODE_OF_DELIVERY)));
+        map.put("recipient_address", cur.getString(cur.getColumnIndex(ORDERS_RECIPIENT_ADDRESS)));
+        map.put("recipient_name", cur.getString(cur.getColumnIndex(ORDERS_RECIPIENT_NAME)));
+        map.put("recipient_contact_number", cur.getString(cur.getColumnIndex(ORDERS_RECIPIENT_NUMBER)));
+        map.put("order_status", cur.getString(cur.getColumnIndex(ORDERS_STATUS)));
+        map.put("payment_method", cur.getString(cur.getColumnIndex(BillingController.BILLINGS_PAYMENT_METHOD)));
+        map.put("subtotal", String.valueOf(cur.getDouble(cur.getColumnIndex(BillingController.BILLINGS_GROSS_TOTAL))));
+        map.put("total", String.valueOf(cur.getDouble(cur.getColumnIndex(BillingController.BILLINGS_TOTAL))));
+        map.put("coupon_discount", String.valueOf(cur.getDouble(cur.getColumnIndex(BillingController.BILLINGS_COUPON_DISCOUNT))));
+        map.put("points_discount", String.valueOf(cur.getDouble(cur.getColumnIndex(BillingController.BILLINGS_POINTS_DISCOUNT))));
+        map.put("payment_status", cur.getString(cur.getColumnIndex(BillingController.BILLINGS_PAYMENT_STATUS)));
+        order_items.add(map);
+
+        cur.close();
+        sql_db.close();
+        return order_items;
+    }
 
 }

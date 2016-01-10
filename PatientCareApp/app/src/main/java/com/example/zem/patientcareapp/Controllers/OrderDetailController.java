@@ -31,11 +31,12 @@ public class OrderDetailController extends DbHelper {
             ORDER_DETAILS_QUANTITY = "quantity",
             ORDER_DETAILS_TYPE = "type",
             ORDER_DETAILS_QTY_FULFILLED = "qty_fulfilled",
-            ORDER_DETAILS_PRICE = "price";
+            ORDER_DETAILS_PRICE = "price",
+            ORDER_DETAILS_PRODUCT_NAME = "product_name";
 
             public static final String CREATE_TABLE = String.format("CREATE TABLE %s" +
-                        " (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_ORDER_DETAILS, AI_ID, SERVER_ORDER_DETAILS_ID, ORDER_DETAILS_ORDER_ID, ORDER_DETAILS_PRODUCT_ID, ORDER_DETAILS_PRESCRIPTION_ID, ORDER_DETAILS_QUANTITY, ORDER_DETAILS_TYPE, ORDER_DETAILS_QTY_FULFILLED, ORDER_DETAILS_PRICE, CREATED_AT, UPDATED_AT, DELETED_AT);
+                        " (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                TBL_ORDER_DETAILS, AI_ID, SERVER_ORDER_DETAILS_ID, ORDER_DETAILS_ORDER_ID, ORDER_DETAILS_PRODUCT_ID, ORDER_DETAILS_PRESCRIPTION_ID, ORDER_DETAILS_QUANTITY, ORDER_DETAILS_TYPE, ORDER_DETAILS_QTY_FULFILLED, ORDER_DETAILS_PRICE, ORDER_DETAILS_PRODUCT_NAME, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public OrderDetailController(Context context) {
         super(context);
@@ -57,6 +58,7 @@ public class OrderDetailController extends DbHelper {
             values.put(ORDER_DETAILS_TYPE, object.getString(ORDER_DETAILS_TYPE));
             values.put(ORDER_DETAILS_QTY_FULFILLED, object.getInt(ORDER_DETAILS_QTY_FULFILLED));
             values.put(ORDER_DETAILS_PRICE, object.getDouble(ORDER_DETAILS_PRICE));
+            values.put(ORDER_DETAILS_PRODUCT_NAME, object.getString(ORDER_DETAILS_PRODUCT_NAME));
             values.put(CREATED_AT, object.getString(CREATED_AT));
             values.put(UPDATED_AT, object.getString(UPDATED_AT));
             values.put(DELETED_AT, object.getString(DELETED_AT));
@@ -73,21 +75,18 @@ public class OrderDetailController extends DbHelper {
     public ArrayList<HashMap<String, String>> getOrderDetailsFromOrder(int order_id) {
         ArrayList<HashMap<String, String>> order_details = new ArrayList<>();
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
-        String sql = "SELECT od.order_details_id, p.name as product_name, od.price, od.quantity, o.created_at as ordered_on, o.status,  p.packing, p.qty_per_packing, p.unit from order_details as od inner join orders as o on od.order_id = o.orders_id inner join products as p on od.product_id = p.product_id inner join branches as br on o.branch_id = br.branches_id where od.order_id = " + order_id + " order by od.created_at DESC";
+//        String sql = "SELECT od.order_details_id, p.name as product_name, od.price, od.quantity, o.created_at as ordered_on, o.status,  p.packing, p.qty_per_packing, p.unit from order_details as od inner join orders as o on od.order_id = o.orders_id inner join products as p on od.product_id = p.product_id inner join branches as br on o.branch_id = br.branches_id where od.order_id = " + order_id + " order by od.created_at DESC";
+        String sql = "SELECT * from order_details where order_id = "+order_id+" order by created_at DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
             double item_subtotal = cur.getInt(cur.getColumnIndex(ORDER_DETAILS_QUANTITY)) * cur.getDouble(cur.getColumnIndex(ORDER_DETAILS_PRICE));
             HashMap<String, String> map = new HashMap<>();
             map.put(SERVER_ORDER_DETAILS_ID, cur.getString(cur.getColumnIndex(SERVER_ORDER_DETAILS_ID)));
-            map.put(ProductController.PRODUCT_NAME, cur.getString(cur.getColumnIndex("product_name")));
+            map.put("name", cur.getString(cur.getColumnIndex(ORDER_DETAILS_PRODUCT_NAME)));
             map.put(ORDER_DETAILS_PRICE, cur.getString(cur.getColumnIndex(ORDER_DETAILS_PRICE)));
-            map.put(ORDER_DETAILS_QUANTITY, cur.getString(cur.getColumnIndex("quantity")));
-            map.put(OrderController.ORDERS_CREATED_AT, cur.getString(cur.getColumnIndex("ordered_on")));
-            map.put(OrderController.ORDERS_STATUS, cur.getString(cur.getColumnIndex("status")));
-            map.put(ProductController.PRODUCT_PACKING, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_PACKING)));
-            map.put(ProductController.PRODUCT_QTY_PER_PACKING, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_QTY_PER_PACKING)));
-            map.put(ProductController.PRODUCT_UNIT, cur.getString(cur.getColumnIndex(ProductController.PRODUCT_UNIT)));
+            map.put(ORDER_DETAILS_QUANTITY, cur.getString(cur.getColumnIndex(ORDER_DETAILS_QUANTITY)));
+            map.put(OrderController.ORDERS_CREATED_AT, cur.getString(cur.getColumnIndex("created_at")));
             map.put("item_subtotal", String.valueOf(item_subtotal));
             order_details.add(map);
         }

@@ -19,10 +19,12 @@ public class BillingController extends DbHelper {
             BILLINGS_GROSS_TOTAL = "gross_total",
             BILLINGS_TOTAL = "total",
             BILLINGS_PAYMENT_STATUS = "payment_status",
-            BILLINGS_PAYMENT_METHOD = "payment_method";
+            BILLINGS_PAYMENT_METHOD = "payment_method",
+            BILLINGS_COUPON_DISCOUNT = "coupon_discount",
+            BILLINGS_POINTS_DISCOUNT = "points_discount";
 
-    public static final String CREATE_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s DOUBLE, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-            TBL_BILLINGS, AI_ID, SERVER_BILLINGS_ID, BILLINGS_ORDER_ID, BILLINGS_GROSS_TOTAL, BILLINGS_TOTAL, BILLINGS_PAYMENT_STATUS, BILLINGS_PAYMENT_METHOD, CREATED_AT, UPDATED_AT, DELETED_AT);
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s DOUBLE, %s DOUBLE, %s TEXT, %s TEXT, %s DOUBLE, %s DOUBLE, %s TEXT, %s TEXT, %s TEXT)",
+            TBL_BILLINGS, AI_ID, SERVER_BILLINGS_ID, BILLINGS_ORDER_ID, BILLINGS_GROSS_TOTAL, BILLINGS_TOTAL, BILLINGS_PAYMENT_STATUS, BILLINGS_PAYMENT_METHOD, BILLINGS_COUPON_DISCOUNT, BILLINGS_POINTS_DISCOUNT, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     DbHelper dbhelper;
 
@@ -41,6 +43,8 @@ public class BillingController extends DbHelper {
             values.put(BILLINGS_TOTAL, jobject.getDouble(BILLINGS_TOTAL));
             values.put(BILLINGS_PAYMENT_STATUS, jobject.getString(BILLINGS_PAYMENT_STATUS));
             values.put(BILLINGS_PAYMENT_METHOD, jobject.getString(BILLINGS_PAYMENT_METHOD));
+            values.put(BILLINGS_COUPON_DISCOUNT, jobject.getDouble(BILLINGS_COUPON_DISCOUNT));
+            values.put(BILLINGS_POINTS_DISCOUNT, jobject.getDouble(BILLINGS_POINTS_DISCOUNT));
             values.put(CREATED_AT, jobject.getString(CREATED_AT));
             values.put(UPDATED_AT, jobject.getString(UPDATED_AT));
             values.put(DELETED_AT, jobject.getString(DELETED_AT));

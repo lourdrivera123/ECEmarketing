@@ -65,6 +65,7 @@
         android:layout_marginStart="15dp"
         android:text="Ordered on Feb 23, 2015"
         android:textSize="12sp"
+        android:textColor="#1D976C"
         tools:ignore="RtlCompat" />
 
     <LinearLayout

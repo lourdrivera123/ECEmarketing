@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Activities.GoogleMapsActivity;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
@@ -108,9 +109,9 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.orderLayout:
-//                Intent intent1 = new Intent(getActivity(), GoogleMapsActivity.class);
-//                startActivity(intent1);
-                startActivity(new Intent(getActivity(), ProductsActivity.class));
+                Intent intent1 = new Intent(getActivity(), GoogleMapsActivity.class);
+                startActivity(intent1);
+//                startActivity(new Intent(getActivity(), ProductsActivity.class));
                 break;
 
             case R.id.refillLayout:
