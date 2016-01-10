@@ -5,12 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +34,12 @@ import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by User PC on 11/27/2015.
@@ -46,18 +47,23 @@ import java.util.Map;
 
 public class ProductsAdapter extends ArrayAdapter implements View.OnClickListener {
     LayoutInflater inflater;
-    TextView original_price, product_name, promo, rs_price, cart_text, out_of_stock;
+    TextView product_name, rs_price, cart_text, out_of_stock,
+            promo_peso_discount, promo_percentage_discount, promo_free_delivery, promo_free_gift;
     ImageView product_image;
-    LinearLayout if_promo_layout, add_to_cart, root;
+    LinearLayout add_to_cart, root;
     ToggleButton add_to_favorite;
     ImageView cart_icon;
 
     Context context;
 
     DbHelper db;
+    Helpers helpers;
 
     ArrayList<Map<String, String>> products_items, basket_items;
     ArrayList<Integer> list_favorites;
+
+    String peso_discount, percentage_discount, free_delivery, free_gift, start_date, end_date,
+            pr_quantity_required, pr_percentage_discount, pr_peso_discount, quantity_required;
 
     public ProductsAdapter(Context context, int resource, ArrayList<Map<String, String>> objects) {
         super(context, resource, objects);
@@ -70,11 +76,8 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.product_item, parent, false);
 
-        original_price = (TextView) view.findViewById(R.id.original_price);
         product_image = (ImageView) view.findViewById(R.id.product_image);
         product_name = (TextView) view.findViewById(R.id.product_name);
-        if_promo_layout = (LinearLayout) view.findViewById(R.id.if_promo_layout);
-        promo = (TextView) view.findViewById(R.id.promo);
         rs_price = (TextView) view.findViewById(R.id.rs_price);
         add_to_cart = (LinearLayout) view.findViewById(R.id.add_to_cart);
         add_to_favorite = (ToggleButton) view.findViewById(R.id.add_to_favorite);
@@ -82,11 +85,14 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         cart_text = (TextView) view.findViewById(R.id.cart_text);
         out_of_stock = (TextView) view.findViewById(R.id.out_of_stock);
         root = (LinearLayout) view.findViewById(R.id.root);
-
+        promo_peso_discount = (TextView) view.findViewById(R.id.promo_peso_discount);
+        promo_percentage_discount = (TextView) view.findViewById(R.id.promo_percentage_discount);
+        promo_free_delivery = (TextView) view.findViewById(R.id.promo_free_delivery);
+        promo_free_gift = (TextView) view.findViewById(R.id.promo_free_gift);
         add_to_cart.setTag(position);
         add_to_favorite.setTag(position);
 
-        if(Integer.parseInt(products_items.get(position).get("available_quantity")) == 0) {
+        if (Integer.parseInt(products_items.get(position).get("available_quantity")) == 0) {
             out_of_stock.setVisibility(View.VISIBLE);
             add_to_cart.setVisibility(View.GONE);
         }
@@ -94,6 +100,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
         basket_items = ProductsActivity.basket_items;
         db = new DbHelper(context);
+        helpers = new Helpers();
         list_favorites = db.getFavoritesByUserID(SidebarActivity.getUserID());
 
         try {
@@ -107,10 +114,68 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
             Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
         }
 
-        original_price.setPaintFlags(original_price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        peso_discount = products_items.get(position).get("peso_discount");
+        percentage_discount = products_items.get(position).get("percentage_discount");
+        free_delivery = products_items.get(position).get("free_delivery");
+        free_gift = products_items.get(position).get("free_gifts");
+        pr_percentage_discount = products_items.get(position).get("pr_percentage_discount");
+        pr_peso_discount = products_items.get(position).get("pr_peso_discount");
+        pr_quantity_required = products_items.get(position).get("pr_quantity_required");
+        start_date = products_items.get(position).get("start_date");
+        end_date = products_items.get(position).get("end_date");
+        quantity_required = products_items.get(position).get("quantity_required");
+
+        Calendar c = Calendar.getInstance();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String current_date = df.format(c.getTime());
+
+        if (!start_date.equals("")) {
+            if (start_date.compareTo(current_date) <= 0) {
+                int final_qty_required = 0;
+                double final_peso_discount, final_percentage_discount;
+                double final_min_purchase = 0;
+
+                if (products_items.get(position).get("product_applicability").equals("SPECIFIC_PRODUCTS")) {
+                    final_qty_required = Integer.parseInt(quantity_required);
+                    final_peso_discount = Double.parseDouble(peso_discount);
+                    final_percentage_discount = Double.parseDouble(percentage_discount);
+                } else {
+                    final_peso_discount = Double.parseDouble(pr_peso_discount);
+                    final_percentage_discount = Double.parseDouble(pr_percentage_discount);
+                    //check here if naka percentage discount
+                    //check here if naay free gift/s
+
+                    if (products_items.get(position).get("pr_minimum_purchase").equals("0"))
+                        final_qty_required = Integer.parseInt(pr_quantity_required);
+                    else if (pr_quantity_required.equals("0"))
+                        final_min_purchase = Double.parseDouble(products_items.get(position).get("pr_minimun_purchase"));
+                }
+
+                String purchases = helpers.getPluralForm(products_items.get(position).get("packing"), final_qty_required);
+
+                if (final_peso_discount > 0) {
+                    promo_peso_discount.setVisibility(View.VISIBLE);
+                    promo_peso_discount.setText("* " + final_peso_discount + " Php  off for " + final_qty_required + " " + purchases + " or more");
+                }
+
+                if (final_percentage_discount > 0) {
+                    promo_percentage_discount.setVisibility(View.VISIBLE);
+                    promo_percentage_discount.setText("* " + final_percentage_discount + "% off for " + final_qty_required + " " + purchases + " or more");
+                }
+
+                if (free_gift.equals("1")) {
+                    promo_free_gift.setVisibility(View.VISIBLE);
+                    promo_free_gift.setText("* A free item for " + final_qty_required + " " + purchases + " or more");
+                }
+            }
+        }
+
         product_name.setText(products_items.get(position).get("name"));
         rs_price.setText("Php " + products_items.get(position).get("price") + "/" + products_items.get(position).get("packing"));
 
+        Log.d("objects", products_items.get(position) + "");
         return view;
     }
 

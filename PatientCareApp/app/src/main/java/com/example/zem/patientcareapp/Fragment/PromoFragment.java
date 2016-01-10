@@ -2,16 +2,15 @@ package com.example.zem.patientcareapp.Fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -19,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
@@ -29,26 +29,30 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class PromoFragment extends Fragment implements TextWatcher, AdapterView.OnItemClickListener {
+public class PromoFragment extends Fragment implements TextWatcher {
     EditText search;
-    ListView listOfPromos;
+    ListView list_of_promos;
     LinearLayout root;
+    TextView no_promos;
 
     ArrayList<HashMap<String, String>> map_promos = new ArrayList();
 
     ListViewAdapter adapter;
 
+    String[] months = {
+            "Jan.", "Feb.", "Mar.", "Apr.", "May.", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_promos, container, false);
-        search = (EditText) rootView.findViewById(R.id.search);
-        listOfPromos = (ListView) rootView.findViewById(R.id.listOfPromos);
-        root = (LinearLayout) rootView.findViewById(R.id.root);
 
-        listOfPromos.setOnItemClickListener(this);
+        search = (EditText) rootView.findViewById(R.id.search);
+        list_of_promos = (ListView) rootView.findViewById(R.id.list_of_promos);
+        root = (LinearLayout) rootView.findViewById(R.id.root);
+        no_promos = (TextView) rootView.findViewById(R.id.no_promos);
+
         search.addTextChangedListener(this);
 
         final ProgressDialog pdialog = new ProgressDialog(getActivity());
@@ -62,6 +66,8 @@ public class PromoFragment extends Fragment implements TextWatcher, AdapterView.
                     int success = response.getInt("success");
 
                     if (success == 1) {
+                        no_promos.setVisibility(View.GONE);
+                        list_of_promos.setVisibility(View.VISIBLE);
                         JSONArray json_mysql = response.getJSONArray("promos");
 
                         for (int x = 0; x < json_mysql.length(); x++) {
@@ -78,13 +84,15 @@ public class PromoFragment extends Fragment implements TextWatcher, AdapterView.
                             map.put("end_date", obj.getString("end_date"));
                             map_promos.add(map);
                         }
-                    } else
-                        Snackbar.make(root, "There are no promos/discount ongoing", Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        no_promos.setVisibility(View.VISIBLE);
+                        list_of_promos.setVisibility(View.GONE);
+                    }
                 } catch (Exception e) {
                     Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                 }
                 adapter = new ListViewAdapter(getActivity(), R.layout.item_promo_products, map_promos);
-                listOfPromos.setAdapter(adapter);
+                list_of_promos.setAdapter(adapter);
                 pdialog.dismiss();
             }
         }, new ErrorListener<VolleyError>() {
@@ -113,14 +121,9 @@ public class PromoFragment extends Fragment implements TextWatcher, AdapterView.
 
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-    }
-
     private class ListViewAdapter extends ArrayAdapter {
         LayoutInflater inflater;
-        TextView title, applicability, duration;
+        TextView title, applicability, duration, view_products;
 
         public ListViewAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
             super(context, resource, objects);
@@ -128,12 +131,37 @@ public class PromoFragment extends Fragment implements TextWatcher, AdapterView.
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view = inflater.inflate(R.layout.item_promo_products, parent, false);
 
             title = (TextView) view.findViewById(R.id.title);
             applicability = (TextView) view.findViewById(R.id.applicability);
             duration = (TextView) view.findViewById(R.id.duration);
+            view_products = (TextView) view.findViewById(R.id.view_products);
+
+            if (map_promos.get(position).get("applicability").equals("SPECIFIC_PRODUCTS"))
+                applicability.setText("on Selected products");
+            else
+                applicability.setText("on All products");
+
+            int start_date_month = Integer.parseInt(map_promos.get(position).get("start_date").substring(5, 7)) - 1;
+            String start_date = months[start_date_month] + " " + map_promos.get(position).get("start_date").substring(8);
+
+            int end_date_month = Integer.parseInt(map_promos.get(position).get("end_date").substring(5, 7)) - 1;
+            String end_date = months[end_date_month] + " " + map_promos.get(position).get("end_date").substring(8);
+
+            title.setText(map_promos.get(position).get("promo_title"));
+            duration.setText(start_date + " - " + end_date);
+
+            view_products.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int promo_id = Integer.parseInt(map_promos.get(position).get("promo_id"));
+                    Intent intent = new Intent(getActivity(), ProductsActivity.class);
+                    intent.putExtra("promo_id", promo_id);
+                    startActivity(intent);
+                }
+            });
 
             return view;
         }
