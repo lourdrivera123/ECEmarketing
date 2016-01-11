@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -28,6 +29,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     EditText username, current_pass, new_pass, retype_new_pass, password;
     TextView changePassword, show_and_hide_pass;
     Button btn_save, save, cancel;
+    LinearLayout change_image;
 
     DbHelper dbhelper;
     PatientController pc;
@@ -47,6 +49,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         btn_save = (Button) rootView.findViewById(R.id.btn_save);
         changePassword = (TextView) rootView.findViewById(R.id.changePassword);
         password = (EditText) rootView.findViewById(R.id.password);
+        change_image = (LinearLayout) rootView.findViewById(R.id.change_image);
 
         int edit = EditTabsActivity.edit_int;
         dbhelper = new DbHelper(getActivity());
@@ -56,6 +59,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         if (edit > 0) {
             changePassword.setVisibility(View.VISIBLE);
             password.setVisibility(View.GONE);
+            change_image.setVisibility(View.VISIBLE);
 
             String edit_uname = SidebarActivity.getUname();
             Patient patient = pc.getloginPatient(edit_uname);

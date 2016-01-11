@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.PasswordTransformationMethod;
@@ -17,7 +18,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -48,7 +48,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     EditText username_txtfield, password_txtfield;
     TextView signup, forgotpw;
-    LinearLayout login;
+    LinearLayout login, root;
     Toolbar login_toolbar;
 
     public static final String MyPREFERENCES = "MyPrefs", name = "nameKey", pass = "passwordKey";
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         signup = (TextView) findViewById(R.id.signup);
         forgotpw = (TextView) findViewById(R.id.forgot_password);
         login = (LinearLayout) findViewById(R.id.login);
+        root = (LinearLayout) findViewById(R.id.root);
         username_txtfield = (EditText) findViewById(R.id.username_txtfield);
         password_txtfield = (EditText) findViewById(R.id.password_txtfield);
 
@@ -173,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -184,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -206,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -218,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -229,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -240,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -255,11 +256,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         pDialog.dismiss();
                                         startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                     } else {
-                                        Toast.makeText(MainActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                                         pDialog.dismiss();
+                                        Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                                     }
                                 } else {
-                                    Toast.makeText(MainActivity.this, "Invalid username/password", Toast.LENGTH_SHORT).show();
+                                    Snackbar.make(root, "Invalid username/password", Snackbar.LENGTH_SHORT).show();
                                     pDialog.dismiss();
                                 }
                             } catch (JSONException e) {
@@ -269,9 +270,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d("mainAct", error + "");
-                            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
                             pDialog.dismiss();
+                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                     queue.add(jsObjRequest);

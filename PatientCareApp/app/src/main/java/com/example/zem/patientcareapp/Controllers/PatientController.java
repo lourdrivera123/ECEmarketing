@@ -216,7 +216,7 @@ public class PatientController extends DbHelper {
         return row > 0;
     }
 
-    public boolean updatePoints(double points){
+    public boolean updatePoints(double points) {
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -227,5 +227,5 @@ public class PatientController extends DbHelper {
         sql_db.close();
         return row > 0;
     }
-    
+
 }

@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +29,7 @@ import java.util.Calendar;
 /**
  * Created by Zem on 4/28/2015.
  */
-public class SignUpFragment extends Fragment implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener {
+public class SignUpFragment extends Fragment implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener{
 
     public static EditText birthdate, fname, lname, mname, height, weight, occupation;
     public static Spinner civil_status_spinner;
@@ -59,6 +63,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
         mname = (EditText) rootView.findViewById(R.id.mname);
         height = (EditText) rootView.findViewById(R.id.height);
         weight = (EditText) rootView.findViewById(R.id.weight);
+        birthdate = (EditText) rootView.findViewById(R.id.birthdate);
         occupation = (EditText) rootView.findViewById(R.id.occupation);
         male_rb = (RadioButton) rootView.findViewById(R.id.male_rb);
         female_rb = (RadioButton) rootView.findViewById(R.id.female_rb);
@@ -67,7 +72,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
         civil_status_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, civil_status_array);
         civil_status_spinner.setAdapter(civil_status_adapter);
 
-        birthdate = (EditText) rootView.findViewById(R.id.birthdate);
         birthdate.setOnClickListener(this);
 
         if (edit > 0) {

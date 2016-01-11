@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +81,8 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
             up_btn.setTag(product_quantity);
             down_btn.setTag(product_quantity);
         }
+
+        Log.d("objects", objects.get(position) + "");
 
         final double price = Double.parseDouble(objects.get(position).get("price"));
         int qty_per_packing = Integer.parseInt(objects.get(position).get("qty_per_packing"));

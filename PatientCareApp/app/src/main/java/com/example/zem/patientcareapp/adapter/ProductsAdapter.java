@@ -47,8 +47,7 @@ import java.util.TimeZone;
 
 public class ProductsAdapter extends ArrayAdapter implements View.OnClickListener {
     LayoutInflater inflater;
-    TextView product_name, rs_price, cart_text, out_of_stock,
-            promo_peso_discount, promo_percentage_discount, promo_free_delivery, promo_free_gift;
+    TextView product_name, rs_price, cart_text, out_of_stock, is_promo;
     ImageView product_image;
     LinearLayout add_to_cart, root;
     ToggleButton add_to_favorite;
@@ -85,10 +84,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         cart_text = (TextView) view.findViewById(R.id.cart_text);
         out_of_stock = (TextView) view.findViewById(R.id.out_of_stock);
         root = (LinearLayout) view.findViewById(R.id.root);
-        promo_peso_discount = (TextView) view.findViewById(R.id.promo_peso_discount);
-        promo_percentage_discount = (TextView) view.findViewById(R.id.promo_percentage_discount);
-        promo_free_delivery = (TextView) view.findViewById(R.id.promo_free_delivery);
-        promo_free_gift = (TextView) view.findViewById(R.id.promo_free_gift);
+        is_promo = (TextView) view.findViewById(R.id.is_promo);
         add_to_cart.setTag(position);
         add_to_favorite.setTag(position);
 
@@ -133,19 +129,22 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
         if (!start_date.equals("")) {
             if (start_date.compareTo(current_date) <= 0) {
-                int final_qty_required = 0;
+                int final_qty_required = 0, final_free_delivery = 0;
                 double final_peso_discount, final_percentage_discount;
                 double final_min_purchase = 0;
+                ArrayList<String> all_promos = new ArrayList();
 
                 if (products_items.get(position).get("product_applicability").equals("SPECIFIC_PRODUCTS")) {
                     final_qty_required = Integer.parseInt(quantity_required);
                     final_peso_discount = Double.parseDouble(peso_discount);
                     final_percentage_discount = Double.parseDouble(percentage_discount);
+                    final_free_delivery = Integer.parseInt(free_delivery);
                 } else {
                     final_peso_discount = Double.parseDouble(pr_peso_discount);
                     final_percentage_discount = Double.parseDouble(pr_percentage_discount);
                     //check here if naka percentage discount
                     //check here if naay free gift/s
+                    //check here if free delivery
 
                     if (products_items.get(position).get("pr_minimum_purchase").equals("0"))
                         final_qty_required = Integer.parseInt(pr_quantity_required);
@@ -156,18 +155,34 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                 String purchases = helpers.getPluralForm(products_items.get(position).get("packing"), final_qty_required);
 
                 if (final_peso_discount > 0) {
-                    promo_peso_discount.setVisibility(View.VISIBLE);
-                    promo_peso_discount.setText("* " + final_peso_discount + " Php  off for " + final_qty_required + " " + purchases + " or more");
+                    all_promos.add(final_peso_discount + " Php  off");
                 }
 
                 if (final_percentage_discount > 0) {
-                    promo_percentage_discount.setVisibility(View.VISIBLE);
-                    promo_percentage_discount.setText("* " + final_percentage_discount + "% off for " + final_qty_required + " " + purchases + " or more");
+                    all_promos.add(final_percentage_discount + "% off");
                 }
 
                 if (free_gift.equals("1")) {
-                    promo_free_gift.setVisibility(View.VISIBLE);
-                    promo_free_gift.setText("* A free item for " + final_qty_required + " " + purchases + " or more");
+                    all_promos.add("A free item");
+                }
+
+                if (final_free_delivery == 1) {
+                    all_promos.add("Free Delivery");
+                }
+
+                if (all_promos.size() > 0) {
+                    is_promo.setVisibility(View.VISIBLE);
+                    String final_list_of_promos = " ";
+
+                    for (int x = 0; x < all_promos.size(); x++) {
+                        final_list_of_promos = final_list_of_promos + all_promos.get(x);
+
+                        if (!((x + 1) == all_promos.size()))
+                            final_list_of_promos = final_list_of_promos + ",";
+                        final_list_of_promos = final_list_of_promos + " ";
+                    }
+
+                    is_promo.setText("*" + final_list_of_promos + "for " + final_qty_required + " " + purchases + " or more");
                 }
             }
         }

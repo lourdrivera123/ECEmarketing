@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -28,7 +29,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +74,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class EditTabsActivity extends AppCompatActivity implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener, ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener {
-
     public static Patient patient;
     RequestQueue queue;
     Patient editUser;
@@ -88,6 +87,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
     private ViewPager viewPager;
     TabLayout tab_layout;
     Toolbar toolbar;
+    LinearLayout root;
     public boolean hasError = true, hasError2 = true, hasError3 = true;
 
     // SIGN UP FRAGMENT
@@ -133,6 +133,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
         helpers = new Helpers();
         patient = new Patient();
         fragment = new SignUpFragment();
+        pc = new PatientController(this);
 
         showOverLay();
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
@@ -155,6 +156,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
 
         tab_layout = (TabLayout) findViewById(R.id.tab_layout);
         viewPager = (ViewPager) findViewById(R.id.pager);
+        root = (LinearLayout) findViewById(R.id.root);
         setupViewPager(viewPager);
         tab_layout.setupWithViewPager(viewPager);
         viewPager.addOnPageChangeListener(this);
@@ -196,19 +198,20 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
             params.put("action", "update");
             params.put("table", "patients");
         } else {
+            patient.setPhoto("");
+
             params.put("request", "register");
             params.put("password", patient.getPassword());
             params.put("action", "insert");
             params.put("table", "patients");
             params.put("photo", patient.getPhoto());
-
             params.put("referral_id", patient.getReferral_id());
             params.put("referred_byUser", patient.getReferred_byUser());
             params.put("referred_byDoctor", patient.getReferred_byDoctor());
         }
         params.put("fname", patient.getFname());
-        params.put("lname", patient.getLname());
         params.put("mname", patient.getMname());
+        params.put("lname", patient.getLname());
         params.put("username", patient.getUsername());
         params.put("occupation", patient.getOccupation());
         params.put("birthdate", patient.getBirthdate());
@@ -521,6 +524,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
 
             final ProgressDialog pDialog = new ProgressDialog(EditTabsActivity.this);
             pDialog.setMessage("Please wait...");
+            pDialog.setCancelable(false);
 
             if (signup_int > 0)
                 changePassword.setVisibility(View.GONE);
@@ -583,19 +587,18 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                                     editor.putString(MainActivity.pass, patient.getPassword());
                                                     editor.commit();
 
-                                                    Toast.makeText(getBaseContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
+                                                    Snackbar.make(root, "Updated successfully", Snackbar.LENGTH_SHORT).show();
                                                     EditTabsActivity.this.finish();
                                                 } else
-                                                    Toast.makeText(getBaseContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                                    Snackbar.make(root, "Something went wrong", Snackbar.LENGTH_SHORT).show();
                                             } else
-                                                Toast.makeText(getBaseContext(), "Server Error Occurred", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                                             pDialog.dismiss();
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         public void getError(VolleyError error) {
                                             pDialog.dismiss();
-                                            Toast.makeText(getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
-                                            System.out.print("src <EditTabsActivity>: " + error);
+                                            Snackbar.make(root, "Networ error", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });
                                 } else {
@@ -617,7 +620,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                                         int success = response.getInt("success");
 
                                                         if (success == 2) {
-                                                            Toast.makeText(EditTabsActivity.this, "Username Already Registered", Toast.LENGTH_SHORT).show();
+                                                            Snackbar.make(root, "Username is already registered", Snackbar.LENGTH_SHORT).show();
                                                         } else if (success == 1) {
                                                             patient_json_array_mysql = response.getJSONArray("patient");
                                                             patient_json_object_mysql = patient_json_array_mysql.getJSONObject(0);
@@ -636,10 +639,8 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                                                         try {
                                                                             int success = response.getInt("success");
 
-                                                                            if (success == 1) {
-
-                                                                            } else
-                                                                                Toast.makeText(EditTabsActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
+                                                                            if (success != 1)
+                                                                                Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
 
                                                                         } catch (JSONException e) {
                                                                             e.printStackTrace();
@@ -647,8 +648,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                                                     }
                                                                 }, new ErrorListener<VolleyError>() {
                                                                     public void getError(VolleyError error) {
-                                                                        Log.d("EditTabs3", error + "");
-                                                                        Toast.makeText(EditTabsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                                        Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                                                     }
                                                                 });
                                                             }
@@ -663,10 +663,10 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                                                 startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                                                 EditTabsActivity.this.finish();
                                                             } else
-                                                                Toast.makeText(EditTabsActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                                                Snackbar.make(root, "Something went wrong", Snackbar.LENGTH_SHORT).show();
                                                         }
                                                     } catch (JSONException e) {
-                                                        Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                                                        Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                                                         Log.d("EditTabs2", e + "");
                                                     }
                                                     pDialog.dismiss();
@@ -674,16 +674,14 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
                                                     pDialog.dismiss();
-                                                    Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                                    Log.d("EditTabs1", error + "");
+                                                    Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                                 }
                                             });
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         public void getError(VolleyError error) {
                                             pDialog.dismiss();
-                                            Log.d("EditTabs0", error + "");
-                                            Toast.makeText(EditTabsActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
