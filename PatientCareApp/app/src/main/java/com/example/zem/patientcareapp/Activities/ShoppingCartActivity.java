@@ -38,7 +38,7 @@ import java.util.HashMap;
 /**
  * Created by User PC on 12/19/2015.
  */
-public class ShoppingCart extends AppCompatActivity implements View.OnClickListener {
+public class ShoppingCartActivity extends AppCompatActivity implements View.OnClickListener {
     Toolbar myToolBar;
     ListView lisOfItems;
     LinearLayout root;
@@ -50,6 +50,7 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
     BasketController bc;
 
     public ArrayList<HashMap<String, String>> items = new ArrayList();
+    public static HashMap<String, String> all_promos_map;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
 
         bc = new BasketController();
         opc = new OrderPreferenceController(this);
+        all_promos_map = new HashMap();
 
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -77,40 +79,79 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
 
         proceed_to_checkout.setOnClickListener(this);
 
-        String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID();
-        ListOfPatientsRequest.getJSONobj(this, url_raw, "baskets", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, "get_promos", "promos", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
-                double TotalAmount = 0.00;
-
                 try {
                     int success = response.getInt("success");
 
                     if (success == 1) {
-                        JSONArray json_mysql = response.getJSONArray("baskets");
-                        items = bc.convertFromJson(ShoppingCart.this, json_mysql);
+                        JSONArray json_mysql = response.getJSONArray("promos");
 
-                        adapter = new ShoppingCartAdapter(ShoppingCart.this, R.layout.item_shopping_cart, items);
-                        lisOfItems.setAdapter(adapter);
+                        for (int x = 0; x < json_mysql.length(); x++) {
+                            JSONObject obj = json_mysql.getJSONObject(x);
 
-                        for (HashMap<String, String> item : items) {
-                            double price = Double.parseDouble(item.get("price"));
-                            double quantity = Double.parseDouble(item.get("quantity"));
-                            double total = price * quantity;
-                            TotalAmount += total;
+                            if (obj.getString("product_applicability").equals("ALL_PRODUCTS")) {
+                                all_promos_map.put("promo_id", obj.getString("id"));
+                                all_promos_map.put("offer_type", obj.getString("offer_type"));
+                                all_promos_map.put("coupon_code", obj.getString("generic_redemption_code"));
+                                all_promos_map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
+                                all_promos_map.put("quantity_required", obj.getString("quantity_required"));
+                                all_promos_map.put("is_free_delivery", obj.getString("is_free_delivery"));
+                                all_promos_map.put("percentage_discount", obj.getString("percentage_discount"));
+                                all_promos_map.put("peso_discount", obj.getString("peso_discount"));
+                                all_promos_map.put("start_date", obj.getString("start_date"));
+                                all_promos_map.put("end_date", obj.getString("end_date"));
+                            }
                         }
                     }
                 } catch (Exception e) {
-                    Toast.makeText(ShoppingCart.this, e + "", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                 }
-                total_amount.setText("Php " + TotalAmount);
-                dialog.dismiss();
+
+                String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID();
+                ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
+                    @Override
+                    public void getResult(JSONObject response) {
+                        double TotalAmount = 0.00;
+
+                        try {
+                            int success = response.getInt("success");
+
+                            if (success == 1) {
+                                JSONArray json_mysql = response.getJSONArray("baskets");
+                                items = bc.convertFromJson(ShoppingCartActivity.this, json_mysql);
+
+                                adapter = new ShoppingCartAdapter(ShoppingCartActivity.this, R.layout.item_shopping_cart, items);
+                                lisOfItems.setAdapter(adapter);
+
+                                for (HashMap<String, String> item : items) {
+                                    double price = Double.parseDouble(item.get("price"));
+                                    double quantity = Double.parseDouble(item.get("quantity"));
+                                    double total = price * quantity;
+                                    TotalAmount += total;
+                                }
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(ShoppingCartActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                        }
+
+                        total_amount.setText("Php " + TotalAmount);
+                        dialog.dismiss();
+                    }
+                }, new ErrorListener<VolleyError>() {
+                    @Override
+                    public void getError(VolleyError e) {
+                        dialog.dismiss();
+                        Snackbar.make(root, "Network Error", Snackbar.LENGTH_SHORT).show();
+                    }
+                });
             }
         }, new ErrorListener<VolleyError>() {
             @Override
             public void getError(VolleyError e) {
                 dialog.dismiss();
-                Snackbar.make(root, "Network Error", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
@@ -125,17 +166,17 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.proceed_to_checkout:
-                updateBasket(items);
+                updateBasket(items, 1);
                 break;
         }
     }
 
     protected void onPause() {
-        updateBasket(items);
+        updateBasket(items, 0);
         super.onPause();
     }
 
-    void updateBasket(ArrayList<HashMap<String, String>> objects) {
+    void updateBasket(ArrayList<HashMap<String, String>> objects, final int check) {
         try {
             JSONArray master_arr = new JSONArray();
             HashMap<String, String> hash = new HashMap();
@@ -157,25 +198,25 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
             params.put("action", "multiple_update_for_basket");
             params.put("jsobj", json_to_be_passed.toString());
 
-            PostRequest.send(ShoppingCart.this, params, new RespondListener<JSONObject>() {
+            PostRequest.send(ShoppingCartActivity.this, params, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     try {
                         int success = response.getInt("success");
                         if (success == 1) {
-                            OrderModel order_model = opc.getOrderPreference();
-                            if (order_model.isValid()) {
-                                Intent summary_intent = new Intent(ShoppingCart.this, PromosDiscounts.class);
-                                summary_intent.putExtra("order_model", order_model);
-                                startActivity(summary_intent);
-                                finish();
-                            } else {
-                                startActivity(new Intent(ShoppingCart.this, DeliverPickupOption.class));
-                                finish();
+
+                            if (check == 1) {
+                                OrderModel order_model = opc.getOrderPreference();
+                                if (order_model.isValid()) {
+                                    Intent summary_intent = new Intent(ShoppingCartActivity.this, PromosDiscounts.class);
+                                    summary_intent.putExtra("order_model", order_model);
+                                    startActivity(summary_intent);
+                                } else
+                                    startActivity(new Intent(ShoppingCartActivity.this, DeliverPickupOption.class));
                             }
                         }
                     } catch (Exception e) {
-                        Toast.makeText(ShoppingCart.this, e + "", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ShoppingCartActivity.this, e + "", Toast.LENGTH_SHORT).show();
                     }
                 }
             }, new ErrorListener<VolleyError>() {
@@ -184,7 +225,7 @@ public class ShoppingCart extends AppCompatActivity implements View.OnClickListe
                 }
             });
         } catch (JSONException e) {
-            Toast.makeText(ShoppingCart.this, e + "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ShoppingCartActivity.this, e + "", Toast.LENGTH_SHORT).show();
         }
     }
 }

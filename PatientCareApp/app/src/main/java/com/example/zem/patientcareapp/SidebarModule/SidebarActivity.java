@@ -28,7 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.zem.patientcareapp.Activities.ShoppingCart;
+import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
 import com.example.zem.patientcareapp.AlarmModule.AlarmService;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
@@ -212,7 +212,7 @@ public class SidebarActivity extends AppCompatActivity {
             return true;
 
         if (item.getItemId() == R.id.go_to_cart)
-            startActivity(new Intent(this, ShoppingCart.class));
+            startActivity(new Intent(this, ShoppingCartActivity.class));
 
         return super.onOptionsItemSelected(item);
     }

@@ -25,12 +25,15 @@ import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Model.Product;
+import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,8 +64,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
     ArrayList<Map<String, String>> products_items, basket_items;
     ArrayList<Integer> list_favorites;
 
-    String peso_discount, percentage_discount, free_delivery, free_gift, start_date, end_date,
-            pr_quantity_required, pr_percentage_discount, pr_peso_discount, quantity_required;
+    String start_date, end_date;
 
     public ProductsAdapter(Context context, int resource, ArrayList<Map<String, String>> objects) {
         super(context, resource, objects);
@@ -73,20 +75,23 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = inflater.inflate(R.layout.product_item, parent, false);
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.product_item, parent, false);
 
-        product_image = (ImageView) view.findViewById(R.id.product_image);
-        product_name = (TextView) view.findViewById(R.id.product_name);
-        rs_price = (TextView) view.findViewById(R.id.rs_price);
-        add_to_cart = (LinearLayout) view.findViewById(R.id.add_to_cart);
-        add_to_favorite = (ToggleButton) view.findViewById(R.id.add_to_favorite);
-        cart_icon = (ImageView) view.findViewById(R.id.cart_icon);
-        cart_text = (TextView) view.findViewById(R.id.cart_text);
-        out_of_stock = (TextView) view.findViewById(R.id.out_of_stock);
-        root = (LinearLayout) view.findViewById(R.id.root);
-        is_promo = (TextView) view.findViewById(R.id.is_promo);
-        add_to_cart.setTag(position);
-        add_to_favorite.setTag(position);
+            product_image = (ImageView) convertView.findViewById(R.id.product_image);
+            product_name = (TextView) convertView.findViewById(R.id.product_name);
+            rs_price = (TextView) convertView.findViewById(R.id.rs_price);
+            add_to_cart = (LinearLayout) convertView.findViewById(R.id.add_to_cart);
+            add_to_favorite = (ToggleButton) convertView.findViewById(R.id.add_to_favorite);
+            cart_icon = (ImageView) convertView.findViewById(R.id.cart_icon);
+            cart_text = (TextView) convertView.findViewById(R.id.cart_text);
+            out_of_stock = (TextView) convertView.findViewById(R.id.out_of_stock);
+            root = (LinearLayout) convertView.findViewById(R.id.root);
+            is_promo = (TextView) convertView.findViewById(R.id.is_promo);
+
+            add_to_cart.setTag(position);
+            add_to_favorite.setTag(position);
+        }
 
         if (Integer.parseInt(products_items.get(position).get("available_quantity")) == 0) {
             out_of_stock.setVisibility(View.VISIBLE);
@@ -110,88 +115,88 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
             Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
         }
 
-        peso_discount = products_items.get(position).get("peso_discount");
-        percentage_discount = products_items.get(position).get("percentage_discount");
-        free_delivery = products_items.get(position).get("free_delivery");
-        free_gift = products_items.get(position).get("free_gifts");
-        pr_percentage_discount = products_items.get(position).get("pr_percentage_discount");
-        pr_peso_discount = products_items.get(position).get("pr_peso_discount");
-        pr_quantity_required = products_items.get(position).get("pr_quantity_required");
         start_date = products_items.get(position).get("start_date");
         end_date = products_items.get(position).get("end_date");
-        quantity_required = products_items.get(position).get("quantity_required");
 
         Calendar c = Calendar.getInstance();
+        ArrayList<String> all_promos = new ArrayList();
+        double final_peso_discount, final_percentage_discount, final_min_purchase = 0;
+        String final_free_gift, final_free_delivery, final_qty_required = "";
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         df.setTimeZone(TimeZone.getTimeZone("GMT"));
         String current_date = df.format(c.getTime());
 
-        if (!start_date.equals("")) {
-            if (start_date.compareTo(current_date) <= 0) {
-                int final_qty_required = 0, final_free_delivery = 0;
-                double final_peso_discount, final_percentage_discount;
-                double final_min_purchase = 0;
-                ArrayList<String> all_promos = new ArrayList();
+        if (ProductsActivity.promos_map.size() > 0) {
+            final_min_purchase = Double.parseDouble(ProductsActivity.promos_map.get("minimum_purchase"));
+            final_peso_discount = Double.parseDouble(ProductsActivity.promos_map.get("peso_discount"));
+            final_percentage_discount = Double.parseDouble(ProductsActivity.promos_map.get("percentage_discount"));
+            final_free_gift = "";
+            final_free_delivery = ProductsActivity.promos_map.get("is_free_delivery");
+            final_qty_required = ProductsActivity.promos_map.get("quantity_required");
 
-                if (products_items.get(position).get("product_applicability").equals("SPECIFIC_PRODUCTS")) {
-                    final_qty_required = Integer.parseInt(quantity_required);
-                    final_peso_discount = Double.parseDouble(peso_discount);
-                    final_percentage_discount = Double.parseDouble(percentage_discount);
-                    final_free_delivery = Integer.parseInt(free_delivery);
-                } else {
-                    final_peso_discount = Double.parseDouble(pr_peso_discount);
-                    final_percentage_discount = Double.parseDouble(pr_percentage_discount);
-                    //check here if naka percentage discount
-                    //check here if naay free gift/s
-                    //check here if free delivery
+            if (final_peso_discount > 0)
+                all_promos.add(final_peso_discount + " Php  off");
 
-                    if (products_items.get(position).get("pr_minimum_purchase").equals("0"))
-                        final_qty_required = Integer.parseInt(pr_quantity_required);
-                    else if (pr_quantity_required.equals("0"))
-                        final_min_purchase = Double.parseDouble(products_items.get(position).get("pr_minimun_purchase"));
-                }
+            if (final_percentage_discount > 0)
+                all_promos.add(final_percentage_discount + "% off");
 
-                String purchases = helpers.getPluralForm(products_items.get(position).get("packing"), final_qty_required);
+            if (final_free_gift.equals("1"))
+                all_promos.add("A free item");
 
-                if (final_peso_discount > 0) {
-                    all_promos.add(final_peso_discount + " Php  off");
-                }
+            if (final_free_delivery.equals("1"))
+                all_promos.add("Free Delivery");
 
-                if (final_percentage_discount > 0) {
-                    all_promos.add(final_percentage_discount + "% off");
-                }
+        } else {
+            if (!start_date.equals("")) {
+                if (start_date.compareTo(current_date) <= 0 && end_date.compareTo(current_date) >= 0) {
+                    final_peso_discount = Double.parseDouble(products_items.get(position).get("peso_discount"));
+                    final_percentage_discount = Double.parseDouble(products_items.get(position).get("percentage_discount"));
+                    final_free_gift = products_items.get(position).get("free_gifts");
+                    final_free_delivery = products_items.get(position).get("free_delivery");
+                    final_qty_required = products_items.get(position).get("quantity_required");
 
-                if (free_gift.equals("1")) {
-                    all_promos.add("A free item");
-                }
+                    if (final_peso_discount > 0)
+                        all_promos.add(final_peso_discount + " Php  off");
 
-                if (final_free_delivery == 1) {
-                    all_promos.add("Free Delivery");
-                }
+                    if (final_percentage_discount > 0)
+                        all_promos.add(final_percentage_discount + "% off");
 
-                if (all_promos.size() > 0) {
-                    is_promo.setVisibility(View.VISIBLE);
-                    String final_list_of_promos = " ";
+                    if (final_free_gift.equals("1"))
+                        all_promos.add("A free item");
 
-                    for (int x = 0; x < all_promos.size(); x++) {
-                        final_list_of_promos = final_list_of_promos + all_promos.get(x);
-
-                        if (!((x + 1) == all_promos.size()))
-                            final_list_of_promos = final_list_of_promos + ",";
-                        final_list_of_promos = final_list_of_promos + " ";
-                    }
-
-                    is_promo.setText("*" + final_list_of_promos + "for " + final_qty_required + " " + purchases + " or more");
+                    if (final_free_delivery.equals("1"))
+                        all_promos.add("Free Delivery");
                 }
             }
         }
 
+        if (all_promos.size() > 0) {
+            is_promo.setVisibility(View.VISIBLE);
+            String final_list_of_promos = " ";
+
+            for (int x = 0; x < all_promos.size(); x++) {
+                final_list_of_promos = final_list_of_promos + all_promos.get(x);
+
+                if (!((x + 1) == all_promos.size()))
+                    final_list_of_promos = final_list_of_promos + ",";
+                final_list_of_promos = final_list_of_promos + " ";
+            }
+
+
+            if (final_qty_required.equals("0")) {
+                is_promo.setText("*" + final_list_of_promos + "for a minimum purchase of " + final_min_purchase);
+            } else {
+                String purchases = helpers.getPluralForm(products_items.get(position).get("packing"), Integer.parseInt(final_qty_required));
+                is_promo.setText("*" + final_list_of_promos + "for " + final_qty_required + " " + purchases + " or more");
+            }
+        }
+
+
         product_name.setText(products_items.get(position).get("name"));
         rs_price.setText("Php " + products_items.get(position).get("price") + "/" + products_items.get(position).get("packing"));
 
-        Log.d("objects", products_items.get(position) + "");
-        return view;
+        return convertView;
     }
 
     void AddToCart(HashMap<String, String> map) {
@@ -199,7 +204,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.add_to_cart:
                 final Helpers helpers = new Helpers();
@@ -241,17 +246,17 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
 
                                 if (success == 1) {
                                     ProductsActivity.transferHashMap(hashMap);
-                                    Snackbar.make(root, "Your cart has been updated", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(v, "Your cart has been updated", Snackbar.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
-                                Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(v, e + "", Snackbar.LENGTH_SHORT).show();
                             }
                             pdialog.dismiss();
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
                             pdialog.dismiss();
-                            Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(v, "Network error", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 } else { //ADD NEW SA BASKET
@@ -291,17 +296,17 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                                                 if (success == 1) {
                                                     hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
                                                     ProductsActivity.transferHashMap(hashMap);
-                                                    Snackbar.make(root, "New item has been added to your cart", Snackbar.LENGTH_SHORT).show();
+                                                    Snackbar.make(v, "New item has been added to your cart", Snackbar.LENGTH_SHORT).show();
                                                 }
                                             } catch (JSONException e) {
-                                                Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
+                                                Snackbar.make(v, e + "", Snackbar.LENGTH_SHORT).show();
                                             }
                                             pdialog.dismiss();
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         public void getError(VolleyError error) {
                                             pdialog.dismiss();
-                                            Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
+                                            Snackbar.make(v, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });
                                     builder.dismiss();
@@ -342,17 +347,17 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                                     if (success == 1) {
                                         hashMap.put("server_id", String.valueOf(response.getInt("last_inserted_id")));
                                         ProductsActivity.transferHashMap(hashMap);
-                                        Snackbar.make(root, "New item has been added to your cart", Snackbar.LENGTH_SHORT).show();
+                                        Snackbar.make(v, "New item has been added to your cart", Snackbar.LENGTH_SHORT).show();
                                     }
                                 } catch (Exception e) {
-                                    Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(v, e + "", Snackbar.LENGTH_SHORT).show();
                                 }
                                 pdialog.dismiss();
                             }
                         }, new ErrorListener<VolleyError>() {
                             public void getError(VolleyError error) {
                                 pdialog.dismiss();
-                                Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(v, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                             }
                         });
                     }

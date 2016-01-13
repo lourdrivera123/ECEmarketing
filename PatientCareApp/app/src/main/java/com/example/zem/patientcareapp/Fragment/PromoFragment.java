@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,8 @@ public class PromoFragment extends Fragment implements TextWatcher {
                             JSONObject obj = json_mysql.getJSONObject(x);
                             HashMap<String, String> map = new HashMap();
 
+                            Log.d("objects", obj + "");
+
                             map.put("promo_id", obj.getString("id"));
                             map.put("promo_title", obj.getString("long_title"));
                             map.put("applicability", obj.getString("product_applicability"));
@@ -99,7 +102,7 @@ public class PromoFragment extends Fragment implements TextWatcher {
             @Override
             public void getError(VolleyError e) {
                 pdialog.dismiss();
-                Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -123,7 +126,7 @@ public class PromoFragment extends Fragment implements TextWatcher {
 
     private class ListViewAdapter extends ArrayAdapter {
         LayoutInflater inflater;
-        TextView title, applicability, duration, view_products;
+        TextView title, applicability, duration, view_products, redemption_code;
 
         public ListViewAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
             super(context, resource, objects);
@@ -138,11 +141,17 @@ public class PromoFragment extends Fragment implements TextWatcher {
             applicability = (TextView) view.findViewById(R.id.applicability);
             duration = (TextView) view.findViewById(R.id.duration);
             view_products = (TextView) view.findViewById(R.id.view_products);
+            redemption_code = (TextView) view.findViewById(R.id.redemption_code);
 
             if (map_promos.get(position).get("applicability").equals("SPECIFIC_PRODUCTS"))
                 applicability.setText("on Selected products");
             else
                 applicability.setText("on All products");
+
+            if (!map_promos.get(position).get("offer_type").equals("NO_CODE")) {
+                redemption_code.setVisibility(View.VISIBLE);
+                redemption_code.setText("CODE: " + map_promos.get(position).get("coupon_code"));
+            }
 
             int start_date_month = Integer.parseInt(map_promos.get(position).get("start_date").substring(5, 7)) - 1;
             String start_date = months[start_date_month] + " " + map_promos.get(position).get("start_date").substring(8);

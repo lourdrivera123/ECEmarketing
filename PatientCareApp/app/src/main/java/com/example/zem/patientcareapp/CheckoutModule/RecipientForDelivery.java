@@ -36,7 +36,7 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
     Intent get_intent;
     OrderModel order_model;
     Patient patient;
-    EditText recipientName,recipientContactNumber;
+    EditText recipientName, recipientContactNumber;
     DbHelper db;
     PatientController pc;
 
@@ -65,7 +65,7 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
         blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
         stepping_stone = (TextView) findViewById(R.id.stepping_stone);
 
-        if(order_model.getMode_of_delivery().equals("delivery")){
+        if (order_model.getMode_of_delivery().equals("delivery")) {
             stepping_stone.setText("Step 3/4");
             blood_seeker.setProgress(60);
         } else {
@@ -79,7 +79,7 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
                 return true;
             }
         });
-        to_me.setText("Me ("+patient.getFname()+" "+patient.getLname()+")");
+        to_me.setText("Me (" + patient.getFname() + " " + patient.getLname() + ")");
 
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -91,12 +91,12 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
         next_btn.setOnClickListener(this);
 
         hideLayout.setVisibility(View.GONE);
-        if(!order_model.getRecipient_name().equals("") && !order_model.getRecipient_name().equals(patient.getFname() + " " + patient.getLname())){
+        if (!order_model.getRecipient_name().equals("") && !order_model.getRecipient_name().equals(patient.getFname() + " " + patient.getLname())) {
             to_others.setChecked(true);
             recipientName.setText(order_model.getRecipient_name());
         }
 
-        if(!order_model.getRecipient_contactNumber().equals("") && !order_model.getRecipient_contactNumber().equals(patient.getMobile_no())){
+        if (!order_model.getRecipient_contactNumber().equals("") && !order_model.getRecipient_contactNumber().equals(patient.getMobile_no())) {
             to_others.setChecked(true);
             recipientContactNumber.setText(order_model.getRecipient_contactNumber());
         }
@@ -114,16 +114,16 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(to_me.isChecked()) {
+        if (to_me.isChecked()) {
             hideLayout.setVisibility(View.GONE);
-        } else if( to_others.isChecked() ){
+        } else if (to_others.isChecked()) {
             hideLayout.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onClick(View v) {
-        if(to_me.isChecked()){
+        if (to_me.isChecked()) {
             order_model.setRecipient_name(patient.getFname() + " " + patient.getLname());
             order_model.setRecipient_contactNumber(patient.getMobile_no());
         } else {
@@ -134,5 +134,6 @@ public class RecipientForDelivery extends AppCompatActivity implements CompoundB
         Intent payment_method_intent = new Intent(this, PaymentMethod.class);
         payment_method_intent.putExtra("order_model", order_model);
         startActivity(payment_method_intent);
+        this.finish();
     }
 }

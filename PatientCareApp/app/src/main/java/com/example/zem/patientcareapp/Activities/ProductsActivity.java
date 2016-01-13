@@ -23,7 +23,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.android.volley.RequestQueue;
@@ -40,7 +39,6 @@ import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.adapter.ProductsAdapter;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
@@ -76,7 +74,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     Intent get_intent;
 
     public static ArrayList<Map<String, String>> temp_products_items, products_items, basket_items;
-    public static HashMap<String, String> map;
+    public static HashMap<String, String> map, promos_map;
     ArrayList<HashMap<Integer, HashMap<String, String>>> searchProducts = new ArrayList();
     ArrayList<String> categories = new ArrayList();
 
@@ -109,6 +107,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
         basket_items = new ArrayList();
         map = new HashMap();
+        promos_map = new HashMap();
         products_items = new ArrayList();
         temp_products_items = new ArrayList();
 
@@ -118,6 +117,43 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
         get_intent = getIntent();
         promo_id = get_intent.getIntExtra("promo_id", 0);
+
+        ListOfPatientsRequest.getJSONobj(this, "get_promos", "promos", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    int success = response.getInt("success");
+
+                    if (success == 1) {
+                        JSONArray json_mysql = response.getJSONArray("promos");
+
+                        for (int x = 0; x < json_mysql.length(); x++) {
+                            JSONObject obj = json_mysql.getJSONObject(x);
+
+                            if (obj.getString("product_applicability").equals("ALL_PRODUCTS")) {
+                                promos_map.put("promo_id", obj.getString("id"));
+                                promos_map.put("offer_type", obj.getString("offer_type"));
+                                promos_map.put("coupon_code", obj.getString("generic_redemption_code"));
+                                promos_map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
+                                promos_map.put("quantity_required", obj.getString("quantity_required"));
+                                promos_map.put("is_free_delivery", obj.getString("is_free_delivery"));
+                                promos_map.put("percentage_discount", obj.getString("percentage_discount"));
+                                promos_map.put("peso_discount", obj.getString("peso_discount"));
+                                promos_map.put("start_date", obj.getString("start_date"));
+                                promos_map.put("end_date", obj.getString("end_date"));
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError e) {
+                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+            }
+        });
 
         listOfProducts.setOnItemClickListener(this);
         spinner_categories.setOnItemSelectedListener(this);
@@ -351,7 +387,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.go_to_cart:
-                startActivity(new Intent(this, ShoppingCart.class));
+                startActivity(new Intent(this, ShoppingCartActivity.class));
                 break;
         }
     }
@@ -404,10 +440,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                     map.put("peso_discount", obj.getString("peso_discount"));
                                     map.put("percentage_discount", obj.getString("percentage_discount"));
                                     map.put("product_applicability", obj.getString("product_applicability"));
-                                    map.put("pr_quantity_required", obj.getString("pr_quantity_required"));
-                                    map.put("pr_minimum_purchase", obj.getString("minimum_purchase_amount"));
-                                    map.put("pr_percentage_discount", obj.getString("pr_percentage_discount"));
-                                    map.put("pr_peso_discount", obj.getString("pr_peso_discount"));
                                     map.put("start_date", obj.getString("start_date"));
                                     map.put("end_date", obj.getString("end_date"));
                                     products_items.add(map);

@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,7 +36,6 @@ import java.util.HashMap;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
@@ -73,7 +71,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EditTabsActivity extends AppCompatActivity implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener, ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener {
+public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener {
     public static Patient patient;
     RequestQueue queue;
     Patient editUser;
@@ -91,7 +89,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
     public boolean hasError = true, hasError2 = true, hasError3 = true;
 
     // SIGN UP FRAGMENT
-    EditText birthdate, fname, lname, mname, height, weight, occupation;
+    EditText birthday, fname, lname, mname, height, weight, occupation;
     RadioGroup sex;
     Spinner civil_status_spinner;
     String s_fname, s_lname, s_mname, s_birthdate, s_sex, s_civil_status, s_height, s_weight, s_occupation;
@@ -249,15 +247,11 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
         s_civil_status = civil_status_spinner.getSelectedItem().toString();
         s_sex = selectedId == R.id.male_rb ? "Male" : "Female";
 
-        birthdate = (EditText) findViewById(R.id.birthdate);
-        s_birthdate = birthdate.getText().toString();
-        birthdate.setOnClickListener(this);
+        birthday = (EditText) findViewById(R.id.birthday);
+        s_birthdate = birthday.getText().toString();
 
         limit = 5;
         count = 0;
-
-        Calendar calendar = Calendar.getInstance();
-        int current_year = calendar.get(Calendar.YEAR);
 
         if (s_fname.equals("")) {
             fname.setError("Field Required");
@@ -274,9 +268,9 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if (s_birthdate.equals("")) {
-            birthdate.setError("Field Required");
-        } else if ((current_year - int_year) < 18) {
-            birthdate.setError("Must be 18 years old and above");
+            birthday.setError("Field Required");
+        } else if (s_birthdate.contains("m") || s_birthdate.contains("d") || s_birthdate.contains("y")) {
+            birthday.setError("Invalid date");
         } else {
             patient.setBirthdate(s_birthdate);
             count++;
@@ -335,7 +329,7 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
         s_optional_address = optional_address_line.getText().toString();
 
         count = 0;
-        limit = 3;
+        limit = 4;
 
         if (s_street.equals("")) {
             address_street.setError("Field Required");
@@ -359,13 +353,19 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
             count++;
         }
 
+        if (s_email.equals(""))
+            email.setError("Field required");
+        else {
+            patient.setEmail(s_email);
+            count++;
+        }
+
         if (count == limit)
             this.hasError2 = false;
         else
             this.hasError2 = true;
 
         patient.setTel_no(s_tel_no);
-        patient.setEmail(s_email);
         patient.setOptional_address(s_optional_address);
     }
 
@@ -431,59 +431,6 @@ public class EditTabsActivity extends AppCompatActivity implements View.OnClickL
 
             }
         }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.birthdate:
-                FragmentManager fm = getSupportFragmentManager();
-                Calendar now = Calendar.getInstance();
-                CalendarDatePickerDialogFragment datepicker;
-
-                if (s_birthdate.equals("")) {
-                    birthdate.setError("Field Required");
-                    datepicker = CalendarDatePickerDialogFragment
-                            .newInstance(this, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
-                } else {
-                    int month, year, day;
-                    String birth = birthdate.getText().toString();
-                    int indexOfYear = birth.indexOf("-");
-                    int indexOfMonthandDay = birth.lastIndexOf("-");
-                    year = Integer.parseInt(birth.substring(0, indexOfYear));
-                    month = Integer.parseInt(birth.substring(indexOfYear + 1, indexOfMonthandDay)) - 1;
-                    day = Integer.parseInt(birth.substring(indexOfMonthandDay + 1, birth.length()));
-                    count++;
-
-                    datepicker = CalendarDatePickerDialogFragment
-                            .newInstance(this, year, month, day);
-                }
-                datepicker.show(fm, "fragment_date_picker_name");
-
-                break;
-        }
-    }
-
-    @Override
-    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        String dateStr = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-        birthdate.setText(dateStr);
-        s_birthdate = dateStr;
-
-        int_year = year;
-        int_month = monthOfYear;
-        int_day = dayOfMonth;
-
-        birthdate.setError(null);
-        patient.setBirthdate(dateStr);
-
-        Calendar calendar = Calendar.getInstance();
-        int current_year = calendar.get(Calendar.YEAR);
-
-        if ((current_year - year) < 18)
-            birthdate.setError("Must be 18 years old and above");
-        else
-            birthdate.setError(null);
     }
 
     public void showProgressbar() {

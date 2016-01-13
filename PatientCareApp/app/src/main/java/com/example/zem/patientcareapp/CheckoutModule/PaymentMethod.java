@@ -49,7 +49,7 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
         visa_or_mastercard = (LinearLayout) findViewById(R.id.visa_or_mastercard);
         paypal = (LinearLayout) findViewById(R.id.paypal);
 
-        if(order_model.getMode_of_delivery().equals("delivery")){
+        if (order_model.getMode_of_delivery().equals("delivery")) {
             stepping_stone.setText("Step 4/4");
             blood_seeker.setProgress(100);
         } else {
@@ -86,7 +86,7 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.cash:
 //                order_model.setPayment_method("cash");
                 payment_method = "cash_on_delivery";
@@ -107,15 +107,16 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public void ok_lets_go(){
+    public void ok_lets_go() {
         order_model.setPayment_method(payment_method);
         OrderPreferenceController opc = new OrderPreferenceController(this);
-        if(opc.savePreference(order_model)){
+        if (opc.savePreference(order_model)) {
             intent = new Intent(this, PromosDiscounts.class);
             intent.putExtra("order_model", order_model);
             startActivity(intent);
+            this.finish();
         } else {
-            Log.d("ot","what  the fuck is wrong ?");
+            Log.d("ot", "what  the fuck is wrong ?");
         }
     }
 }

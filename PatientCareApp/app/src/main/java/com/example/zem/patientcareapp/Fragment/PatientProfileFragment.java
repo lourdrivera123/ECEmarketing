@@ -62,7 +62,7 @@ public class PatientProfileFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.mastertabs_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.edit_profile_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -107,7 +107,8 @@ public class PatientProfileFragment extends Fragment {
         else
             address_first_line.setText(loginUser.getAddress_street() + ", " + loginUser.getBarangay());
 
-        address_second_line.setText(loginUser.getMunicipality() + ", " + loginUser.getProvince() + ", " + loginUser.getRegion() + ", Philippines, ");
+        address_second_line.setText((loginUser.getMunicipality().substring(0, 1).toUpperCase() + loginUser.getMunicipality().substring(1).toLowerCase()) + ", "
+                + (loginUser.getProvince().substring(0, 1).toUpperCase() + loginUser.getProvince().substring(1).toLowerCase()) + ", Philippines");
 
         if (loginUser.getEmail() == null || loginUser.getEmail().equals(""))
             email.setVisibility(View.GONE);

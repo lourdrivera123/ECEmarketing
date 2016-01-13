@@ -3,20 +3,17 @@ package com.example.zem.patientcareapp.Fragment;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
-import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.SwipeTabsModule.EditTabsActivity;
@@ -26,14 +23,11 @@ import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import java.util.Calendar;
 
-/**
- * Created by Zem on 4/28/2015.
- */
-public class SignUpFragment extends Fragment implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener{
-
-    public static EditText birthdate, fname, lname, mname, height, weight, occupation;
+public class SignUpFragment extends Fragment {
+    static EditText fname, lname, mname, height, weight, occupation, birthday;
     public static Spinner civil_status_spinner;
     public static RadioButton male_rb, female_rb;
+    static RadioGroup sex;
     public static View rootView;
 
     public static ArrayAdapter<String> civil_status_adapter;
@@ -56,23 +50,23 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
         int edit = EditTabsActivity.edit_int;
         int signup = EditTabsActivity.signup_int;
         intent = EditTabsActivity.intent;
-        get_birthdate = "1995-02-23";
 
         fname = (EditText) rootView.findViewById(R.id.fname);
         lname = (EditText) rootView.findViewById(R.id.lname);
         mname = (EditText) rootView.findViewById(R.id.mname);
         height = (EditText) rootView.findViewById(R.id.height);
         weight = (EditText) rootView.findViewById(R.id.weight);
-        birthdate = (EditText) rootView.findViewById(R.id.birthdate);
+        birthday = (EditText) rootView.findViewById(R.id.birthday);
         occupation = (EditText) rootView.findViewById(R.id.occupation);
         male_rb = (RadioButton) rootView.findViewById(R.id.male_rb);
         female_rb = (RadioButton) rootView.findViewById(R.id.female_rb);
+        sex = (RadioGroup) rootView.findViewById(R.id.sex);
 
         civil_status_spinner = (Spinner) rootView.findViewById(R.id.civil_status);
         civil_status_adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, civil_status_array);
         civil_status_spinner.setAdapter(civil_status_adapter);
 
-        birthdate.setOnClickListener(this);
+        birthday.addTextChangedListener(tw);
 
         if (edit > 0) {
             String edit_uname = SidebarActivity.getUname();
@@ -82,7 +76,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
             fname.setText(patient.getFname());
             lname.setText(patient.getLname());
             mname.setText(patient.getMname());
-            birthdate.setText(patient.getBirthdate());
+            birthday.setText(patient.getBirthdate());
             occupation.setText(patient.getOccupation());
             height.setText(patient.getHeight());
             weight.setText(patient.getWeight());
@@ -102,7 +96,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
                 fname.setText(intent.getExtras().getString("fname"));
                 mname.setText(intent.getExtras().getString("mname"));
                 lname.setText(intent.getExtras().getString("lname"));
-                birthdate.setText(intent.getExtras().getString("birthdate"));
+                birthday.setText(intent.getExtras().getString("birthdate"));
                 occupation.setText(intent.getExtras().getString("occupation"));
                 height.setText(intent.getExtras().getString("height"));
                 weight.setText(intent.getExtras().getString("weight"));
@@ -118,56 +112,68 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, Ca
         return rootView;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.birthdate:
-                FragmentManager fm = getChildFragmentManager();
-                CalendarDatePickerDialogFragment datepicker;
+    TextWatcher tw = new TextWatcher() {
+        private String current = "";
+        private String yyyymmdd = "yyyymmdd";
+        private Calendar cal = Calendar.getInstance();
 
-                int month, year, day;
-                int indexOfYear = get_birthdate.indexOf("-");
-                int indexOfMonthandDay = get_birthdate.lastIndexOf("-");
-                year = Integer.parseInt(get_birthdate.substring(0, indexOfYear));
-                month = Integer.parseInt(get_birthdate.substring(indexOfYear + 1, indexOfMonthandDay)) - 1;
-                day = Integer.parseInt(get_birthdate.substring(indexOfMonthandDay + 1, get_birthdate.length()));
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                datepicker = CalendarDatePickerDialogFragment.newInstance(this, year, month, day);
-                datepicker.show(fm, "fragment_date_picker_name");
-
-                break;
         }
-    }
 
-    @Override
-    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        String day;
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (!s.toString().equals(current)) {
+                String clean = s.toString().replaceAll("[^\\d.]", "");
+                String cleanC = current.replaceAll("[^\\d.]", "");
 
-        if (dayOfMonth < 10)
-            day = "0" + dayOfMonth;
-        else
-            day = String.valueOf(dayOfMonth);
+                int cl = clean.length();
+                int sel = cl;
+                for (int i = 2; i <= cl && i < 6; i += 2) {
+                    sel++;
+                }
+                //Fix for pressing delete next to a forward slash
+                if (clean.equals(cleanC)) sel--;
 
-        String dateStr = year + "-" + (monthOfYear + 1) + "-" + day;
-        birthdate.setText(dateStr);
-        get_birthdate = dateStr;
+                if (clean.length() < 8) {
+                    clean = clean + yyyymmdd.substring(clean.length());
+                } else {
+                    //This part makes sure that when we finish entering numbers
+                    //the date is correct, fixing it otherwise
+                    int day = Integer.parseInt(clean.substring(6, 8));
+                    int mon = Integer.parseInt(clean.substring(4, 6));
+                    int year = Integer.parseInt(clean.substring(0, 4));
 
-        Calendar calendar = Calendar.getInstance();
-        int current_year = calendar.get(Calendar.YEAR);
+                    if (mon > 12) mon = 12;
+                    cal.set(Calendar.MONTH, mon - 1);
+                    year = (year < 1800) ? 1800 : (year > 2100) ? 2100 : year;
+                    cal.set(Calendar.YEAR, year);
+                    // ^ first set year for the line below to work correctly
+                    //with leap years - otherwise, date e.g. 29/02/2012
+                    //would be automatically corrected to 28/02/2012
 
-        if ((current_year - year) < 18)
-            birthdate.setError("Must be 18 years old and above");
-        else
-            birthdate.setError(null);
-    }
+                    day = (day > cal.getActualMaximum(Calendar.DATE)) ? cal.getActualMaximum(Calendar.DATE) : day;
+                    clean = String.format("%02d%02d%02d", year, mon, day);
+                }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        CalendarDatePickerDialogFragment calendarDatePickerDialogFragment = (CalendarDatePickerDialogFragment) getChildFragmentManager()
-                .findFragmentByTag("fragment_date_picker_name");
-        if (calendarDatePickerDialogFragment != null) {
-            calendarDatePickerDialogFragment.setOnDateSetListener(this);
+                clean = String.format("%s-%s-%s", clean.substring(0, 4), clean.substring(4, 6), clean.substring(6, 8));
+
+                sel = sel < 0 ? 0 : sel;
+                current = clean;
+                birthday.setText(current);
+                birthday.setSelection(sel < current.length() ? sel : current.length());
+
+//                if ((current_year - year) < 18)
+//                    birthdate.setError("Must be 18 years old and above");
+//                else
+//                    birthdate.setError(null);
+            }
         }
-    }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 }

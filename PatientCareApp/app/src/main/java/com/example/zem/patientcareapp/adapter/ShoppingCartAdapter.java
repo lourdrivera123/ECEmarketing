@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.Activities.ShoppingCart;
+import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Customizations.RoundedAvatarDrawable;
@@ -83,6 +83,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         }
 
         Log.d("objects", objects.get(position) + "");
+        Log.d("all_promos", ShoppingCartActivity.all_promos_map + "");
 
         final double price = Double.parseDouble(objects.get(position).get("price"));
         int qty_per_packing = Integer.parseInt(objects.get(position).get("qty_per_packing"));
@@ -118,7 +119,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                 txt.setText(lastQty + "");
                 p_total.setText("Php " + total_per_item);
                 cart_total = cart_total + price;
-                ShoppingCart.total_amount.setText("Php " + cart_total);
+                ShoppingCartActivity.total_amount.setText("Php " + cart_total);
 
                 HashMap<String, String> temp = objects.get(position);
                 temp.put("quantity", String.valueOf(lastQty));
@@ -137,10 +138,10 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                 if (lastQty < 1) {
                     lastQty = 1;
-                    ShoppingCart.total_amount.setText("Php " + cart_total);
+                    ShoppingCartActivity.total_amount.setText("Php " + cart_total);
                 } else {
                     cart_total = cart_total - price;
-                    ShoppingCart.total_amount.setText("Php " + cart_total);
+                    ShoppingCartActivity.total_amount.setText("Php " + cart_total);
                 }
 
                 double total_per_item = price * lastQty;

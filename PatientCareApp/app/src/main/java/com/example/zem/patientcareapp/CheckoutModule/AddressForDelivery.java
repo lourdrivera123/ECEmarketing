@@ -46,7 +46,7 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
         setContentView(R.layout.address_for_delivery);
 
         get_intent = getIntent();
-        Bundle bundle= get_intent.getExtras();
+        Bundle bundle = get_intent.getExtras();
 
         db = new DbHelper(this);
         pc = new PatientController(this);
@@ -67,7 +67,7 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
         stepping_stone.setText("Step 2/4");
         blood_seeker.setProgress(40);
 
-        to_me.setText("Use my own address \n ("+patient.getComplete_address()+")");
+        to_me.setText("Use my own address \n (" + patient.getComplete_address() + ")");
 
         blood_seeker.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -87,7 +87,7 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
 
         hideLayout.setVisibility(View.GONE);
 
-        if(!order_model.getRecipient_address().equals("") && !order_model.getRecipient_address().equals(patient.getComplete_address())){
+        if (!order_model.getRecipient_address().equals("") && !order_model.getRecipient_address().equals(patient.getComplete_address())) {
             to_others.setChecked(true);
             recipientAddress.setText(order_model.getRecipient_address());
         }
@@ -105,23 +105,24 @@ public class AddressForDelivery extends AppCompatActivity implements CompoundBut
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(to_me.isChecked()) {
+        if (to_me.isChecked()) {
             hideLayout.setVisibility(View.GONE);
-        } else if( to_others.isChecked() ){
+        } else if (to_others.isChecked()) {
             hideLayout.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onClick(View v) {
-        if(to_me.isChecked()) {
+        if (to_me.isChecked()) {
             order_model.setRecipient_address(patient.getComplete_address());
-        }else if(to_others.isChecked()) {
+        } else if (to_others.isChecked()) {
             order_model.setRecipient_address(recipientAddress.getText().toString());
         }
 
         Intent recipientfordelivery_intent = new Intent(this, RecipientForDelivery.class);
         recipientfordelivery_intent.putExtra("order_model", order_model);
         startActivity(recipientfordelivery_intent);
+        this.finish();
     }
 }

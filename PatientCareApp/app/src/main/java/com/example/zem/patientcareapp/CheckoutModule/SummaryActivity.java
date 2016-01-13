@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.Activities.ShoppingCart;
+import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
@@ -109,7 +109,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void getResult(JSONObject response) {
                 try {
-                    Log.d("response_fs", response+ "");
+                    Log.d("response_fs", response + "");
                     int success = response.getInt("success");
 
                     if (success == 1) {
@@ -184,8 +184,6 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent shopping_cart_activity = new Intent(SummaryActivity.this, ShoppingCart.class);
-                startActivity(shopping_cart_activity);
                 this.finish();
                 break;
         }
@@ -305,8 +303,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     order_confirmation_dialog.show();
                 }
                 break;
-            default:
-                break;
         }
+
+        this.finish();
     }
 }

@@ -41,7 +41,7 @@ public class DeliverPickupOption extends AppCompatActivity implements View.OnCli
         blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
         stepping_stone = (TextView) findViewById(R.id.stepping_stone);
 
-        if(getIntent().getSerializableExtra("order_model") != null){
+        if (getIntent().getSerializableExtra("order_model") != null) {
             order_model = (OrderModel) getIntent().getSerializableExtra("order_model");
             order_model.setAction("update");
         } else {
@@ -99,10 +99,11 @@ public class DeliverPickupOption extends AppCompatActivity implements View.OnCli
         }
     }
 
-    public void go_on(){
+    public void go_on() {
 //        Bundle bundle = new Bundle();
 //        bundle.putSerializable("order_model", order_model);
         intent.putExtra("order_model", order_model);
         startActivity(intent);
+        this.finish();
     }
 }

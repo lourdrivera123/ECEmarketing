@@ -131,7 +131,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.go_to_cart:
-                startActivity(new Intent(this, ShoppingCart.class));
+                startActivity(new Intent(this, ShoppingCartActivity.class));
                 break;
 
             case android.R.id.home:

@@ -23,16 +23,23 @@
             android:id="@+id/duration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/d10"
             android:layout_marginTop="5dp"
             android:text="December 2015 - January 2016"
             android:textSize="12sp" />
 
         <TextView
+            android:id="@+id/redemption_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/applicability"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="on Selected Products"
             android:textSize="12sp"
