@@ -5,10 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,24 +23,18 @@ import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Model.Product;
-import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.Activities.ProductsActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.ShowPrescriptionDialog;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * Created by User PC on 11/27/2015.
@@ -64,34 +56,46 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
     ArrayList<Map<String, String>> products_items, basket_items;
     ArrayList<Integer> list_favorites;
 
-    String start_date, end_date;
+    HashMap<String, String> map_all_products_promos;
+    ArrayList<HashMap<String, String>> specific_products_promos;
 
     public ProductsAdapter(Context context, int resource, ArrayList<Map<String, String>> objects) {
         super(context, resource, objects);
         inflater = LayoutInflater.from(context);
         this.context = context;
         products_items = objects;
+
+        map_all_products_promos = new HashMap();
+        specific_products_promos = new ArrayList();
+
+        for (int x = 0; x < ProductsActivity.no_code_promos.size(); x++) {
+            if (ProductsActivity.no_code_promos.get(x).get("product_applicability").equals("ALL_PRODUCTS"))
+                map_all_products_promos.putAll(ProductsActivity.no_code_promos.get(x));
+            else {
+                HashMap<String, String> map = new HashMap();
+                map.putAll(ProductsActivity.no_code_promos.get(x));
+                specific_products_promos.add(map);
+            }
+        }
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.product_item, parent, false);
+        convertView = inflater.inflate(R.layout.product_item, parent, false);
 
-            product_image = (ImageView) convertView.findViewById(R.id.product_image);
-            product_name = (TextView) convertView.findViewById(R.id.product_name);
-            rs_price = (TextView) convertView.findViewById(R.id.rs_price);
-            add_to_cart = (LinearLayout) convertView.findViewById(R.id.add_to_cart);
-            add_to_favorite = (ToggleButton) convertView.findViewById(R.id.add_to_favorite);
-            cart_icon = (ImageView) convertView.findViewById(R.id.cart_icon);
-            cart_text = (TextView) convertView.findViewById(R.id.cart_text);
-            out_of_stock = (TextView) convertView.findViewById(R.id.out_of_stock);
-            root = (LinearLayout) convertView.findViewById(R.id.root);
-            is_promo = (TextView) convertView.findViewById(R.id.is_promo);
+        product_image = (ImageView) convertView.findViewById(R.id.product_image);
+        product_name = (TextView) convertView.findViewById(R.id.product_name);
+        rs_price = (TextView) convertView.findViewById(R.id.rs_price);
+        add_to_cart = (LinearLayout) convertView.findViewById(R.id.add_to_cart);
+        add_to_favorite = (ToggleButton) convertView.findViewById(R.id.add_to_favorite);
+        cart_icon = (ImageView) convertView.findViewById(R.id.cart_icon);
+        cart_text = (TextView) convertView.findViewById(R.id.cart_text);
+        out_of_stock = (TextView) convertView.findViewById(R.id.out_of_stock);
+        root = (LinearLayout) convertView.findViewById(R.id.root);
+        is_promo = (TextView) convertView.findViewById(R.id.is_promo);
 
-            add_to_cart.setTag(position);
-            add_to_favorite.setTag(position);
-        }
+        add_to_cart.setTag(position);
+        add_to_favorite.setTag(position);
 
         if (Integer.parseInt(products_items.get(position).get("available_quantity")) == 0) {
             out_of_stock.setVisibility(View.VISIBLE);
@@ -104,71 +108,49 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         helpers = new Helpers();
         list_favorites = db.getFavoritesByUserID(SidebarActivity.getUserID());
 
-        try {
-            int product_id = Integer.parseInt(products_items.get(position).get("product_id"));
+        ArrayList<String> all_promos = new ArrayList();
+        double final_peso_discount = 0, final_min_purchase = 0;
+        String final_free_gift = "", final_percentage_discount = "", final_free_delivery = "", final_qty_required = "0", final_is_every = "";
+        int product_id = Integer.parseInt(products_items.get(position).get("product_id"));
 
-            for (int x = 0; x < list_favorites.size(); x++) {
-                if (list_favorites.get(x) == product_id)
-                    add_to_favorite.setChecked(true);
-            }
-        } catch (Exception e) {
-            Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
+        for (int x = 0; x < list_favorites.size(); x++) {
+            if (list_favorites.get(x) == product_id)
+                add_to_favorite.setChecked(true);
         }
 
-        start_date = products_items.get(position).get("start_date");
-        end_date = products_items.get(position).get("end_date");
+        if (ProductsActivity.no_code_promos.size() > 0) {
+            if (map_all_products_promos.size() > 0) {
+                final_min_purchase = Double.parseDouble(map_all_products_promos.get("minimum_purchase"));
+                final_qty_required = map_all_products_promos.get("pr_qty_required");
+                final_peso_discount = Double.parseDouble(map_all_products_promos.get("pr_peso"));
+                final_free_delivery = map_all_products_promos.get("pr_free_delivery");
+                final_percentage_discount = map_all_products_promos.get("pr_percentage");
+                final_free_gift = "";
 
-        Calendar c = Calendar.getInstance();
-        ArrayList<String> all_promos = new ArrayList();
-        double final_peso_discount, final_percentage_discount, final_min_purchase = 0;
-        String final_free_gift, final_free_delivery, final_qty_required = "";
-
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String current_date = df.format(c.getTime());
-
-        if (ProductsActivity.promos_map.size() > 0) {
-            final_min_purchase = Double.parseDouble(ProductsActivity.promos_map.get("minimum_purchase"));
-            final_peso_discount = Double.parseDouble(ProductsActivity.promos_map.get("peso_discount"));
-            final_percentage_discount = Double.parseDouble(ProductsActivity.promos_map.get("percentage_discount"));
-            final_free_gift = "";
-            final_free_delivery = ProductsActivity.promos_map.get("is_free_delivery");
-            final_qty_required = ProductsActivity.promos_map.get("quantity_required");
+            } else if (specific_products_promos.size() > 0) {
+                for (int x = 0; x < specific_products_promos.size(); x++) {
+                    if (specific_products_promos.get(x).get("product_id").equals(products_items.get(position).get("product_id"))) {
+                        final_peso_discount = Double.parseDouble(specific_products_promos.get(x).get("peso_discount"));
+                        final_qty_required = specific_products_promos.get(x).get("quantity_required");
+                        final_free_delivery = specific_products_promos.get(x).get("is_free_delivery");
+                        final_percentage_discount = specific_products_promos.get(x).get("percentage_discount");
+                        final_free_gift = specific_products_promos.get(x).get("has_free_gifts");
+                        final_is_every = specific_products_promos.get(x).get("is_every");
+                    }
+                }
+            }
 
             if (final_peso_discount > 0)
                 all_promos.add(final_peso_discount + " Php  off");
 
-            if (final_percentage_discount > 0)
-                all_promos.add(final_percentage_discount + "% off");
+            if (final_free_delivery.equals("1"))
+                all_promos.add("Free Delivery");
 
             if (final_free_gift.equals("1"))
                 all_promos.add("A free item");
 
-            if (final_free_delivery.equals("1"))
-                all_promos.add("Free Delivery");
-
-        } else {
-            if (!start_date.equals("")) {
-                if (start_date.compareTo(current_date) <= 0 && end_date.compareTo(current_date) >= 0) {
-                    final_peso_discount = Double.parseDouble(products_items.get(position).get("peso_discount"));
-                    final_percentage_discount = Double.parseDouble(products_items.get(position).get("percentage_discount"));
-                    final_free_gift = products_items.get(position).get("free_gifts");
-                    final_free_delivery = products_items.get(position).get("free_delivery");
-                    final_qty_required = products_items.get(position).get("quantity_required");
-
-                    if (final_peso_discount > 0)
-                        all_promos.add(final_peso_discount + " Php  off");
-
-                    if (final_percentage_discount > 0)
-                        all_promos.add(final_percentage_discount + "% off");
-
-                    if (final_free_gift.equals("1"))
-                        all_promos.add("A free item");
-
-                    if (final_free_delivery.equals("1"))
-                        all_promos.add("Free Delivery");
-                }
-            }
+            if (!final_percentage_discount.equals("0"))
+                all_promos.add(final_percentage_discount + "% off");
         }
 
         if (all_promos.size() > 0) {
@@ -182,16 +164,17 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                     final_list_of_promos = final_list_of_promos + ",";
                 final_list_of_promos = final_list_of_promos + " ";
             }
+            String purchases = helpers.getPluralForm(products_items.get(position).get("packing"), Integer.parseInt(final_qty_required));
 
-
-            if (final_qty_required.equals("0")) {
+            if (!final_qty_required.equals("0")) {
+                if (final_is_every.equals("1"))
+                    is_promo.setText("*" + final_list_of_promos + "for every " + final_qty_required + " " + purchases);
+                else
+                    is_promo.setText("*" + final_list_of_promos + "for " + final_qty_required + " " + purchases + " or more");
+            } else if (final_min_purchase > 0) {
                 is_promo.setText("*" + final_list_of_promos + "for a minimum purchase of " + final_min_purchase);
-            } else {
-                String purchases = helpers.getPluralForm(products_items.get(position).get("packing"), Integer.parseInt(final_qty_required));
-                is_promo.setText("*" + final_list_of_promos + "for " + final_qty_required + " " + purchases + " or more");
             }
         }
-
 
         product_name.setText(products_items.get(position).get("name"));
         rs_price.setText("Php " + products_items.get(position).get("price") + "/" + products_items.get(position).get("packing"));

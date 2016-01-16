@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:text="Php 11.34/strip (12 tablets)"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
                 <TextView
                     android:id="@+id/is_promo"

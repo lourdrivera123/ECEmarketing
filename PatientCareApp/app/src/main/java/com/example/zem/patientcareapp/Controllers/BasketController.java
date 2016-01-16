@@ -42,6 +42,7 @@ public class BasketController {
                 map.put(ProductController.PRODUCT_PRESCRIPTION_REQUIRED, String.valueOf(obj.getInt("prescription_required")));
                 map.put("prescription_id", String.valueOf(obj.getInt("prescription_id")));
                 map.put("is_approved", String.valueOf(obj.getInt("is_approved")));
+                map.put("available_quantity", obj.getString("available_quantity"));
 
                 basketItems.add(map);
             }
