@@ -82,6 +82,7 @@ public class PayPalCheckout extends Activity {
     BigDecimal amount;
     int billing_id = 0, branch_server_id = 0;
     String basket_ids = "", recipient_name = "", recipient_address = "", recipient_contactNumber = "", modeOfDelivery = "", payment_method = "";
+    String delivery_charge;
 
     // PayPal configuration
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration()
@@ -98,6 +99,7 @@ public class PayPalCheckout extends Activity {
         pDialog = new ProgressDialog(this);
         queue = Volley.newRequestQueue(this);
         order_model = (OrderModel) getIntent().getSerializableExtra("order_model");
+        delivery_charge = getIntent().getStringExtra("delivery_charge");
 
         Intent ckintent = getIntent();
         OrderModel om = (OrderModel) ckintent.getSerializableExtra("order_model");
@@ -382,6 +384,9 @@ public class PayPalCheckout extends Activity {
                 params.put("status", "open");
                 params.put("coupon_discount", String.valueOf(order_model.getCoupon_discount()));
                 params.put("points_discount", String.valueOf(order_model.getPoints_discount()));
+                params.put("delivery_charge", String.valueOf(delivery_charge));
+                params.put("promo_id", String.valueOf(order_model.getPromo_id()));
+                params.put("promo_type", String.valueOf(order_model.getCoupon_discount_type()));
                 params.put("email", patient.getEmail());
 
                 Log.d("params shit", params + "");

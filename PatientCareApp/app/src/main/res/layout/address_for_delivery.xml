@@ -3,146 +3,158 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/toolbar">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/myToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolbar"
+        android:background="#00000000"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <TextView
-        android:id="@+id/stepping_stone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="Step 3/4"
-        android:textColor="@color/partner_toolbar"
-        android:textSize="18sp" />
-
-    <SeekBar
-        android:id="@+id/blood_seeker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/lightGreen"
-        android:enabled="false"
-        android:progress="50" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".9"
+                android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rectback"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:background="@android:drawable/dialog_holo_light_frame"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/stepping_stone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="20dp"
+                    android:text="Step #"
+                    android:textColor="#2b2b2b"
+                    android:textSize="20sp"
+                    android:gravity="center"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:padding="5dp"
                     android:text="Where should we deliver the order ?"
-                    android:textColor="@color/partner_toolbar"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dip"
-                    android:layout_marginBottom="10dp"
-                    android:background="@color/partner_toolbar" />
-
-                <RadioGroup
+                <SeekBar
+                    android:id="@+id/blood_seeker"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:orientation="vertical">
-
-                    <RadioButton
-                        android:id="@+id/to_me"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:layout_weight=".5"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:text="Use my own address \n (B69 L17 Deca Homes Tigatto Davao City)"
-                        android:textColor="@color/partner_toolbar"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Or"
-                        android:textColor="@color/partner_toolbar"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/to_others"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:layout_weight=".5"
-                        android:checked="false"
-                        android:gravity="center"
-                        android:text="I will specify the address"
-                        android:textColor="@color/partner_toolbar"
-                        android:textSize="15sp" />
-                </RadioGroup>
+                    android:backgroundTint="@color/ColorPrimary"
+                    android:enabled="false"
+                    android:progress="50" />
 
                 <LinearLayout
-                    android:id="@+id/hideLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/rectback"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="16dp"
+                    android:orientation="vertical">
 
-
-                    <EditText
-                        android:id="@+id/recipientAddress"
+                    <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:gravity="top|left"
-                        android:hint="Complete Address of Recepient"
-                        android:inputType="textMultiLine"
-                        android:lines="2"
-                        android:maxLines="5"
-                        android:minLines="2"
-                        android:scrollbars="vertical"
-                        android:textSize="13sp" />
+                        android:orientation="vertical">
 
+                        <RadioButton
+                            android:id="@+id/to_me"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight=".5"
+                            android:checked="true"
+                            android:gravity="center"
+                            android:text="Use my own address \n (B69 L17 Deca Homes Tigatto Davao City)"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Or"
+                            android:textSize="15sp" />
+
+                        <RadioButton
+                            android:id="@+id/to_others"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight=".5"
+                            android:checked="false"
+                            android:gravity="center"
+                            android:text="I will specify the address"
+                            android:textSize="15sp" />
+                    </RadioGroup>
+
+                    <LinearLayout
+                        android:id="@+id/hideLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/rectback"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+
+                        <EditText
+                            android:id="@+id/recipientAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:gravity="top|left"
+                            android:hint="Complete Address of Recepient"
+                            android:inputType="textMultiLine"
+                            android:lines="2"
+                            android:maxLines="5"
+                            android:minLines="2"
+                            android:scrollbars="vertical"
+                            android:textSize="13sp" />
+                    </LinearLayout>
 
                 </LinearLayout>
+
             </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".1"
+                android:orientation="vertical">
 
             <Button
                 android:id="@+id/next_btn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@color/partner_toolbar"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_button"
                 android:clickable="true"
                 android:drawableRight="@mipmap/ic_next"
                 android:text="Next"
                 android:textColor="@color/white" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

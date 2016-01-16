@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,10 +23,12 @@ import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.SettingController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Patient;
+import com.example.zem.patientcareapp.Model.Settings;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Customizations.NonScrollListView;
 import com.example.zem.patientcareapp.Network.PaymentRequest;
@@ -55,13 +58,18 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
     Helpers helper;
     PatientController pc;
     BasketController bc;
+    SettingController sc;
 
     ArrayList<HashMap<String, String>> items;
     Double totalAmount = 0.0;
     NonScrollListView order_summary;
-    TextView amount_subtotal, amount_of_coupon_discount, amount_of_points_discount, total_amount;
-    LinearLayout points_layout, coupon_layout, subtotal_layout, total_layout;
+    TextView amount_subtotal, amount_of_coupon_discount, amount_of_points_discount, total_amount, delivery_charge;
+    LinearLayout points_layout, coupon_layout, subtotal_layout, total_layout, delivery_charge_layout;
     TextView order_receiving_option, address_option, recipient_option, payment_option, recipient_contact_number, address_or_branch;
+    LinearLayout root;
+    Settings settings;
+    double delivery_charge_val = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,17 +95,21 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         payment_option = (TextView) findViewById(R.id.payment_option);
         recipient_contact_number = (TextView) findViewById(R.id.recipient_contact_number);
         address_or_branch = (TextView) findViewById(R.id.address_or_branch);
+        delivery_charge = (TextView) findViewById(R.id.delivery_charge);
 
+        delivery_charge_layout = (LinearLayout) findViewById(R.id.delivery_charge_layout);
         points_layout = (LinearLayout) findViewById(R.id.points_layout);
         coupon_layout = (LinearLayout) findViewById(R.id.coupon_layout);
         subtotal_layout = (LinearLayout) findViewById(R.id.subtotal_layout);
         total_layout = (LinearLayout) findViewById(R.id.total_layout);
         order_now_btn = (Button) findViewById(R.id.order_now_btn);
+        root = (LinearLayout) findViewById(R.id.root);
 
         dbHelper = new DbHelper(this);
         pc = new PatientController(this);
         bc = new BasketController();
         helper = new Helpers();
+        sc = new SettingController(this);
 
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.setMessage("Please wait...");
@@ -122,11 +134,14 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                         }
 
                         double coupon_discount = order_model.getCoupon_discount();
+
+                        if(order_model.getCoupon_discount_type().equals("percentage_discount")){
+                            Log.d("converted_percentage", totalAmount * (coupon_discount/100)+"");
+                            coupon_discount = totalAmount * (coupon_discount/100);
+                        }
+
                         double points_discount = order_model.getPoints_discount();
                         double discounted_total = totalAmount - points_discount - coupon_discount;
-
-                        order_model.setCoupon_discount(coupon_discount);
-                        order_model.setPoints_discount(points_discount);
 
                         /* discounts and total block*/
                         if (coupon_discount == 0.0)
@@ -165,6 +180,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         } else {
             address_or_branch.setText("Address for delivery");
             address_option.setText(order_model.getRecipient_address());
+            checkForSettingsUpdate();
         }
         order_receiving_option.setText(order_model.getMode_of_delivery());
         recipient_option.setText(order_model.getRecipient_name());
@@ -190,6 +206,27 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         return super.onOptionsItemSelected(item);
     }
 
+    public void checkForSettingsUpdate() {
+        GetRequest.getJSONobj(getBaseContext(), "get_settings", "settings", "serverID", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                settings = sc.getAllSettings();
+                delivery_charge_layout.setVisibility(View.VISIBLE);
+                if(order_model.getCoupon_discount_type().equals("free_delivery")){
+                    delivery_charge.setTextColor(getResources().getColor(R.color.ColorPrimary));
+                    delivery_charge.setText("Free");
+                } else{
+                    delivery_charge.setText(""+settings.getDelivery_charge());
+                    delivery_charge_val = settings.getDelivery_charge();
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Snackbar.make(root, "Please check network connection.", Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -202,6 +239,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                 if (order_model.getPayment_method().equals("paypal")) {
                     Intent paypal_intent = new Intent(this, PayPalCheckout.class);
                     paypal_intent.putExtra("order_model", order_model);
+                    paypal_intent.putExtra("delivery_charge", String.valueOf(delivery_charge_val));
                     startActivity(paypal_intent);
                 } else if (order_model.getPayment_method().equals("cash_on_delivery")) {
                     AlertDialog.Builder order_confirmation_dialog = new AlertDialog.Builder(SummaryActivity.this);
@@ -223,6 +261,9 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                             map.put("status", "Pending");
                             map.put("coupon_discount", String.valueOf(order_model.getCoupon_discount()));
                             map.put("points_discount", String.valueOf(order_model.getPoints_discount()));
+                            map.put("delivery_charge", String.valueOf(delivery_charge_val));
+                            map.put("promo_id", String.valueOf(order_model.getPromo_id()));
+                            map.put("promo_type", String.valueOf(order_model.getCoupon_discount_type()));
                             map.put("email", patient.getEmail());
 
                             Log.d("mappings", map.toString());

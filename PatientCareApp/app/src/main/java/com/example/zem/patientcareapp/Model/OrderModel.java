@@ -7,9 +7,9 @@ import java.io.Serializable;
  */
 public class OrderModel implements Serializable {
 
-    private int patient_id = 0, branch_id = 0;
+    private int patient_id = 0, branch_id = 0, promo_id = 0;
     private double coupon_discount=0.0, points_discount = 0.0;
-    private String recipient_name = "", recipient_address = "", recipient_contactNumber = "", delivery_sched="", mode_of_delivery = "", payment_method = "", action ="";
+    private String recipient_name = "", recipient_address = "", recipient_contactNumber = "", delivery_sched="", mode_of_delivery = "", payment_method = "", action ="", coupon_discount_type="";
 
     public OrderModel(){}
 
@@ -18,6 +18,22 @@ public class OrderModel implements Serializable {
             return true;
 
         return false;
+    }
+
+    public int getPromo_id() {
+        return promo_id;
+    }
+
+    public void setPromo_id(int promo_id) {
+        this.promo_id = promo_id;
+    }
+
+    public String getCoupon_discount_type() {
+        return coupon_discount_type;
+    }
+
+    public void setCoupon_discount_type(String coupon_discount_type) {
+        this.coupon_discount_type = coupon_discount_type;
     }
 
     public int getPatient_id() {

@@ -37,8 +37,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
     OrderDetailController odc;
     OrderController oc;
     int order_id;
-    TextView order_id_txtview, date_and_time, order_receiving_option, address_option, recipient_option, recipient_contact_number, payment_option, order_status, subtotal_value, coupon_discounts_value, points_discount_value, total_value;
-    LinearLayout subtotal_block, coupon_discounts_block, points_discount_block;
+    TextView order_id_txtview, date_and_time, order_receiving_option, address_option, recipient_option, recipient_contact_number, payment_option, order_status, subtotal_value, coupon_discounts_value, points_discount_value, total_value, delivery_charge_value;
+    LinearLayout subtotal_block, coupon_discounts_block, points_discount_block, delivery_charge_block;
+    String promo_type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
         coupon_discounts_value = (TextView) findViewById(R.id.coupon_discounts_value);
         points_discount_value = (TextView) findViewById(R.id.points_discount_value);
         total_value = (TextView) findViewById(R.id.total_value);
+        delivery_charge_block = (LinearLayout) findViewById(R.id.delivery_charge_block);
+        delivery_charge_value = (TextView) findViewById(R.id.delivery_charge_value);
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         order_summary = (NonScrollListView) findViewById(R.id.order_summary);
@@ -80,12 +83,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
         order_information = oc.getOrder(order_id);
         items = odc.getOrderDetailsFromOrder(order_id);
 
-        Log.d("items", items.toString());
-        Log.d("order_info", order_information.toString());
-        Log.d("fight_song", order_information.get(0).get("points_discount"));
-
         double pdc = Double.parseDouble(order_information.get(0).get("points_discount"));
         double cdc = Double.parseDouble(order_information.get(0).get("coupon_discount"));
+        double dc = Double.parseDouble(order_information.get(0).get("delivery_charge"));
 
         points_discount_value.setText(""+pdc);
         coupon_discounts_value.setText(""+cdc);
@@ -119,6 +119,12 @@ public class OrderDetailsActivity extends AppCompatActivity {
         if (cdc > 0) {
             subtotal_block.setVisibility(View.VISIBLE);
             coupon_discounts_block.setVisibility(View.VISIBLE);
+        }
+
+        if(dc > 0){
+            subtotal_block.setVisibility(View.VISIBLE);
+            delivery_charge_block.setVisibility(View.VISIBLE);
+            delivery_charge_value.setText(order_information.get(0).get("delivery_charge"));
         }
 
         SummaryAdapter adapter = new SummaryAdapter(OrderDetailsActivity.this, items);

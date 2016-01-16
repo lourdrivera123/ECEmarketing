@@ -264,6 +264,33 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/delivery_charge_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".5"
+                            android:text="Delivery Charge"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/delivery_charge_value"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".5"
+                            android:text="\u20B1 10"
+                            android:textSize="14sp"
+                            android:textStyle="italic" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:id="@+id/coupon_discounts_block"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

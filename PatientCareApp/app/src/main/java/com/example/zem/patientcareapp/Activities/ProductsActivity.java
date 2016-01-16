@@ -433,15 +433,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                     map.put("category_name", obj.getString("cat_name"));
                                     map.put("category_id", String.valueOf(obj.getInt("cat_id")));
                                     map.put("available_quantity", String.valueOf(obj.getInt("available_quantity")));
-                                    map.put("promo_id", obj.getString("promo_id"));
-                                    map.put("free_delivery", obj.getString("is_free_delivery"));
-                                    map.put("free_gifts", obj.getString("has_free_gifts"));
-                                    map.put("quantity_required", obj.getString("quantity_required"));
-                                    map.put("peso_discount", obj.getString("peso_discount"));
-                                    map.put("percentage_discount", obj.getString("percentage_discount"));
-                                    map.put("product_applicability", obj.getString("product_applicability"));
-                                    map.put("start_date", obj.getString("start_date"));
-                                    map.put("end_date", obj.getString("end_date"));
                                     products_items.add(map);
 
                                     HashMap<Integer, HashMap<String, String>> hash = new HashMap();

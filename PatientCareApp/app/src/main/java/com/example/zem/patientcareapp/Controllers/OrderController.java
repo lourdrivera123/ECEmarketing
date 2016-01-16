@@ -31,13 +31,16 @@ public class OrderController extends DbHelper {
             ORDERS_DELIVERY_SCHED = "delivery_sched",
             ORDERS_ECE_BRANCH = "branch_id",
             ORDERS_MODE_OF_DELIVERY = "modeOfDelivery",
+            ORDERS_DELIVERY_CHARGE = "delivery_charge",
+            ORDERS_PROMO_ID = "promo_id",
+            ORDERS_PROMO_TYPE = "promo_type",
             ORDERS_STATUS = "status",
             ORDERS_CREATED_AT = "created_at";
 
     public static final String CREATE_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT," +
-                    " %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+                    " %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s DOUBLE, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
             TBL_ORDERS, AI_ID, SERVER_ORDERS_ID, PATIENT_ID, ORDERS_RECIPIENT_NAME, ORDERS_RECIPIENT_ADDRESS,
-            ORDERS_RECIPIENT_NUMBER, ORDERS_DELIVERY_SCHED, ORDERS_ECE_BRANCH, ORDERS_MODE_OF_DELIVERY, ORDERS_STATUS, CREATED_AT,
+            ORDERS_RECIPIENT_NUMBER, ORDERS_DELIVERY_SCHED, ORDERS_ECE_BRANCH, ORDERS_MODE_OF_DELIVERY, ORDERS_DELIVERY_CHARGE, ORDERS_PROMO_ID, ORDERS_PROMO_TYPE, ORDERS_STATUS, CREATED_AT,
             UPDATED_AT, DELETED_AT);
 
     public OrderController(Context context) {
@@ -60,6 +63,9 @@ public class OrderController extends DbHelper {
             values.put(ORDERS_DELIVERY_SCHED, object.getString(ORDERS_DELIVERY_SCHED));
             values.put(ORDERS_ECE_BRANCH, object.getInt(ORDERS_ECE_BRANCH));
             values.put(ORDERS_MODE_OF_DELIVERY, object.getString(ORDERS_MODE_OF_DELIVERY));
+            values.put(ORDERS_DELIVERY_CHARGE, object.getDouble(ORDERS_DELIVERY_CHARGE));
+            values.put(ORDERS_PROMO_ID, object.getDouble(ORDERS_PROMO_ID));
+            values.put(ORDERS_PROMO_TYPE, object.getDouble(ORDERS_PROMO_TYPE));
             values.put(ORDERS_STATUS, object.getString(ORDERS_STATUS));
             values.put(CREATED_AT, object.getString(CREATED_AT));
             values.put(UPDATED_AT, object.getString(UPDATED_AT));
@@ -118,6 +124,8 @@ public class OrderController extends DbHelper {
         map.put("coupon_discount", String.valueOf(cur.getDouble(cur.getColumnIndex(BillingController.BILLINGS_COUPON_DISCOUNT))));
         map.put("points_discount", String.valueOf(cur.getDouble(cur.getColumnIndex(BillingController.BILLINGS_POINTS_DISCOUNT))));
         map.put("payment_status", cur.getString(cur.getColumnIndex(BillingController.BILLINGS_PAYMENT_STATUS)));
+        map.put("delivery_charge", String.valueOf(cur.getDouble(cur.getColumnIndex(ORDERS_DELIVERY_CHARGE))));
+        map.put("promo_type", cur.getString(cur.getColumnIndex(ORDERS_PROMO_TYPE)));
         order_items.add(map);
 
         cur.close();
