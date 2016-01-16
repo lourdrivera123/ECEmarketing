@@ -74,7 +74,8 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     Intent get_intent;
 
     public static ArrayList<Map<String, String>> temp_products_items, products_items, basket_items;
-    public static HashMap<String, String> map, promos_map;
+    public static ArrayList<HashMap<String, String>> no_code_promos;
+    public static HashMap<String, String> map;
     ArrayList<HashMap<Integer, HashMap<String, String>>> searchProducts = new ArrayList();
     ArrayList<String> categories = new ArrayList();
 
@@ -107,9 +108,9 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
         basket_items = new ArrayList();
         map = new HashMap();
-        promos_map = new HashMap();
         products_items = new ArrayList();
         temp_products_items = new ArrayList();
+        no_code_promos = new ArrayList();
 
         showOverLay(this);
         getProductCategories();
@@ -118,7 +119,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         get_intent = getIntent();
         promo_id = get_intent.getIntExtra("promo_id", 0);
 
-        ListOfPatientsRequest.getJSONobj(this, "get_promos", "promos", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(this, "get_nocode_promos", "promos", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
@@ -129,19 +130,23 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
                         for (int x = 0; x < json_mysql.length(); x++) {
                             JSONObject obj = json_mysql.getJSONObject(x);
+                            HashMap<String, String> map = new HashMap();
 
-                            if (obj.getString("product_applicability").equals("ALL_PRODUCTS")) {
-                                promos_map.put("promo_id", obj.getString("id"));
-                                promos_map.put("offer_type", obj.getString("offer_type"));
-                                promos_map.put("coupon_code", obj.getString("generic_redemption_code"));
-                                promos_map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
-                                promos_map.put("quantity_required", obj.getString("quantity_required"));
-                                promos_map.put("is_free_delivery", obj.getString("is_free_delivery"));
-                                promos_map.put("percentage_discount", obj.getString("percentage_discount"));
-                                promos_map.put("peso_discount", obj.getString("peso_discount"));
-                                promos_map.put("start_date", obj.getString("start_date"));
-                                promos_map.put("end_date", obj.getString("end_date"));
-                            }
+                            map.put("promo_id", obj.getString("pr_promo_id"));
+                            map.put("product_applicability", obj.getString("product_applicability"));
+                            map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
+                            map.put("pr_qty_required", obj.getString("pr_qty_required"));
+                            map.put("is_every", obj.getString("is_every"));
+                            map.put("pr_free_delivery", obj.getString("pr_free_delivery"));
+                            map.put("pr_percentage", obj.getString("pr_percentage"));
+                            map.put("pr_peso", obj.getString("pr_peso"));
+                            map.put("product_id", obj.getString("product_id"));
+                            map.put("quantity_required", obj.getString("quantity_required"));
+                            map.put("is_free_delivery", obj.getString("is_free_delivery"));
+                            map.put("has_free_gifts", obj.getString("has_free_gifts"));
+                            map.put("percentage_discount", obj.getString("percentage_discount"));
+                            map.put("peso_discount", obj.getString("peso_discount"));
+                            no_code_promos.add(map);
                         }
                     }
                 } catch (Exception e) {
@@ -433,15 +438,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                                     map.put("category_name", obj.getString("cat_name"));
                                     map.put("category_id", String.valueOf(obj.getInt("cat_id")));
                                     map.put("available_quantity", String.valueOf(obj.getInt("available_quantity")));
-                                    map.put("promo_id", obj.getString("promo_id"));
-                                    map.put("free_delivery", obj.getString("is_free_delivery"));
-                                    map.put("free_gifts", obj.getString("has_free_gifts"));
-                                    map.put("quantity_required", obj.getString("quantity_required"));
-                                    map.put("peso_discount", obj.getString("peso_discount"));
-                                    map.put("percentage_discount", obj.getString("percentage_discount"));
-                                    map.put("product_applicability", obj.getString("product_applicability"));
-                                    map.put("start_date", obj.getString("start_date"));
-                                    map.put("end_date", obj.getString("end_date"));
                                     products_items.add(map);
 
                                     HashMap<Integer, HashMap<String, String>> hash = new HashMap();

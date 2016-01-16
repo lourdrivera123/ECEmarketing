@@ -50,7 +50,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     BasketController bc;
 
     public ArrayList<HashMap<String, String>> items = new ArrayList();
-    public static HashMap<String, String> all_promos_map;
+    public static ArrayList<HashMap<String, String>> no_code_promos;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         bc = new BasketController();
         opc = new OrderPreferenceController(this);
-        all_promos_map = new HashMap();
+        no_code_promos = new ArrayList();
 
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -79,7 +79,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         proceed_to_checkout.setOnClickListener(this);
 
-        ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, "get_promos", "promos", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, "get_nocode_promos", "promos", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
@@ -90,19 +90,23 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
                         for (int x = 0; x < json_mysql.length(); x++) {
                             JSONObject obj = json_mysql.getJSONObject(x);
+                            HashMap<String, String> map = new HashMap();
 
-                            if (obj.getString("product_applicability").equals("ALL_PRODUCTS")) {
-                                all_promos_map.put("promo_id", obj.getString("id"));
-                                all_promos_map.put("offer_type", obj.getString("offer_type"));
-                                all_promos_map.put("coupon_code", obj.getString("generic_redemption_code"));
-                                all_promos_map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
-                                all_promos_map.put("quantity_required", obj.getString("quantity_required"));
-                                all_promos_map.put("is_free_delivery", obj.getString("is_free_delivery"));
-                                all_promos_map.put("percentage_discount", obj.getString("percentage_discount"));
-                                all_promos_map.put("peso_discount", obj.getString("peso_discount"));
-                                all_promos_map.put("start_date", obj.getString("start_date"));
-                                all_promos_map.put("end_date", obj.getString("end_date"));
-                            }
+                            map.put("promo_id", obj.getString("pr_promo_id"));
+                            map.put("product_applicability", obj.getString("product_applicability"));
+                            map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
+                            map.put("pr_qty_required", obj.getString("pr_qty_required"));
+                            map.put("is_every", obj.getString("is_every"));
+                            map.put("pr_free_delivery", obj.getString("pr_free_delivery"));
+                            map.put("pr_percentage", obj.getString("pr_percentage"));
+                            map.put("pr_peso", obj.getString("pr_peso"));
+                            map.put("product_id", obj.getString("product_id"));
+                            map.put("quantity_required", obj.getString("quantity_required"));
+                            map.put("has_free_gifts", obj.getString("has_free_gifts"));
+                            map.put("is_free_delivery", obj.getString("is_free_delivery"));
+                            map.put("percentage_discount", obj.getString("percentage_discount"));
+                            map.put("peso_discount", obj.getString("peso_discount"));
+                            no_code_promos.add(map);
                         }
                     }
                 } catch (Exception e) {
