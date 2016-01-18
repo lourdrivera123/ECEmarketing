@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,6 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * Created by User PC on 12/19/2015.
@@ -44,8 +42,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
     LayoutInflater inflater;
     Context context;
 
-    ArrayList<HashMap<String, String>> objects;
-
     Helpers helpers;
     DbHelper dbHelper;
 
@@ -54,9 +50,8 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
     LinearLayout root;
     TextView productName, product_quantity, product_price, total, is_promo, promo_total;
 
-    double cart_total = 0;
     HashMap<String, String> map_all_products_promos;
-    ArrayList<HashMap<String, String>> specific_products_promos;
+    ArrayList<HashMap<String, String>> objects, specific_products_promos;
 
     public static double cart_total_amount;
 
@@ -70,7 +65,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         dbHelper = new DbHelper(context);
         map_all_products_promos = new HashMap();
         specific_products_promos = new ArrayList();
-        cart_total = 0;
         cart_total_amount = 0.0;
 
         for (int x = 0; x < ShoppingCartActivity.no_code_promos.size(); x++) {
@@ -107,7 +101,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         final double price = Double.parseDouble(objects.get(position).get("price"));
         int qty_per_packing = Integer.parseInt(objects.get(position).get("qty_per_packing"));
         final int available_qty = Integer.parseInt(objects.get(position).get("available_quantity"));
-        int cart_quantity = Integer.parseInt(objects.get(position).get("quantity"));
+        final int cart_quantity = Integer.parseInt(objects.get(position).get("quantity"));
         final double total_per_item = price * cart_quantity;
         final DecimalFormat df = new DecimalFormat("#.##");
         int final_qty_required = 0, final_percentage = 0;
@@ -150,25 +144,24 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                         promo_total.setVisibility(View.VISIBLE);
                         total.setPaintFlags(total.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         double percent_off = Double.parseDouble(String.valueOf(final_percentage / 100.0f));
-                        double discounted_amount = 0;
+                        double discounted_amount = 0, discounted_total = 0;
 
                         if (final_is_every.equals("1")) {
                             int discount_times = cart_quantity / final_qty_required;
                             int left = cart_quantity - (discount_times * final_qty_required);
-                            double total = 0;
 
                             for (int x = 0; x < discount_times; x++) {
                                 discounted_amount = discounted_amount + ((price * final_qty_required) * percent_off);
                                 double temp_total = (price * final_qty_required) - ((price * final_qty_required) * percent_off);
-                                total = total + temp_total;
+                                discounted_total = discounted_total + temp_total;
                             }
-                            total = total + (price * left);
-                            promo_total.setText("Php " + df.format(total));
+                            discounted_total = discounted_total + (price * left);
                         } else {
                             discounted_amount = total_per_item * percent_off;
-                            double discounted_total = total_per_item - discounted_amount;
-                            promo_total.setText("Php " + df.format(discounted_total));
+                            discounted_total = total_per_item - discounted_amount;
                         }
+
+                        promo_total.setText("Php " + df.format(discounted_total));
                         cart_total_amount = cart_total_amount - discounted_amount;
                     }
                 }
@@ -237,12 +230,11 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         prod_image.setImageDrawable(new RoundedAvatarDrawable(icon, shadowSize, shadowColor));
         prod_image.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
+        String plural = helpers.getPluralForm(objects.get(position).get("unit"), qty_per_packing);
+        product_price.setText("Php " + price + "/" + objects.get(position).get("packing") + " (" + qty_per_packing + " " + plural + ")");
         productName.setText(objects.get(position).get("name"));
         total.setText("Php " + total_per_item);
         product_quantity.setText(String.valueOf(cart_quantity));
-        String plural = helpers.getPluralForm(objects.get(position).get("unit"), qty_per_packing);
-        product_price.setText("Php " + price + "/" + objects.get(position).get("packing") + " (" + qty_per_packing + " " + plural + ")");
-        cart_total = cart_total + total_per_item;
 
         delete.setOnClickListener(this);
 
@@ -253,6 +245,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         final String final_is_every1 = final_is_every;
         final Object txt_promo_total = promo_total;
         final double percent_off = Double.parseDouble(String.valueOf(final_percentage1 / 100.0f));
+        final double decimal = (100 - final_percentage1) / 100.0f;
 
         up_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -267,8 +260,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                 if (lastQty <= available_qty) {
                     double total_per_item = price * lastQty;
                     txt.setText(lastQty + "");
-                    cart_total = cart_total + price;
-
 
                     if (final_qty_required1 > 0) {
                         if (lastQty >= final_qty_required1) {
@@ -281,23 +272,30 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                                 double temp_prod_discount = 0;
 
                                 if (final_percentage1 > 0) {
-                                    if (lastQty == final_qty_required1)
-                                        cart_total = cart_total - (total_per_item * percent_off);
-
                                     temp_prod_discount = total_per_item - (total_per_item * percent_off);
-                                } else if (!final_peso1.equals("0")) {
-                                    if (lastQty == final_qty_required1)
-                                        cart_total = cart_total - Double.parseDouble(final_peso1);
 
+                                    if (lastQty == final_qty_required1)
+                                        cart_total_amount = (cart_total_amount - (price * (lastQty - 1))) + temp_prod_discount;
+                                    else
+                                        cart_total_amount = cart_total_amount + (price * Double.parseDouble(df.format(decimal)));
+
+                                } else if (!final_peso1.equals("0")) {
                                     temp_prod_discount = total_per_item - Double.parseDouble(final_peso1);
+
+                                    if (lastQty == final_qty_required1)
+                                        cart_total_amount = cart_total_amount + (price - Double.parseDouble(final_peso1));
+                                    else
+                                        cart_total_amount = cart_total_amount + price;
                                 }
                                 txt_promo.setText("Php " + df.format(temp_prod_discount));
                             }
-                        }
-                    }
+                        } else
+                            cart_total_amount = cart_total_amount + price;
+                    } else
+                        cart_total_amount = cart_total_amount + price;
 
                     p_total.setText("Php " + total_per_item);
-                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total));
+                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
 
                     HashMap<String, String> temp = objects.get(position);
                     temp.put("quantity", String.valueOf(lastQty));
@@ -319,9 +317,9 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                 if (lastQty < 1) {
                     lastQty = 1;
-                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total));
+                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
                 } else {
-                    cart_total = cart_total - price;
+                    cart_total_amount = cart_total_amount - price;
 
                     if (final_qty_required1 > 0) {
                         if (lastQty < final_qty_required1) {
@@ -330,21 +328,24 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                             if (!final_peso1.equals("0")) {
                                 if (lastQty == (final_qty_required1 - 1))
-                                    cart_total = cart_total + Double.parseDouble(final_peso1);
+                                    cart_total_amount = cart_total_amount + Double.parseDouble(final_peso1);
                             } else if (final_percentage1 > 0) {
-                                if (lastQty == (final_qty_required1 - 1)) {
-                                    double prev_total = price * final_qty_required1;
-                                    cart_total = cart_total + (prev_total * percent_off);
-                                }
+                                if (lastQty == (final_qty_required1 - 1))
+                                    cart_total_amount = cart_total_amount + ((price * final_qty_required1) * percent_off);
                             }
                         } else {
-                            if (!final_peso1.equals("0")) {
-                                double discounted_temp_total = (price * lastQty) - Double.parseDouble(final_peso1);
-                                txt_promo.setText("Php " + discounted_temp_total);
+                            double discounted_temp_total = 0;
+
+                            if (!final_peso1.equals("0"))
+                                discounted_temp_total = (price * lastQty) - Double.parseDouble(final_peso1);
+                            else if (final_percentage1 > 0) {
+                                discounted_temp_total = (price * lastQty) - ((price * lastQty) * percent_off);
+                                cart_total_amount = cart_total_amount + (price * percent_off);
                             }
+                            txt_promo.setText("Php " + df.format(discounted_temp_total));
                         }
                     }
-                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total));
+                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
                 }
 
                 double total_per_item = price * lastQty;
