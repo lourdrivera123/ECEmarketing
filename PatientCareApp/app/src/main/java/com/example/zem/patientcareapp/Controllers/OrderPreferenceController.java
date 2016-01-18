@@ -24,18 +24,36 @@ public class OrderPreferenceController extends DbHelper {
             ORDER_PREFERENCES_RECIPIENT_ADDRESS = "recipient_address",
             ORDER_PREFERENCES_RECIPIENT_NUMBER = "recipient_contactNumber",
             ORDER_PREFERENCES_MODE_OF_DELIVERY = "mode_of_delivery",
-            ORDER_PREFERENCES_PAYMENT_METHOD = "payment_method";
+            ORDER_PREFERENCES_PAYMENT_METHOD = "payment_method",
+            ORDER_PREFERENCES_BRANCH_ID = "branch_id";
 
     public static final String CREATE_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT," +
-                    " %s TEXT, %s TEXT, %s TEXT )",
+                    "%s INTEGER, %s TEXT, %s TEXT, %s TEXT )",
             TBL_ORDER_PREFERENCES, AI_ID, ORDER_PREFERENCES_PATIENT_ID, ORDER_PREFERENCES_RECIPIENT_NAME, ORDER_PREFERENCES_RECIPIENT_ADDRESS, ORDER_PREFERENCES_RECIPIENT_NUMBER, ORDER_PREFERENCES_MODE_OF_DELIVERY,
-            ORDER_PREFERENCES_PAYMENT_METHOD, CREATED_AT,
+            ORDER_PREFERENCES_PAYMENT_METHOD, ORDER_PREFERENCES_BRANCH_ID, CREATED_AT,
             UPDATED_AT, DELETED_AT);
 
     public OrderPreferenceController(Context context) {
         super(context);
         dbhelper = new DbHelper(context);
         sql_db = dbhelper.getWritableDatabase();
+    }
+
+    public boolean saveSelectedBranch(OrderModel order_model){
+        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(ORDER_PREFERENCES_BRANCH_ID, order_model.getBranch_id());
+
+        long row = 0;
+
+        if (order_model.getAction().equals("insert")) {
+            row = sql_db.insert(TBL_ORDER_PREFERENCES, null, values);
+        } else if (order_model.getAction().equals("update")) {
+            row = sql_db.update(TBL_ORDER_PREFERENCES, values, ORDER_PREFERENCES_PATIENT_ID + " = " + order_model.getPatient_id(), null);
+        }
+        sql_db.close();
+        return row > 0;
     }
 
     public boolean savePreference(OrderModel order_model){
@@ -48,6 +66,7 @@ public class OrderPreferenceController extends DbHelper {
         values.put(ORDER_PREFERENCES_RECIPIENT_NUMBER, order_model.getRecipient_contactNumber());
         values.put(ORDER_PREFERENCES_MODE_OF_DELIVERY, order_model.getMode_of_delivery());
         values.put(ORDER_PREFERENCES_PAYMENT_METHOD, order_model.getPayment_method());
+        values.put(ORDER_PREFERENCES_BRANCH_ID, order_model.getBranch_id());
 
         long row = 0;
 
@@ -74,6 +93,7 @@ public class OrderPreferenceController extends DbHelper {
             order_model.setRecipient_contactNumber(cur.getString(cur.getColumnIndex(ORDER_PREFERENCES_RECIPIENT_NUMBER)));
             order_model.setMode_of_delivery(cur.getString(cur.getColumnIndex(ORDER_PREFERENCES_MODE_OF_DELIVERY)));
             order_model.setPayment_method(cur.getString(cur.getColumnIndex(ORDER_PREFERENCES_PAYMENT_METHOD)));
+            order_model.setBranch_id(cur.getInt(cur.getColumnIndex(ORDER_PREFERENCES_BRANCH_ID)));
         }
         cur.close();
         sql_db.close();

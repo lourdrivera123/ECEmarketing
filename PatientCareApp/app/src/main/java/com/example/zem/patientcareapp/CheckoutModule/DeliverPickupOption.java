@@ -100,8 +100,6 @@ public class DeliverPickupOption extends AppCompatActivity implements View.OnCli
     }
 
     public void go_on() {
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("order_model", order_model);
         intent.putExtra("order_model", order_model);
         startActivity(intent);
         this.finish();

@@ -48,6 +48,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
     ShoppingCartAdapter adapter;
     BasketController bc;
+    OrderModel intent_ordermodel;
 
     public ArrayList<HashMap<String, String>> items = new ArrayList();
     public static ArrayList<HashMap<String, String>> no_code_promos;
@@ -78,6 +79,10 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         dialog.show();
 
         proceed_to_checkout.setOnClickListener(this);
+
+        if (getIntent().getSerializableExtra("order_model") != null) {
+            intent_ordermodel = (OrderModel) getIntent().getSerializableExtra("order_model");
+        }
 
         ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, "get_nocode_promos", "promos", new RespondListener<JSONObject>() {
             @Override
@@ -205,8 +210,12 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                                     Intent summary_intent = new Intent(ShoppingCartActivity.this, PromosDiscounts.class);
                                     summary_intent.putExtra("order_model", order_model);
                                     startActivity(summary_intent);
-                                } else
+                                } else{
+                                    Intent deliver_p_intent = new Intent(ShoppingCartActivity.this, DeliverPickupOption.class);
+                                    deliver_p_intent.putExtra("order_model", intent_ordermodel);
                                     startActivity(new Intent(ShoppingCartActivity.this, DeliverPickupOption.class));
+                                }
+
                             }
                         }
                     } catch (Exception e) {

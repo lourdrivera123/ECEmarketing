@@ -19,6 +19,7 @@ import com.example.zem.patientcareapp.Controllers.BranchController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.BranchesAdapter;
@@ -86,6 +87,8 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
     Toolbar mytoolbar;
     ListView list_view_of_branches;
     BranchController bc;
+
+    OrderModel order_model;
     //basics
 
     @Override
@@ -95,6 +98,8 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
         dbHelper = new DbHelper(getBaseContext());
         bc = new BranchController(getBaseContext());
+
+        order_model = new OrderModel();
 
         list_view_of_branches = (ListView) findViewById(R.id.list_view_of_branches);
         mytoolbar = (Toolbar) findViewById(R.id.mytoolbar);
@@ -282,6 +287,11 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int branches_selected_id = Integer.parseInt(ece_branches.get(position).get("branches_id"));
+        order_model.setBranch_id(branches_selected_id);
+        Intent intent = new Intent(this, ProductsActivity.class);
+        intent.putExtra("order_model", order_model);
         startActivity(new Intent(this, ProductsActivity.class));
+        this.finish();
     }
 }
