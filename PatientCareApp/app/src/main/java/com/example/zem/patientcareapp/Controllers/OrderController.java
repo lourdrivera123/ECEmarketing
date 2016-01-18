@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
@@ -53,7 +54,7 @@ public class OrderController extends DbHelper {
         long rowID = 0;
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-
+        Log.d("obj", object + "");
         try {
             values.put(SERVER_ORDERS_ID, object.getInt("id"));
             values.put(PATIENT_ID, object.getInt(PATIENT_ID));
@@ -64,8 +65,8 @@ public class OrderController extends DbHelper {
             values.put(ORDERS_ECE_BRANCH, object.getInt(ORDERS_ECE_BRANCH));
             values.put(ORDERS_MODE_OF_DELIVERY, object.getString(ORDERS_MODE_OF_DELIVERY));
             values.put(ORDERS_DELIVERY_CHARGE, object.getDouble(ORDERS_DELIVERY_CHARGE));
-            values.put(ORDERS_PROMO_ID, object.getDouble(ORDERS_PROMO_ID));
-            values.put(ORDERS_PROMO_TYPE, object.getDouble(ORDERS_PROMO_TYPE));
+            values.put(ORDERS_PROMO_ID, object.getInt(ORDERS_PROMO_ID));
+            values.put(ORDERS_PROMO_TYPE, object.getString(ORDERS_PROMO_TYPE));
             values.put(ORDERS_STATUS, object.getString(ORDERS_STATUS));
             values.put(CREATED_AT, object.getString(CREATED_AT));
             values.put(UPDATED_AT, object.getString(UPDATED_AT));

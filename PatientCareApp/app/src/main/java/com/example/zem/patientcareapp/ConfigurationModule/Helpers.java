@@ -264,4 +264,8 @@ public class Helpers implements View.OnCreateContextMenuListener {
 
         });
     }
+
+    void compute_promo(){
+
+    }
 }

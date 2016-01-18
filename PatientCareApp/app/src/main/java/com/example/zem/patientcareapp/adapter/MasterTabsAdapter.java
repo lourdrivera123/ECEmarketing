@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.zem.patientcareapp.Fragment.PatientConsultationFragment;
-import com.example.zem.patientcareapp.Fragment.ReferralsFragment;
+import com.example.zem.patientcareapp.Fragment.ReferralFragment;
 import com.example.zem.patientcareapp.Fragment.TrialPrescriptionFragment;
 
 import java.util.ArrayList;

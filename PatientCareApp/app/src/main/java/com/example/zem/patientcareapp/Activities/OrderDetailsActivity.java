@@ -86,6 +86,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         double pdc = Double.parseDouble(order_information.get(0).get("points_discount"));
         double cdc = Double.parseDouble(order_information.get(0).get("coupon_discount"));
         double dc = Double.parseDouble(order_information.get(0).get("delivery_charge"));
+        promo_type = order_information.get(0).get("promo_type");
 
         points_discount_value.setText(""+pdc);
         coupon_discounts_value.setText(""+cdc);
@@ -125,6 +126,11 @@ public class OrderDetailsActivity extends AppCompatActivity {
             subtotal_block.setVisibility(View.VISIBLE);
             delivery_charge_block.setVisibility(View.VISIBLE);
             delivery_charge_value.setText(order_information.get(0).get("delivery_charge"));
+        }
+
+        if(promo_type.equals("free_delivery")){
+            delivery_charge_block.setVisibility(View.VISIBLE);
+            delivery_charge_value.setText("Free");
         }
 
         SummaryAdapter adapter = new SummaryAdapter(OrderDetailsActivity.this, items);

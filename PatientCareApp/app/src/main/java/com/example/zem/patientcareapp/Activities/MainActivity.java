@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
+                                                Log.d("orders error", error+"");
                                                 Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });

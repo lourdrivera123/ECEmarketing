@@ -29,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.MessageController;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
+import com.example.zem.patientcareapp.Customizations.NonScrollListView;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Activities.MessageActivity;
@@ -89,6 +90,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         listOfMessages.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listOfMessages.setMultiChoiceModeListener(this);
         listOfMessages.setOnItemLongClickListener(this);
+
+
 
         return v;
     }
@@ -163,7 +166,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 listOfMessages.setAdapter(adapter);
 
                 dialog.dismiss();
-                System.out.print("VolleyError <ReferralsFragment>: " + error);
+                System.out.print("VolleyError <ReferralFragment>: " + error);
                 Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });

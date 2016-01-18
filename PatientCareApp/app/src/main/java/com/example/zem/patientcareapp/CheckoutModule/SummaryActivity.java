@@ -69,7 +69,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
     LinearLayout root;
     Settings settings;
     double delivery_charge_val = 0;
-
+    double discounted_total = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +141,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                         }
 
                         double points_discount = order_model.getPoints_discount();
-                        double discounted_total = totalAmount - points_discount - coupon_discount;
+                        discounted_total = totalAmount - points_discount - coupon_discount;
 
                         /* discounts and total block*/
                         if (coupon_discount == 0.0)
@@ -216,8 +216,9 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     delivery_charge.setTextColor(getResources().getColor(R.color.ColorPrimary));
                     delivery_charge.setText("Free");
                 } else{
-                    delivery_charge.setText(""+settings.getDelivery_charge());
+                    delivery_charge.setText("₱ "+settings.getDelivery_charge());
                     delivery_charge_val = settings.getDelivery_charge();
+                    total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
                 }
             }
         }, new ErrorListener<VolleyError>() {
@@ -241,6 +242,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     paypal_intent.putExtra("order_model", order_model);
                     paypal_intent.putExtra("delivery_charge", String.valueOf(delivery_charge_val));
                     startActivity(paypal_intent);
+                    SummaryActivity.this.finish();
                 } else if (order_model.getPayment_method().equals("cash_on_delivery")) {
                     AlertDialog.Builder order_confirmation_dialog = new AlertDialog.Builder(SummaryActivity.this);
                     order_confirmation_dialog.setTitle("Confirmation");
@@ -293,6 +295,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                                                                     order_intent.putExtra("timestamp_ordered", timestamp_ordered);
                                                                     order_intent.putExtra("select", 5);
                                                                     startActivity(order_intent);
+                                                                    SummaryActivity.this.finish();
 
                                                                 } catch (JSONException e) {
                                                                     e.printStackTrace();
@@ -323,6 +326,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                                         });
                                     } catch (Exception e) {
                                         System.out.print("src: <SummaryAct> " + e.toString());
+                                        SummaryActivity.this.finish();
                                     }
                                 }
                             }, new ErrorListener<VolleyError>() {
@@ -338,14 +342,12 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+                            SummaryActivity.this.finish();
                         }
                     });
                     order_confirmation_dialog.show();
                 }
                 break;
         }
-
-        this.finish();
     }
 }
