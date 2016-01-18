@@ -117,8 +117,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
-                        double TotalAmount = 0.00;
-
                         try {
                             int success = response.getInt("success");
 
@@ -128,19 +126,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
                                 adapter = new ShoppingCartAdapter(ShoppingCartActivity.this, R.layout.item_shopping_cart, items);
                                 lisOfItems.setAdapter(adapter);
-
-                                for (HashMap<String, String> item : items) {
-                                    double price = Double.parseDouble(item.get("price"));
-                                    double quantity = Double.parseDouble(item.get("quantity"));
-                                    double total = price * quantity;
-                                    TotalAmount += total;
-                                }
                             }
                         } catch (Exception e) {
                             Toast.makeText(ShoppingCartActivity.this, e + "", Toast.LENGTH_SHORT).show();
                         }
 
-                        total_amount.setText("Php " + TotalAmount);
                         dialog.dismiss();
                     }
                 }, new ErrorListener<VolleyError>() {
