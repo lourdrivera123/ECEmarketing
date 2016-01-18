@@ -16,10 +16,14 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Activities.GoogleMapsActivity;
+import com.example.zem.patientcareapp.CheckoutModule.DeliverPickupOption;
+import com.example.zem.patientcareapp.CheckoutModule.PromosDiscounts;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
 import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.SwipeTabsModule.MasterTabActivity;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
@@ -39,7 +43,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
 
     DbHelper db;
     PatientConsultationController pcc;
-
+    OrderPreferenceController opc;
     static int patientID;
     Context context;
 
@@ -50,6 +54,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         context = getActivity();
         db = new DbHelper(context);
         pcc = new PatientConsultationController(context);
+        opc = new OrderPreferenceController(context);
 
         root = (ScrollView) rootView.findViewById(R.id.root);
         orderLayout = (LinearLayout) rootView.findViewById(R.id.orderLayout);
@@ -109,9 +114,13 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.orderLayout:
-//                Intent intent1 = new Intent(getActivity(), GoogleMapsActivity.class);
-//                startActivity(intent1);
-                startActivity(new Intent(getActivity(), ProductsActivity.class));
+                startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
+                OrderModel order_model = opc.getOrderPreference();
+                if (order_model.hasSelectedBranch()) {
+                        startActivity(new Intent(getActivity(), ProductsActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
+                }
                 break;
 
             case R.id.refillLayout:
