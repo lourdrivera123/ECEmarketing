@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +34,6 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-/**
- * Created by User PC on 12/19/2015.
- */
 
 public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickListener {
     LayoutInflater inflater;
@@ -174,7 +171,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                     if (cart_quantity >= final_qty_required) {
                         promo_total.setVisibility(View.VISIBLE);
                         total.setPaintFlags(total.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                        double discounted_amount = 0;
+                        double discounted_amount;
 
                         if (final_is_every.equals("1")) {
                             int discount_times = cart_quantity / final_qty_required;
@@ -261,16 +258,34 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                     double total_per_item = price * lastQty;
                     txt.setText(lastQty + "");
 
-                    if (final_qty_required1 > 0) {
-                        if (lastQty >= final_qty_required1) {
+                    if (final_qty_required1 > 0) { //IF NAAY PROMO NGA QTY_REQUIRED
+                        final int discount_times = lastQty / final_qty_required1;
+                        final int left = lastQty - (discount_times * final_qty_required1);
+
+                        if (lastQty >= final_qty_required1) { //IF ANG CART_QTY KAY MAS DGHAN SA QTY_REQUIRED
                             txt_promo.setVisibility(View.VISIBLE);
                             p_total.setPaintFlags(p_total.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                            double temp_prod_discount = 0;
 
-                            if (final_is_every1.equals("1")) {
+                            if (final_is_every1.equals("1")) { //IF IS_EVERY ANG PROMO
+                                double discounted_amount = 0;
 
-                            } else {
-                                double temp_prod_discount = 0;
+                                if (final_percentage1 > 0) {
 
+                                } else if (!final_peso1.equals("0")) {
+                                    for (int x = 0; x < discount_times; x++) {
+                                        double temp_total = (price * final_qty_required1) - Double.parseDouble(final_peso1);
+                                        temp_prod_discount = temp_prod_discount + temp_total;
+                                    }
+                                    temp_prod_discount = temp_prod_discount + (price * left);
+
+                                    if (left == 0)
+                                        discounted_amount = price - Double.parseDouble(final_peso1);
+                                    else
+                                        discounted_amount = price;
+                                }
+                                cart_total_amount = cart_total_amount + discounted_amount;
+                            } else { //IF WALA NAKA IS_EVERY - MEANING, OR MORE
                                 if (final_percentage1 > 0) {
                                     temp_prod_discount = total_per_item - (total_per_item * percent_off);
 
@@ -287,8 +302,9 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                                     else
                                         cart_total_amount = cart_total_amount + price;
                                 }
-                                txt_promo.setText("Php " + df.format(temp_prod_discount));
                             }
+
+                            txt_promo.setText("Php " + df.format(temp_prod_discount));
                         } else
                             cart_total_amount = cart_total_amount + price;
                     } else
@@ -321,8 +337,8 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                 } else {
                     cart_total_amount = cart_total_amount - price;
 
-                    if (final_qty_required1 > 0) {
-                        if (lastQty < final_qty_required1) {
+                    if (final_qty_required1 > 0) { // IF NAKA PROMO ANG PROJ UG NAAY QTY_REQUIRED
+                        if (lastQty < final_qty_required1) { //IF WALA PA KAABOT ANG CART_QTY SA QTY_REQUIRED
                             txt_promo.setVisibility(View.GONE);
                             p_total.setPaintFlags(p_total.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
 
@@ -333,14 +349,28 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                                 if (lastQty == (final_qty_required1 - 1))
                                     cart_total_amount = cart_total_amount + ((price * final_qty_required1) * percent_off);
                             }
-                        } else {
-                            double discounted_temp_total = 0;
+                        } else { //IF CART_QTY KAY EQUAL OR MAS DAKO SA QTY_REQUIRED
+                            double discounted_temp_total = price * lastQty;
+                            final int discount_times = lastQty / final_qty_required1;
+                            final int left = lastQty - (discount_times * final_qty_required1);
 
                             if (!final_peso1.equals("0"))
-                                discounted_temp_total = (price * lastQty) - Double.parseDouble(final_peso1);
+                                if (!final_is_every1.equals("0")) {
+                                    Log.d("cart_amount", cart_total_amount + "");
+
+                                    discounted_temp_total -= (Double.parseDouble(final_peso1) * discount_times);
+
+                                    if (left == (final_qty_required1 - 1))
+                                        cart_total_amount += Double.parseDouble(final_peso1);
+                                } else
+                                    discounted_temp_total = discounted_temp_total - Double.parseDouble(final_peso1);
                             else if (final_percentage1 > 0) {
-                                discounted_temp_total = (price * lastQty) - ((price * lastQty) * percent_off);
-                                cart_total_amount = cart_total_amount + (price * percent_off);
+                                if (!final_is_every1.equals("0")) {
+
+                                } else {
+                                    discounted_temp_total = discounted_temp_total - ((price * lastQty) * percent_off);
+                                    cart_total_amount = cart_total_amount + (price * percent_off);
+                                }
                             }
                             txt_promo.setText("Php " + df.format(discounted_temp_total));
                         }
