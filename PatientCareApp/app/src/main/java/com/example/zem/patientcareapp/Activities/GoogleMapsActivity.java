@@ -1,27 +1,39 @@
 package com.example.zem.patientcareapp.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.CheckoutModule.DeliverPickupOption;
+import com.example.zem.patientcareapp.CheckoutModule.PromosDiscounts;
 import com.example.zem.patientcareapp.Controllers.BranchController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
+import com.example.zem.patientcareapp.Customizations.GlowingText;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Interface.StringRespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.Network.StringRequests;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.adapter.BranchesAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -56,7 +68,7 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
-    private Location mLastLocation;
+//    private Location mLastLocation;
 
     // Google client to interact with Google API
     private GoogleApiClient mGoogleApiClient;
@@ -87,8 +99,10 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
     Toolbar mytoolbar;
     ListView list_view_of_branches;
     BranchController bc;
-
     OrderModel order_model;
+    OrderPreferenceController opc;
+    LinearLayout root;
+
     //basics
 
     @Override
@@ -98,11 +112,11 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
         dbHelper = new DbHelper(getBaseContext());
         bc = new BranchController(getBaseContext());
-
-        order_model = new OrderModel();
+        opc = new OrderPreferenceController(getBaseContext());
 
         list_view_of_branches = (ListView) findViewById(R.id.list_view_of_branches);
         mytoolbar = (Toolbar) findViewById(R.id.mytoolbar);
+        root = (LinearLayout) findViewById(R.id.root);
 
         setSupportActionBar(mytoolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -127,99 +141,111 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
 
     private void setMapMarker() {
 
-        mLastLocation = LocationServices.FusedLocationApi
-                .getLastLocation(mGoogleApiClient);
+//        mLastLocation = LocationServices.FusedLocationApi
+//                .getLastLocation(mGoogleApiClient);
 
-        if (mLastLocation != null) {
-            MY_GEOCODE = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+//        if (mLastLocation != null) {
+//            MY_GEOCODE = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 //            ECE_DAVAO = new LatLng(7.051969, 125.5947593);
-            ECE_DAVAO = new LatLng(7.163199, 125.577526);
-            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        ECE_DAVAO = new LatLng(7.163199, 125.577526);
+        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
-            // before loop:
-            final List<Marker> markers = new ArrayList<Marker>();
-            final List<Marker> same_region_markers = new ArrayList<Marker>();
+        // before loop:
+        final List<Marker> markers = new ArrayList<Marker>();
+        final List<Marker> same_region_markers = new ArrayList<Marker>();
 
 
-            GetRequest.getJSONobj(getBaseContext(), "google_distance_matrix&mylocation_lat=" + mLastLocation.getLatitude() + "&mylocation_long=" + mLastLocation.getLongitude(), "branches", "branches_id", new RespondListener<JSONObject>() {
-                @Override
-                public void getResult(JSONObject response) {
-                    Log.d("googlemapactivity", response + "");
+        GetRequest.getJSONobj(getBaseContext(), "google_distance_matrix&mylocation_lat=" + 7.163199 + "&mylocation_long=" + 125.577526, "branches", "branches_id", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                Log.d("googlemapactivity", response + "");
+//                    Log.d("mlastlocation", "bday "+mLastLocation+"");
 //                    ece_branches = dbHelper.getECEBranches();
-                    ece_branches = bc.getECEBranchesfromjson(response, "sorted_nearest_branches");
-                    ece_branches_in_the_same_region = bc.getECEBranchesfromjson(response, "branches_in_the_same_region");
+                ece_branches = bc.getECEBranchesfromjson(response, "sorted_nearest_branches");
+                ece_branches_in_the_same_region = bc.getECEBranchesfromjson(response, "branches_in_the_same_region");
 
-                    Bitmap marker_icon = BitmapFactory.decodeResource(getResources(), R.mipmap.map_marker_ece);
-                    Bitmap my_marker_icon = BitmapFactory.decodeResource(getResources(), R.mipmap.my_map_marker);
+                Bitmap marker_icon = BitmapFactory.decodeResource(getResources(), R.mipmap.map_marker_ece);
+                Bitmap my_marker_icon = BitmapFactory.decodeResource(getResources(), R.mipmap.my_map_marker);
 
-                    Marker my_location_marker = map.addMarker(new MarkerOptions().position(MY_GEOCODE).title("You are here !").icon(BitmapDescriptorFactory.fromBitmap(my_marker_icon)));
-                    same_region_markers.add(my_location_marker);
+                //change ECE_DAVAO constant to MY_GEOCODE if going production
+                Marker my_location_marker = map.addMarker(new MarkerOptions().position(ECE_DAVAO).title("You are here !").icon(BitmapDescriptorFactory.fromBitmap(my_marker_icon)));
+                same_region_markers.add(my_location_marker);
 
-                    Log.d("srm", same_region_markers.size() + "");
+                Log.d("srm", same_region_markers.size() + "");
 
-                    for (int i = 0; i < ece_branches.size(); i++) {
-                        double lat_from_row = Double.parseDouble(ece_branches.get(i).get("latitude"));
-                        double long_from_row = Double.parseDouble(ece_branches.get(i).get("longitude"));
-                        int same_region = Integer.parseInt(ece_branches.get(i).get("same_region"));
-                        LatLng latlong = new LatLng(lat_from_row, long_from_row);
-                        Marker marker = map.addMarker(new MarkerOptions().position(latlong).title(ece_branches.get(i).get("name")).snippet(ece_branches.get(i).get("full_address")).icon(BitmapDescriptorFactory.fromBitmap(marker_icon)));
+                for (int i = 0; i < ece_branches.size(); i++) {
+                    double lat_from_row = Double.parseDouble(ece_branches.get(i).get("latitude"));
+                    double long_from_row = Double.parseDouble(ece_branches.get(i).get("longitude"));
+                    int same_region = Integer.parseInt(ece_branches.get(i).get("same_region"));
+                    LatLng latlong = new LatLng(lat_from_row, long_from_row);
+                    Marker marker = map.addMarker(new MarkerOptions().position(latlong).title(ece_branches.get(i).get("name")).snippet(ece_branches.get(i).get("full_address")).icon(BitmapDescriptorFactory.fromBitmap(marker_icon)));
 
-                        if (same_region == 1)
-                            same_region_markers.add(marker);
-                        else
-                            markers.add(marker);
-                    }
-
-                    if (same_region_markers.size() == 0) {
-                        same_region_markers.add(markers.get(0));
-                    }
-
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    for (Marker marker : same_region_markers) {
-                        builder.include(marker.getPosition());
-                    }
-                    LatLngBounds bounds = builder.build();
-                    int padding = 100; // offset from edges of the map in pixels
-
-                    CameraUpdate cu1 = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                    map.moveCamera(cu1);
-                    map.animateCamera(cu1);
-
-                    branches_adapter = new BranchesAdapter(getBaseContext(), ece_branches);
-                    list_view_of_branches.setAdapter(branches_adapter);
+                    if (same_region == 1)
+                        same_region_markers.add(marker);
+                    else
+                        markers.add(marker);
                 }
-            }, new ErrorListener<VolleyError>() {
-                public void getError(VolleyError error) {
-                    Log.d("googlemapsAct0", error + "");
-                    ece_branches = bc.getECEBranches();
-                    branches_adapter = new BranchesAdapter(getBaseContext(), ece_branches);
-                    list_view_of_branches.setAdapter(branches_adapter);
+
+                if (same_region_markers.size() == 0) {
+                    same_region_markers.add(markers.get(0));
                 }
-            });
-        } else {
-            Toast.makeText(this, "Can't get ur location", Toast.LENGTH_LONG).show();
-        }
+
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker marker : same_region_markers) {
+                    builder.include(marker.getPosition());
+                }
+                LatLngBounds bounds = builder.build();
+                int padding = 100; // offset from edges of the map in pixels
+
+                CameraUpdate cu1 = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                map.moveCamera(cu1);
+                map.animateCamera(cu1);
+
+                branches_adapter = new BranchesAdapter(getBaseContext(), ece_branches);
+                list_view_of_branches.setAdapter(branches_adapter);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("googlemapsAct0", error + "");
+                ece_branches = bc.getECEBranches();
+                branches_adapter = new BranchesAdapter(getBaseContext(), ece_branches);
+                list_view_of_branches.setAdapter(branches_adapter);
+            }
+        });
+//        } else {
+//            Toast.makeText(GoogleMapsActivity.this, "cant get location", Toast.LENGTH_SHORT).show();
+//            root.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if(mLastLocation == null)
+//                        turn_on_location_dialog();
+//                }
+//            }, 3000);
+//        }
     }
 
-    /**
-     * Method to display the location on UI
-     */
-    private void displayLocation() {
+    public void turn_on_location_dialog() {
+        AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(GoogleMapsActivity.this);
+        confirmationDialog.setTitle("Warning!");
+        confirmationDialog.setMessage("Try to turn on Location Services, or set it to High Accuracy.");
+        confirmationDialog.setCancelable(false);
 
-        mLastLocation = LocationServices.FusedLocationApi
-                .getLastLocation(mGoogleApiClient);
+        confirmationDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                GoogleMapsActivity.this.finish();
+            }
+        });
 
-        if (mLastLocation != null) {
-            double latitude = mLastLocation.getLatitude();
-            double longitude = mLastLocation.getLongitude();
-
-            Toast.makeText(this, "Lat = " + latitude + ", Long = " + longitude, Toast.LENGTH_LONG).show();
-
-        } else {
-
-            Toast.makeText(this, "Can't get your location", Toast.LENGTH_LONG).show();
-        }
+        confirmationDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+        });
+        confirmationDialog.show();
     }
+
 
     /**
      * Creating google api client object
@@ -265,12 +291,13 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
         super.onResume();
 
         checkPlayServices();
+        setMapMarker();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         // Once connected with google api, get the location
-        displayLocation();
+//        displayLocation();
         setMapMarker();
     }
 
@@ -288,10 +315,73 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         int branches_selected_id = Integer.parseInt(ece_branches.get(position).get("branches_id"));
-        order_model.setBranch_id(branches_selected_id);
-        Intent intent = new Intent(this, ProductsActivity.class);
-        intent.putExtra("order_model", order_model);
-        startActivity(new Intent(this, ProductsActivity.class));
-        this.finish();
+
+        order_model = opc.getOrderPreference();
+
+        if (order_model.hasSelectedBranch()) {
+            if (order_model.getBranch_id() != branches_selected_id) {
+                order_model.setAction("update");
+                order_model.setBranch_id(branches_selected_id);
+                showconfirmation();
+            } else {
+                redirect();
+            }
+        } else {
+            order_model.setAction("insert");
+            order_model.setBranch_id(branches_selected_id);
+            save();
+        }
+    }
+
+    void showconfirmation() {
+        final AlertDialog.Builder confirmationDialog1 = new AlertDialog.Builder(GoogleMapsActivity.this);
+        confirmationDialog1.setTitle("Warning!");
+        confirmationDialog1.setMessage("If you select another branch, all your products in the cart will be removed.\nDo you wish to continue?");
+        confirmationDialog1.setCancelable(false);
+
+        confirmationDialog1.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+//                GoogleMapsActivity.this.finish();
+            }
+        });
+
+        confirmationDialog1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                flushBasketOnline();
+            }
+        });
+        confirmationDialog1.show();
+    }
+
+    void redirect(){
+            startActivity(new Intent(this, ProductsActivity.class));
+            this.finish();
+    }
+
+    void save(){
+        if (opc.saveSelectedBranch(order_model)) {
+            redirect();
+        } else {
+            Snackbar.make(root, "Cannot Save Branch", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    void flushBasketOnline(){
+        StringRequests.getString(GoogleMapsActivity.this, "db/get.php?q=empty_basket_to_change_branch&patient_id=" + SidebarActivity.getUserID(), new StringRespondListener<String>() {
+            @Override
+            public void getResult(String response) {
+                if(response.equals("deleted"))
+                    save();
+                else
+                    Snackbar.make(root, "Unable to proceed, please try again", Snackbar.LENGTH_SHORT);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("error flashing basket", error + "");
+            }
+        });
     }
 }

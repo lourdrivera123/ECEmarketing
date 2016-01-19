@@ -14,14 +14,14 @@ public class OrderModel implements Serializable {
     public OrderModel(){}
 
     public boolean isValid(){
-        if(this.getBranch_id() != 0 && this.getRecipient_name() != "" && this.getRecipient_address() != "" && this.getRecipient_contactNumber() != "" && this.getMode_of_delivery() != "" && this.getPayment_method() != "" )
+        if(!this.getRecipient_name().equals("") && !this.getRecipient_address().equals("") && !this.getRecipient_contactNumber().equals("") && !this.getMode_of_delivery().equals("") && !this.getPayment_method().equals(""))
             return true;
 
         return false;
     }
 
     public boolean hasSelectedBranch(){
-        if(this.getBranch_id() != 0)
+        if(this.getBranch_id() > 0)
            return true;
 
         return false;

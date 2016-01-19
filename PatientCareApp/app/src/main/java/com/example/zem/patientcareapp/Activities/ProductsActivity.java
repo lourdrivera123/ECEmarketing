@@ -29,10 +29,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.Controllers.BasketController;
+import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
@@ -53,7 +55,7 @@ import java.util.Map;
  * Created by User PC on 11/20/2015.
  */
 
-public class ProductsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class ProductsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemSelectedListener, MenuItem.OnMenuItemClickListener {
     ListView listOfProducts;
     Toolbar myToolBar;
     LinearLayout results_layout, root;
@@ -70,6 +72,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     static ProductController pc;
     BasketController bc;
     static OverlayController oc;
+    OrderPreferenceController opc;
 
     Intent get_intent;
 
@@ -81,6 +84,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
     public static int is_finish;
     int promo_id = 0;
+    OrderModel order_model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,12 +109,14 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         oc = new OverlayController(this);
         queue = Volley.newRequestQueue(this);
         helpers = new Helpers();
+        opc = new OrderPreferenceController(this);
 
         basket_items = new ArrayList();
         map = new HashMap();
         products_items = new ArrayList();
         temp_products_items = new ArrayList();
         no_code_promos = new ArrayList();
+        order_model = opc.getOrderPreference();
 
         showOverLay(this);
         getProductCategories();
@@ -118,6 +124,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
         get_intent = getIntent();
         promo_id = get_intent.getIntExtra("promo_id", 0);
+
 
         ListOfPatientsRequest.getJSONobj(this, "get_nocode_promos", "promos", new RespondListener<JSONObject>() {
             @Override
@@ -217,6 +224,9 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         number_of_notif = (TextView) badgeLayout.findViewById(R.id.number_of_notif);
         go_to_cart = (ImageButton) badgeLayout.findViewById(R.id.go_to_cart);
         go_to_cart.setOnClickListener(this);
+
+        MenuItem change_branch = menu.findItem(R.id.change_branch);
+        change_branch.setOnMenuItemClickListener(this);
 
         if (number_of_notif.getVisibility() == View.VISIBLE)
             number_of_notif.setText("12");
@@ -411,7 +421,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         progress1.setCancelable(false);
         progress1.show();
 
-        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products", "products", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products&branch_id="+order_model.getBranch_id(), "products", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
                         try {
@@ -539,5 +549,12 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                 Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        startActivity(new Intent(getBaseContext(), GoogleMapsActivity.class));
+//        ProductsActivity.this.finish();
+        return false;
     }
 }

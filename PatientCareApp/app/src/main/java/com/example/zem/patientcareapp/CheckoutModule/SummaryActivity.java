@@ -79,7 +79,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         get_intent = getIntent();
 
         order_model = (OrderModel) get_intent.getSerializableExtra("order_model");
-
+        Log.d("summary_activity_om", order_model.getMode_of_delivery());
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         change_id = (Button) findViewById(R.id.change_id);
         order_summary = (NonScrollListView) findViewById(R.id.order_summary);

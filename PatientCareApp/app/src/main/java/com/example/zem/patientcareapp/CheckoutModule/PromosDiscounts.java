@@ -73,6 +73,8 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
 
         promos_map = new HashMap();
         msg = "";
+        order_model = (OrderModel) getIntent().getSerializableExtra("order_model");
+
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         redeem_points = (Button) findViewById(R.id.redeem_points);
@@ -181,7 +183,7 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
                                     message_after_promo_input.setVisibility(View.VISIBLE);
                                 }
                             } catch (Exception e) {
-                                Snackbar.make(root, e + "", Snackbar.LENGTH_INDEFINITE).show();
+//                                Snackbar.make(root, e + "", Snackbar.LENGTH_INDEFINITE).show();
                                 Log.d("err", e + "");
                             }
                         }
@@ -201,7 +203,7 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
         pc = new PatientController(this);
         patient = pc.getloginPatient(SidebarActivity.getUname());
 
-        StringRequests.getString(PromosDiscounts.this, "db/get.php?q=get_patient_points&patient_id=" + patient.getServerID(), new StringRespondListener<String>() {
+        StringRequests.getString(PromosDiscounts.this, "db/get.php?q=get_patient_points&patient_id=" + SidebarActivity.getUserID(), new StringRespondListener<String>() {
             @Override
             public void getResult(String response) {
                 patient.setPoints(Double.parseDouble(response));
@@ -227,10 +229,6 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
                 Log.d("error for sumthing", error + "");
             }
         });
-
-        Intent get_intent = getIntent();
-
-        order_model = (OrderModel) get_intent.getSerializableExtra("order_model");
 
         next_btn.setOnClickListener(this);
         redeem_points.setOnClickListener(this);
