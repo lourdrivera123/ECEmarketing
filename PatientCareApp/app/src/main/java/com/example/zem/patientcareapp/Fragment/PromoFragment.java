@@ -59,7 +59,7 @@ public class PromoFragment extends Fragment implements TextWatcher {
         pdialog.setMessage("Please wait...");
         pdialog.show();
 
-        ListOfPatientsRequest.getJSONobj(getActivity(), "get_promos", "promos", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getActivity(), "get_nocode_promos", "promos", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
@@ -74,12 +74,13 @@ public class PromoFragment extends Fragment implements TextWatcher {
                             JSONObject obj = json_mysql.getJSONObject(x);
                             HashMap<String, String> map = new HashMap();
 
-                            map.put("promo_id", obj.getString("id"));
+                            map.put("promo_id", obj.getString("pr_promo_id"));
                             map.put("promo_title", obj.getString("long_title"));
                             map.put("applicability", obj.getString("product_applicability"));
-                            map.put("offer_type", obj.getString("offer_type"));
-                            map.put("coupon_code", obj.getString("generic_redemption_code"));
-                            map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
+                            map.put("pt_minimum_purchase", obj.getString("minimum_purchase_amount"));
+                            map.put("pt_free_delivery", obj.getString("pr_free_delivery"));
+                            map.put("pt_percentage", obj.getString("pr_percentage"));
+                            map.put("pt_peso", obj.getString("pr_peso"));
                             map.put("start_date", obj.getString("start_date"));
                             map.put("end_date", obj.getString("end_date"));
                             map_promos.add(map);
@@ -123,7 +124,7 @@ public class PromoFragment extends Fragment implements TextWatcher {
 
     private class ListViewAdapter extends ArrayAdapter {
         LayoutInflater inflater;
-        TextView title, applicability, duration, view_products;
+        TextView title, applicability, duration, view_products, promos_per_transaction;
 
         public ListViewAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
             super(context, resource, objects);
@@ -138,22 +139,45 @@ public class PromoFragment extends Fragment implements TextWatcher {
             applicability = (TextView) view.findViewById(R.id.applicability);
             duration = (TextView) view.findViewById(R.id.duration);
             view_products = (TextView) view.findViewById(R.id.view_products);
+            promos_per_transaction = (TextView) view.findViewById(R.id.promos_per_transaction);
 
-            if (map_promos.get(position).get("offer_type").equals("NO_CODE")) {
-                if (map_promos.get(position).get("applicability").equals("SPECIFIC_PRODUCTS"))
-                    applicability.setText("on Selected products");
-                else
-                    applicability.setText("on All products");
+            if (map_promos.get(position).get("applicability").equals("SPECIFIC_PRODUCTS"))
+                applicability.setText("on Selected products");
+            else {
+                applicability.setText("during Checkout");
+                double pt_min_purchase = Double.parseDouble(map_promos.get(position).get("pt_minimum_purchase"));
 
-                int start_date_month = Integer.parseInt(map_promos.get(position).get("start_date").substring(5, 7)) - 1;
-                String start_date = months[start_date_month] + " " + map_promos.get(position).get("start_date").substring(8);
+                if (pt_min_purchase > 0) {
+                    promos_per_transaction.setVisibility(View.VISIBLE);
+                    String pt_free_delivery = map_promos.get(position).get("pt_free_delivery");
+                    int pt_percentage = Integer.parseInt(map_promos.get(position).get("pt_percentage"));
+                    double pt_peso = Double.parseDouble(map_promos.get(position).get("pt_peso"));
+                    String final_promo = "";
 
-                int end_date_month = Integer.parseInt(map_promos.get(position).get("end_date").substring(5, 7)) - 1;
-                String end_date = months[end_date_month] + " " + map_promos.get(position).get("end_date").substring(8);
+                    if (pt_percentage > 0)
+                        final_promo = "*" + pt_percentage + "% off on your entire purchase for a minimum order amount of Php " + pt_min_purchase;
+                    else if (pt_peso > 0)
+                        final_promo = "*Php " + pt_peso + " off on your entire purchase for a minimum order amount of Php " + pt_min_purchase;
 
-                title.setText(map_promos.get(position).get("promo_title"));
-                duration.setText(start_date + " - " + end_date);
+                    if (final_promo.equals("")) {
+                        if (pt_free_delivery.equals("1"))
+                            final_promo = "*FREE DELIVERY for a minimum order amount of Php " + pt_min_purchase;
+                    } else {
+                        if (pt_free_delivery.equals("1"))
+                            final_promo = new StringBuilder(final_promo).insert(1, "FREE DELIVERY, ").toString();
+                    }
+                    promos_per_transaction.setText(final_promo);
+                }
             }
+
+            int start_date_month = Integer.parseInt(map_promos.get(position).get("start_date").substring(5, 7)) - 1;
+            String start_date = months[start_date_month] + " " + map_promos.get(position).get("start_date").substring(8);
+
+            int end_date_month = Integer.parseInt(map_promos.get(position).get("end_date").substring(5, 7)) - 1;
+            String end_date = months[end_date_month] + " " + map_promos.get(position).get("end_date").substring(8);
+
+            title.setText(map_promos.get(position).get("promo_title"));
+            duration.setText(start_date + " - " + end_date);
 
             view_products.setOnClickListener(new View.OnClickListener() {
                 @Override

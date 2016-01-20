@@ -38,14 +38,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RESULTS" />
+                android:text="RESULTS"
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/noOfResults"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="22" />
+                android:text="22"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <ListView

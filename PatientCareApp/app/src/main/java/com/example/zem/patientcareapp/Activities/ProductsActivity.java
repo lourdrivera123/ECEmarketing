@@ -77,7 +77,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     Intent get_intent;
 
     public static ArrayList<Map<String, String>> temp_products_items, products_items, basket_items;
-    public static ArrayList<HashMap<String, String>> no_code_promos;
+    public static ArrayList<HashMap<String, String>> specific_no_code;
     public static HashMap<String, String> map;
     ArrayList<HashMap<Integer, HashMap<String, String>>> searchProducts = new ArrayList();
     ArrayList<String> categories = new ArrayList();
@@ -115,7 +115,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         map = new HashMap();
         products_items = new ArrayList();
         temp_products_items = new ArrayList();
-        no_code_promos = new ArrayList();
+        specific_no_code = new ArrayList();
         order_model = opc.getOrderPreference();
 
         showOverLay(this);
@@ -139,21 +139,17 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                             JSONObject obj = json_mysql.getJSONObject(x);
                             HashMap<String, String> map = new HashMap();
 
-                            map.put("promo_id", obj.getString("pr_promo_id"));
-                            map.put("product_applicability", obj.getString("product_applicability"));
-                            map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
-                            map.put("pr_qty_required", obj.getString("pr_qty_required"));
-                            map.put("is_every", obj.getString("is_every"));
-                            map.put("pr_free_delivery", obj.getString("pr_free_delivery"));
-                            map.put("pr_percentage", obj.getString("pr_percentage"));
-                            map.put("pr_peso", obj.getString("pr_peso"));
-                            map.put("product_id", obj.getString("product_id"));
-                            map.put("quantity_required", obj.getString("quantity_required"));
-                            map.put("is_free_delivery", obj.getString("is_free_delivery"));
-                            map.put("has_free_gifts", obj.getString("has_free_gifts"));
-                            map.put("percentage_discount", obj.getString("percentage_discount"));
-                            map.put("peso_discount", obj.getString("peso_discount"));
-                            no_code_promos.add(map);
+                            if (obj.getString("product_applicability").equals("SPECIFIC_PRODUCTS")) {
+                                map.put("promo_id", obj.getString("pr_promo_id"));
+                                map.put("minimum_purchase", obj.getString("minimum_purchase"));
+                                map.put("quantity_required", obj.getString("quantity_required"));
+                                map.put("is_every", obj.getString("is_every"));
+                                map.put("product_id", obj.getString("product_id"));
+                                map.put("has_free_gifts", obj.getString("has_free_gifts"));
+                                map.put("percentage_discount", obj.getString("percentage_discount"));
+                                map.put("peso_discount", obj.getString("peso_discount"));
+                                specific_no_code.add(map);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -421,7 +417,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         progress1.setCancelable(false);
         progress1.show();
 
-        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products&branch_id="+order_model.getBranch_id(), "products", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products&branch_id=" + order_model.getBranch_id(), "products", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
                         try {
