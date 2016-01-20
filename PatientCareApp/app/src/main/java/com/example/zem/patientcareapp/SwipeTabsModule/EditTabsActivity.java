@@ -1,5 +1,6 @@
 package com.example.zem.patientcareapp.SwipeTabsModule;
 
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,7 +15,9 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -119,9 +122,12 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
     private TextView txtPercentage;
 
     ProgressBar progressBar;
-    public static ProgressDialog public_progress;
+//    public static ProgressDialog public_progress;
     Dialog upload_dialog;
     public static Intent intent;
+    public static AppCompatDialog pDialog;
+    AlertDialog.Builder builder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,9 +151,7 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
         queue = VolleySingleton.getInstance().getRequestQueue();
         url = Constants.POST_URL;
 
-        public_progress = new ProgressDialog(this);
-        public_progress.setMessage("Please wait...");
-        public_progress.show();
+        showBeautifulDialog();
 
         // Initilization
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -166,6 +170,18 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
             patient.setReferred_byUser(intent.getStringExtra("referred_by_User"));
             patient.setReferred_byDoctor(intent.getStringExtra("referred_by_Doctor"));
         }
+    }
+
+    void showBeautifulDialog() {
+        builder = new AlertDialog.Builder(EditTabsActivity.this);
+        builder.setView(R.layout.progress_stuffing);
+        builder.setCancelable(false);
+        pDialog = builder.create();
+        pDialog.show();
+    }
+
+    void letDialogSleep() {
+        pDialog.dismiss();
     }
 
     @Override
@@ -357,7 +373,7 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
 
         if (s_email.equals(""))
             email.setError("Field required");
-        else if(!isEmailValid(s_email))
+        else if (!isEmailValid(s_email))
             email.setError("Please input email");
         else {
             patient.setEmail(s_email);
@@ -380,26 +396,39 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
         username = et_username.getText().toString();
 
         count = 0;
-        limit = 2;
+        limit = 3;
 
         if (signup_int > 0) {
             EditText password = (EditText) findViewById(R.id.password);
+            EditText confirm_password = (EditText) findViewById(R.id.confirm_password);
 
             if (password.getText().toString().equals("")) {
                 password.setError("Field is required");
-            } else if(!validatechars(password.getText().toString())){
+            } else if (!validatechars(password.getText().toString())) {
                 password.setError("Minimum of 6 characters");
             } else {
-                pass = helpers.md5(password.getText().toString());
+                count++;
+            }
+
+            if (confirm_password.getText().toString().equals("")) {
+                confirm_password.setError("Field is required");
+            } else if (!validatechars(confirm_password.getText().toString())) {
+                confirm_password.setError("Minimum of 6 characters");
+            } else if (!confirm_password.getText().toString().equals(password.getText().toString())) {
+                Log.d("sad", confirm_password.getText().toString() + " , " + password.getText().toString());
+                confirm_password.setError("Password does not match");
+            } else {
+                pass = helpers.md5(confirm_password.getText().toString());
                 patient.setPassword(pass);
                 count++;
             }
+
         } else
-            count++;
+            count += 2;
 
         if (username.equals("")) {
             et_username.setError("Field is required");
-        } else if(!validatechars(username)){
+        } else if (!validatechars(username)) {
             et_username.setError("Minimum of 6 characters");
         } else {
             patient.setUsername(username);
@@ -410,30 +439,29 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
             this.hasError3 = false;
     }
 
-    public boolean validatechars(String str){
+    public boolean validatechars(String str) {
         Log.d("str_nums", String.valueOf(str.length()));
-        if(str.length() >= 6)
+        if (str.length() >= 6)
             return true;
 
         return false;
     }
 
-    public boolean isEmailValid(String email)
-    {
+    public boolean isEmailValid(String email) {
         String regExpn =
                 "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
-                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
-                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
-                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+                        + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                        + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                        + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
 
         CharSequence inputStr = email;
 
-        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile(regExpn, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(inputStr);
 
-        if(matcher.matches())
+        if (matcher.matches())
             return true;
         else
             return false;
@@ -502,13 +530,9 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
             validateAtPosition2();
 
         } else if (position == 2) {
-            Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
+            final Button choose_image_btn = (Button) findViewById(R.id.choose_image_btn);
             image_holder = (ImageView) findViewById(R.id.image_holder);
             TextView changePassword = (TextView) findViewById(R.id.changePassword);
-
-            final ProgressDialog pDialog = new ProgressDialog(EditTabsActivity.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
 
             if (signup_int > 0)
                 changePassword.setVisibility(View.GONE);
@@ -530,7 +554,6 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
             btn_submit.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     validateUserAccountInfo();
-
                     if (hasError) {
                         viewPager.setCurrentItem(0);
                     } else if (hasError2) {
@@ -547,7 +570,7 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
                                 patient.setRegion(ContactsFragment.address_region.getSelectedItem().toString());
 
                                 if (edit_int > 0) {
-                                    pDialog.show();
+                                    showBeautifulDialog();
                                     editUser = pc.getloginPatient(SidebarActivity.getUname());
 
                                     patient.setServerID(editUser.getServerID());
@@ -577,16 +600,16 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
                                                     Snackbar.make(root, "Something went wrong", Snackbar.LENGTH_SHORT).show();
                                             } else
                                                 Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
-                                            pDialog.dismiss();
+                                            letDialogSleep();
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         public void getError(VolleyError error) {
-                                            pDialog.dismiss();
+                                            letDialogSleep();
                                             Snackbar.make(root, "Networ error", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });
                                 } else {
-                                    pDialog.show();
+                                    showBeautifulDialog();
 
                                     final HashMap<String, String> params = setParams("register");
 
@@ -653,18 +676,18 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
                                                         Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                                                         Log.d("EditTabs2", e + "");
                                                     }
-                                                    pDialog.dismiss();
+                                                    letDialogSleep();
                                                 }
                                             }, new ErrorListener<VolleyError>() {
                                                 public void getError(VolleyError error) {
-                                                    pDialog.dismiss();
+                                                    letDialogSleep();
                                                     Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                                 }
                                             });
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         public void getError(VolleyError error) {
-                                            pDialog.dismiss();
+                                            letDialogSleep();
                                             Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });

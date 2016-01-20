@@ -62,13 +62,13 @@ public class PatientProfileFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.edit_profile_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.update_options_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.edit_profile) {
+        if (item.getItemId() == R.id.edit) {
             int edit = 7;
 
             Intent intent = new Intent(getActivity(), EditTabsActivity.class);

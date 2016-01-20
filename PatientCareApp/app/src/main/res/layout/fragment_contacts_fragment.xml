@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/root"
-    android:padding="@dimen/d10">
+    android:background="@color/toolbar"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,100 +16,137 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Address Information" />
+                android:background="@android:drawable/dialog_holo_light_frame"
+                android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dip"
-                android:layout_marginBottom="15dp"
-                android:background="@color/partner_toolbar" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="14dp"
+                    android:text="Address Information"
+                    android:textColor="#2b2b2b"
+                    android:textSize="17sp" />
 
-            <Spinner
-                android:id="@+id/address_region"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:background="@color/partner_toolbar" />
 
-            <Spinner
-                android:id="@+id/address_province"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
-            <Spinner
-                android:id="@+id/address_city_municipality"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp" />
+                    <Spinner
+                        android:id="@+id/address_region"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="5dp" />
 
-            <Spinner
-                android:id="@+id/address_barangay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/d10"
-                android:layout_marginLeft="5dp" />
+                    <Spinner
+                        android:id="@+id/address_province"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="5dp" />
 
-            <EditText
-                android:id="@+id/optional_address_line"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:hint="Unit/Building/Lot/Block/Phase/House #"
-                android:paddingTop="5dp"
-                android:textSize="14sp" />
+                    <Spinner
+                        android:id="@+id/address_city_municipality"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="5dp" />
 
-            <EditText
-                android:id="@+id/address_street"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:hint="Street"
-                android:paddingTop="5dp"
-                android:textSize="14sp" />
+                    <Spinner
+                        android:id="@+id/address_barangay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/d10"
+                        android:layout_marginLeft="5dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Contact Information" />
+                    <EditText
+                        android:id="@+id/optional_address_line"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:hint="Unit/Building/Lot/Block/Phase/House #"
+                        android:paddingTop="5dp"
+                        android:textSize="14sp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dip"
-                android:layout_marginBottom="15dp"
-                android:background="@color/partner_toolbar" />
+                    <EditText
+                        android:id="@+id/address_street"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:hint="Street"
+                        android:paddingTop="5dp"
+                        android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
 
-            <EditText
-                android:id="@+id/tel_no"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:hint="Telephone Number"
-                android:textSize="15sp" />
+                android:background="@android:drawable/dialog_holo_light_frame"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/cell_no"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:hint="Cellphone Number"
-                android:inputType="number"
-                android:textSize="15sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="14dp"
+                    android:text="Contact Information"
+                    android:textColor="#2b2b2b"
+                    android:textSize="17sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:background="@color/partner_toolbar" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <EditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:textSize="15sp" />
+
+                    <EditText
+                        android:id="@+id/tel_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Telephone Number"
+                        android:textSize="15sp" />
+
+                    <EditText
+                        android:id="@+id/cell_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Cellphone Number"
+                        android:inputType="number"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
