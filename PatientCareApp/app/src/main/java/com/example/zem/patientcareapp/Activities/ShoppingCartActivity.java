@@ -45,6 +45,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     ShoppingCartAdapter adapter;
     BasketController bc;
     OrderModel intent_ordermodel;
+    OrderModel order_model;
 
     public ArrayList<HashMap<String, String>> items = new ArrayList();
     public static ArrayList<HashMap<String, String>> no_code_promos;
@@ -61,8 +62,9 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         proceed_to_checkout = (TextView) findViewById(R.id.proceed_to_checkout);
 
         bc = new BasketController();
-        opc = new OrderPreferenceController(this);
+        opc = new OrderPreferenceController(getBaseContext());
         no_code_promos = new ArrayList();
+        order_model = opc.getOrderPreference();
 
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -75,10 +77,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         dialog.show();
 
         proceed_to_checkout.setOnClickListener(this);
-
-        if (getIntent().getSerializableExtra("order_model") != null) {
-            intent_ordermodel = (OrderModel) getIntent().getSerializableExtra("order_model");
-        }
 
         ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, "get_nocode_promos", "promos", new RespondListener<JSONObject>() {
             @Override
@@ -113,7 +111,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                     Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                 }
 
-                String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID();
+                String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID() + "&branch_id=" + order_model.getBranch_id();
                 ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
@@ -200,21 +198,21 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                         if (success == 1) {
 
                             if (check == 1) {
-                                OrderModel order_model = opc.getOrderPreference();
                                 if (order_model.isValid()) {
-                                    Intent summary_intent = new Intent(ShoppingCartActivity.this, PromosDiscounts.class);
-                                    summary_intent.putExtra("order_model", order_model);
-                                    startActivity(summary_intent);
+                                    Intent intent = new Intent(ShoppingCartActivity.this, PromosDiscounts.class);
+                                    intent.putExtra("order_model", order_model);
+                                    startActivity(intent);
+                                    ShoppingCartActivity.this.finish();
                                 } else {
-                                    Intent deliver_p_intent = new Intent(ShoppingCartActivity.this, DeliverPickupOption.class);
-                                    deliver_p_intent.putExtra("order_model", intent_ordermodel);
-                                    startActivity(new Intent(ShoppingCartActivity.this, DeliverPickupOption.class));
+                                    Intent intent = new Intent(ShoppingCartActivity.this, DeliverPickupOption.class);
+                                    intent.putExtra("order_model", order_model);
+                                    startActivity(intent);
+                                    ShoppingCartActivity.this.finish();
                                 }
-
                             }
                         }
                     } catch (Exception e) {
-                        Toast.makeText(ShoppingCartActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(root, "cart_error: " + e, Snackbar.LENGTH_SHORT).show();
                     }
                 }
             }, new ErrorListener<VolleyError>() {
@@ -223,7 +221,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 }
             });
         } catch (JSONException e) {
-            Toast.makeText(ShoppingCartActivity.this, e + "", Toast.LENGTH_SHORT).show();
+            Snackbar.make(root, "cart_json_error: " + e, Snackbar.LENGTH_SHORT).show();
         }
     }
 }

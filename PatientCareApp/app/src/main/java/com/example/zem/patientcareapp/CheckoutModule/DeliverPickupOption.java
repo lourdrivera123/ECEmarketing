@@ -41,13 +41,16 @@ public class DeliverPickupOption extends AppCompatActivity implements View.OnCli
         blood_seeker = (SeekBar) findViewById(R.id.blood_seeker);
         stepping_stone = (TextView) findViewById(R.id.stepping_stone);
 
-        if (getIntent().getSerializableExtra("order_model") != null) {
             order_model = (OrderModel) getIntent().getSerializableExtra("order_model");
             order_model.setAction("update");
-        } else {
-            order_model = new OrderModel();
-            order_model.setAction("insert");
-        }
+
+//        if (getIntent().getSerializableExtra("order_model") != null) {
+//            order_model = (OrderModel) getIntent().getSerializableExtra("order_model");
+//            order_model.setAction("update");
+//        } else {
+//            order_model = new OrderModel();
+//            order_model.setAction("insert");
+//        }
         order_model.setPatient_id(SidebarActivity.getUserID());
 
 

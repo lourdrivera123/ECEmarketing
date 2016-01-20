@@ -27,11 +27,10 @@ public class OrderPreferenceController extends DbHelper {
             ORDER_PREFERENCES_PAYMENT_METHOD = "payment_method",
             ORDER_PREFERENCES_BRANCH_ID = "branch_id";
 
-    public static final String CREATE_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT," +
-                    "%s INTEGER, %s TEXT, %s TEXT, %s TEXT )",
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT," +
+                    "%s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT )",
             TBL_ORDER_PREFERENCES, AI_ID, ORDER_PREFERENCES_PATIENT_ID, ORDER_PREFERENCES_RECIPIENT_NAME, ORDER_PREFERENCES_RECIPIENT_ADDRESS, ORDER_PREFERENCES_RECIPIENT_NUMBER, ORDER_PREFERENCES_MODE_OF_DELIVERY,
-            ORDER_PREFERENCES_PAYMENT_METHOD, ORDER_PREFERENCES_BRANCH_ID, CREATED_AT,
-            UPDATED_AT, DELETED_AT);
+            ORDER_PREFERENCES_PAYMENT_METHOD, ORDER_PREFERENCES_BRANCH_ID, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public OrderPreferenceController(Context context) {
         super(context);
@@ -44,13 +43,19 @@ public class OrderPreferenceController extends DbHelper {
         ContentValues values = new ContentValues();
 
         values.put(ORDER_PREFERENCES_BRANCH_ID, order_model.getBranch_id());
+        values.put(ORDER_PREFERENCES_PATIENT_ID, SidebarActivity.getUserID());
+        values.put(ORDER_PREFERENCES_RECIPIENT_NAME, order_model.getRecipient_name());
+        values.put(ORDER_PREFERENCES_RECIPIENT_ADDRESS, order_model.getRecipient_address());
+        values.put(ORDER_PREFERENCES_RECIPIENT_NUMBER, order_model.getRecipient_contactNumber());
+        values.put(ORDER_PREFERENCES_MODE_OF_DELIVERY, order_model.getMode_of_delivery());
+        values.put(ORDER_PREFERENCES_PAYMENT_METHOD, order_model.getPayment_method());
 
         long row = 0;
 
         if (order_model.getAction().equals("insert")) {
             row = sql_db.insert(TBL_ORDER_PREFERENCES, null, values);
         } else if (order_model.getAction().equals("update")) {
-            row = sql_db.update(TBL_ORDER_PREFERENCES, values, ORDER_PREFERENCES_PATIENT_ID + " = " + order_model.getPatient_id(), null);
+            row = sql_db.update(TBL_ORDER_PREFERENCES, values, ORDER_PREFERENCES_PATIENT_ID + " = " + SidebarActivity.getUserID(), null);
         }
         sql_db.close();
         return row > 0;
@@ -60,7 +65,6 @@ public class OrderPreferenceController extends DbHelper {
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(ORDER_PREFERENCES_PATIENT_ID, order_model.getPatient_id());
         values.put(ORDER_PREFERENCES_RECIPIENT_NAME, order_model.getRecipient_name());
         values.put(ORDER_PREFERENCES_RECIPIENT_ADDRESS, order_model.getRecipient_address());
         values.put(ORDER_PREFERENCES_RECIPIENT_NUMBER, order_model.getRecipient_contactNumber());
@@ -70,11 +74,8 @@ public class OrderPreferenceController extends DbHelper {
 
         long row = 0;
 
-        if (order_model.getAction().equals("insert")) {
-            row = sql_db.insert(TBL_ORDER_PREFERENCES, null, values);
-        } else if (order_model.getAction().equals("update")) {
-            row = sql_db.update(TBL_ORDER_PREFERENCES, values, ORDER_PREFERENCES_PATIENT_ID + " = " + order_model.getPatient_id(), null);
-        }
+            row = sql_db.update(TBL_ORDER_PREFERENCES, values, ORDER_PREFERENCES_PATIENT_ID + " = " + SidebarActivity.getUserID(), null);
+
         sql_db.close();
         return row > 0;
     }
@@ -100,12 +101,6 @@ public class OrderPreferenceController extends DbHelper {
 
         return order_model;
     }
-
-//    public OrderModel getCustomerOrderPreference( int patient_id ){
-//        SQLiteDatabase db = getWritableDatabase();
-//        String sql = "SELECT * FROM " + TBL_PATIENT_PRESCRIPTIONS + " WHERE " + PATIENT_ID + " = " + patient_id;
-//    }
-
 
 
 }

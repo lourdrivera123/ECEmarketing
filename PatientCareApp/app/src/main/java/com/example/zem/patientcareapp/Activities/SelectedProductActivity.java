@@ -26,9 +26,11 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
+import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.ImageGallery.CirclePageIndicator;
 import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Product;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -69,6 +71,9 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     DbHelper dbhelper;
     PatientController ptc;
     ProductController pc;
+    OrderPreferenceController opc;
+    OrderModel order_model;
+
     Product product;
     Helpers helpers;
     CircleFragmentAdapter adapter;
@@ -86,9 +91,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         dbhelper = new DbHelper(this);
         pc = new ProductController(this);
         ptc = new PatientController(this);
-
+        opc = new OrderPreferenceController(this);
         helpers = new Helpers();
         map = new HashMap();
+
+        order_model = opc.getOrderPreference();
 
         pc = new ProductController(this);
 
@@ -408,7 +415,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         final ArrayList<String> filenames = new ArrayList();
         final Product prod = new Product();
 
-        ListOfPatientsRequest.getJSONobj(this, "get_selected_product_with_image&product_id=" + product_id, "products", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(this, "get_selected_product_with_image&product_id=" + product_id+"&branch_id="+order_model.getBranch_id(), "products", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {

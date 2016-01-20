@@ -313,7 +313,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                     } else
                         cart_total_amount = cart_total_amount + price;
 
-                    p_total.setText("Php " + total_per_item);
+                    p_total.setText("Php " + df.format(total_per_item));
                     ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
 
                     HashMap<String, String> temp = objects.get(position);
@@ -383,7 +383,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                 double total_per_item = price * lastQty;
                 txt.setText(lastQty + "");
-                p_total.setText("Php " + total_per_item);
+                p_total.setText("Php " + df.format(total_per_item));
 
                 HashMap<String, String> temp = objects.get(position);
                 temp.put("quantity", String.valueOf(lastQty));

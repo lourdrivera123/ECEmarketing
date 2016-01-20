@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,14 +115,12 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.orderLayout:
-//                startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
-//                OrderModel order_model = opc.getOrderPreference();
-//                if (order_model.hasSelectedBranch()) {
-//                        startActivity(new Intent(getActivity(), ProductsActivity.class));
-//                } else {
-//                    startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
-//                }
-                startActivity(new Intent(getActivity(), ProductsActivity.class));
+                OrderModel order_model = opc.getOrderPreference();
+
+                if (order_model.hasSelectedBranch())
+                    startActivity(new Intent(getActivity(), ProductsActivity.class));
+                else
+                    startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
                 break;
 
             case R.id.refillLayout:

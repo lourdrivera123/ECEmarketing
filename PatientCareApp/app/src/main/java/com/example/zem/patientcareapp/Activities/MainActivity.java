@@ -1,13 +1,10 @@
 package com.example.zem.patientcareapp.Activities;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -185,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("orders error", error+"");
+                                                Log.d("orders error", error + "");
                                                 Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                             }
                                         });
@@ -292,11 +289,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         params.put("username", patient.getUsername());
         params.put("password", patient.getPassword());
         return params;
-    }
-
-    public static void setCustomActionBar(ActionBar actionbar) {
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#5B9A68"));
-        actionbar.setBackgroundDrawable(colorDrawable);
-        actionbar.setDisplayShowTitleEnabled(false);
     }
 }
