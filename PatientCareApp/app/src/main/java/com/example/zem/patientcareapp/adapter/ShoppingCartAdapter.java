@@ -119,20 +119,44 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                             type_of_minimum = " for " + final_qty_required + " " + purchases + " or more";
 
                     } else if (final_min_purchase > 0) {
-                        if (final_peso > 0) {
-                            type_of_promo = "*Php " + final_peso + " off";
-
-//                            if (Integer.parseInt(objects.get(position).get("quantity") >= final_qty_required) {
-//
-//                            }
-                        } else if (final_percentage > 0) {
-                            type_of_promo = "*" + final_percentage + "% off";
-                        }
+                        double discounted_amount = 0, discounted_total = 0;
+                        int discount_times = (int) (total_per_item / final_min_purchase);
 
                         if (final_is_every.equals("1"))
                             type_of_minimum = " for every Php " + final_min_purchase + " worth of purchase";
                         else
                             type_of_minimum = " for a minimum purchase of Php " + final_min_purchase;
+
+                        if (final_peso > 0) {
+                            type_of_promo = "*Php " + final_peso + " off";
+
+                            if (total_per_item >= final_min_purchase) {
+                                promo_total.setVisibility(View.VISIBLE);
+                                total.setPaintFlags(total.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+                                if (final_is_every.equals("1")) {
+                                    discounted_total = total_per_item - (discount_times * final_peso);
+                                    discounted_amount = total_per_item - discounted_total;
+                                } else {
+                                    discounted_total = total_per_item - final_peso;
+                                    discounted_amount = final_peso;
+                                }
+                            }
+                        } else if (final_percentage > 0 && final_is_every.equals("0")) {
+                            type_of_promo = "*" + final_percentage + "% off";
+
+                            if (total_per_item >= final_min_purchase) {
+                                promo_total.setVisibility(View.VISIBLE);
+                                total.setPaintFlags(total.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                double percent_off = Double.parseDouble(String.valueOf(final_percentage / 100.0f));
+
+                                discounted_amount = total_per_item * percent_off;
+                                discounted_total = total_per_item - discounted_amount;
+                            }
+                        }
+
+                        promo_total.setText("Php " + df.format(discounted_total));
+                        cart_total_amount = cart_total_amount - discounted_amount;
                     }
 
                     if (!type_of_promo.equals("")) {
@@ -141,62 +165,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                     }
                 }
             }
-
-//            if (final_percentage > 0) {
-//                if (final_qty_required > 0) {
-//                    if (cart_quantity >= final_qty_required) {
-//                        promo_total.setVisibility(View.VISIBLE);
-//                        total.setPaintFlags(total.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-//                        double percent_off = Double.parseDouble(String.valueOf(final_percentage / 100.0f));
-//                        double discounted_amount = 0, discounted_total = 0;
-//
-//                        if (final_is_every.equals("1")) {
-//                            int discount_times = cart_quantity / final_qty_required;
-//                            int left = cart_quantity - (discount_times * final_qty_required);
-//
-//                            for (int x = 0; x < discount_times; x++) {
-//                                discounted_amount = discounted_amount + ((price * final_qty_required) * percent_off);
-//                                double temp_total = (price * final_qty_required) - ((price * final_qty_required) * percent_off);
-//                                discounted_total = discounted_total + temp_total;
-//                            }
-//                            discounted_total = discounted_total + (price * left);
-//                        } else {
-//                            discounted_amount = total_per_item * percent_off;
-//                            discounted_total = total_per_item - discounted_amount;
-//                        }
-//
-//                        promo_total.setText("Php " + df.format(discounted_total));
-//                        cart_total_amount = cart_total_amount - discounted_amount;
-//                    }
-//                }
-//            }
-
-//            if (!final_peso.equals("0")) {
-//                if (cart_quantity >= final_qty_required) {
-//                    promo_total.setVisibility(View.VISIBLE);
-//                    total.setPaintFlags(total.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-//                    double discounted_amount;
-//
-//                    if (final_is_every.equals("1")) {
-//                        int discount_times = cart_quantity / final_qty_required;
-//                        double discounted_total = 0;
-//                        int left = cart_quantity - (discount_times * final_qty_required);
-//
-//                        for (int x = 0; x < discount_times; x++) {
-//                            double temp_total = (price * final_qty_required) - Double.parseDouble(final_peso);
-//                            discounted_total = discounted_total + temp_total;
-//                        }
-//                        discounted_total = discounted_total + (price * left);
-//                        promo_total.setText("Php " + discounted_total);
-//                        discounted_amount = total_per_item - discounted_total;
-//                    } else {
-//                        discounted_amount = Double.parseDouble(final_peso);
-//                        double discounted_total = total_per_item - Double.parseDouble(final_peso);
-//                        promo_total.setText("Php " + discounted_total);
-//                    }
-//                    cart_total_amount = cart_total_amount - discounted_amount;
-//                }
-//            }
         }
 
         Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ambrolex_family);
@@ -221,6 +189,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         final Object txt_promo_total = promo_total;
         final double percent_off = Double.parseDouble(String.valueOf(final_percentage1 / 100.0f));
         final double decimal = (100 - final_percentage1) / 100.0f;
+        final double final_min_purchase1 = final_min_purchase;
 
         up_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,61 +205,45 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                     double total_per_item = price * lastQty;
                     txt.setText(lastQty + "");
 
-                    if (final_qty_required1 > 0) { //IF NAAY PROMO NGA QTY_REQUIRED
-                        final int discount_times = lastQty / final_qty_required1;
-                        final int left = lastQty - (discount_times * final_qty_required1);
+                    if (final_qty_required1 > 0) {
 
-                        if (lastQty >= final_qty_required1) { //IF ANG CART_QTY KAY MAS DGHAN SA QTY_REQUIRED
+                    } else if (final_min_purchase1 > 0) {
+                        int discount_times = (int) (total_per_item / final_min_purchase1);
+
+                        if (total_per_item >= final_min_purchase1) {
                             txt_promo.setVisibility(View.VISIBLE);
                             p_total.setPaintFlags(p_total.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                             double temp_prod_discount = 0;
 
-                            if (final_is_every1.equals("1")) { //IF IS_EVERY ANG PROMO
-                                double discounted_amount = 0;
+                            if (final_percentage1 > 0 && final_is_every1.equals("0")) {
+                                temp_prod_discount = total_per_item * decimal;
 
-                                if (final_percentage1 > 0) {
-                                    for (int x = 0; x < discount_times; x++) {
-                                        double temp_total = (price * final_qty_required1) - ((price * final_qty_required1) * percent_off);
-                                        discounted_amount += ((price * final_qty_required1) * percent_off);
-                                        temp_prod_discount += temp_total;
-                                    }
-                                } else if (final_peso1 > 0) {
-                                    for (int x = 0; x < discount_times; x++) {
-                                        double temp_total = (price * final_qty_required1) - final_peso1;
-                                        temp_prod_discount += temp_total;
-                                    }
+                                if ((total_per_item - price) <= final_min_purchase1)
+                                    cart_total_amount += (temp_prod_discount - (total_per_item - price));
+                                else
+                                    cart_total_amount += temp_prod_discount - ((total_per_item - price) * decimal);
 
-                                    if (left == 0)
-                                        discounted_amount = price - final_peso1;
+                            } else if (final_peso1 > 0) {
+                                if (final_is_every1.equals("1")) {
+                                    temp_prod_discount = total_per_item - (discount_times * final_peso1);
+
+                                    if ((total_per_item - price) <= (final_min_purchase1 * discount_times))
+                                        cart_total_amount += (price - final_peso1);
                                     else
-                                        discounted_amount = price;
-                                }
-
-                                temp_prod_discount += (price * left);
-                                cart_total_amount += discounted_amount;
-                            } else { //IF WALA NAKA IS_EVERY - MEANING, OR MORE
-                                if (final_percentage1 > 0) {
-                                    temp_prod_discount = total_per_item - (total_per_item * percent_off);
-
-                                    if (lastQty == final_qty_required1)
-                                        cart_total_amount = (cart_total_amount - (price * (lastQty - 1))) + temp_prod_discount;
-                                    else
-                                        cart_total_amount = cart_total_amount + (price * Double.parseDouble(df.format(decimal)));
-
-                                } else if (final_peso1 > 0) {
+                                        cart_total_amount += price;
+                                } else {
                                     temp_prod_discount = total_per_item - final_peso1;
+                                    cart_total_amount += price;
 
-                                    if (lastQty == final_qty_required1)
-                                        cart_total_amount = cart_total_amount + (price - final_peso1);
-                                    else
-                                        cart_total_amount = cart_total_amount + price;
+                                    if ((total_per_item - price) <= final_min_purchase1)
+                                        cart_total_amount -= final_peso1;
                                 }
                             }
 
                             txt_promo.setText("Php " + df.format(temp_prod_discount));
                         } else
                             cart_total_amount = cart_total_amount + price;
-                    } else
+                    } else if (final_qty_required1 == 0 && final_min_purchase1 == 0)
                         cart_total_amount = cart_total_amount + price;
 
                     p_total.setText("Php " + df.format(total_per_item));
@@ -313,47 +266,45 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                 int lastQty = Integer.parseInt(txt.getText().toString());
                 lastQty = lastQty - 1;
+                double total_per_item = price * 1;
+
 
                 if (lastQty < 1) {
                     lastQty = 1;
                     ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
                 } else {
+                    total_per_item = price * lastQty;
                     cart_total_amount = cart_total_amount - price;
 
-                    if (final_qty_required1 > 0) { // IF NAKA PROMO ANG PROJ UG NAAY QTY_REQUIRED
-                        if (lastQty < final_qty_required1) { //IF WALA PA KAABOT ANG CART_QTY SA QTY_REQUIRED
+                    if (final_qty_required1 > 0) {
+
+                    } else if (final_min_purchase1 > 0) {
+                        if (total_per_item < final_min_purchase1) {
                             txt_promo.setVisibility(View.GONE);
                             p_total.setPaintFlags(p_total.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
 
-                            if (final_peso1 > 0) {
-                                if (lastQty == (final_qty_required1 - 1))
-                                    cart_total_amount = cart_total_amount + final_peso1;
-                            } else if (final_percentage1 > 0) {
-                                if (lastQty == (final_qty_required1 - 1))
-                                    cart_total_amount = cart_total_amount + ((price * final_qty_required1) * percent_off);
+                            if ((total_per_item + price) >= final_min_purchase1) {
+                                if (final_peso1 > 0)
+                                    cart_total_amount += final_peso1;
+                                else if (final_percentage1 > 0 && final_is_every1.equals("0"))
+                                    cart_total_amount += ((price * (lastQty + 1)) * percent_off);
                             }
-                        } else { //IF CART_QTY KAY EQUAL OR MAS DAKO SA QTY_REQUIRED
+                        } else {
                             double discounted_temp_total = price * lastQty;
-                            final int discount_times = lastQty / final_qty_required1;
-                            final int left = lastQty - (discount_times * final_qty_required1);
+                            int discount_times = (int) (total_per_item / final_min_purchase1);
 
-                            if (final_peso1 > 0)
+                            if (final_peso1 > 0) { //NAAY MALI DIRI
                                 if (!final_is_every1.equals("0")) {
-                                    Log.d("cart_amount", cart_total_amount + "");
-
                                     discounted_temp_total -= (final_peso1 * discount_times);
 
-                                    if (left == (final_qty_required1 - 1))
+                                    if ((total_per_item + price) >= final_min_purchase1) {
                                         cart_total_amount += final_peso1;
+                                    } //DIRI DAPIT NAAY MALI
                                 } else
-                                    discounted_temp_total = discounted_temp_total - final_peso1;
-                            else if (final_percentage1 > 0) {
-                                if (!final_is_every1.equals("0")) {
-
-                                } else {
-                                    discounted_temp_total = discounted_temp_total - ((price * lastQty) * percent_off);
-                                    cart_total_amount = cart_total_amount + (price * percent_off);
-                                }
+                                    discounted_temp_total -= final_peso1;
+                            } else if (final_percentage1 > 0 && final_is_every1.equals("0")) {
+                                discounted_temp_total = discounted_temp_total - ((price * lastQty) * percent_off);
+                                cart_total_amount = cart_total_amount + (price * percent_off);
                             }
                             txt_promo.setText("Php " + df.format(discounted_temp_total));
                         }
@@ -361,7 +312,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                     ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
                 }
 
-                double total_per_item = price * lastQty;
                 txt.setText(lastQty + "");
                 p_total.setText("Php " + df.format(total_per_item));
 
