@@ -33,9 +33,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="on Selected Products"
+            android:text="during Checkout"
             android:textSize="12sp"
             android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/promos_per_transaction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d10"
+            android:text="*FREE SHIPPING, 10% off on your entire purchase for a minimum order amount of Php 500.00."
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="12sp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <View

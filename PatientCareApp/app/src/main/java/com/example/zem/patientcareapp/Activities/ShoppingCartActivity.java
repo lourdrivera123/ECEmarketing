@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -35,9 +34,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by User PC on 12/19/2015.
- */
 public class ShoppingCartActivity extends AppCompatActivity implements View.OnClickListener {
     Toolbar myToolBar;
     ListView lisOfItems;
@@ -81,10 +77,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         dialog.show();
 
         proceed_to_checkout.setOnClickListener(this);
-//
-//        if (getIntent().getSerializableExtra("order_model") != null) {
-//            intent_ordermodel = (OrderModel) getIntent().getSerializableExtra("order_model");
-//        }
 
         ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, "get_nocode_promos", "promos", new RespondListener<JSONObject>() {
             @Override
@@ -99,28 +91,24 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                             JSONObject obj = json_mysql.getJSONObject(x);
                             HashMap<String, String> map = new HashMap();
 
-                            map.put("promo_id", obj.getString("pr_promo_id"));
-                            map.put("product_applicability", obj.getString("product_applicability"));
-                            map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
-                            map.put("pr_qty_required", obj.getString("pr_qty_required"));
-                            map.put("is_every", obj.getString("is_every"));
-                            map.put("pr_free_delivery", obj.getString("pr_free_delivery"));
-                            map.put("pr_percentage", obj.getString("pr_percentage"));
-                            map.put("pr_peso", obj.getString("pr_peso"));
-                            map.put("product_id", obj.getString("product_id"));
-                            map.put("quantity_required", obj.getString("quantity_required"));
-                            map.put("has_free_gifts", obj.getString("has_free_gifts"));
-                            map.put("is_free_delivery", obj.getString("is_free_delivery"));
-                            map.put("percentage_discount", obj.getString("percentage_discount"));
-                            map.put("peso_discount", obj.getString("peso_discount"));
-                            no_code_promos.add(map);
+                            if (obj.getString("product_applicability").equals("SPECIFIC_PRODUCTS")) {
+                                map.put("promo_id", obj.getString("pr_promo_id"));
+                                map.put("minimum_purchase", obj.getString("minimum_purchase"));
+                                map.put("quantity_required", obj.getString("quantity_required"));
+                                map.put("is_every", obj.getString("is_every"));
+                                map.put("product_id", obj.getString("product_id"));
+                                map.put("has_free_gifts", obj.getString("has_free_gifts"));
+                                map.put("percentage_discount", obj.getString("percentage_discount"));
+                                map.put("peso_discount", obj.getString("peso_discount"));
+                                no_code_promos.add(map);
+                            }
                         }
                     }
                 } catch (Exception e) {
                     Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                 }
 
-                String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID() + "&branch_id="+order_model.getBranch_id();
+                String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID() + "&branch_id=" + order_model.getBranch_id();
                 ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
@@ -207,23 +195,21 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                         if (success == 1) {
 
                             if (check == 1) {
-                                if (order_model.isValid()){
+                                if (order_model.isValid()) {
                                     Intent intent = new Intent(ShoppingCartActivity.this, PromosDiscounts.class);
                                     intent.putExtra("order_model", order_model);
                                     startActivity(intent);
                                     ShoppingCartActivity.this.finish();
-                                } else{
+                                } else {
                                     Intent intent = new Intent(ShoppingCartActivity.this, DeliverPickupOption.class);
                                     intent.putExtra("order_model", order_model);
                                     startActivity(intent);
                                     ShoppingCartActivity.this.finish();
                                 }
-
-
                             }
                         }
                     } catch (Exception e) {
-                        Snackbar.make(root, "cart_error: "+e, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(root, "cart_error: " + e, Snackbar.LENGTH_SHORT).show();
                     }
                 }
             }, new ErrorListener<VolleyError>() {
@@ -232,7 +218,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 }
             });
         } catch (JSONException e) {
-            Snackbar.make(root, "cart_json_error: "+e, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(root, "cart_json_error: " + e, Snackbar.LENGTH_SHORT).show();
         }
     }
 }

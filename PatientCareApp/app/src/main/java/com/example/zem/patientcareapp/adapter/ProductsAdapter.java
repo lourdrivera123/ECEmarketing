@@ -37,10 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by User PC on 11/27/2015.
- */
-
 public class ProductsAdapter extends ArrayAdapter implements View.OnClickListener {
     LayoutInflater inflater;
     TextView product_name, rs_price, cart_text, out_of_stock, is_promo;
@@ -57,27 +53,11 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
     ArrayList<Map<String, String>> products_items, basket_items;
     ArrayList<Integer> list_favorites;
 
-    HashMap<String, String> map_all_products_promos;
-    ArrayList<HashMap<String, String>> specific_products_promos;
-
     public ProductsAdapter(Context context, int resource, ArrayList<Map<String, String>> objects) {
         super(context, resource, objects);
         inflater = LayoutInflater.from(context);
         this.context = context;
         products_items = objects;
-
-        map_all_products_promos = new HashMap();
-        specific_products_promos = new ArrayList();
-
-        for (int x = 0; x < ProductsActivity.no_code_promos.size(); x++) {
-            if (ProductsActivity.no_code_promos.get(x).get("product_applicability").equals("ALL_PRODUCTS"))
-                map_all_products_promos.putAll(ProductsActivity.no_code_promos.get(x));
-            else {
-                HashMap<String, String> map = new HashMap();
-                map.putAll(ProductsActivity.no_code_promos.get(x));
-                specific_products_promos.add(map);
-            }
-        }
     }
 
     @Override
@@ -109,9 +89,9 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         helpers = new Helpers();
         list_favorites = db.getFavoritesByUserID(SidebarActivity.getUserID());
 
-        ArrayList<String> all_promos = new ArrayList();
         double final_peso_discount = 0, final_min_purchase = 0;
-        String final_free_gift = "", final_percentage_discount = "", final_free_delivery = "", final_qty_required = "0", final_is_every = "";
+        int final_qty_required = 0;
+        String final_free_gift = "", final_percentage_discount = "", final_is_every = "";
         int product_id = Integer.parseInt(products_items.get(position).get("product_id"));
 
         for (int x = 0; x < list_favorites.size(); x++) {
@@ -119,61 +99,43 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
                 add_to_favorite.setChecked(true);
         }
 
-        if (ProductsActivity.no_code_promos.size() > 0) {
-            if (map_all_products_promos.size() > 0) {
-                final_min_purchase = Double.parseDouble(map_all_products_promos.get("minimum_purchase"));
-                final_qty_required = map_all_products_promos.get("pr_qty_required");
-                final_peso_discount = Double.parseDouble(map_all_products_promos.get("pr_peso"));
-                final_free_delivery = map_all_products_promos.get("pr_free_delivery");
-                final_percentage_discount = map_all_products_promos.get("pr_percentage");
-                final_free_gift = "";
+        if (ProductsActivity.specific_no_code.size() > 0) {
+            for (int x = 0; x < ProductsActivity.specific_no_code.size(); x++) {
+                if (ProductsActivity.specific_no_code.get(x).get("product_id").equals(products_items.get(position).get("product_id"))) {
+                    final_min_purchase = Double.parseDouble(ProductsActivity.specific_no_code.get(x).get("minimum_purchase"));
+                    final_qty_required = Integer.parseInt(ProductsActivity.specific_no_code.get(x).get("quantity_required"));
+                    final_peso_discount = Double.parseDouble(ProductsActivity.specific_no_code.get(x).get("peso_discount"));
+                    final_percentage_discount = ProductsActivity.specific_no_code.get(x).get("percentage_discount");
+                    final_free_gift = ProductsActivity.specific_no_code.get(x).get("has_free_gifts");
+                    final_is_every = ProductsActivity.specific_no_code.get(x).get("is_every");
 
-            } else if (specific_products_promos.size() > 0) {
-                for (int x = 0; x < specific_products_promos.size(); x++) {
-                    if (specific_products_promos.get(x).get("product_id").equals(products_items.get(position).get("product_id"))) {
-                        final_peso_discount = Double.parseDouble(specific_products_promos.get(x).get("peso_discount"));
-                        final_qty_required = specific_products_promos.get(x).get("quantity_required");
-                        final_free_delivery = specific_products_promos.get(x).get("is_free_delivery");
-                        final_percentage_discount = specific_products_promos.get(x).get("percentage_discount");
-                        final_free_gift = specific_products_promos.get(x).get("has_free_gifts");
-                        final_is_every = specific_products_promos.get(x).get("is_every");
+                    String type_of_promo = "", type_of_minimum = "";
+
+                    if (final_min_purchase > 0) {
+                        if (!final_percentage_discount.equals("0"))
+                            type_of_promo = final_percentage_discount + "% off";
+                        else if (final_peso_discount > 0)
+                            type_of_promo = final_peso_discount + " Php  off";
+
+                        if (final_is_every.equals("1"))
+                            type_of_minimum = " for every Php " + final_min_purchase + " worth of purchase";
+                        else
+                            type_of_minimum = " for a minimum purchase of Php " + final_min_purchase;
+                    } else if (final_qty_required > 0 && final_free_gift.equals("1")) {
+                        String purchases = helpers.getPluralForm(products_items.get(position).get("packing"), final_qty_required);
+                        type_of_promo = "A free item";
+
+                        if (final_is_every.equals("1"))
+                            type_of_minimum = " for every " + final_qty_required + " " + purchases;
+                        else
+                            type_of_minimum = " for " + final_qty_required + " " + purchases + " or more";
+                    }
+
+                    if (!type_of_promo.equals("")) {
+                        is_promo.setVisibility(View.VISIBLE);
+                        is_promo.setText(type_of_promo + type_of_minimum);
                     }
                 }
-            }
-
-            if (final_peso_discount > 0)
-                all_promos.add(final_peso_discount + " Php  off");
-
-            if (final_free_delivery.equals("1"))
-                all_promos.add("Free Delivery");
-
-            if (final_free_gift.equals("1"))
-                all_promos.add("A free item");
-
-            if (!final_percentage_discount.equals("0"))
-                all_promos.add(final_percentage_discount + "% off");
-        }
-
-        if (all_promos.size() > 0) {
-            is_promo.setVisibility(View.VISIBLE);
-            String final_list_of_promos = " ";
-
-            for (int x = 0; x < all_promos.size(); x++) {
-                final_list_of_promos = final_list_of_promos + all_promos.get(x);
-
-                if (!((x + 1) == all_promos.size()))
-                    final_list_of_promos = final_list_of_promos + ",";
-                final_list_of_promos = final_list_of_promos + " ";
-            }
-            String purchases = helpers.getPluralForm(products_items.get(position).get("packing"), Integer.parseInt(final_qty_required));
-
-            if (!final_qty_required.equals("0")) {
-                if (final_is_every.equals("1"))
-                    is_promo.setText("*" + final_list_of_promos + "for every " + final_qty_required + " " + purchases);
-                else
-                    is_promo.setText("*" + final_list_of_promos + "for " + final_qty_required + " " + purchases + " or more");
-            } else if (final_min_purchase > 0) {
-                is_promo.setText("*" + final_list_of_promos + "for a minimum purchase of " + final_min_purchase);
             }
         }
 
