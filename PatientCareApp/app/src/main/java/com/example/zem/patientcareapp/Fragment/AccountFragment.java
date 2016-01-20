@@ -27,7 +27,7 @@ import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 public class AccountFragment extends Fragment implements View.OnClickListener {
     ImageView image_holder;
     EditText username, current_pass, new_pass, retype_new_pass, password;
-    TextView changePassword, show_and_hide_pass;
+    TextView changePassword, show_and_hide_pass, confirm_password;
     Button btn_save, save, cancel;
     LinearLayout change_image;
 
@@ -50,6 +50,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         changePassword = (TextView) rootView.findViewById(R.id.changePassword);
         password = (EditText) rootView.findViewById(R.id.password);
         change_image = (LinearLayout) rootView.findViewById(R.id.change_image);
+        confirm_password = (TextView) rootView.findViewById(R.id.confirm_password);
 
         int edit = EditTabsActivity.edit_int;
         dbhelper = new DbHelper(getActivity());
@@ -76,6 +77,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
         } else {
             changePassword.setVisibility(View.GONE);
             password.setVisibility(View.VISIBLE);
+            confirm_password.setVisibility(View.VISIBLE);
         }
 
         changePassword.setOnClickListener(this);

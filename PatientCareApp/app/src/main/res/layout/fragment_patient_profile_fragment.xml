@@ -2,25 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/toolbar">
 
-    <View
+<!--    <View
         android:id="@+id/shadow"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_below="@+id/selected_product_toolbar"
-        android:background="@drawable/shadow_toolbar" />
+        android:background="@drawable/shadow_toolbar" />-->
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:padding="@dimen/d10">
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@android:drawable/dialog_holo_light_frame"
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -65,29 +67,37 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Rosell Esel Sel Barnes"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textSize="20sp"
+                        android:textColor="#2b2b2b"
+                        />
 
                     <TextView
                         android:id="@+id/username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:textSize="14sp"
                         android:text="username: eselbarnz" />
                 </LinearLayout>
             </LinearLayout>
-
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="@color/ColorPrimary" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:text="PERSONAL INFORMATION"
-                    android:textStyle="bold" />
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Personal Information"
+                    android:textSize="17sp"
+                    android:textColor="#2b2b2b" />
 
 
                 <TextView
@@ -118,14 +128,20 @@
                     android:gravity="center"
                     android:text="Occupation: Android Developer" />
 
+                <View
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:background="@color/ColorPrimary" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="@dimen/d20"
-                    android:text="CONTACT INFORMATION"
-                    android:textStyle="bold" />
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Contact Information"
+                    android:textColor="#2b2b2b"
+                    android:textSize="17sp"/>
 
                 <TextView
                     android:id="@+id/address_first_line"

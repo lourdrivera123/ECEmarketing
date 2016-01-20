@@ -65,6 +65,7 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
     double final_peso_discount, final_percentage_discount, final_min_purchase = 0;
     String final_free_gift, final_free_delivery, final_qty_required = "";
     ArrayList<String> all_promos;
+    Button promo_code_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +87,20 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
         promo_progress = (ProgressBar) findViewById(R.id.promo_progress);
         message_after_promo_input = (TextView) findViewById(R.id.message_after_promo_input);
         points_txtfield = (EditText) findViewById(R.id.points_txtfield);
+        promo_code_btn = (Button) findViewById(R.id.promo_code_btn);
 
         all_promos = new ArrayList();
 
+        promo_code_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                message_after_promo_input.setVisibility(View.GONE);
+                if(!coupon.getText().toString().equals("")){
+                    promo_progress.setVisibility(View.VISIBLE);
+                    searchPromoCode(coupon.getText().toString());
+                }
+            }
+        });
 
         coupon.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -96,103 +108,8 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
                     message_after_promo_input.setVisibility(View.GONE);
                     promo_progress.setVisibility(View.VISIBLE);
 
-                    String promo_code = coupon.getText().toString();
-
-                    Log.d("text", promo_code);
-
-                    ListOfPatientsRequest.getJSONobj(PromosDiscounts.this, "check_promo_code&promo_code=" + promo_code, "promos", new RespondListener<JSONObject>() {
-                        @Override
-                        public void getResult(JSONObject response) {
-                            Log.d("response_promo", response + "");
-                            try {
-                                int success = response.getInt("success");
-
-                                if (success == 1) {
-                                    JSONArray json_mysql = response.getJSONArray("promos");
-
-//                                    for (int x = 0; x < json_mysql.length(); x++) {
-                                    JSONObject obj = json_mysql.getJSONObject(0);
-
-                                    //free gifts still needed to be discussed
-                                    promos_map.put("is_free_delivery", obj.getString("is_free_delivery"));
-                                    promos_map.put("percentage_discount", obj.getString("percentage_discount"));
-                                    promos_map.put("peso_discount", obj.getString("peso_discount"));
-
-                                    promos_map.put("product_applicability", obj.getString("product_applicability"));
-                                    promos_map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
-                                    promos_map.put("quantity_required", obj.getString("quantity_required"));
-
-                                    //additional common data
-                                    promos_map.put("promo_id", obj.getString("id"));
-                                    promos_map.put("offer_type", obj.getString("offer_type"));
-                                    promos_map.put("coupon_code", obj.getString("generic_redemption_code"));
-                                    promos_map.put("start_date", obj.getString("start_date"));
-                                    promos_map.put("end_date", obj.getString("end_date"));
-
-                                    //setting msg for what the user have received
-                                    final_min_purchase = Double.parseDouble(promos_map.get("minimum_purchase"));
-                                    final_peso_discount = Double.parseDouble(promos_map.get("peso_discount"));
-                                    final_percentage_discount = Double.parseDouble(promos_map.get("percentage_discount"));
-                                    final_free_gift = "";
-                                    final_free_delivery = promos_map.get("is_free_delivery");
-                                    final_qty_required = promos_map.get("quantity_required");
-
-
-                                    if (final_peso_discount > 0){
-                                        msg = "You got ₱" + promos_map.get("peso_discount") + " discount on your total order.";
-                                        order_model.setCoupon_discount(Double.parseDouble(promos_map.get("peso_discount")));
-                                        order_model.setCoupon_discount_type("peso_discount");
-                                    }
-
-                                    if (final_percentage_discount > 0){
-                                        msg = "You got " + promos_map.get("percentage_discount") + "% discount on your total order.";
-                                        order_model.setCoupon_discount(Double.parseDouble(promos_map.get("percentage_discount")));
-                                        order_model.setCoupon_discount_type("percentage_discount");
-                                    }
-
-                                    if (final_free_gift.equals("1")){
-                                        msg = "You got free gift, upon purchase.";
-                                        order_model.setCoupon_discount_type("free_gift");
-                                    }
-
-                                    if (final_free_delivery.equals("1")){
-                                        msg = "You got free delivery.";
-                                        order_model.setCoupon_discount_type("free_delivery");
-                                    }
-
-
-                                    AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(PromosDiscounts.this);
-                                    confirmationDialog.setTitle("Congratulations!");
-                                    confirmationDialog.setMessage(msg);
-                                    confirmationDialog.setCancelable(false);
-                                    confirmationDialog.setPositiveButton("Ok, Thanks", null);
-                                    confirmationDialog.show();
-
-                                    message_after_promo_input.setTextColor(getResources().getColor(R.color.ColorPrimary));
-                                    message_after_promo_input.setText(msg);
-                                    message_after_promo_input.setVisibility(View.VISIBLE);
-                                    order_model.setPromo_id(Integer.parseInt(promos_map.get("promo_id")));
-
-                                    promo_progress.setVisibility(View.GONE);
-                                    coupon.setVisibility(View.GONE);
-
-//                                    }
-                                } else {
-                                    promo_progress.setVisibility(View.GONE);
-                                    message_after_promo_input.setTextColor(getResources().getColor(R.color.list_background_pressed));
-                                    message_after_promo_input.setVisibility(View.VISIBLE);
-                                }
-                            } catch (Exception e) {
-//                                Snackbar.make(root, e + "", Snackbar.LENGTH_INDEFINITE).show();
-                                Log.d("err", e + "");
-                            }
-                        }
-                    }, new ErrorListener<VolleyError>() {
-                        @Override
-                        public void getError(VolleyError e) {
-                            Snackbar.make(root, "Network error", Snackbar.LENGTH_INDEFINITE).show();
-                        }
-                    });
+                    if(!coupon.getText().toString().equals(""))
+                        searchPromoCode(coupon.getText().toString());
 
                 }
                 return false;
@@ -237,6 +154,103 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Promos & Discounts");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
+    }
+
+    void searchPromoCode(String promo_code){
+        ListOfPatientsRequest.getJSONobj(PromosDiscounts.this, "check_promo_code&promo_code=" + promo_code, "promos", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                Log.d("response_promo", response + "");
+                try {
+                    int success = response.getInt("success");
+
+                    if (success == 1) {
+                        JSONArray json_mysql = response.getJSONArray("promos");
+
+//                                    for (int x = 0; x < json_mysql.length(); x++) {
+                        JSONObject obj = json_mysql.getJSONObject(0);
+
+                        //free gifts still needed to be discussed
+                        promos_map.put("is_free_delivery", obj.getString("is_free_delivery"));
+                        promos_map.put("percentage_discount", obj.getString("percentage_discount"));
+                        promos_map.put("peso_discount", obj.getString("peso_discount"));
+
+                        promos_map.put("product_applicability", obj.getString("product_applicability"));
+                        promos_map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
+                        promos_map.put("quantity_required", obj.getString("quantity_required"));
+
+                        //additional common data
+                        promos_map.put("promo_id", obj.getString("id"));
+                        promos_map.put("offer_type", obj.getString("offer_type"));
+                        promos_map.put("coupon_code", obj.getString("generic_redemption_code"));
+                        promos_map.put("start_date", obj.getString("start_date"));
+                        promos_map.put("end_date", obj.getString("end_date"));
+
+                        //setting msg for what the user have received
+                        final_min_purchase = Double.parseDouble(promos_map.get("minimum_purchase"));
+                        final_peso_discount = Double.parseDouble(promos_map.get("peso_discount"));
+                        final_percentage_discount = Double.parseDouble(promos_map.get("percentage_discount"));
+                        final_free_gift = "";
+                        final_free_delivery = promos_map.get("is_free_delivery");
+                        final_qty_required = promos_map.get("quantity_required");
+
+
+                        if (final_peso_discount > 0){
+                            msg = "You got ₱" + promos_map.get("peso_discount") + " discount on your total order.";
+                            order_model.setCoupon_discount(Double.parseDouble(promos_map.get("peso_discount")));
+                            order_model.setCoupon_discount_type("peso_discount");
+                        }
+
+                        if (final_percentage_discount > 0){
+                            msg = "You got " + promos_map.get("percentage_discount") + "% discount on your total order.";
+                            order_model.setCoupon_discount(Double.parseDouble(promos_map.get("percentage_discount")));
+                            order_model.setCoupon_discount_type("percentage_discount");
+                        }
+
+                        if (final_free_gift.equals("1")){
+                            msg = "You got free gift, upon purchase.";
+                            order_model.setCoupon_discount_type("free_gift");
+                        }
+
+                        if (final_free_delivery.equals("1")){
+                            msg = "You got free delivery.";
+                            order_model.setCoupon_discount_type("free_delivery");
+                        }
+
+
+                        AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(PromosDiscounts.this);
+                        confirmationDialog.setTitle("Congratulations!");
+                        confirmationDialog.setMessage(msg);
+                        confirmationDialog.setCancelable(false);
+                        confirmationDialog.setPositiveButton("Ok, Thanks", null);
+                        confirmationDialog.show();
+
+                        message_after_promo_input.setTextColor(getResources().getColor(R.color.ColorPrimary));
+                        message_after_promo_input.setText(msg);
+                        message_after_promo_input.setVisibility(View.VISIBLE);
+                        order_model.setPromo_id(Integer.parseInt(promos_map.get("promo_id")));
+
+                        promo_progress.setVisibility(View.GONE);
+                        coupon.setVisibility(View.GONE);
+                        promo_code_btn.setVisibility(View.GONE);
+
+//                                    }
+                    } else {
+                        promo_progress.setVisibility(View.GONE);
+                        message_after_promo_input.setTextColor(getResources().getColor(R.color.list_background_pressed));
+                        message_after_promo_input.setVisibility(View.VISIBLE);
+                    }
+                } catch (Exception e) {
+//                                Snackbar.make(root, e + "", Snackbar.LENGTH_INDEFINITE).show();
+                    Log.d("err", e + "");
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError e) {
+                Snackbar.make(root, "Network error", Snackbar.LENGTH_INDEFINITE).show();
+            }
+        });
     }
 
     @Override

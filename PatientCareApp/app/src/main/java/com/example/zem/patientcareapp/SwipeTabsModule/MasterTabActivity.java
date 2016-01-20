@@ -56,7 +56,7 @@ public class MasterTabActivity extends AppCompatActivity implements TabLayout.On
 
     private void setupViewPager(ViewPager viewPager) {
         MasterTabsAdapter adapter = new MasterTabsAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ReferralFragment(), "Refills & Renewals");
+//        adapter.addFragment(new ReferralFragment(), "Refills & Renewals");
         adapter.addFragment(new ReferralFragment(), "Referral Points");
         adapter.addFragment(new TrialPrescriptionFragment(), "Prescription");
         adapter.addFragment(new PatientConsultationFragment(), "Consultation");

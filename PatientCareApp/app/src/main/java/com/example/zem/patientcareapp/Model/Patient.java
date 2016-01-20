@@ -186,7 +186,7 @@ public class Patient implements Serializable {
     }
 
     //GETTER
-    public String getComplete_address(){ return this.getOptional_address() + ", "+this.getBarangay()+", "+this.getMunicipality(); }
+    public String getComplete_address(){ return this.getAddress_street() + ", "+this.getBarangay()+", "+this.getMunicipality(); }
 
     public String getOccupation() {
         return occupation;

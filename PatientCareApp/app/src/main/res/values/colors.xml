@@ -20,4 +20,7 @@
     <color name="list_item_title">#fff</color>
     <color name="counter_text_color">#c5c4c4</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="color_preloader_start">#000000</color>
+    <color name="color_preloader_center">#000000</color>
+    <color name="color_preloader_end">#ff56a9c7</color>
 </resources>

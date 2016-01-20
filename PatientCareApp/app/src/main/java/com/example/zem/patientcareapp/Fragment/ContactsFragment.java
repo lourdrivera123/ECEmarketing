@@ -3,6 +3,8 @@ package com.example.zem.patientcareapp.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -42,8 +46,11 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
     ArrayAdapter<String> regions_adapter, provinces_adapter, municipalities_adapter, barangays_adapter;
     Patient patient;
     Intent intent;
+//    LinearLayout progressCircleLayout;
 
     public static String barangay_id;
+    public static AppCompatDialog pDialog;
+    AlertDialog.Builder builder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +65,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         address_barangay = (Spinner) rootView.findViewById(R.id.address_barangay);
         address_city_municipality = (Spinner) rootView.findViewById(R.id.address_city_municipality);
         address_province = (Spinner) rootView.findViewById(R.id.address_province);
+//        progressCircleLayout = (LinearLayout) rootView.findViewById(R.id.progressCircleLayout);
 
         hashOfRegions = new ArrayList();
         listOfRegions = new ArrayList();
@@ -83,6 +91,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
             }
         }
 
+        showprogress();
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_regions", "regions", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
@@ -134,9 +143,11 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                closeprogress();
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
+                closeprogress();
                 Log.d("<ContactsFragment>", error + "");
                 Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
 
@@ -155,7 +166,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         switch (parent.getId()) {
             case R.id.address_barangay:
                 barangay_id = hashOfBarangays.get(position).get("barangay_server_id");
-                EditTabsActivity.public_progress.dismiss();
+                EditTabsActivity.pDialog.dismiss();
                 break;
 
             case R.id.address_region:
@@ -174,7 +185,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     provinces_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfProvinces);
                     address_province.setAdapter(provinces_adapter);
                 } else {
-
+                    showprogress();
                     ListOfPatientsRequest.getJSONobj(getActivity(), "get_provinces&region_id=" + region_server_id, "provinces", new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
@@ -217,9 +228,11 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                            closeprogress();
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
+                            closeprogress();
                             Log.d("<ContactsFragment>", error + "");
                             Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
 
@@ -244,12 +257,11 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     municipalities_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfMunicipalities);
                     address_city_municipality.setAdapter(municipalities_adapter);
                 } else {
+                    showprogress();
                     ListOfPatientsRequest.getJSONobj(getActivity(), "get_municipalities&province_id=" + province_server_id, "municipalities",  new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {
-
-
                                 JSONArray json_array_mysql = response.getJSONArray("municipalities");
                                 for (int x = 0; x < json_array_mysql.length(); x++) {
                                     HashMap<String, String> map = new HashMap();
@@ -288,9 +300,11 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                            closeprogress();
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
+                            closeprogress();
                             Log.d("<ContactsFragment>", error + "");
                             Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                         }
@@ -314,12 +328,11 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     barangays_adapter = new ArrayAdapter(getActivity(), R.layout.address_spinner_list_item, listOfBarangays);
                     address_barangay.setAdapter(barangays_adapter);
                 } else {
+                    showprogress();
                     ListOfPatientsRequest.getJSONobj(getActivity(), "get_barangays&municipality_id=" + municipality_server_id, "barangays", new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {
-
-
                                 JSONArray json_array_mysql = response.getJSONArray("barangays");
                                 for (int x = 0; x < json_array_mysql.length(); x++) {
                                     HashMap<String, String> map = new HashMap();
@@ -358,9 +371,11 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                            closeprogress();
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
+                            closeprogress();
                             Log.d("<ContactsFragment>", error + "");
                             Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                         }
@@ -373,5 +388,17 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    void showprogress() {
+        builder = new AlertDialog.Builder(getActivity());
+        builder.setView(R.layout.progress_stuffing);
+        builder.setCancelable(false);
+        pDialog = builder.create();
+        pDialog.show();
+    }
+
+    void closeprogress() {
+        pDialog.dismiss();
     }
 }

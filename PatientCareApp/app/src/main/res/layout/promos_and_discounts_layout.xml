@@ -168,6 +168,15 @@
 
                     </LinearLayout>
 
+                    <Button
+                        android:id="@+id/promo_code_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/partner_toolbar"
+                        android:clickable="true"
+                        android:text="Search Promo Code"
+                        android:textColor="@color/white"/>
+
                 </LinearLayout>
 
             </LinearLayout>

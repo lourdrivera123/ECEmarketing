@@ -31,6 +31,7 @@ import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.StringRequests;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
+import com.example.zem.patientcareapp.adapter.DownlinesAdapter;
 import com.example.zem.patientcareapp.adapter.PointsLogAdapter;
 
 import org.json.JSONArray;
@@ -52,12 +53,13 @@ public class ReferralFragment extends Fragment {
 
     Patient ptnt;
     PatientController pc;
-    NonScrollListView earned_points_log, used_points_log;
+    NonScrollListView earned_points_log, used_points_log, downlines;
     PointsLogAdapter points_log_adapter;
     ArrayList<HashMap<String, String>> items;
     PointsController ptc;
     TextView patient_points;
     Patient patient;
+    DownlinesAdapter downlinesAdapter;
 
 
     @Override
@@ -67,10 +69,11 @@ public class ReferralFragment extends Fragment {
 
         referralsLvlLimit = (TextView) root.findViewById(R.id.referralsLvlLimit);
         parent = (LinearLayout) root.findViewById(R.id.parent);
-        table_parent = (TableLayout) root.findViewById(R.id.table_parent);
+//        table_parent = (TableLayout) root.findViewById(R.id.table_parent);
         earned_points_log = (NonScrollListView) root.findViewById(R.id.earned_points_log);
         patient_points = (TextView) root.findViewById(R.id.patient_points);
         used_points_log = (NonScrollListView) root.findViewById(R.id.used_points_log);
+        downlines = (NonScrollListView) root.findViewById(R.id.downlines);
 
         pc = new PatientController(getActivity());
         ptc = new PointsController();
@@ -79,7 +82,7 @@ public class ReferralFragment extends Fragment {
         patient = pc.getloginPatient(SidebarActivity.getUname());
 
         checkForSettingsUpdate();
-        addTableRow();
+//        addTableRow();
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_settings", "settings", new RespondListener<JSONObject>() {
             @Override
@@ -153,6 +156,26 @@ public class ReferralFragment extends Fragment {
             }
         });
 
+
+        ListOfPatientsRequest.getJSONobj(getActivity(), "get_patients_downlines&referral_id="+ptnt.getReferral_id(), "patients", new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    JSONArray json_mysql = response.getJSONArray("downlines");
+                    items = pc.convertFromJson(json_mysql);
+                    downlinesAdapter = new DownlinesAdapter(getActivity(), items);
+                    downlines.setAdapter(downlinesAdapter);
+                } catch (Exception e) {
+                    Log.d("exception2", e + "");
+                    Snackbar.make(parent, "Error occurred", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Snackbar.make(parent, "Network Error", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
         return root;
     }
 
@@ -164,7 +187,7 @@ public class ReferralFragment extends Fragment {
                     JSONArray json_mysql = response.getJSONArray("settings");
                     JSONObject object = json_mysql.getJSONObject(0);
                     int limit = object.getInt("level_limit");
-                    referralsLvlLimit.setText("Referrals Level Limit: " + limit + " level/s");
+
                 } catch (JSONException e) {
                     Log.d("exception1", e + "");
                     Snackbar.make(parent, "Error occurred", Snackbar.LENGTH_SHORT).show();
@@ -177,50 +200,50 @@ public class ReferralFragment extends Fragment {
         });
     }
 
-    public void addTableRow() {
-        final ProgressDialog progress = new ProgressDialog(getActivity());
-        progress.setMessage("Please wait...");
-        progress.show();
+//    public void addTableRow() {
+//        final ProgressDialog progress = new ProgressDialog(getActivity());
+//        progress.setMessage("Please wait...");
+//        progress.show();
+//
+//        Log.d("referral", ptnt.getReferral_id() + "");
+//
+//        ListOfPatientsRequest.getJSONobj(getActivity(), "get_patients", "patients", new RespondListener<JSONObject>() {
+//            @Override
+//            public void getResult(JSONObject response) {
+//                String referral_ID = null;
+//
+//                try {
+//                    JSONArray json_mysql = response.getJSONArray("patients");
+//
+//                    for (int x = 0; x < json_mysql.length(); x++) {
+//                        JSONObject obj = json_mysql.getJSONObject(x);
+//
+//                    }
+//                } catch (Exception e) {
+//                    Log.d("exception2", e + "");
+//                    Snackbar.make(parent, "Error occurred", Snackbar.LENGTH_SHORT).show();
+//                }
+//
+//                progress.dismiss();
+//            }
+//        }, new ErrorListener<VolleyError>() {
+//            public void getError(VolleyError error) {
+//                progress.dismiss();
+//                Snackbar.make(parent, "Network Error", Snackbar.LENGTH_SHORT).show();
+//            }
+//        });
 
-        Log.d("referral", ptnt.getReferral_id() + "");
-
-        ListOfPatientsRequest.getJSONobj(getActivity(), "get_patients", "patients", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                String referral_ID = null;
-
-                try {
-                    JSONArray json_mysql = response.getJSONArray("patients");
-
-                    for (int x = 0; x < json_mysql.length(); x++) {
-                        JSONObject obj = json_mysql.getJSONObject(x);
-
-                    }
-                } catch (Exception e) {
-                    Log.d("exception2", e + "");
-                    Snackbar.make(parent, "Error occurred", Snackbar.LENGTH_SHORT).show();
-                }
-
-                progress.dismiss();
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                progress.dismiss();
-                Snackbar.make(parent, "Network Error", Snackbar.LENGTH_SHORT).show();
-            }
-        });
-
-        TableRow tr = new TableRow(getActivity());
-        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-        for (int x = 0; x < 5; x++) {
-            TextView txt = new TextView(getActivity());
-            txt.setGravity(Gravity.CENTER);
-            txt.setBackgroundDrawable(getResources().getDrawable(R.drawable.cell_border));
-            txt.setText(x + "");
-            tr.addView(txt);
-        }
-
-        table_parent.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-    }
+//        TableRow tr = new TableRow(getActivity());
+//        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+//
+//        for (int x = 0; x < 5; x++) {
+//            TextView txt = new TextView(getActivity());
+//            txt.setGravity(Gravity.CENTER);
+//            txt.setBackgroundDrawable(getResources().getDrawable(R.drawable.cell_border));
+//            txt.setText(x + "");
+//            tr.addView(txt);
+//        }
+//
+//        table_parent.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+//    }
 }

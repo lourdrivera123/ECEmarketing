@@ -2,11 +2,9 @@ package com.example.zem.patientcareapp.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -19,26 +17,25 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * Created by lourdrivera on 1/18/2016.
+ * Created by lourdrivera on 1/20/2016.
  */
-public class PointsLogAdapter extends BaseAdapter {
-
+public class DownlinesAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<HashMap<String, String>> hashOfPointsLog;
+    private ArrayList<HashMap<String, String>> hashOfDownlines;
 
-    public PointsLogAdapter(Context context, ArrayList<HashMap<String, String>> hashOfPointsLog){
+    public DownlinesAdapter(Context context, ArrayList<HashMap<String, String>> hashOfDownlines){
         this.context = context;
-        this.hashOfPointsLog = hashOfPointsLog;
+        this.hashOfDownlines = hashOfDownlines;
     }
 
     @Override
     public int getCount() {
-        return hashOfPointsLog.size();
+        return hashOfDownlines.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return hashOfPointsLog.get(position);
+        return hashOfDownlines.get(position);
     }
 
     @Override
@@ -51,25 +48,25 @@ public class PointsLogAdapter extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.points_log_item, null);
+            convertView = mInflater.inflate(R.layout.downlines_item, null);
         }
 
-        TextView date_acquired = (TextView) convertView.findViewById(R.id.date_acquired);
-        TextView note = (TextView) convertView.findViewById(R.id.note);
+        TextView full_name = (TextView) convertView.findViewById(R.id.full_name);
+        TextView date_referred = (TextView) convertView.findViewById(R.id.date_referred);
 
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date1 = null;
-            date1 = formatter.parse(hashOfPointsLog.get(position).get("created_at"));
+            date1 = formatter.parse(hashOfDownlines.get(position).get("created_at"));
 
+//        format to readable ones
             SimpleDateFormat fd = new SimpleDateFormat("MMM d, yyyy - h:mm a");
             String formatted_date = fd.format(date1);
-            date_acquired.setText(formatted_date);
+            date_referred.setText(formatted_date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-        note.setText(hashOfPointsLog.get(position).get("notes"));
+        full_name.setText(hashOfDownlines.get(position).get("fname")+" "+hashOfDownlines.get(position).get("lname"));
 
         return convertView;
     }
