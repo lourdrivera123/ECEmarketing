@@ -4,14 +4,19 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.zem.patientcareapp.Fragment.AccountFragment;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Zem on 11/23/2015.
@@ -226,6 +231,27 @@ public class PatientController extends DbHelper {
 
         sql_db.close();
         return row > 0;
+    }
+
+    public ArrayList<HashMap<String, String>> convertFromJson(JSONArray json_array) {
+        ArrayList<HashMap<String, String>> points_list = new ArrayList();
+
+        try {
+            for (int x = 0; x < json_array.length(); x++) {
+                JSONObject obj = json_array.getJSONObject(x);
+
+                HashMap<String, String> map = new HashMap();
+                map.put("fname", obj.getString("fname"));
+                map.put("lname", obj.getString("lname"));
+                map.put("created_at", obj.getString("created_at"));
+
+                points_list.add(map);
+            }
+        } catch (Exception e) {
+            Log.d("error_converting", e + "");
+        }
+
+        return points_list;
     }
 
 }

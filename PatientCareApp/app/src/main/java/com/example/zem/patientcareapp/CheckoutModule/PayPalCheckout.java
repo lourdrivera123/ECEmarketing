@@ -80,8 +80,7 @@ public class PayPalCheckout extends Activity {
     // If you have tax, add it here
     BigDecimal tax = new BigDecimal("0.0");
     BigDecimal amount;
-    int billing_id = 0, branch_server_id = 0;
-    String basket_ids = "", recipient_name = "", recipient_address = "", recipient_contactNumber = "", modeOfDelivery = "", payment_method = "";
+    String recipient_name = "", recipient_address = "", recipient_contactNumber = "", modeOfDelivery = "", payment_method = "";
     String delivery_charge;
 
     // PayPal configuration
@@ -104,7 +103,6 @@ public class PayPalCheckout extends Activity {
         Intent ckintent = getIntent();
         OrderModel om = (OrderModel) ckintent.getSerializableExtra("order_model");
 
-        branch_server_id = 1;
         recipient_name = om.getRecipient_name();
         recipient_address = om.getRecipient_address();
         recipient_contactNumber = om.getRecipient_contactNumber();
@@ -370,28 +368,28 @@ public class PayPalCheckout extends Activity {
             protected Map<String, String> getParams() {
                 Patient patient = pc.getloginPatient(SidebarActivity.getUname());
 
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("paymentId", paymentId);
-                params.put("paymentClientJson", payment_client);
-                params.put("patient_id", String.valueOf(patient.getServerID()));
-                params.put("user_id", String.valueOf(SidebarActivity.getUserID()));
-                params.put("branch_server_id", String.valueOf(branch_server_id));
-                params.put("recipient_name", recipient_name);
-                params.put("recipient_address", recipient_address);
-                params.put("recipient_contactNumber", recipient_contactNumber);
-                params.put("modeOfDelivery", modeOfDelivery);
-                params.put("payment_method", payment_method);
-                params.put("status", "open");
-                params.put("coupon_discount", String.valueOf(order_model.getCoupon_discount()));
-                params.put("points_discount", String.valueOf(order_model.getPoints_discount()));
-                params.put("delivery_charge", String.valueOf(delivery_charge));
-                params.put("promo_id", String.valueOf(order_model.getPromo_id()));
-                params.put("promo_type", String.valueOf(order_model.getCoupon_discount_type()));
-                params.put("email", patient.getEmail());
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("paymentId", paymentId);
+                map.put("paymentClientJson", payment_client);
+                map.put("patient_id", String.valueOf(patient.getServerID()));
+                map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
+                map.put("branch_server_id", String.valueOf(order_model.getBranch_id()));
+                map.put("recipient_name", recipient_name);
+                map.put("recipient_address", recipient_address);
+                map.put("recipient_contactNumber", recipient_contactNumber);
+                map.put("modeOfDelivery", modeOfDelivery);
+                map.put("payment_method", payment_method);
+                map.put("status", "open");
+                map.put("coupon_discount", String.valueOf(order_model.getCoupon_discount()));
+                map.put("points_discount", String.valueOf(order_model.getPoints_discount()));
+                map.put("delivery_charge", String.valueOf(delivery_charge));
+                map.put("promo_id", String.valueOf(order_model.getPromo_id()));
+                map.put("promo_type", String.valueOf(order_model.getCoupon_discount_type()));
+                map.put("email", patient.getEmail());
 
-                Log.d("params shit", params + "");
+                Log.d("maps shit", map + "");
 
-                return params;
+                return map;
             }
         };
 

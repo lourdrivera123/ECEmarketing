@@ -55,7 +55,7 @@ import java.util.Map;
  * Created by User PC on 11/20/2015.
  */
 
-public class ProductsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemSelectedListener, MenuItem.OnMenuItemClickListener {
+public class ProductsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, AdapterView.OnItemSelectedListener {
     ListView listOfProducts;
     Toolbar myToolBar;
     LinearLayout results_layout, root;
@@ -226,7 +226,14 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         go_to_cart.setOnClickListener(this);
 
         MenuItem change_branch = menu.findItem(R.id.change_branch);
-        change_branch.setOnMenuItemClickListener(this);
+        change_branch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                startActivity(new Intent(getBaseContext(), GoogleMapsActivity.class));
+//        ProductsActivity.this.finish();
+                return false;
+            }
+        });
 
         if (number_of_notif.getVisibility() == View.VISIBLE)
             number_of_notif.setText("12");
@@ -421,7 +428,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         progress1.setCancelable(false);
         progress1.show();
 
-        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products&branch_id="+order_model.getBranch_id(), "products", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products&branch_id=" + order_model.getBranch_id(), "products", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
                         try {
@@ -549,12 +556,5 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                 Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
             }
         });
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-        startActivity(new Intent(getBaseContext(), GoogleMapsActivity.class));
-//        ProductsActivity.this.finish();
-        return false;
     }
 }

@@ -119,7 +119,7 @@ public class SidebarActivity extends AppCompatActivity {
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1)));
+//        navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1)));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
 
         navMenuIcons.recycle(); // Recycle the typed array
@@ -260,11 +260,11 @@ public class SidebarActivity extends AppCompatActivity {
                 title = "Promos";
                 fragment = new PromoFragment();
                 break;
+//            case 8:
+//                title = "News";
+//                fragment = new HomeTileFragment();
+//                break;
             case 8:
-                title = "News";
-                fragment = new HomeTileFragment();
-                break;
-            case 9:
                 editor.clear();
                 editor.commit();
                 startActivity(new Intent(this, MainActivity.class));

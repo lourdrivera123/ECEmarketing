@@ -124,18 +124,18 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
 
                 break;
 
-            case R.id.refillLayout:
+//            case R.id.refillLayout:
+//                intent.putExtra("selected", 0);
+//                startActivity(intent);
+//                break;
+
+            case R.id.pointsLayout:
                 intent.putExtra("selected", 0);
                 startActivity(intent);
                 break;
 
-            case R.id.pointsLayout:
-                intent.putExtra("selected", 1);
-                startActivity(intent);
-                break;
-
             case R.id.prescriptionLayout:
-                intent.putExtra("selected", 2);
+                intent.putExtra("selected", 1);
                 startActivity(intent);
                 break;
 
@@ -164,7 +164,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                     }
                 });
 
-                intent.putExtra("selected", 3);
+                intent.putExtra("selected", 2);
                 startActivity(intent);
                 break;
         }

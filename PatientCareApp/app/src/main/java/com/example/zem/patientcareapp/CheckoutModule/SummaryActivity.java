@@ -1,10 +1,11 @@
 package com.example.zem.patientcareapp.CheckoutModule;
 
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,14 +25,17 @@ import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.SettingController;
+import com.example.zem.patientcareapp.Customizations.GlowingText;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Interface.StringRespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Model.Settings;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Customizations.NonScrollListView;
 import com.example.zem.patientcareapp.Network.PaymentRequest;
+import com.example.zem.patientcareapp.Network.StringRequests;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
@@ -116,7 +120,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         dialog.setCancelable(false);
         dialog.show();
 
-        String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID();
+        String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID()+"&branch_id="+order_model.getBranch_id();
         ListOfPatientsRequest.getJSONobj(this, url_raw, "baskets", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
@@ -176,7 +180,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
         if (order_model.getMode_of_delivery().equals("pickup")) {
             address_or_branch.setText("Branch to pickup order");
-            address_option.setText("ECE NAGA");
+            setBranchNameFromServer();
         } else {
             address_or_branch.setText("Address for delivery");
             address_option.setText(order_model.getRecipient_address());
@@ -194,6 +198,19 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
         change_id.setOnClickListener(this);
         order_now_btn.setOnClickListener(this);
+    }
+
+    void setBranchNameFromServer(){
+        StringRequests.getString(SummaryActivity.this, "db/get.php?q=get_branch_name_from_id&branch_id=" + order_model.getBranch_id(), new StringRespondListener<String>() {
+            @Override
+            public void getResult(String response) {
+                address_option.setText(response);
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("error for sumthing", error + "");
+            }
+        });
     }
 
     @Override
@@ -218,6 +235,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                 } else{
                     delivery_charge.setText("₱ "+settings.getDelivery_charge());
                     delivery_charge_val = settings.getDelivery_charge();
+                    discounted_total += delivery_charge_val;
                     total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
                 }
             }
@@ -257,7 +275,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                             map.put("recipient_name", order_model.getRecipient_name());
                             map.put("recipient_address", order_model.getRecipient_address());
                             map.put("recipient_contactNumber", order_model.getRecipient_contactNumber());
-                            map.put("branch_server_id", String.valueOf(1)); //needs to be the id of the selected combobox
+                            map.put("branch_server_id", String.valueOf(order_model.getBranch_id())); //needs to be the id of the selected combobox
                             map.put("modeOfDelivery", order_model.getMode_of_delivery());
                             map.put("payment_method", order_model.getPayment_method());
                             map.put("status", "Pending");
@@ -342,7 +360,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            SummaryActivity.this.finish();
+//                            SummaryActivity.this.finish();
+                            dialog.dismiss();
                         }
                     });
                     order_confirmation_dialog.show();

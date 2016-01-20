@@ -33,6 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -355,6 +357,8 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
 
         if (s_email.equals(""))
             email.setError("Field required");
+        else if(!isEmailValid(s_email))
+            email.setError("Please input email");
         else {
             patient.setEmail(s_email);
             count++;
@@ -383,6 +387,8 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
 
             if (password.getText().toString().equals("")) {
                 password.setError("Field is required");
+            } else if(!validatechars(password.getText().toString())){
+                password.setError("Minimum of 6 characters");
             } else {
                 pass = helpers.md5(password.getText().toString());
                 patient.setPassword(pass);
@@ -393,6 +399,8 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
 
         if (username.equals("")) {
             et_username.setError("Field is required");
+        } else if(!validatechars(username)){
+            et_username.setError("Minimum of 6 characters");
         } else {
             patient.setUsername(username);
             count++;
@@ -400,6 +408,35 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
 
         if (count == limit)
             this.hasError3 = false;
+    }
+
+    public boolean validatechars(String str){
+        Log.d("str_nums", String.valueOf(str.length()));
+        if(str.length() >= 6)
+            return true;
+
+        return false;
+    }
+
+    public boolean isEmailValid(String email)
+    {
+        String regExpn =
+                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+
+        CharSequence inputStr = email;
+
+        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+
+        if(matcher.matches())
+            return true;
+        else
+            return false;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
