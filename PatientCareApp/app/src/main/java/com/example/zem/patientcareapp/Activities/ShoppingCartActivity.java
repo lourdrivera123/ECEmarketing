@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -35,9 +34,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by User PC on 12/19/2015.
- */
 public class ShoppingCartActivity extends AppCompatActivity implements View.OnClickListener {
     Toolbar myToolBar;
     ListView lisOfItems;
@@ -108,7 +104,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                             map.put("product_id", obj.getString("product_id"));
                             map.put("quantity_required", obj.getString("quantity_required"));
                             map.put("has_free_gifts", obj.getString("has_free_gifts"));
-                            map.put("is_free_delivery", obj.getString("is_free_delivery"));
                             map.put("percentage_discount", obj.getString("percentage_discount"));
                             map.put("peso_discount", obj.getString("peso_discount"));
                             no_code_promos.add(map);
@@ -210,7 +205,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                                     Intent summary_intent = new Intent(ShoppingCartActivity.this, PromosDiscounts.class);
                                     summary_intent.putExtra("order_model", order_model);
                                     startActivity(summary_intent);
-                                } else{
+                                } else {
                                     Intent deliver_p_intent = new Intent(ShoppingCartActivity.this, DeliverPickupOption.class);
                                     deliver_p_intent.putExtra("order_model", intent_ordermodel);
                                     startActivity(new Intent(ShoppingCartActivity.this, DeliverPickupOption.class));

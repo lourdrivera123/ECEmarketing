@@ -107,12 +107,11 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         cart_total_amount = cart_total_amount + total_per_item;
 
         if (map_all_products_promos.size() > 0 || specific_products_promos.size() > 0) {
-            String final_free_delivery = "0", final_free_gifts = "0", final_min_purchase = "";
+            String final_free_gifts = "0", final_min_purchase = "";
             ArrayList<String> all_promos = new ArrayList();
 
             if (map_all_products_promos.size() > 0) {
                 final_qty_required = Integer.parseInt(map_all_products_promos.get("pr_qty_required"));
-                final_free_delivery = map_all_products_promos.get("pr_free_delivery");
                 final_percentage = Integer.parseInt(map_all_products_promos.get("pr_percentage"));
                 final_peso = map_all_products_promos.get("pr_peso");
                 final_min_purchase = map_all_products_promos.get("minimum_purchase");
@@ -121,7 +120,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                 for (int x = 0; x < specific_products_promos.size(); x++) {
                     if (specific_products_promos.get(x).get("product_id").equals(objects.get(position).get("product_id"))) {
                         final_qty_required = Integer.parseInt(specific_products_promos.get(x).get("quantity_required"));
-                        final_free_delivery = specific_products_promos.get(x).get("is_free_delivery");
                         final_percentage = Integer.parseInt(specific_products_promos.get(x).get("percentage_discount"));
                         final_peso = specific_products_promos.get(x).get("peso_discount");
                         final_free_gifts = specific_products_promos.get(x).get("has_free_gifts");
@@ -129,9 +127,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                     }
                 }
             }
-
-            if (final_free_delivery.equals("1"))
-                all_promos.add("Free delivery");
 
             if (final_percentage > 0) {
                 all_promos.add(final_percentage + "% off");
@@ -271,20 +266,28 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                                 double discounted_amount = 0;
 
                                 if (final_percentage1 > 0) {
-
+                                    for (int x = 0; x < discount_times; x++) {
+                                        double temp_total = (price * final_qty_required1) - ((price * final_qty_required1) * percent_off);
+                                        discounted_amount += ((price * final_qty_required1) * percent_off);
+                                        temp_prod_discount += temp_total;
+                                    }
                                 } else if (!final_peso1.equals("0")) {
                                     for (int x = 0; x < discount_times; x++) {
                                         double temp_total = (price * final_qty_required1) - Double.parseDouble(final_peso1);
-                                        temp_prod_discount = temp_prod_discount + temp_total;
+                                        temp_prod_discount += temp_total;
                                     }
-                                    temp_prod_discount = temp_prod_discount + (price * left);
 
                                     if (left == 0)
                                         discounted_amount = price - Double.parseDouble(final_peso1);
                                     else
                                         discounted_amount = price;
                                 }
-                                cart_total_amount = cart_total_amount + discounted_amount;
+
+                                Log.d("discounted_amount", discounted_amount + "");
+                                Log.d("cart_amount_before", cart_total_amount + "");
+
+                                temp_prod_discount += (price * left);
+                                cart_total_amount += discounted_amount;
                             } else { //IF WALA NAKA IS_EVERY - MEANING, OR MORE
                                 if (final_percentage1 > 0) {
                                     temp_prod_discount = total_per_item - (total_per_item * percent_off);

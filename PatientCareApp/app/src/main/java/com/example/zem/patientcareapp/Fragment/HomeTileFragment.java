@@ -114,13 +114,14 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.orderLayout:
-                startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
-                OrderModel order_model = opc.getOrderPreference();
-                if (order_model.hasSelectedBranch()) {
-                        startActivity(new Intent(getActivity(), ProductsActivity.class));
-                } else {
-                    startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
-                }
+//                startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
+//                OrderModel order_model = opc.getOrderPreference();
+//                if (order_model.hasSelectedBranch()) {
+//                        startActivity(new Intent(getActivity(), ProductsActivity.class));
+//                } else {
+//                    startActivity(new Intent(getActivity(), GoogleMapsActivity.class));
+//                }
+                startActivity(new Intent(getActivity(), ProductsActivity.class));
                 break;
 
             case R.id.refillLayout:
