@@ -38,7 +38,7 @@ public class OrderPreferenceController extends DbHelper {
         sql_db = dbhelper.getWritableDatabase();
     }
 
-    public boolean saveSelectedBranch(OrderModel order_model){
+    public boolean saveSelectedBranch(OrderModel order_model) {
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -61,7 +61,7 @@ public class OrderPreferenceController extends DbHelper {
         return row > 0;
     }
 
-    public boolean savePreference(OrderModel order_model){
+    public boolean savePreference(OrderModel order_model) {
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -74,7 +74,7 @@ public class OrderPreferenceController extends DbHelper {
 
         long row = 0;
 
-            row = sql_db.update(TBL_ORDER_PREFERENCES, values, ORDER_PREFERENCES_PATIENT_ID + " = " + SidebarActivity.getUserID(), null);
+        row = sql_db.update(TBL_ORDER_PREFERENCES, values, ORDER_PREFERENCES_PATIENT_ID + " = " + SidebarActivity.getUserID(), null);
 
         sql_db.close();
         return row > 0;
@@ -83,8 +83,7 @@ public class OrderPreferenceController extends DbHelper {
     public OrderModel getOrderPreference() {
         OrderModel order_model = new OrderModel();
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
-        String sql = "SELECT * from "+TBL_ORDER_PREFERENCES+" where patient_id = " + SidebarActivity.getUserID() + " order by created_at DESC";
-        Log.d("patient_id", SidebarActivity.getUserID() + "");
+        String sql = "SELECT * from " + TBL_ORDER_PREFERENCES + " where patient_id = " + SidebarActivity.getUserID() + " order by created_at DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
         cur.moveToFirst();
 

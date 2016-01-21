@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -100,6 +101,10 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                                 map.put("has_free_gifts", obj.getString("has_free_gifts"));
                                 map.put("percentage_discount", obj.getString("percentage_discount"));
                                 map.put("peso_discount", obj.getString("peso_discount"));
+                                map.put("free_product_id", obj.getString("free_product_id"));
+                                map.put("name", obj.getString("name"));
+                                map.put("quantity_free", obj.getString("quantity_free"));
+                                map.put("free_product_packing", obj.getString("free_product_packing"));
                                 no_code_promos.add(map);
                             }
                         }
@@ -155,7 +160,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.proceed_to_checkout:
-                updateBasket(items, 1);
+                updateBasket(CartWithPromos(items, no_code_promos), 1);
                 break;
         }
     }
@@ -163,6 +168,49 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     protected void onPause() {
         updateBasket(items, 0);
         super.onPause();
+    }
+
+    ArrayList<HashMap<String, String>> CartWithPromos(ArrayList<HashMap<String, String>> items, ArrayList<HashMap<String, String>> promos) {
+        ArrayList<HashMap<String, String>> new_items = new ArrayList();
+
+        for (int x = 0; x < items.size(); x++) {
+            for (int y = 0; y < promos.size(); y++) {
+                if (items.get(x).get("product_id").equals(promos.get(y).get("product_id"))) {
+                    HashMap<String, String> map = new HashMap();
+                    map.putAll(items.get(x));
+                    map.put("promo_id", promos.get(y).get("promo_id"));
+
+                    if (promos.get(y).get("has_free_gifts").equals("1"))
+                        map.put("promo_type", "free_gift");
+                    else if (Double.parseDouble(promos.get(y).get("percentage_discount")) > 0)
+                        map.put("promo_type", "percentage_discount");
+                    else if (Double.parseDouble(promos.get(y).get("peso_discount")) > 0)
+                        map.put("promo_type", "peso_discount");
+
+                    new_items.add(map);
+                }
+            }
+        }
+
+
+        for (int x = 0; x < new_items.size(); x++) {
+            for (int y = 0; y < items.size(); y++) {
+                if (new_items.get(x).get("product_id").equals(items.get(y).get("product_id"))) {
+                    items.remove(y);
+                }
+            }
+        }
+
+        for (int x = 0; x < items.size(); x++) {
+            HashMap<String, String> map = items.get(x);
+            map.put("promo_id", "");
+            map.put("promo_type", "");
+            items.set(x, map);
+        }
+
+        new_items.addAll(items);
+
+        return new_items;
     }
 
     void updateBasket(ArrayList<HashMap<String, String>> objects, final int check) {
