@@ -189,9 +189,9 @@ public class DoctorController extends DbHelper {
 
         while (cur.moveToNext()) {
             HashMap<String, String> map = new HashMap();
-            String fullname = "Dr. " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1) + ". " + cur.getString(cur.getColumnIndex(DOC_LNAME));
+
             map.put("clinics_id", String.valueOf(cur.getInt(cur.getColumnIndex(ClinicController.SERVER_CLINICS_ID))));
-            map.put("fullname", fullname);
+            map.put("fullname", cur.getString(cur.getColumnIndex(DOC_LNAME)) + ", " + cur.getString(cur.getColumnIndex(DOC_FNAME)) + " " + cur.getString(cur.getColumnIndex(DOC_MNAME)).substring(0, 1));
             map.put("clinic_name", cur.getString(cur.getColumnIndex(ClinicController.CLINIC_NAME)));
             map.put("clinic_sched", cur.getString(cur.getColumnIndex(ClinicDoctorController.CD_CLINIC_SCHED)));
             listOfDoctorClinic.add(map);
