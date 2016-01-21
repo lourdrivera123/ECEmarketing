@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Model.Settings;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Customizations.NonScrollListView;
+import com.example.zem.patientcareapp.Network.ListRequestFromCustomURI;
 import com.example.zem.patientcareapp.Network.PaymentRequest;
 import com.example.zem.patientcareapp.Network.StringRequests;
 import com.example.zem.patientcareapp.R;
@@ -74,6 +76,9 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
     Settings settings;
     double delivery_charge_val = 0;
     double discounted_total = 0;
+    public static AppCompatDialog pDialog;
+    AlertDialog.Builder builder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,13 +120,13 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         helper = new Helpers();
         sc = new SettingController(this);
 
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("Please wait...");
-        dialog.setCancelable(false);
-        dialog.show();
-
-        String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID()+"&branch_id="+order_model.getBranch_id();
-        ListOfPatientsRequest.getJSONobj(this, url_raw, "baskets", new RespondListener<JSONObject>() {
+//        final ProgressDialog dialog = new ProgressDialog(this);
+//        dialog.setMessage("Please wait...");
+//        dialog.setCancelable(false);
+//        dialog.show();
+        showBeautifulDialog();
+        String url_raw = "check_basket?patient_id=" + SidebarActivity.getUserID() + "&branch_id=" + order_model.getBranch_id();
+        ListRequestFromCustomURI.getJSONobj(this, url_raw, "baskets", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
@@ -129,6 +134,11 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     int success = response.getInt("success");
 
                     if (success == 1) {
+                        if(response.getBoolean("basket_quantity_changed")){
+                            letDialogSleep();
+                            orderCancelled();
+                        }
+
                         JSONArray json_mysql = response.getJSONArray("baskets");
 
                         items = bc.convertFromJson(SummaryActivity.this, json_mysql);
@@ -139,9 +149,9 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
                         double coupon_discount = order_model.getCoupon_discount();
 
-                        if(order_model.getCoupon_discount_type().equals("percentage_discount")){
-                            Log.d("converted_percentage", totalAmount * (coupon_discount/100)+"");
-                            coupon_discount = totalAmount * (coupon_discount/100);
+                        if (order_model.getCoupon_discount_type().equals("percentage_discount")) {
+                            Log.d("converted_percentage", totalAmount * (coupon_discount / 100) + "");
+                            coupon_discount = totalAmount * (coupon_discount / 100);
                         }
 
                         double points_discount = order_model.getPoints_discount();
@@ -169,11 +179,11 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                 } catch (Exception e) {
                     Toast.makeText(SummaryActivity.this, e + "", Toast.LENGTH_SHORT).show();
                 }
-                dialog.dismiss();
+                letDialogSleep();
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                dialog.dismiss();
+                letDialogSleep();
                 Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }
         });
@@ -200,7 +210,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         order_now_btn.setOnClickListener(this);
     }
 
-    void setBranchNameFromServer(){
+    void setBranchNameFromServer() {
         StringRequests.getString(SummaryActivity.this, "db/get.php?q=get_branch_name_from_id&branch_id=" + order_model.getBranch_id(), new StringRespondListener<String>() {
             @Override
             public void getResult(String response) {
@@ -229,11 +239,11 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
             public void getResult(JSONObject response) {
                 settings = sc.getAllSettings();
                 delivery_charge_layout.setVisibility(View.VISIBLE);
-                if(order_model.getCoupon_discount_type().equals("free_delivery")){
+                if (order_model.getCoupon_discount_type().equals("free_delivery")) {
                     delivery_charge.setTextColor(getResources().getColor(R.color.ColorPrimary));
                     delivery_charge.setText("Free");
-                } else{
-                    delivery_charge.setText("₱ "+settings.getDelivery_charge());
+                } else {
+                    delivery_charge.setText("₱ " + settings.getDelivery_charge());
                     delivery_charge_val = settings.getDelivery_charge();
                     discounted_total += delivery_charge_val;
                     total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
@@ -270,6 +280,8 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                         public void onClick(DialogInterface dialog, int which) {
                             Patient patient = pc.getloginPatient(SidebarActivity.getUname());
 
+                            showBeautifulDialog();
+
                             HashMap<String, String> map = new HashMap();
                             map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
                             map.put("recipient_name", order_model.getRecipient_name());
@@ -289,71 +301,93 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                             Log.d("mappings", map.toString());
 
                             PaymentRequest.send(getBaseContext(), map, new RespondListener<JSONObject>() {
-                                @Override
-                                public void getResult(JSONObject response) {
-                                    try {
-                                        //request for orders request
-                                        GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
-                                            @Override
-                                            public void getResult(JSONObject response) {
+                                        @Override
+                                        public void getResult(JSONObject response) {
+                                            try {
+                                                if (response.getBoolean("basket_quantity_changed")) {
+                                                    letDialogSleep();
+                                                    orderCancelled();
+                                                } else {
+                                                    //request for orders request
+                                                    GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
+                                                        @Override
+                                                        public void getResult(JSONObject response) {
 
-                                                GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
-                                                    @Override
-                                                    public void getResult(JSONObject response) {
+                                                            GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
+                                                                @Override
+                                                                public void getResult(JSONObject response) {
 
-                                                        GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + SidebarActivity.getUserID(), "billings", "billings_id", new RespondListener<JSONObject>() {
-                                                            @Override
-                                                            public void getResult(JSONObject response) {
+                                                                    GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + SidebarActivity.getUserID(), "billings", "billings_id", new RespondListener<JSONObject>() {
+                                                                        @Override
+                                                                        public void getResult(JSONObject response) {
 
-                                                                try {
-                                                                    String timestamp_ordered = response.getString("server_timestamp");
+                                                                            try {
+                                                                                String timestamp_ordered = response.getString("server_timestamp");
 
-                                                                    Intent order_intent = new Intent(getBaseContext(), SidebarActivity.class);
-                                                                    order_intent.putExtra("payment_from", "cod");
-                                                                    order_intent.putExtra("timestamp_ordered", timestamp_ordered);
-                                                                    order_intent.putExtra("select", 5);
-                                                                    startActivity(order_intent);
-                                                                    SummaryActivity.this.finish();
+                                                                                Intent order_intent = new Intent(getBaseContext(), SidebarActivity.class);
+                                                                                order_intent.putExtra("payment_from", "cod");
+                                                                                order_intent.putExtra("timestamp_ordered", timestamp_ordered);
+                                                                                order_intent.putExtra("select", 5);
+                                                                                startActivity(order_intent);
+                                                                                SummaryActivity.this.finish();
 
-                                                                } catch (JSONException e) {
-                                                                    e.printStackTrace();
+                                                                            } catch (JSONException e) {
+                                                                                e.printStackTrace();
+                                                                            }
+                                                                            letDialogSleep();
+
+                                                                        }
+                                                                    }, new ErrorListener<VolleyError>() {
+                                                                        public void getError(VolleyError error) {
+                                                                            letDialogSleep();
+                                                                            Log.d("Error", error + "");
+                                                                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    });
+
                                                                 }
+                                                            }, new ErrorListener<VolleyError>() {
+                                                                public void getError(VolleyError error) {
+                                                                    letDialogSleep();
+                                                                    Log.d("Error", error + "");
+                                                                    Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
 
-                                                            }
-                                                        }, new ErrorListener<VolleyError>() {
-                                                            public void getError(VolleyError error) {
-                                                                Log.d("Error", error + "");
-                                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
+                                                        }
+                                                    }, new ErrorListener<VolleyError>() {
+                                                        public void getError(VolleyError error) {
+                                                            letDialogSleep();
+                                                            Log.d("Error", error + "");
+                                                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
 
-                                                    }
-                                                }, new ErrorListener<VolleyError>() {
-                                                    public void getError(VolleyError error) {
-                                                        Log.d("Error", error + "");
-                                                        Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
+                                                }
 
+                                            } catch (
+                                                    Exception e
+                                                    )
+
+                                            {
+                                                System.out.print("src: <SummaryAct> " + e.toString());
+                                                SummaryActivity.this.finish();
                                             }
-                                        }, new ErrorListener<VolleyError>() {
-                                            public void getError(VolleyError error) {
-                                                Log.d("Error", error + "");
-                                                Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    } catch (Exception e) {
-                                        System.out.print("src: <SummaryAct> " + e.toString());
-                                        SummaryActivity.this.finish();
+                                        }
                                     }
-                                }
-                            }, new ErrorListener<VolleyError>() {
-                                @Override
-                                public void getError(VolleyError error) {
-                                    System.out.print("src: <HomeTileActivityClone>: " + error.toString());
-                                    Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+
+                                    , new ErrorListener<VolleyError>()
+
+                                    {
+                                        @Override
+                                        public void getError(VolleyError error) {
+                                            letDialogSleep();
+                                            System.out.print("src: <HomeTileActivityClone>: " + error.toString());
+                                            Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                            );
                         }
                     });
                     order_confirmation_dialog.setNegativeButton("No, wait I'll check", new DialogInterface.OnClickListener() {
@@ -368,5 +402,35 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
         }
+    }
+
+    void orderCancelled() {
+        AlertDialog.Builder cancelled_order_dialog = new AlertDialog.Builder(SummaryActivity.this);
+        cancelled_order_dialog.setTitle("Order Cancelled!");
+        cancelled_order_dialog.setMessage("Sorry to inform you that your order have been cancelled. \n" +
+                "Our records show that one or more products that you want to order exceeds the number of our stocks. \n" +
+                "We updated your basket items. \n" +
+                "Please try again.");
+        cancelled_order_dialog.setCancelable(false);
+        cancelled_order_dialog.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startActivity(new Intent(SummaryActivity.this, ShoppingCartActivity.class));
+                SummaryActivity.this.finish();
+            }
+        });
+        cancelled_order_dialog.show();
+    }
+
+    void showBeautifulDialog() {
+        builder = new AlertDialog.Builder(SummaryActivity.this);
+        builder.setView(R.layout.progress_stuffing);
+        builder.setCancelable(false);
+        pDialog = builder.create();
+        pDialog.show();
+    }
+
+    void letDialogSleep() {
+        pDialog.dismiss();
     }
 }

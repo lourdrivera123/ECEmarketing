@@ -3,7 +3,9 @@ package com.example.zem.patientcareapp.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -36,6 +38,8 @@ public class MessageActivity extends AppCompatActivity {
 
     DbHelper db;
     Messages msg;
+    public static AppCompatDialog pDialog;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +72,11 @@ public class MessageActivity extends AppCompatActivity {
             hashMap.put("patient_id", String.valueOf(SidebarActivity.getUserID()));
             hashMap.put("isRead", String.valueOf(1));
 
-            final ProgressDialog pdialog = new ProgressDialog(this);
-            pdialog.setCancelable(false);
-            pdialog.setMessage("Loading...");
-            pdialog.show();
+//            final ProgressDialog pdialog = new ProgressDialog(this);
+//            pdialog.setCancelable(false);
+//            pdialog.setMessage("Loading...");
+//            pdialog.show();
+            showBeautifulDialog();
 
             PostRequest.send(this, hashMap, new RespondListener<JSONObject>() {
                 @Override
@@ -88,11 +93,11 @@ public class MessageActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
                         Log.d("MsgActvity", e + "");
                     }
-                    pdialog.dismiss();
+                    letDialogSleep();
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
-                    pdialog.dismiss();
+                    letDialogSleep();
                     Log.d("MsgActvity", error + "");
                     Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                 }
@@ -102,6 +107,18 @@ public class MessageActivity extends AppCompatActivity {
         date.setText(msg.getDate());
         subject.setText("Subject: " + msg.getSubject());
         message.setText(msg.getContent());
+    }
+
+    void showBeautifulDialog() {
+        builder = new AlertDialog.Builder(MessageActivity.this);
+        builder.setView(R.layout.progress_stuffing);
+        builder.setCancelable(false);
+        pDialog = builder.create();
+        pDialog.show();
+    }
+
+    void letDialogSleep() {
+        pDialog.dismiss();
     }
 
     @Override

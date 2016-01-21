@@ -1,10 +1,13 @@
 package com.example.zem.patientcareapp.Activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +25,7 @@ import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
+import com.example.zem.patientcareapp.Network.ListRequestFromCustomURI;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
@@ -46,6 +50,8 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     BasketController bc;
     OrderModel intent_ordermodel;
     OrderModel order_model;
+    public static AppCompatDialog pDialog;
+    AlertDialog.Builder builder;
 
     public ArrayList<HashMap<String, String>> items = new ArrayList();
     public static ArrayList<HashMap<String, String>> no_code_promos;
@@ -71,10 +77,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle("Shopping Cart");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("Please wait...");
-        dialog.setCancelable(false);
-        dialog.show();
+//        final ProgressDialog dialog = new ProgressDialog(this);
+//        dialog.setMessage("Please wait...");
+//        dialog.setCancelable(false);
+//        dialog.show();
+        showBeautifulDialog();
 
         proceed_to_checkout.setOnClickListener(this);
 
@@ -108,14 +115,18 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                     Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                 }
 
-                String url_raw = "get_basket_details&patient_id=" + SidebarActivity.getUserID() + "&branch_id=" + order_model.getBranch_id();
-                ListOfPatientsRequest.getJSONobj(ShoppingCartActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
+                String url_raw = "check_basket?patient_id=" + SidebarActivity.getUserID()+"&branch_id="+order_model.getBranch_id();
+                ListRequestFromCustomURI.getJSONobj(ShoppingCartActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
                         try {
                             int success = response.getInt("success");
 
                             if (success == 1) {
+                                if(response.getBoolean("basket_quantity_changed")){
+                                    letDialogSleep();
+                                    cartQuantityUpdated();
+                                }
                                 JSONArray json_mysql = response.getJSONArray("baskets");
                                 items = bc.convertFromJson(ShoppingCartActivity.this, json_mysql);
 
@@ -125,13 +136,13 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                         } catch (Exception e) {
                             Toast.makeText(ShoppingCartActivity.this, e + "", Toast.LENGTH_SHORT).show();
                         }
+                        letDialogSleep();
 
-                        dialog.dismiss();
                     }
                 }, new ErrorListener<VolleyError>() {
                     @Override
                     public void getError(VolleyError e) {
-                        dialog.dismiss();
+                        letDialogSleep();
                         Snackbar.make(root, "Network Error", Snackbar.LENGTH_SHORT).show();
                     }
                 });
@@ -139,10 +150,37 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         }, new ErrorListener<VolleyError>() {
             @Override
             public void getError(VolleyError e) {
-                dialog.dismiss();
+                letDialogSleep();
                 Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
             }
         });
+    }
+
+    void cartQuantityUpdated(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(ShoppingCartActivity.this);
+//        dialog.setTitle("Order Cancelled!");
+        dialog.setMessage("Our records show that one or more products in your cart exceeds the number of our stocks. \n" +
+                "We updated your basket items.");
+        dialog.setCancelable(false);
+        dialog.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    void showBeautifulDialog() {
+        builder = new AlertDialog.Builder(ShoppingCartActivity.this);
+        builder.setView(R.layout.progress_stuffing);
+        builder.setCancelable(false);
+        pDialog = builder.create();
+        pDialog.show();
+    }
+
+    void letDialogSleep() {
+        pDialog.dismiss();
     }
 
     @Override

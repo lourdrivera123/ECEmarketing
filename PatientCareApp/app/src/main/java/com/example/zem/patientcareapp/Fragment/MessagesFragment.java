@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDialog;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
@@ -58,13 +59,16 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     OverlayController oc;
     MessageController mc;
 
-    ProgressDialog dialog;
+//    ProgressDialog dialog;
 
     ArrayList<HashMap<String, String>> hashOfMessages;
     ArrayList<Integer> listOfCheckedPositions;
 
     int nr = 0, patient_id;
     String ids = "";
+
+    public static AppCompatDialog pDialog;
+    android.support.v7.app.AlertDialog.Builder builder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,18 +86,30 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         listOfMessages = (ListView) v.findViewById(R.id.listOfMessages);
         noMsgs = (TextView) v.findViewById(R.id.noMsgs);
 
-        dialog = new ProgressDialog(getActivity());
+       /* dialog = new ProgressDialog(getActivity());
         dialog.setMessage("Please wait...");
-        dialog.show();
+        dialog.show();*/
+
+        showBeautifulDialog();
 
         listOfMessages.setOnItemClickListener(this);
         listOfMessages.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listOfMessages.setMultiChoiceModeListener(this);
         listOfMessages.setOnItemLongClickListener(this);
 
-
-
         return v;
+    }
+
+    void showBeautifulDialog() {
+        builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setView(R.layout.progress_stuffing);
+        builder.setCancelable(false);
+        pDialog = builder.create();
+        pDialog.show();
+    }
+
+    void letDialogSleep() {
+        pDialog.dismiss();
     }
 
     private void showOverLay() {
@@ -156,7 +172,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                     Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
                     System.out.print("src: <MessagesFragment>: " + e);
                 }
-                dialog.dismiss();
+                letDialogSleep();
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
@@ -165,7 +181,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 adapter = new MessagesAdapter(getActivity(), R.layout.list_item_messages_fragment, hashOfMessages);
                 listOfMessages.setAdapter(adapter);
 
-                dialog.dismiss();
+                letDialogSleep();
                 System.out.print("VolleyError <ReferralFragment>: " + error);
                 Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
             }

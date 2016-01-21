@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -85,6 +87,8 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     public static int is_finish;
     int promo_id = 0;
     OrderModel order_model;
+    public static AppCompatDialog pDialog;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,16 +171,29 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         spinner_categories.setOnItemSelectedListener(this);
     }
 
+    void showBeautifulDialog() {
+        builder = new AlertDialog.Builder(ProductsActivity.this);
+        builder.setView(R.layout.progress_stuffing);
+        builder.setCancelable(false);
+        pDialog = builder.create();
+        pDialog.show();
+    }
+
+    void letDialogSleep() {
+        pDialog.dismiss();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         SelectedProductActivity.is_resumed = 0;
 
         if (is_finish != 0) {
-            final ProgressDialog pdialog = new ProgressDialog(this);
-            pdialog.setCancelable(false);
-            pdialog.setMessage("Please wait...");
-            pdialog.show();
+//            final ProgressDialog pdialog = new ProgressDialog(this);
+//            pdialog.setCancelable(false);
+//            pdialog.setMessage("Please wait...");
+//            pdialog.show();
+            showBeautifulDialog();
 
             int prescriptionId = is_finish;
             final HashMap<String, String> hashMap = map;
@@ -197,11 +214,11 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
                         Log.d("exception3", e + "");
                         Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                     }
-                    pdialog.dismiss();
+                    letDialogSleep();
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
-                    pdialog.dismiss();
+                    letDialogSleep();
                     Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
@@ -419,10 +436,12 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         searchProducts.clear();
         temp_products_items.clear();
 
-        final ProgressDialog progress1 = new ProgressDialog(this);
-        progress1.setMessage("Please wait...");
-        progress1.setCancelable(false);
-        progress1.show();
+//        final ProgressDialog progress1 = new ProgressDialog(this);
+//        progress1.setMessage("Please wait...");
+//        progress1.setCancelable(false);
+//        progress1.show();
+
+        showBeautifulDialog();
 
         ListOfPatientsRequest.getJSONobj(getBaseContext(), "get_products&branch_id=" + order_model.getBranch_id(), "products", new RespondListener<JSONObject>() {
                     @Override
@@ -499,18 +518,18 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
                                     adapter = new ProductsAdapter(ProductsActivity.this, R.layout.product_item, newMap);
                                     listOfProducts.setAdapter(adapter);
-                                    progress1.dismiss();
+                                    letDialogSleep();
                                 }
                             }
                         } catch (Exception e) {
                             Log.d("exception1", e + "");
                             Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                         }
-                        progress1.dismiss();
+                        letDialogSleep();
                     }
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
-                        progress1.dismiss();
+                        letDialogSleep();
                         Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                     }
                 }

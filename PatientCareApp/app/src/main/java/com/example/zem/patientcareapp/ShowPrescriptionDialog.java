@@ -3,6 +3,7 @@ package com.example.zem.patientcareapp;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,6 +12,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.internal.view.ContextThemeWrapper;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
@@ -44,7 +49,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ShowPrescriptionDialog extends Activity implements View.OnClickListener {
+public class ShowPrescriptionDialog extends AppCompatActivity implements View.OnClickListener {
     LinearLayout pick_camera_layout, pick_gallery_layout;
     ProgressBar progressBar;
     private TextView txtPercentage;
@@ -203,8 +208,7 @@ public class ShowPrescriptionDialog extends Activity implements View.OnClickList
             int patientID = SidebarActivity.getUserID();
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL + "?patient_id=" + patientID);
-
+            HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL);
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
                         new AndroidMultipartEntity.ProgressListener() {
@@ -217,8 +221,8 @@ public class ShowPrescriptionDialog extends Activity implements View.OnClickList
                 File sourceFile = new File(filePath);
 
                 // Adding file data to http body
+                entity.addPart("patient_id", new StringBody("" + patientID));
                 entity.addPart("image", new FileBody(sourceFile));
-
                 entity.addPart("purpose", new StringBody("prescription_upload"));
 
                 totalSize = entity.getContentLength();
@@ -245,28 +249,51 @@ public class ShowPrescriptionDialog extends Activity implements View.OnClickList
 
         @Override
         protected void onPostExecute(String result) {
+            Log.d("response_showprescd", result + "");
+
             JSONObject jObject;
             String image_url = "";
             int serverID = 0;
             try {
                 jObject = new JSONObject(result);
-                image_url = jObject.getString("file_name");
-                serverID = jObject.getInt("server_id");
+                if (jObject.getBoolean("error")) {
+                    uploadfaileddialog(jObject.getString("message"), "Upload Failed");
+                } else {
+                    image_url = jObject.getString("file_name");
+                    serverID = jObject.getInt("server_id");
+
+                    //put the refresh grid here or the display newly added image here
+                    if (ppc.insertUploadOnPrescription(patientID, image_url, serverID)) {
+                        arrayOfPrescriptions = refreshPrescriptionList();
+                        ShowPrescriptionDialog.this.finish();
+                        ProductsActivity.is_finish = serverID;
+                        SelectedProductActivity.is_resumed = serverID;
+                    } else
+                        Toast.makeText(ShowPrescriptionDialog.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
+//                upload_dialog.dismiss();
+                uploadfaileddialog("Sorry, we cannot upload your file", "Upload Failed");
             }
-
-            //put the refresh grid here or the display newly added image here
-            if (ppc.insertUploadOnPrescription(patientID, image_url, serverID)) {
-                arrayOfPrescriptions = refreshPrescriptionList();
-                ShowPrescriptionDialog.this.finish();
-                ProductsActivity.is_finish = serverID;
-                SelectedProductActivity.is_resumed = serverID;
-            } else
-                Toast.makeText(ShowPrescriptionDialog.this, "Error occurred", Toast.LENGTH_SHORT).show();
-
             upload_dialog.dismiss();
+
             super.onPostExecute(result);
+        }
+
+        void uploadfaileddialog(String msg, String title) {
+            AlertDialog.Builder uploadfaildialog = new AlertDialog.Builder(new ContextThemeWrapper(ShowPrescriptionDialog.this, R.style.myDialog));
+
+            uploadfaildialog.setTitle(title);
+            uploadfaildialog.setMessage(msg);
+            uploadfaildialog.setCancelable(false);
+            uploadfaildialog.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            uploadfaildialog.show();
         }
     }
 }

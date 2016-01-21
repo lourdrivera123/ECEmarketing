@@ -4,6 +4,7 @@ package com.example.zem.patientcareapp.SwipeTabsModule;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -18,6 +19,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialog;
+import android.support.v7.internal.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -41,6 +43,7 @@ import java.util.regex.Pattern;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
@@ -122,7 +125,7 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
     private TextView txtPercentage;
 
     ProgressBar progressBar;
-//    public static ProgressDialog public_progress;
+    //    public static ProgressDialog public_progress;
     Dialog upload_dialog;
     public static Intent intent;
     public static AppCompatDialog pDialog;
@@ -178,6 +181,21 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
         builder.setCancelable(false);
         pDialog = builder.create();
         pDialog.show();
+    }
+
+    void uploadfaileddialog(String msg, String title) {
+        AlertDialog.Builder uploadfaildialog = new AlertDialog.Builder(EditTabsActivity.this);
+
+        uploadfaildialog.setTitle(title);
+        uploadfaildialog.setMessage(msg);
+        uploadfaildialog.setCancelable(false);
+        uploadfaildialog.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        uploadfaildialog.show();
     }
 
     void letDialogSleep() {
@@ -743,7 +761,7 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
             int patientID = pc.getCurrentLoggedInPatient().getServerID();
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL + "?patient_id=" + patientID);
+            HttpPost httppost = new HttpPost(Constants.FILE_UPLOAD_URL);
 
             try {
                 AndroidMultipartEntity entity = new AndroidMultipartEntity(
@@ -757,6 +775,7 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
                 File sourceFile = new File(s_filepath);
 
                 // Adding file data to http body
+                entity.addPart("patient_id", new StringBody("" + patientID));
                 entity.addPart("image", new FileBody(sourceFile));
                 entity.addPart("purpose", new StringBody(purpose));
 
@@ -783,26 +802,31 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
 
         @Override
         protected void onPostExecute(String result) {
-            JSONObject jObject;
-
+            Log.d("edittabsresult", result + "");
             try {
+                JSONObject jObject;
                 jObject = new JSONObject(result);
-                image_url = jObject.getString("file_name");
-                patient.setPhoto(image_url);
+                if (jObject.getBoolean("error")) {
+                    upload_dialog.dismiss();
+                    uploadfaileddialog(jObject.getString("message"), "Upload Failed");
+                } else {
+                    image_url = jObject.getString("file_name");
+                    patient.setPhoto(image_url);
 
-                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+                    ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
-                if (pc.updatePatientImage(image_url, SidebarActivity.getUserID()))
-                    Log.d("updated photo", "true");
-                else
-                    Log.d("updated photo", "false");
+                    if (pc.updatePatientImage(image_url, SidebarActivity.getUserID()))
+                        Log.d("updated photo", "true");
+                    else
+                        Log.d("updated photo", "false");
 
-                helpers.setImage(image_url, progressBar, image_holder);
-
+                    helpers.setImage(image_url, progressBar, image_holder);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
+//                upload_dialog.dismiss();
+                uploadfaileddialog("Sorry, we cannot upload your file", "Upload Failed");
             }
-
             upload_dialog.dismiss();
             super.onPostExecute(result);
         }

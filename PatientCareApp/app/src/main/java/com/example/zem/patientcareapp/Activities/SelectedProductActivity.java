@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -78,7 +79,9 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     Helpers helpers;
     CircleFragmentAdapter adapter;
 
-    ProgressDialog dialog;
+    public static AppCompatDialog pDialog;
+    AlertDialog.Builder builder;
+//    ProgressDialog dialog;
 
     public HashMap<String, String> map;
 
@@ -126,13 +129,25 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         Intent intent = getIntent();
         get_productID = intent.getIntExtra(PRODUCT_ID, 0);
 
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("Please wait...");
-        dialog.show();
+//        dialog = new ProgressDialog(this);
+//        dialog.setMessage("Please wait...");
+//        dialog.show();
+        showBeautifulDialog();
         product = getProductWithImage(get_productID);
         qty_cart.setText("" + temp_qty);
     }
 
+    void showBeautifulDialog() {
+        builder = new AlertDialog.Builder(SelectedProductActivity.this);
+        builder.setView(R.layout.progress_stuffing);
+        builder.setCancelable(false);
+        pDialog = builder.create();
+        pDialog.show();
+    }
+
+    void letDialogSleep() {
+        pDialog.dismiss();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -205,9 +220,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                 hashMap.put("patient_id", String.valueOf(SidebarActivity.getUserID()));
                 hashMap.put("request", "crud");
 
-                final ProgressDialog pdialog = new ProgressDialog(this);
-                pdialog.setMessage("Please wait...");
-                pdialog.show();
+//                final ProgressDialog pdialog = new ProgressDialog(this);
+//                pdialog.setMessage("Please wait...");
+//                pdialog.show();
+
+                showBeautifulDialog();
 
                 String url_raw = "get_basket_items&patient_id=" + SidebarActivity.getUserID() + "&table=baskets";
                 ListOfPatientsRequest.getJSONobj(SelectedProductActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
@@ -251,11 +268,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                         } catch (JSONException e) {
                                             Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                                         }
-                                        pdialog.dismiss();
+                                        letDialogSleep();
                                     }
                                 }, new ErrorListener<VolleyError>() {
                                     public void getError(VolleyError error) {
-                                        pdialog.dismiss();
+                                        letDialogSleep();
                                         Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                                     }
                                 });
@@ -263,9 +280,9 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                 hashMap.put("quantity", String.valueOf(temp_qty));
                                 hashMap.put("action", "insert");
 
-                                final ProgressDialog dialog = new ProgressDialog(SelectedProductActivity.this);
-                                dialog.setCancelable(false);
-                                dialog.setMessage("Loading...");
+//                                final ProgressDialog dialog = new ProgressDialog(SelectedProductActivity.this);
+//                                dialog.setCancelable(false);
+//                                dialog.setMessage("Loading...");
 
                                 if (product.getPrescriptionRequired() == 1) { //IF PRODUCT REQUIRES PRESCRIPTION
                                     GridView gridView;
@@ -280,7 +297,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                dialog.show();
+                                                showBeautifulDialog();
                                                 int prescriptionId = (int) id;
                                                 hashMap.put("prescription_id", prescriptionId + "");
                                                 hashMap.put("is_approved", "0");
@@ -299,11 +316,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                                         } catch (JSONException e) {
                                                             Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                                                         }
-                                                        dialog.dismiss();
+                                                        letDialogSleep();
                                                     }
                                                 }, new ErrorListener<VolleyError>() {
                                                     public void getError(VolleyError error) {
-                                                        dialog.dismiss();
+                                                        letDialogSleep();
                                                         Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                                                     }
                                                 });
@@ -333,7 +350,7 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                 } else { //IF NO PRESCRIPTION IS REQUIRED
                                     hashMap.put("prescription_id", "0");
                                     hashMap.put("is_approved", "1");
-                                    dialog.show();
+                                    letDialogSleep();
 
                                     PostRequest.send(getBaseContext(), hashMap, new RespondListener<JSONObject>() {
                                         @Override
@@ -343,11 +360,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                                             } catch (Exception e) {
                                                 Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                                             }
-                                            dialog.dismiss();
+                                            letDialogSleep();
                                         }
                                     }, new ErrorListener<VolleyError>() {
                                         public void getError(VolleyError error) {
-                                            dialog.dismiss();
+                                            letDialogSleep();
                                             Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });
@@ -356,12 +373,12 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                         } catch (Exception e) {
                             Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                         }
-                        pdialog.dismiss();
+                        letDialogSleep();
                     }
                 }, new ErrorListener<VolleyError>() {
                     @Override
                     public void getError(VolleyError e) {
-                        pdialog.dismiss();
+                        letDialogSleep();
                         Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                     }
                 });
@@ -377,10 +394,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
         ProductsActivity.is_finish = 0;
 
         if (is_resumed != 0) {
-            final ProgressDialog pdialog = new ProgressDialog(this);
-            pdialog.setCancelable(false);
-            pdialog.setMessage("Please wait...");
-            pdialog.show();
+//            final ProgressDialog pdialog = new ProgressDialog(this);
+//            pdialog.setCancelable(false);
+//            pdialog.setMessage("Please wait...");
+//            pdialog.show();
+            showBeautifulDialog();
 
             int prescriptionId = is_resumed;
             final HashMap<String, String> hashMap = map;
@@ -398,11 +416,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                     } catch (Exception e) {
                         Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                     }
-                    pdialog.dismiss();
+                    letDialogSleep();
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
-                    pdialog.dismiss();
+                    letDialogSleep();
                     Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
                 }
             });
@@ -483,12 +501,12 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
                 pager.setAdapter(adapter);
                 indicator.setViewPager(pager);
 
-                dialog.dismiss();
+                letDialogSleep();
             }
         }, new ErrorListener<VolleyError>() {
             @Override
             public void getError(VolleyError e) {
-                dialog.dismiss();
+                letDialogSleep();
                 Snackbar.make(root, "Please check your Internet connection", Snackbar.LENGTH_SHORT).show();
             }
         });

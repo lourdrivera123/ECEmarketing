@@ -119,7 +119,7 @@
         <activity
             android:name=".ShowPrescriptionDialog"
             android:excludeFromRecents="true"
-            android:theme="@style/ForDialogTheme" />
+            android:theme="@style/myDialog" />
         <activity
             android:name=".Activities.GoogleMapsActivity"
             android:screenOrientation="portrait"

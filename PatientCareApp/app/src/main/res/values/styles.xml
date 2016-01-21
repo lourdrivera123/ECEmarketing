@@ -121,6 +121,10 @@
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
     </style>
 
+    <style name="myDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="CustomCirclePageIndicator">
         <item name="fillColor">@color/partner_toolbar</item>
         <item name="strokeColor">@color/counter_text_bg</item>
