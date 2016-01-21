@@ -1,27 +1,18 @@
 package com.example.zem.patientcareapp.Fragment;
 
-import android.app.ProgressDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.PointsController;
-import com.example.zem.patientcareapp.Customizations.GlowingText;
 import com.example.zem.patientcareapp.Customizations.NonScrollListView;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
@@ -47,7 +38,6 @@ import java.util.HashMap;
 
 public class ReferralFragment extends Fragment {
     TextView referralsLvlLimit;
-    TableLayout table_parent;
     LinearLayout parent;
     LayoutInflater inflater;
 
@@ -63,13 +53,12 @@ public class ReferralFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_referrals, container, false);
         this.inflater = inflater;
 
         referralsLvlLimit = (TextView) root.findViewById(R.id.referralsLvlLimit);
         parent = (LinearLayout) root.findViewById(R.id.parent);
-//        table_parent = (TableLayout) root.findViewById(R.id.table_parent);
         earned_points_log = (NonScrollListView) root.findViewById(R.id.earned_points_log);
         patient_points = (TextView) root.findViewById(R.id.patient_points);
         used_points_log = (NonScrollListView) root.findViewById(R.id.used_points_log);
@@ -82,7 +71,6 @@ public class ReferralFragment extends Fragment {
         patient = pc.getloginPatient(SidebarActivity.getUname());
 
         checkForSettingsUpdate();
-//        addTableRow();
 
         ListOfPatientsRequest.getJSONobj(getActivity(), "get_settings", "settings", new RespondListener<JSONObject>() {
             @Override
@@ -130,7 +118,7 @@ public class ReferralFragment extends Fragment {
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Snackbar.make(parent, "Network Error", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(container, "Network Error", Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -152,12 +140,12 @@ public class ReferralFragment extends Fragment {
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Snackbar.make(parent, "Network Error", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(container, "Network Error", Snackbar.LENGTH_SHORT).show();
             }
         });
 
 
-        ListOfPatientsRequest.getJSONobj(getActivity(), "get_patients_downlines&referral_id="+ptnt.getReferral_id(), "patients", new RespondListener<JSONObject>() {
+        ListOfPatientsRequest.getJSONobj(getActivity(), "get_patients_downlines&referral_id=" + ptnt.getReferral_id(), "patients", new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {
                 try {
@@ -167,12 +155,12 @@ public class ReferralFragment extends Fragment {
                     downlines.setAdapter(downlinesAdapter);
                 } catch (Exception e) {
                     Log.d("exception2", e + "");
-                    Snackbar.make(parent, "Error occurred", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(container, "Error occurred", Snackbar.LENGTH_SHORT).show();
                 }
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Snackbar.make(parent, "Network Error", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(container, "Network Error", Snackbar.LENGTH_SHORT).show();
             }
         });
 

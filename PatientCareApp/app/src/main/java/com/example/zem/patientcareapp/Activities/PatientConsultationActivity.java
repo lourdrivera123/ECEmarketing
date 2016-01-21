@@ -3,6 +3,7 @@ package com.example.zem.patientcareapp.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +23,6 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
@@ -46,13 +46,14 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-public class PatientConsultationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, TextWatcher, CompoundButton.OnCheckedChangeListener, CalendarDatePickerDialogFragment.OnDateSetListener, RadialTimePickerDialogFragment.OnTimeSetListener {
+public class PatientConsultationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, CompoundButton.OnCheckedChangeListener, CalendarDatePickerDialogFragment.OnDateSetListener, RadialTimePickerDialogFragment.OnTimeSetListener, TextWatcher {
     DbHelper dbhelper;
     PatientConsultationController pcc;
     Consultation consult;
     AlarmService alarmService;
+    DoctorController dc;
 
-    LinearLayout setDate, setAlarmedTime;
+    LinearLayout setDate, setAlarmedTime, root;
     TextView txtDate, txtAlarmedTime;
     CheckBox checkAlarm;
     AutoCompleteTextView search_doctor;
@@ -80,16 +81,16 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
         getSupportActionBar().setTitle("Set Consultation");
 
         dbhelper = new DbHelper(this);
+        dc = new DoctorController(this);
         pcc = new PatientConsultationController(this);
+
         alarmService = new AlarmService(this);
         Intent getIntent = getIntent();
         listOfDoctors = new ArrayList();
         listOfClinic = new ArrayList();
 
-        DoctorController doctor_controller = new DoctorController(this);
-
-        doctorClinicHashmap = doctor_controller.getDoctorsInnerJoinClinics();
-        doctorsHashmap = doctor_controller.getAllDoctors();
+        doctorClinicHashmap = dc.getDoctorsInnerJoinClinics();
+        doctorsHashmap = dc.getAllDoctors();
 
         setDate = (LinearLayout) findViewById(R.id.setDate);
         setAlarmedTime = (LinearLayout) findViewById(R.id.setAlarmedTime);
@@ -98,6 +99,7 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
         checkAlarm = (CheckBox) findViewById(R.id.checkAlarm);
         search_doctor = (AutoCompleteTextView) findViewById(R.id.search_doctor);
         spinner_clinic = (Spinner) findViewById(R.id.spinner_clinic);
+        root = (LinearLayout) findViewById(R.id.root);
 
         cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
@@ -145,12 +147,12 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
             txtDate.setText(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + check_date);
         }
 
-        listOfClinic.add("Choose a Doctor");
+        listOfClinic.add("Choose a Clinic");
         clinicAdapter = new ArrayAdapter(this, R.layout.spinner_clinics_by_doctors, listOfClinic);
         spinner_clinic.setAdapter(clinicAdapter);
 
-        search_doctor.addTextChangedListener(this);
         search_doctor.setOnItemClickListener(this);
+        search_doctor.addTextChangedListener(this);
         setDate.setOnClickListener(this);
         setAlarmedTime.setOnClickListener(this);
         checkAlarm.setOnCheckedChangeListener(this);
@@ -211,30 +213,25 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
                     @Override
                     public void getResult(JSONObject response) {
                         try {
-                            int success = response.getInt("success");
+                            consult.setServerID(response.getInt("last_inserted_id"));
+                            consult.setCreated_at(response.getString("created_at"));
 
-                            if (success == 1) {
-                                consult.setServerID(response.getInt("last_inserted_id"));
-                                consult.setCreated_at(response.getString("created_at"));
-
-                                if (pcc.savePatientConsultation(consult, request)) {
-                                    alarmService.patientConsultationReminder();
-                                    PatientConsultationActivity.this.finish();
-                                    Toast.makeText(getBaseContext(), "Your request has been submitted. Please wait for your confirmation.", Toast.LENGTH_SHORT).show();
-                                } else
-                                    Toast.makeText(getBaseContext(), "Error while saving", Toast.LENGTH_SHORT).show();
+                            if (pcc.savePatientConsultation(consult, request)) {
+                                alarmService.patientConsultationReminder();
+                                PatientConsultationActivity.this.finish();
+                                Snackbar.make(root, "Your request has been submitted. Please wait for your confirmation.", Snackbar.LENGTH_SHORT).show();
                             } else
-                                Toast.makeText(getBaseContext(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                         } catch (Exception e) {
-                            Toast.makeText(getBaseContext(), e + "", Toast.LENGTH_SHORT).show();
+                            Log.d("patient_consultation", e + "");
+                            Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                         }
                         pdialog.dismiss();
                     }
                 }, new ErrorListener<VolleyError>() {
                     public void getError(VolleyError error) {
                         pdialog.dismiss();
-                        Log.d("PatientConsultAct", error + "");
-                        Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(root, "Network Error", Snackbar.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -297,13 +294,14 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
         String day;
+        String month = ((monthOfYear + 1) < 10 ? "0" : "") + (monthOfYear + 1);
 
         if (dayOfMonth < 10)
             day = "0" + dayOfMonth;
         else
             day = String.valueOf(dayOfMonth);
 
-        String dateStr = year + "-" + (monthOfYear + 1) + "-" + day;
+        String dateStr = year + "-" + month + "-" + day;
         txtDate.setText(dateStr);
     }
 
@@ -319,7 +317,6 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
     }
 
     public void prepareSpinner(String doctor_name) {
-        spinner_clinic.setVisibility(View.VISIBLE);
         listOfClinic.clear();
 
         for (int x = 0; x < doctorClinicHashmap.size(); x++) {
@@ -344,13 +341,18 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
     }
 
     @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String s_doctor = search_doctor.getText().toString();
 
         for (String doctor : listOfDoctors) {
             if (!doctor.toLowerCase().contains(s_doctor.toLowerCase())) {
                 listOfClinic.clear();
-                listOfClinic.add("Choose a Doctor");
+                listOfClinic.add("Choose a Clinic");
                 clinicAdapter.notifyDataSetChanged();
             }
         }
@@ -358,9 +360,6 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
 
     @Override
     public void afterTextChanged(Editable s) {
-    }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
     }
 }
