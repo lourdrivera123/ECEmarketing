@@ -16,6 +16,7 @@ import com.example.zem.patientcareapp.Controllers.FreeProductsController;
 import com.example.zem.patientcareapp.Controllers.MessageController;
 import com.example.zem.patientcareapp.Controllers.OrderController;
 import com.example.zem.patientcareapp.Controllers.OrderDetailController;
+import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
 import com.example.zem.patientcareapp.Controllers.PatientConsultationController;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
@@ -54,6 +55,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import static android.util.Log.d;
+
 /**
  * Created by Dexter B. on 5/11/2015.
  */
@@ -89,6 +92,7 @@ public class Sync {
     PatientConsultationController ptcc;
     UpdateController uc;
     BillingController blc;
+    OrderPreferenceController opc;
     Context context;
 
     public void init(Context c, String request, String table_name, String table_id, JSONObject response) {
@@ -120,6 +124,7 @@ public class Sync {
         ptcc = new PatientConsultationController(context);
         uc = new UpdateController(context);
         blc = new BillingController(context);
+        opc = new OrderPreferenceController(context);
 
         try {
             int success = response.getInt("success");
@@ -137,71 +142,74 @@ public class Sync {
                         if (json_object != null) {
                             if (tableName.equals("doctors")) {
                                 if (!doctor_controller.saveDoctor(setDoctor(json_object), "insert"))
-                                    Log.d("sync_21", "wala na save");
+                                    d("sync_21", "wala na save");
                             } else if (tableName.equals("specialties")) {
                                 if (!sp.saveSpecialty(setSpecialty(json_object), "insert"))
-                                    Log.d("sync_20", "wala na save");
+                                    d("sync_20", "wala na save");
                             } else if (tableName.equals("sub_specialties")) {
                                 if (!ssp.saveSubSpecialty(setSubSpecialty(json_object), "insert"))
-                                    Log.d("sync_19", "wala na save");
+                                    d("sync_19", "wala na save");
                             } else if (tableName.equals("product_categories")) {
                                 try {
                                     if (!pcc.insertProductCategory(setProductCategory(json_object)))
-                                        Log.d("sync_18", "wala na save");
+                                        d("sync_18", "wala na save");
                                 } catch (Exception e) {
                                     Toast.makeText(context, "Something went wrong! " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             } else if (tableName.equals("product_subcategories")) {
                                 if (!pscc.insertProductSubCategory(setProductSubCategory(json_object)))
-                                    Log.d("sync_17", "wala na save");
+                                    d("sync_17", "wala na save");
                             } else if (tableName.equals("dosage_format_and_strength")) {
                                 if (!dc.insertDosage(setDosage(json_object)))
-                                    Log.d("sync_16", "wala na save");
+                                    d("sync_16", "wala na save");
                             } else if (tableName.equals("patient_records")) {
                                 if (prc.savePatientRecord(setPatientRecord(json_object), "insert"))
-                                    Log.d("sync_14", "wala na save");
+                                    d("sync_14", "wala na save");
                             } else if (tableName.equals("patient_treatments")) {
                                 if (!ptc.savePatientTreatments(setTreatments(json_object), "insert"))
-                                    Log.d("sync_13", "wala na save");
+                                    d("sync_13", "wala na save");
                             } else if (tableName.equals("discounts_free_products")) {
                                 if (!dfpc.saveDiscountsFreeProducts(setDiscountsFreeProducts(json_object), "insert"))
-                                    Log.d("sync_12", "wala na save");
+                                    d("sync_12", "wala na save");
                             } else if (tableName.equals("free_products")) {
                                 if (!fpc.saveFreeProducts(setFreeProducts(json_object), "insert"))
-                                    Log.d("sync_11", "wala na save");
+                                    d("sync_11", "wala na save");
                             } else if (tableName.equals("promo")) {
                                 if (!prmc.savePromo(setPromo(json_object), "insert"))
-                                    Log.d("sync_10", "wala na save");
+                                    d("sync_10", "wala na save");
                             } else if (tableName.equals("clinics")) {
                                 if (!clinic_controller.saveClinic(setClinic(json_object), "insert"))
-                                    Log.d("sync_9", "wala na save");
+                                    d("sync_9", "wala na save");
                             } else if (tableName.equals("clinic_doctor")) {
                                 if (!cdc.saveClinicDoctor(setClinicDoctor(json_object), "insert"))
-                                    Log.d("sync_8", "wala na save");
+                                    d("sync_8", "wala na save");
                             } else if (tableName.equals("patient_prescriptions")) {
                                 if (!ppc.savePrescription(json_object))
-                                    Log.d("sync_7", "wala na save");
+                                    d("sync_7", "wala na save");
                             } else if (tableName.equals("settings")) {
                                 if (!sc.saveSettings(json_object, "insert"))
-                                    Log.d("sync_6", "wala na save");
+                                    d("sync_6", "wala na save");
                             } else if (tableName.equals("branches")) {
                                 if (!brc.saveBranches(json_object))
-                                    Log.d("sync_5", "wala na save");
+                                    d("sync_5", "wala na save");
                             } else if (tableName.equals("orders")) {
                                 if (!oc.saveOrders(json_object))
-                                    Log.d("sync_4", "wala na save");
+                                    d("sync_4", "wala na save");
                             } else if (tableName.equals("order_details")) {
                                 if (!odc.saveOrderDetails(json_object))
-                                    Log.d("sync_3", "wala na save");
+                                    d("sync_3", "wala na save");
                             } else if (tableName.equals("messages")) {
                                 if (!mc.saveMessages(json_object, "insert"))
-                                    Log.d("sync_2", "wala na save");
+                                    d("sync_2", "wala na save");
                             } else if (tableName.equals("consultations")) {
                                 if (!ptcc.savePatientConsultation(setConsultation(json_object), "add"))
-                                    Log.d("sync_1", "wala na save");
+                                    d("sync_1", "wala na save");
                             } else if (tableName.equals("billings")) {
                                 if (!blc.saveBillings(json_object))
-                                    Log.d("sync_0", "wala na save");
+                                    d("sync_0", "wala na save");
+                            } else if (tableName.equals("order_preference")){
+                                if (!opc.savePreferenceFromJson(json_object))
+                                    d("sync_0", "wala na save");
                             }
                         }
                     }
@@ -256,7 +264,7 @@ public class Sync {
             consult.setCreated_at(json.getString("created_at"));
             consult.setUpdated_at(json.getString("updated_at"));
         } catch (Exception e) {
-            Log.d("sync1", e + "");
+            d("sync1", e + "");
         }
 
         return consult;

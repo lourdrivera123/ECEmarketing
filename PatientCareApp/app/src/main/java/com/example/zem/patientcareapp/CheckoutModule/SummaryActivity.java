@@ -141,7 +141,20 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                         items = bc.convertFromJson(SummaryActivity.this, json_mysql);
 
                         for (HashMap<String, String> item : items) {
-                            totalAmount = totalAmount + Double.parseDouble(item.get("item_subtotal"));
+                            String promo_type = item.get("promo_type");
+                            double item_subtotal_value = Double.parseDouble(item.get("item_subtotal"));
+                            double peso_discount = Double.parseDouble(item.get("peso_discount"));
+                            double percentage_discount = Double.parseDouble(item.get("percentage_discount"));
+                            double computed_discount = 0;
+
+                            if(promo_type.equals("peso_discount"))
+                                computed_discount = item_subtotal_value - peso_discount;
+                            else if(promo_type.equals("percentage_discount"))
+                                computed_discount = item_subtotal_value - percentage_discount;
+                            else
+                                computed_discount = item_subtotal_value;
+
+                            totalAmount = totalAmount + computed_discount;
                         }
 
                         double coupon_discount = order_model.getCoupon_discount();

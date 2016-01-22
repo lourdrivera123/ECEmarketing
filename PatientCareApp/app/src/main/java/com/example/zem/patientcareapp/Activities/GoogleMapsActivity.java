@@ -56,6 +56,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
+import static android.support.design.widget.Snackbar.make;
+import static android.util.Log.d;
+import static com.example.zem.patientcareapp.Network.CustomPostRequest.send;
+import static java.lang.System.out;
+
 /**
  * Created by Zem on 11/3/2015.
  */
@@ -329,14 +335,14 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
         } else {
             order_model.setAction("insert");
             order_model.setBranch_id(branches_selected_id);
-            save();
+            saveSelectedBranchOnline(order_model);
         }
     }
 
     void showconfirmation() {
         final AlertDialog.Builder confirmationDialog1 = new AlertDialog.Builder(GoogleMapsActivity.this);
         confirmationDialog1.setTitle("Warning!");
-        confirmationDialog1.setMessage("If you select another branch, all your products in the cart will be removed.\nDo you wish to continue?");
+        confirmationDialog1.setMessage("If you select another branch, your current cart and order preference will reset.\nDo you wish to continue?");
         confirmationDialog1.setCancelable(false);
 
         confirmationDialog1.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -361,23 +367,60 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
             this.finish();
     }
 
-    void save(){
-//        if () {
-        opc.saveSelectedBranchOnline(order_model);
-//            redirect();
-//        } else {
-//            Snackbar.make(root, "Cannot Save Branch", Snackbar.LENGTH_SHORT).show();
-//        }
+    void saveSelectedBranchOnline(final OrderModel order_model){
+        HashMap<String, String> hashMap = new HashMap();
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_BRANCH_ID, String.valueOf(order_model.getBranch_id()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_PATIENT_ID, String.valueOf(SidebarActivity.getUserID()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_RECIPIENT_NAME, String.valueOf(order_model.getRecipient_name()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_RECIPIENT_ADDRESS, String.valueOf(order_model.getRecipient_address()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_RECIPIENT_NUMBER, String.valueOf(order_model.getRecipient_contactNumber()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_MODE_OF_DELIVERY, String.valueOf(order_model.getMode_of_delivery()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_PAYMENT_METHOD, String.valueOf(order_model.getPayment_method()));
+
+        if (order_model.getAction().equals("insert"))
+            hashMap.put("action", "insert");
+        else if (order_model.getAction().equals("update"))
+            hashMap.put("action", "update");
+
+        send("saveBranchPreference", hashMap, new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    d("orderprefresponse", response + "");
+                    if(response.getBoolean("success")){
+                        order_model.setServer_id(response.getInt("server_id"));
+                        if(opc.saveSelectedBranch(order_model)){
+                            redirect();
+                        } else {
+                            make(root, "Cannot save branch on local database", LENGTH_LONG).show();
+                        }
+                    } else {
+                        make(root, "Unable to save branch", LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    out.println("<saveBranchPreference> request error" + e);
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError error) {
+                out.println("src: <saveBranchPreference>: " + error.toString());
+            }
+        });
     }
 
     void flushBasketOnline(){
         StringRequests.getString(GoogleMapsActivity.this, "db/get.php?q=empty_basket_to_change_branch&patient_id=" + SidebarActivity.getUserID(), new StringRespondListener<String>() {
             @Override
             public void getResult(String response) {
-                if(response.equals("deleted"))
-                    save();
-                else
-                    Snackbar.make(root, "Unable to proceed, please try again", Snackbar.LENGTH_SHORT);
+                if(response.equals("deleted")){
+                    order_model.setMode_of_delivery("");
+                    order_model.setPayment_method("");
+                    order_model.setRecipient_address("");
+                    order_model.setRecipient_name("");
+                    saveSelectedBranchOnline(order_model);
+                } else
+                    make(root, "Unable to proceed, please try again", Snackbar.LENGTH_SHORT);
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {

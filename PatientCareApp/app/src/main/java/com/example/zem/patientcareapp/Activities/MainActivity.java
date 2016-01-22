@@ -42,6 +42,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
+import static android.support.design.widget.Snackbar.make;
+import static com.example.zem.patientcareapp.Network.GetRequest.getJSONobj;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     EditText username_txtfield, password_txtfield;
     TextView signup, forgotpw;
@@ -165,83 +169,95 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                     if (pc.LoginUser(uname, password)) {
                                         //request for patient_prescriptions
-                                        GetRequest.getJSONobj(getBaseContext(), "get_prescriptions&patient_id=" + syncedPatient.getServerID(), "patient_prescriptions", "prescriptions_id", new RespondListener<JSONObject>() {
+                                        getJSONobj(getBaseContext(), "get_prescriptions&patient_id=" + syncedPatient.getServerID(), "patient_prescriptions", "prescriptions_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                                                make(root, "Network error", LENGTH_SHORT).show();
                                             }
                                         });
 
                                         //request for orders request
-                                        GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + syncedPatient.getServerID(), "orders", "orders_id", new RespondListener<JSONObject>() {
+                                        getJSONobj(getBaseContext(), "get_orders&patient_id=" + syncedPatient.getServerID(), "orders", "orders_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
                                                 Log.d("orders error", error + "");
-                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                                                make(root, "Network error", LENGTH_SHORT).show();
                                             }
                                         });
 
                                         //request for order_billings
-                                        GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + syncedPatient.getServerID(), "billings", "billings_id", new RespondListener<JSONObject>() {
+                                        getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + syncedPatient.getServerID(), "billings", "billings_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                                                make(root, "Network error", LENGTH_SHORT).show();
                                             }
                                         });
 
                                         //request for order_details
-                                        GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + syncedPatient.getServerID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
+                                        getJSONobj(getBaseContext(), "get_order_details&patient_id=" + syncedPatient.getServerID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                                                make(root, "Network error", LENGTH_SHORT).show();
                                             }
                                         });
 
                                         //request for consultations
-                                        GetRequest.getJSONobj(getBaseContext(), "get_consultations&patient_id=" + syncedPatient.getServerID(), "consultations", "consultation_id", new RespondListener<JSONObject>() {
+                                        getJSONobj(getBaseContext(), "get_consultations&patient_id=" + syncedPatient.getServerID(), "consultations", "consultation_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
 
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                                                make(root, "Network error", LENGTH_SHORT).show();
                                             }
                                         });
 
                                         //request for patient_records
-                                        GetRequest.getJSONobj(getBaseContext(), "get_patient_records&patient_id=" + syncedPatient.getServerID(), "patient_records", "record_id", new RespondListener<JSONObject>() {
+                                        getJSONobj(getBaseContext(), "get_patient_records&patient_id=" + syncedPatient.getServerID(), "patient_records", "record_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                                                make(root, "Network error", LENGTH_SHORT).show();
                                             }
                                         });
 
                                         //request for patient_treatments
-                                        GetRequest.getJSONobj(getBaseContext(), "get_treatments", "patient_treatments", "treatments_id", new RespondListener<JSONObject>() {
+                                        getJSONobj(getBaseContext(), "get_treatments", "patient_treatments", "treatments_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                                                make(root, "Network error", LENGTH_SHORT).show();
                                             }
                                         });
+
+                                        getJSONobj(getBaseContext(), "get_order_preference&patient_id="+syncedPatient.getServerID(), "order_preference", "server_id", new RespondListener<JSONObject>() {
+                                            @Override
+                                            public void getResult(JSONObject response) {
+                                                
+                                            }
+                                        }, new ErrorListener<VolleyError>() {
+                                            public void getError(VolleyError error) {
+                                                make(root, "Network error", LENGTH_SHORT).show();
+                                            }
+                                        });
+
 
                                         SharedPreferences.Editor editor = sharedpreferences.edit();
                                         editor.putString(name, uname);
@@ -255,10 +271,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         startActivity(new Intent(getBaseContext(), SidebarActivity.class));
                                     } else {
                                         pDialog.dismiss();
-                                        Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
+                                        make(root, "Error occurred", LENGTH_SHORT).show();
                                     }
                                 } else {
-                                    Snackbar.make(root, "Invalid username/password", Snackbar.LENGTH_SHORT).show();
+                                    make(root, "Invalid username/password", LENGTH_SHORT).show();
                                     pDialog.dismiss();
                                 }
                             } catch (JSONException e) {
@@ -269,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             pDialog.dismiss();
-                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                            make(root, "Network error", LENGTH_SHORT).show();
                         }
                     });
                     queue.add(jsObjRequest);

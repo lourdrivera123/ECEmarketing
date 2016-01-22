@@ -14,9 +14,23 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
+import static android.support.design.widget.Snackbar.make;
+import static android.util.Log.d;
+import static com.example.zem.patientcareapp.Network.CustomPostRequest.send;
+import static java.lang.System.out;
 
 /**
  * Created by Zem on 11/18/2015.
@@ -28,9 +42,10 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
     TextView stepping_stone;
     Intent get_intent;
     OrderModel order_model;
-    LinearLayout cash, visa_or_mastercard, paypal;
+    LinearLayout cash, visa_or_mastercard, paypal, root;
     Intent intent;
     String payment_method;
+    OrderPreferenceController opc;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +63,10 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
         cash = (LinearLayout) findViewById(R.id.cash);
         visa_or_mastercard = (LinearLayout) findViewById(R.id.visa_or_mastercard);
         paypal = (LinearLayout) findViewById(R.id.paypal);
+        root = (LinearLayout) findViewById(R.id.root);
+
+        opc = new OrderPreferenceController(this);
+
 
         if (order_model.getMode_of_delivery().equals("delivery")) {
             stepping_stone.setText("Step 4/4");
@@ -90,33 +109,74 @@ public class PaymentMethod extends AppCompatActivity implements View.OnClickList
             case R.id.cash:
 //                order_model.setPayment_method("cash");
                 payment_method = "cash_on_delivery";
-                ok_lets_go();
+                saveSelectedBranchOnline();
                 break;
             case R.id.visa_or_mastercard:
                 payment_method = "visa_or_mastercard";
 //                order_model.setPayment_method("visa_or_mastercard");
-                ok_lets_go();
+                saveSelectedBranchOnline();
                 break;
             case R.id.paypal:
                 payment_method = "paypal";
 //                order_model.setPayment_method("order_model");
-                ok_lets_go();
+                saveSelectedBranchOnline();
                 break;
             default:
                 break;
         }
     }
 
-    public void ok_lets_go() {
+//    public void ok_lets_go() {
+//        order_model.setPayment_method(payment_method);
+//        if (opc.savePreference(order_model)) {
+//            intent = new Intent(this, PromosDiscounts.class);
+//            intent.putExtra("order_model", order_model);
+//            startActivity(intent);
+//            this.finish();
+//        } else {
+//            Log.d("ot", "what  the fuck is wrong ?");
+//        }
+//    }
+
+    void saveSelectedBranchOnline(){
         order_model.setPayment_method(payment_method);
-        OrderPreferenceController opc = new OrderPreferenceController(this);
-        if (opc.savePreference(order_model)) {
-            intent = new Intent(this, PromosDiscounts.class);
-            intent.putExtra("order_model", order_model);
-            startActivity(intent);
-            this.finish();
-        } else {
-            Log.d("ot", "what  the fuck is wrong ?");
-        }
+        HashMap<String, String> hashMap = new HashMap();
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_BRANCH_ID, String.valueOf(order_model.getBranch_id()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_PATIENT_ID, String.valueOf(SidebarActivity.getUserID()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_RECIPIENT_NAME, String.valueOf(order_model.getRecipient_name()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_RECIPIENT_ADDRESS, String.valueOf(order_model.getRecipient_address()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_RECIPIENT_NUMBER, String.valueOf(order_model.getRecipient_contactNumber()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_MODE_OF_DELIVERY, String.valueOf(order_model.getMode_of_delivery()));
+        hashMap.put(OrderPreferenceController.ORDER_PREFERENCES_PAYMENT_METHOD, String.valueOf(order_model.getPayment_method()));
+        hashMap.put("action", "update");
+
+        send("saveBranchPreference", hashMap, new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    d("orderprefresponse", response + "");
+                    if(response.getBoolean("success")){
+                        order_model.setServer_id(response.getInt("server_id"));
+                        if (opc.savePreference(order_model)) {
+                            intent = new Intent(PaymentMethod.this, PromosDiscounts.class);
+                            intent.putExtra("order_model", order_model);
+                            startActivity(intent);
+                            PaymentMethod.this.finish();
+                        } else {
+                            Log.d("ot", "what  the fuck is wrong ?");
+                        }
+                    } else {
+                        make(root, "Unable to save branch", LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    out.println("<saveBranchPreference> request error" + e);
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError error) {
+                out.println("src: <saveBranchPreference>: " + error.toString());
+            }
+        });
     }
 }

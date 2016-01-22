@@ -84,10 +84,10 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
             add_to_cart.setVisibility(View.GONE);
         }
 
-        if (Integer.parseInt(products_items.get(position).get("in_cart")) > -1) {
-            in_stocks.setVisibility(View.VISIBLE);
-            add_to_cart.setVisibility(View.GONE);
-        }
+//        if (Integer.parseInt(products_items.get(position).get("in_cart")) > -1) {
+//            in_stocks.setVisibility(View.VISIBLE);
+//            add_to_cart.setVisibility(View.GONE);
+//        }
 
         add_to_cart.setOnClickListener(this);
 

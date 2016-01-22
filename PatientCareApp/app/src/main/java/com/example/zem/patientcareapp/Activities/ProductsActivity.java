@@ -36,9 +36,11 @@ import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Interface.StringRespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.Network.PostRequest;
+import com.example.zem.patientcareapp.Network.StringRequests;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.example.zem.patientcareapp.adapter.ProductsAdapter;
 
@@ -61,7 +63,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     ListView listOfProducts;
     Toolbar myToolBar;
     LinearLayout results_layout, root;
-    TextView noOfResults, number_of_notif, no_products;
+    TextView noOfResults, number_of_notif, no_products, branch_selected;
     ImageButton go_to_cart;
     Spinner spinner_categories;
 
@@ -101,6 +103,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         listOfProducts = (ListView) findViewById(R.id.listOfProducts);
         spinner_categories = (Spinner) findViewById(R.id.spinner_categories);
         no_products = (TextView) findViewById(R.id.no_products);
+        branch_selected = (TextView) findViewById(R.id.branch_selected);
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         setSupportActionBar(myToolBar);
@@ -129,6 +132,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         get_intent = getIntent();
         promo_id = get_intent.getIntExtra("promo_id", 0);
 
+        setBranchNameFromServer();
 
         ListOfPatientsRequest.getJSONobj(this, "get_nocode_promos", "promos", new RespondListener<JSONObject>() {
             @Override
@@ -169,6 +173,19 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
 
         listOfProducts.setOnItemClickListener(this);
         spinner_categories.setOnItemSelectedListener(this);
+    }
+
+    void setBranchNameFromServer() {
+        StringRequests.getString(ProductsActivity.this, "db/get.php?q=get_branch_name_from_id&branch_id=" + order_model.getBranch_id(), new StringRespondListener<String>() {
+            @Override
+            public void getResult(String response) {
+                branch_selected.setText(response+" Branch");
+            }
+        }, new ErrorListener<VolleyError>() {
+            public void getError(VolleyError error) {
+                Log.d("fetch_name_err", error + "");
+            }
+        });
     }
 
     void showBeautifulDialog() {
@@ -423,6 +440,7 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         switch (v.getId()) {
             case R.id.go_to_cart:
                 startActivity(new Intent(this, ShoppingCartActivity.class));
+                ProductsActivity.this.finish();
                 break;
         }
     }

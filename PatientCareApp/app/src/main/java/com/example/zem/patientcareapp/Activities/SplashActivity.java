@@ -62,24 +62,6 @@ public class SplashActivity extends Activity {
             checker();
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        Log.d("onpause fired", "yes");
-//        onPauseisFired = true;
-//    }
-//
-//        @Override
-//    protected void onResume() {
-//        super.onResume();
-//            if(onPauseisFired){
-//                if(identifier < max_identifier)
-//                    for_loop_splash();
-//                else
-//                    checker();
-//            }
-//    }
-
     public void for_loop_splash(){
         final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         identifier = settings.getInt("identifier", 0);

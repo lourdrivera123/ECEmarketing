@@ -43,6 +43,11 @@ public class BasketController {
                 map.put("prescription_id", String.valueOf(obj.getInt("prescription_id")));
                 map.put("is_approved", String.valueOf(obj.getInt("is_approved")));
                 map.put("available_quantity", obj.getString("available_quantity"));
+                map.put("promo_type", obj.getString("promo_type"));
+                map.put("peso_discount", String.valueOf(obj.getDouble("peso_discount")));
+                map.put("percentage_discount", String.valueOf(obj.getDouble("percentage_discount")));
+                map.put("promo_free_product_qty", String.valueOf(obj.getInt("promo_free_product_qty")));
+
 
                 basketItems.add(map);
             }

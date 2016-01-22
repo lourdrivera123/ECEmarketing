@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public class OrderModel implements Serializable {
 
-    private int patient_id = 0, branch_id = 0, promo_id = 0;
+    private int patient_id = 0, branch_id = 0, promo_id = 0, server_id=0;
     private double coupon_discount=0.0, points_discount = 0.0;
     private String recipient_name = "", recipient_address = "", recipient_contactNumber = "", delivery_sched="", mode_of_delivery = "", payment_method = "", action ="", coupon_discount_type="";
     public OrderModel(){}
@@ -26,6 +26,14 @@ public class OrderModel implements Serializable {
            return true;
 
         return false;
+    }
+
+    public int getServer_id() {
+        return server_id;
+    }
+
+    public void setServer_id(int server_id) {
+        this.server_id = server_id;
     }
 
     public int getPromo_id() {
