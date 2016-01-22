@@ -106,7 +106,7 @@
     </item>
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/partner_toolbar" />
+            <solid android:color="@color/DarkGreen" />
         </shape>
     </item>
 </layer-list>

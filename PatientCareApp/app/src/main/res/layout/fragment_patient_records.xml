@@ -50,7 +50,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@drawable/circle_selector"
-                android:src="@drawable/ic_action" />
+                android:src="@mipmap/ic_action" />
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

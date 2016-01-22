@@ -143,8 +143,9 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
                 check_date = "0" + (cal.get(Calendar.DATE));
             else
                 check_date = String.valueOf(cal.get(Calendar.DATE));
+            String month = ((cal.get(Calendar.MONTH) + 1) < 10 ? "0" : "") + (cal.get(Calendar.MONTH) + 1);
 
-            txtDate.setText(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + check_date);
+            txtDate.setText(cal.get(Calendar.YEAR) + "-" + month + "-" + check_date);
         }
 
         listOfClinic.add("Choose a Clinic");

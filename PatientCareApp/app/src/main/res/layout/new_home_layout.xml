@@ -82,8 +82,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Refills and Renewals"
-                        android:textSize="16sp"
                         android:textColor="#2b2b2b"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -119,9 +119,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Referral Points"
+                        android:textColor="#2b2b2b"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#2b2b2b"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -156,9 +156,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Upload Prescription"
+                        android:textColor="#2b2b2b"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#2b2b2b"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -194,9 +194,9 @@
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/notifConsultation"
                         android:text="Set Up A Consultation"
+                        android:textColor="#2b2b2b"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#2b2b2b"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/notifConsultation"

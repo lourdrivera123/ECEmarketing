@@ -36,9 +36,9 @@ public class PatientConsultationController extends DbHelper {
             CONSULT_PTNT_IS_APPROVED = "patient_is_approved",
             CONSULT_COMMENT_PTNT = "comment_patient";
 
-            //SQL to create PATIENT CONSULTATIONS
+    //SQL to create PATIENT CONSULTATIONS
     public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s INTEGER, %s INTEGER, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT)",
-                TBL_PATIENT_CONSULTATIONS, AI_ID, CONSULT_SERVER_ID, PATIENT_ID, CONSULT_DOCTOR_ID, CONSULT_CLINIC_ID, CONSULT_DATE, CONSULT_TIME, CONSULT_IS_ALARMED, CONSULT_ALARMED_TIME, CONSULT_IS_APPROVED, IS_READ, CONSULT_COMMENT_DOCTOR, CONSULT_PTNT_IS_APPROVED, CONSULT_COMMENT_PTNT, CREATED_AT, UPDATED_AT);
+            TBL_PATIENT_CONSULTATIONS, AI_ID, CONSULT_SERVER_ID, PATIENT_ID, CONSULT_DOCTOR_ID, CONSULT_CLINIC_ID, CONSULT_DATE, CONSULT_TIME, CONSULT_IS_ALARMED, CONSULT_ALARMED_TIME, CONSULT_IS_APPROVED, IS_READ, CONSULT_COMMENT_DOCTOR, CONSULT_PTNT_IS_APPROVED, CONSULT_COMMENT_PTNT, CREATED_AT, UPDATED_AT);
 
     public PatientConsultationController(Context context) {
         super(context);
@@ -80,7 +80,7 @@ public class PatientConsultationController extends DbHelper {
         ArrayList<HashMap<String, String>> listOfAllConsultations = new ArrayList();
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT c.*, d.fname, d.lname, d.mname, cn.name FROM consultations as c inner join doctors as d " +
-                "on c.doctor_id = d.id inner join clinics as cn on c.clinic_id = cn.id where c.patient_id = " + userID + " ORDER BY c.date ASC";
+                "on c.doctor_id = d.doc_id inner join clinics as cn on c.clinic_id = cn.id where c.patient_id = " + userID + " ORDER BY c.date ASC";
         Cursor cur = sql_db.rawQuery(sql, null);
 
         while (cur.moveToNext()) {
@@ -157,5 +157,5 @@ public class PatientConsultationController extends DbHelper {
         sql_db.close();
         return deletedID > 0;
     }
-    
+
 }
