@@ -15,6 +15,7 @@
         <View
             android:layout_width="50dp"
             android:layout_height="80dp"
+            android:id="@+id/triangle"
             android:layout_alignParentTop="true"
             android:background="@drawable/triangle" />
     </LinearLayout>

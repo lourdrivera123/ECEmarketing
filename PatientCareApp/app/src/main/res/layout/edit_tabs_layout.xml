@@ -1,15 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/root"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolbar"
+        android:background="@drawable/toolbar_bg_inverted"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -17,7 +17,7 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/toolbar_bg"
+        android:background="@color/toolbar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:tabGravity="fill"
         app:tabMode="fixed"

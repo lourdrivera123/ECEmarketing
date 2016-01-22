@@ -2,7 +2,6 @@ package com.example.zem.patientcareapp.SwipeTabsModule;
 
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,7 +18,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialog;
-import android.support.v7.internal.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -36,14 +34,12 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
 import com.example.zem.patientcareapp.ConfigurationModule.Constants;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
@@ -115,7 +111,7 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
     public static final String SIGNUP_REQUEST = "signup", EDIT_REQUEST = "edit";
     String purpose = "", image_url = "", url;
     public static int signup_int = 0, edit_int = 0;
-    int check = 0, int_year, int_month, int_day, limit = 4, count = 0, unselected;
+    int check = 0, limit = 4, count = 0, unselected;
     long totalSize = 0;
 
     JSONObject patient_json_object_mysql = null;
@@ -125,7 +121,6 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
     private TextView txtPercentage;
 
     ProgressBar progressBar;
-    //    public static ProgressDialog public_progress;
     Dialog upload_dialog;
     public static Intent intent;
     public static AppCompatDialog pDialog;

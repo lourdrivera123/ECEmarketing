@@ -115,7 +115,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                     Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                 }
 
-                String url_raw = "check_basket?patient_id=" + SidebarActivity.getUserID()+"&branch_id="+order_model.getBranch_id();
+                String url_raw = "check_basket?patient_id=" + SidebarActivity.getUserID() + "&branch_id=" + order_model.getBranch_id();
                 ListRequestFromCustomURI.getJSONobj(ShoppingCartActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
@@ -123,7 +123,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                             int success = response.getInt("success");
 
                             if (success == 1) {
-                                if(response.getBoolean("basket_quantity_changed")){
+                                if (response.getBoolean("basket_quantity_changed")) {
                                     letDialogSleep();
                                     cartQuantityUpdated();
                                 }
@@ -156,7 +156,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         });
     }
 
-    void cartQuantityUpdated(){
+    void cartQuantityUpdated() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(ShoppingCartActivity.this);
 //        dialog.setTitle("Order Cancelled!");
         dialog.setMessage("Our records show that one or more products in your cart exceeds the number of our stocks. \n" +
@@ -268,9 +268,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             params.put("request", "crud");
             params.put("action", "multiple_update_for_basket");
             params.put("jsobj", json_to_be_passed.toString());
-
-            Log.d("responsible", json_to_be_passed+"");
-
+            
             order_model.setJson_to_be_passed(json_to_be_passed);
 
             PostRequest.send(ShoppingCartActivity.this, params, new RespondListener<JSONObject>() {
