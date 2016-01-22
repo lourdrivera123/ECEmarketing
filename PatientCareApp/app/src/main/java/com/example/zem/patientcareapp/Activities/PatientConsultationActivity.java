@@ -67,7 +67,7 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
     ArrayList<String> listOfClinic, listOfDoctors;
 
     String request;
-    int hour, minute, new_hour, new_min, isAlarm, doctorID = 0;
+    int hour, minute, new_hour, new_min, isAlarm;
     static int doctor_id = 0;
     static String time_alarm = "";
 
@@ -112,17 +112,23 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
         doctorAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfDoctors);
         search_doctor.setAdapter(doctorAdapter);
 
+        listOfClinic.add("Choose a Clinic");
+        clinicAdapter = new ArrayAdapter(this, R.layout.spinner_clinics_by_doctors, listOfClinic);
+        spinner_clinic.setAdapter(clinicAdapter);
+
         if (getIntent.getStringExtra("request").equals("add")) {
             String doctor = "";
+
             if (getIntent.getIntExtra("doctorID", 0) > 0) {
-                doctorID = getIntent.getIntExtra("doctorID", 0);
+                doctor_id = getIntent.getIntExtra("doctorID", 0);
 
                 for (int i = 0; i < doctorsHashmap.size(); i++) {
-                    if (Integer.parseInt(doctorsHashmap.get(i).get("doc_id")) == doctorID) {
+                    if (Integer.parseInt(doctorsHashmap.get(i).get("doc_id")) == doctor_id) {
                         doctor = doctorsHashmap.get(i).get("fullname");
                         search_doctor.setText(doctor);
                     }
                 }
+
                 prepareSpinner(doctor);
             }
 
@@ -147,10 +153,6 @@ public class PatientConsultationActivity extends AppCompatActivity implements Vi
 
             txtDate.setText(cal.get(Calendar.YEAR) + "-" + month + "-" + check_date);
         }
-
-        listOfClinic.add("Choose a Clinic");
-        clinicAdapter = new ArrayAdapter(this, R.layout.spinner_clinics_by_doctors, listOfClinic);
-        spinner_clinic.setAdapter(clinicAdapter);
 
         search_doctor.setOnItemClickListener(this);
         search_doctor.addTextChangedListener(this);

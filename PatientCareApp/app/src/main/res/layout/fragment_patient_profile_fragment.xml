@@ -2,26 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/toolbar">
-
-<!--    <View
-        android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@+id/selected_product_toolbar"
-        android:background="@drawable/shadow_toolbar" />-->
+    android:background="@color/toolbar"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_height="wrap_content"
             android:background="@android:drawable/dialog_holo_light_frame"
+            android:orientation="vertical"
             android:padding="10dp">
 
             <LinearLayout
@@ -66,24 +59,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Rosell Esel Sel Barnes"
-                        android:textSize="20sp"
                         android:textColor="#2b2b2b"
-                        />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="14sp"
-                        android:text="username: eselbarnz" />
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:background="@color/ColorPrimary" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,45 +85,41 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     android:text="Personal Information"
-                    android:textSize="17sp"
-                    android:textColor="#2b2b2b" />
+                    android:textColor="#2b2b2b"
+                    android:textSize="17sp" />
 
 
                 <TextView
                     android:id="@+id/birthdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Birthdate: January 1, 1994" />
+                    android:gravity="center" />
 
                 <TextView
                     android:id="@+id/civil_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Civil Status: Single" />
+                    android:gravity="center" />
 
                 <TextView
                     android:id="@+id/height_weight"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Height: 5'4 ft. / Weight: 60 kg." />
+                    android:gravity="center" />
 
                 <TextView
                     android:id="@+id/occupation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Occupation: Android Developer" />
+                    android:gravity="center" />
 
                 <View
-                    android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dip"
+                    android:layout_marginTop="10dp"
                     android:background="@color/ColorPrimary" />
 
                 <TextView
@@ -141,36 +129,32 @@
                     android:layout_marginTop="10dp"
                     android:text="Contact Information"
                     android:textColor="#2b2b2b"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/address_first_line"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="#86 Acacia St., Cabantian" />
+                    android:gravity="center" />
 
 
                 <TextView
                     android:id="@+id/address_second_line"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Dexter City, Davao del Sur, Philippines, 8000" />
+                    android:gravity="center" />
 
                 <TextView
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="doctor@email.com" />
+                    android:gravity="center" />
 
                 <TextView
                     android:id="@+id/cp_no"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="0956752434 / 8719876" />
+                    android:gravity="center" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

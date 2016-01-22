@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -26,9 +27,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
@@ -54,6 +55,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     ListView list_of_history;
     ImageButton add_record;
     TextView noResults;
+    LinearLayout root;
 
     ArrayList<HashMap<String, String>> hashHistory;
     ArrayList<String> medRecords;
@@ -89,9 +91,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
         list_of_history = (ListView) rootView.findViewById(R.id.list_of_history);
+        root = (LinearLayout) rootView.findViewById(R.id.root);
 
         if (hashHistory.size() == 0) {
             noResults.setVisibility(View.VISIBLE);
+            list_of_history.setVisibility(View.GONE);
         }
 
         list_of_history.setOnItemClickListener(this);
@@ -190,11 +194,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         view_record_id = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
 
@@ -253,15 +252,14 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                                     JSONArray json_mysql = response.getJSONArray("records");
 
                                                     if (hasRecord == 1)
-                                                        Toast.makeText(getActivity(), "NAA NAKA ANI NGA RECORD", Toast.LENGTH_SHORT).show();
+                                                        Snackbar.make(root, "NAA NAKA ANI NGA RECORD", Snackbar.LENGTH_SHORT).show();
                                                     else
                                                         insertHistory(json_mysql);
-                                                } else {
-                                                    Toast.makeText(getActivity(), "Invalid Credentials", Toast.LENGTH_SHORT).show();
-                                                }
+                                                } else
+                                                    Snackbar.make(root, "Invalid credentials", Snackbar.LENGTH_SHORT).show();
                                             } catch (Exception e) {
-                                                Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
                                                 Log.e("patientHistoryFrag0", e + "");
+                                                Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                                             }
                                             progress.dismiss();
                                         }
@@ -269,8 +267,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                         @Override
                                         public void getError(VolleyError e) {
                                             progress.dismiss();
-                                            Log.e("patientHistoryFrag1", e + "");
-                                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -360,21 +357,20 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
                                     progress.dismiss();
-                                    Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                    Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                 }
                             });
-                        } else
-                            Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (Exception e) {
-                        Toast.makeText(getActivity(), e + "", Toast.LENGTH_SHORT).show();
+                        Log.d("ptnt_history1", e + "");
+                        Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                     }
                     progress.dismiss();
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
                     progress.dismiss();
-                    Log.d("patientHistoryFrag3", error + "");
-                    Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
         } catch (JSONException e) {
