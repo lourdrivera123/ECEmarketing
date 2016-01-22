@@ -73,7 +73,20 @@
                     android:visibility="gone" />
 
                 <TextView
-                    android:id="@+id/out_of_stock"
+                android:id="@+id/out_of_stock"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight=".70"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:text="Out of stock"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/in_stocks"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_weight=".70"
@@ -81,8 +94,8 @@
                     android:focusableInTouchMode="false"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:text="Out of stock"
-                    android:textStyle="italic"
+                    android:text="In Stock"
+                    android:textColor="@color/ColorPrimary"
                     android:visibility="gone" />
 
                 <LinearLayout

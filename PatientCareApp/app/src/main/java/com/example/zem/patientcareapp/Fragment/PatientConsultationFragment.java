@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
     ListView listOfConsultations;
     ImageButton add_consultation;
     Button accept_btn, reject_btn;
+    RelativeLayout root;
     LinearLayout acceptReject, rejected, ongoing_layout, setTime;
     TextView waiting, view_comment, declined_cancelled, doctor_name, clinic_address, consultation_schedule, time;
 
@@ -64,6 +67,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
 
         listOfConsultations = (ListView) rootView.findViewById(R.id.consultation_schedules);
         add_consultation = (ImageButton) rootView.findViewById(R.id.add_consultation);
+        root = (RelativeLayout) rootView.findViewById(R.id.root);
 
         add_consultation.setOnClickListener(this);
         listOfConsultations.setOnCreateContextMenuListener(this);
@@ -79,6 +83,9 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         listOfAllConsultations = pcc.getAllConsultationsByUserId(SidebarActivity.getUserID());
         consultationDoctors = new ArrayList();
         consult = new Consultation();
+
+        if (listOfAllConsultations.size() > 0)
+            listOfConsultations.setVisibility(View.VISIBLE);
 
         consultAdapter = new ConsultationAdapter(getActivity(), R.layout.list_row_consultations, listOfAllConsultations);
         listOfConsultations.setAdapter(consultAdapter);
@@ -120,24 +127,25 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
                             if (pcc.removeFromSQLite(Integer.parseInt(listOfAllConsultations.get(pos).get("id")))) {
                                 listOfAllConsultations.remove(pos);
                                 consultAdapter.notifyDataSetChanged();
+
+                                if (listOfAllConsultations.size() == 0)
+                                    listOfConsultations.setVisibility(View.GONE);
                             }
-                        } else
-                            Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.d("patient_consultation", e + "");
+                        Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                     }
                     pdialog.dismiss();
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
-                    Log.d("p_consultFrag", error + "");
                     pdialog.dismiss();
-                    Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_LONG).show();
+                    Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
-        } else {
-            Toast.makeText(getActivity(), "You are not allowed to remove this item.", Toast.LENGTH_SHORT).show();
-        }
+        } else
+            Snackbar.make(root, "You are not allowed to remove this item", Snackbar.LENGTH_SHORT).show();
         return super.onContextItemSelected(item);
     }
 
@@ -161,7 +169,9 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
             TextView doc_annotation = (TextView) dialog.findViewById(R.id.doc_annotation);
             doc_annotation.setText(listOfAllConsultations.get(position).get("comment_doctor"));
         } else if (listOfAllConsultations.get(position).get("is_approved").equals("2") && listOfAllConsultations.get(position).get("comment_doctor").equals(""))
-            Toast.makeText(getActivity(), "No available comments", Toast.LENGTH_SHORT).show();
+            Snackbar.make(root, "No available comments", Snackbar.LENGTH_SHORT).show();
+        else if (listOfAllConsultations.get(position).get("is_approved").equals("0") && listOfAllConsultations.get(position).get("patient_is_approved").equals("0"))
+            Snackbar.make(root, "Waiting for approval", Snackbar.LENGTH_SHORT).show();
     }
 
     private class ConsultationAdapter extends ArrayAdapter {
@@ -244,42 +254,35 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
                 }
             });
 
-            try {
-                Calendar cal = Calendar.getInstance();
-                String dateNow = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH);
-                String consultDate = listOfAllConsultations.get(pos).get("date");
+            Calendar cal = Calendar.getInstance();
+            String dateNow = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH);
+            String consultDate = listOfAllConsultations.get(pos).get("date");
 
-                if (dateNow.compareTo(consultDate) > 0) {
-                    waiting.setVisibility(View.GONE);
-                    acceptReject.setVisibility(View.GONE);
-                    ongoing_layout.setVisibility(View.GONE);
-                } else {
-                    if (listOfAllConsultations.get(pos).get("is_approved").equals("1")) {
-                        setTime.setVisibility(View.VISIBLE);
-                        waiting.setVisibility(View.GONE);
-                        time.setText(listOfAllConsultations.get(pos).get("time"));
+//                if (dateNow.compareTo(consultDate) > 0) {
+//                    Log.d("dateNow/consultDate", dateNow + "/" + consultDate);
+//
+//                } else {
+            if (listOfAllConsultations.get(pos).get("is_approved").equals("1")) {
+                setTime.setVisibility(View.VISIBLE);
+                waiting.setVisibility(View.GONE);
+                time.setText(listOfAllConsultations.get(pos).get("time"));
 
-                        if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("0"))
-                            acceptReject.setVisibility(View.VISIBLE);
-                        else if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("1"))
-                            ongoing_layout.setVisibility(View.VISIBLE);
-                        else if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("2")) {
-                            setTime.setVisibility(View.GONE);
-                            rejected.setVisibility(View.VISIBLE);
-                            declined_cancelled.setText("Cancelled");
-                            view_comment.setVisibility(View.GONE);
-                        }
-                    } else if (listOfAllConsultations.get(pos).get("is_approved").equals("2")) {
-                        rejected.setVisibility(View.VISIBLE);
-                        waiting.setVisibility(View.GONE);
-
-                        if (listOfAllConsultations.get(pos).get("comment_doctor").equals(""))
-                            view_comment.setVisibility(View.INVISIBLE);
-                    } else if (listOfAllConsultations.get(pos).get("is_approved").equals("0"))
-                        waiting.setVisibility(View.VISIBLE);
+                if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("0"))
+                    acceptReject.setVisibility(View.VISIBLE);
+                else if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("1"))
+                    ongoing_layout.setVisibility(View.VISIBLE);
+                else if (listOfAllConsultations.get(pos).get("patient_is_approved").equals("2")) {
+                    setTime.setVisibility(View.GONE);
+                    rejected.setVisibility(View.VISIBLE);
+                    declined_cancelled.setText("Cancelled");
+                    view_comment.setVisibility(View.GONE);
                 }
-            } catch (Exception e) {
+            } else if (listOfAllConsultations.get(pos).get("is_approved").equals("2")) {
+                rejected.setVisibility(View.VISIBLE);
+                waiting.setVisibility(View.GONE);
 
+                if (listOfAllConsultations.get(pos).get("comment_doctor").equals(""))
+                    view_comment.setVisibility(View.INVISIBLE);
             }
 
             doctor_name.setText("Dr. " + listOfAllConsultations.get(pos).get("doctor_name"));
@@ -298,27 +301,24 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
             PostRequest.send(getActivity(), map, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
-                    int success = 0;
-
                     try {
-                        success = response.getInt("success");
+                        int success = response.getInt("success");
 
                         if (success == 1) {
                             if (!pcc.AcceptRejectConsultation(map, operation))
-                                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                             onResume();
-                        } else
-                            Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.d("patient_consultation2", e + "");
+                        Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                     }
                     pdialog.dismiss();
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
                     pdialog.dismiss();
-                    Log.d("consult_frag2", error + "");
-                    Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
         }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/toolbar"
-    android:padding="@dimen/d10">
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
 
     <ListView
         android:id="@+id/consultation_schedules"
@@ -11,7 +13,8 @@
         android:layout_height="wrap_content"
         android:background="@android:drawable/dialog_holo_light_frame"
         android:divider="@color/toolbar"
-        android:dividerHeight="0.5sp" />
+        android:dividerHeight="0.5sp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,9 +24,9 @@
 
         <ImageButton
             android:id="@+id/add_consultation"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:background="@drawable/circle"
-            android:src="@drawable/ic_action" />
+            android:src="@mipmap/ic_action" />
     </LinearLayout>
 </RelativeLayout>

@@ -49,7 +49,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
     ShoppingCartAdapter adapter;
     BasketController bc;
-    OrderModel intent_ordermodel;
     OrderModel order_model;
     public static AppCompatDialog pDialog;
     AlertDialog.Builder builder;
@@ -78,10 +77,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle("Shopping Cart");
         myToolBar.setNavigationIcon(R.drawable.ic_back);
 
-//        final ProgressDialog dialog = new ProgressDialog(this);
-//        dialog.setMessage("Please wait...");
-//        dialog.setCancelable(false);
-//        dialog.show();
         showBeautifulDialog();
 
         proceed_to_checkout.setOnClickListener(this);
@@ -265,13 +260,18 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             }
 
             final JSONObject json_to_be_passed = new JSONObject();
-            json_to_be_passed.put("jsobj", master_arr);
+            json_to_be_passed.put("baskets", master_arr);
+            json_to_be_passed.put("success", 1);
 
             HashMap<String, String> params = new HashMap();
             params.put("table", "baskets");
             params.put("request", "crud");
             params.put("action", "multiple_update_for_basket");
             params.put("jsobj", json_to_be_passed.toString());
+
+            Log.d("responsible", json_to_be_passed+"");
+
+            order_model.setJson_to_be_passed(json_to_be_passed);
 
             PostRequest.send(ShoppingCartActivity.this, params, new RespondListener<JSONObject>() {
                 @Override

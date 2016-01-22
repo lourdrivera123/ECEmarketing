@@ -3,15 +3,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/d10"
-    android:paddingTop="@dimen/d10">
+    android:paddingBottom="@dimen/d10">
 
     <LinearLayout
         android:id="@+id/ongoing_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:gravity="right">
 
         <View
             android:layout_width="50dp"
@@ -25,7 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:paddingTop="5dp">
 
         <!-- Doctor Name-->
         <TextView

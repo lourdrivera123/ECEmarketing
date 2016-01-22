@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class ProductsAdapter extends ArrayAdapter implements View.OnClickListener {
     LayoutInflater inflater;
-    TextView product_name, rs_price, cart_text, out_of_stock, is_promo;
+    TextView product_name, rs_price, cart_text, out_of_stock, is_promo, in_stocks;
     ImageView product_image;
     LinearLayout add_to_cart, root;
     ToggleButton add_to_favorite;
@@ -74,6 +74,7 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
         out_of_stock = (TextView) convertView.findViewById(R.id.out_of_stock);
         root = (LinearLayout) convertView.findViewById(R.id.root);
         is_promo = (TextView) convertView.findViewById(R.id.is_promo);
+        in_stocks = (TextView) convertView.findViewById(R.id.in_stocks);
 
         add_to_cart.setTag(position);
         add_to_favorite.setTag(position);
@@ -82,6 +83,12 @@ public class ProductsAdapter extends ArrayAdapter implements View.OnClickListene
             out_of_stock.setVisibility(View.VISIBLE);
             add_to_cart.setVisibility(View.GONE);
         }
+
+        if (Integer.parseInt(products_items.get(position).get("in_cart")) > -1 ) {
+            in_stocks.setVisibility(View.VISIBLE);
+            add_to_cart.setVisibility(View.GONE);
+        }
+
         add_to_cart.setOnClickListener(this);
 
         basket_items = ProductsActivity.basket_items;

@@ -51,11 +51,14 @@ public class ReferralFragment extends Fragment {
     Patient patient;
     DownlinesAdapter downlinesAdapter;
 
+    View container;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_referrals, container, false);
         this.inflater = inflater;
+        this.container = container;
 
         referralsLvlLimit = (TextView) root.findViewById(R.id.referralsLvlLimit);
         parent = (LinearLayout) root.findViewById(R.id.parent);
@@ -83,7 +86,7 @@ public class ReferralFragment extends Fragment {
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Snackbar.make(parent, "Network Error", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(container, "Network Error", Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -178,12 +181,12 @@ public class ReferralFragment extends Fragment {
 
                 } catch (JSONException e) {
                     Log.d("exception1", e + "");
-                    Snackbar.make(parent, "Error occurred", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(container, "Error occurred", Snackbar.LENGTH_SHORT).show();
                 }
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Snackbar.make(parent, "Network Error", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(container, "Network Error", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
