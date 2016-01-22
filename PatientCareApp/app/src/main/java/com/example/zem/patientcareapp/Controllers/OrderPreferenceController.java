@@ -5,9 +5,26 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
+import com.example.zem.patientcareapp.Network.CustomPostRequest;
+import com.example.zem.patientcareapp.Network.GetRequest;
+import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import static android.util.Log.d;
+import static com.example.zem.patientcareapp.Network.CustomPostRequest.send;
+import static java.lang.System.out;
 
 /**
  * Created by Zem on 11/23/2015.
@@ -61,6 +78,39 @@ public class OrderPreferenceController extends DbHelper {
         return row > 0;
     }
 
+    public void saveSelectedBranchOnline(OrderModel order_model) {
+        HashMap<String, String> hashMap = new HashMap();
+        hashMap.put(ORDER_PREFERENCES_BRANCH_ID, String.valueOf(order_model.getBranch_id()));
+        hashMap.put(ORDER_PREFERENCES_PATIENT_ID, String.valueOf(SidebarActivity.getUserID()));
+        hashMap.put(ORDER_PREFERENCES_RECIPIENT_NAME, String.valueOf(order_model.getRecipient_name()));
+        hashMap.put(ORDER_PREFERENCES_RECIPIENT_ADDRESS, String.valueOf(order_model.getRecipient_address()));
+        hashMap.put(ORDER_PREFERENCES_RECIPIENT_NUMBER, String.valueOf(order_model.getRecipient_contactNumber()));
+        hashMap.put(ORDER_PREFERENCES_MODE_OF_DELIVERY, String.valueOf(order_model.getMode_of_delivery()));
+        hashMap.put(ORDER_PREFERENCES_PAYMENT_METHOD, String.valueOf(order_model.getPayment_method()));
+
+        if (order_model.getAction().equals("insert"))
+            hashMap.put("action", "insert");
+        else if (order_model.getAction().equals("update"))
+            hashMap.put("action", "update");
+
+        send("saveBranchPreference", hashMap, new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    d("orderprefresponse", response + "");
+                } catch (Exception e) {
+                    out.println("<saveBranchPreference> request error" + e);
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError error) {
+                out.println("src: <saveBranchPreference>: " + error.toString());
+            }
+        });
+
+    }
+
     public boolean savePreference(OrderModel order_model) {
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -100,6 +150,4 @@ public class OrderPreferenceController extends DbHelper {
 
         return order_model;
     }
-
-
 }

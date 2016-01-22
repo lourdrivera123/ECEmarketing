@@ -18,10 +18,12 @@ public class Constants {
     public static final String GET_REQUEST_URL = "http://159.203.111.108/db/get.php?q=";
 
     //Helper get api request url
-    public static final String GET_API_REQUEST_URL = "http://159.203.111.108/";
+    public static final String API_REQUEST_URL = "http://159.203.111.108/";
 
     //uploads path url
     public static final String UPLOAD_PATH_URL = "http://159.203.111.108/db/uploads/";
 
     public static final String PAYMENT_REQUEST_URL = "http://159.203.111.108/verify_cash_payment";
+
+
 }

@@ -54,6 +54,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     AlertDialog.Builder builder;
 
     public ArrayList<HashMap<String, String>> items = new ArrayList();
+    public ArrayList<HashMap<String, String>> items1 = new ArrayList();
     public static ArrayList<HashMap<String, String>> no_code_promos;
 
     @Override
@@ -115,7 +116,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                     Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
                 }
 
-                String url_raw = "check_basket?patient_id=" + SidebarActivity.getUserID()+"&branch_id="+order_model.getBranch_id();
+                String url_raw = "check_basket?patient_id=" + SidebarActivity.getUserID() + "&branch_id=" + order_model.getBranch_id();
                 ListRequestFromCustomURI.getJSONobj(ShoppingCartActivity.this, url_raw, "baskets", new RespondListener<JSONObject>() {
                     @Override
                     public void getResult(JSONObject response) {
@@ -123,13 +124,13 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                             int success = response.getInt("success");
 
                             if (success == 1) {
-                                if(response.getBoolean("basket_quantity_changed")){
+                                if (response.getBoolean("basket_quantity_changed")) {
                                     letDialogSleep();
                                     cartQuantityUpdated();
                                 }
                                 JSONArray json_mysql = response.getJSONArray("baskets");
                                 items = bc.convertFromJson(ShoppingCartActivity.this, json_mysql);
-
+                                items1.addAll(items);
                                 adapter = new ShoppingCartAdapter(ShoppingCartActivity.this, R.layout.item_shopping_cart, items);
                                 lisOfItems.setAdapter(adapter);
                             }
@@ -156,7 +157,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         });
     }
 
-    void cartQuantityUpdated(){
+    void cartQuantityUpdated() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(ShoppingCartActivity.this);
 //        dialog.setTitle("Order Cancelled!");
         dialog.setMessage("Our records show that one or more products in your cart exceeds the number of our stocks. \n" +
@@ -198,8 +199,9 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+
     protected void onPause() {
-        updateBasket(items, 0);
+        updateBasket(CartWithPromos(items1, no_code_promos), 0);
         super.onPause();
     }
 
@@ -211,14 +213,48 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 if (items.get(x).get("product_id").equals(promos.get(y).get("product_id"))) {
                     HashMap<String, String> map = new HashMap();
                     map.putAll(items.get(x));
-                    map.put("promo_id", promos.get(y).get("promo_id"));
+                    map.put("promo_id", "0");
+                    map.put("promo_type", "");
+                    map.put("promo_value", "0");
+                    map.put("promo_free_product_qty", "0");
 
-                    if (promos.get(y).get("has_free_gifts").equals("1"))
-                        map.put("promo_type", "free_gift");
-                    else if (Double.parseDouble(promos.get(y).get("percentage_discount")) > 0)
-                        map.put("promo_type", "percentage_discount");
-                    else if (Double.parseDouble(promos.get(y).get("peso_discount")) > 0)
-                        map.put("promo_type", "peso_discount");
+                    double cart_total = Double.parseDouble(items.get(x).get("price")) * Double.parseDouble(items.get(x).get("quantity"));
+
+                    if (promos.get(y).get("has_free_gifts").equals("1")) {
+                        if (Integer.parseInt(items.get(x).get("quantity")) >= Integer.parseInt(promos.get(y).get("quantity_required"))) {
+                            map.put("promo_id", promos.get(y).get("promo_id"));
+                            map.put("promo_type", "free_gift");
+                            map.put("promo_value", promos.get(y).get("free_product_id"));
+
+                            if (promos.get(y).get("is_every").equals("1")) {
+                                int discount_times = (int) (Integer.parseInt(items.get(x).get("quantity")) / Integer.parseInt(promos.get(y).get("quantity_required")));
+                                int qty_free = discount_times * Integer.parseInt(promos.get(y).get("quantity_free"));
+                                map.put("promo_free_product_qty", String.valueOf(qty_free));
+                            }
+                        }
+                    } else if (Double.parseDouble(promos.get(y).get("percentage_discount")) > 0) {
+                        if (cart_total >= Double.parseDouble(promos.get(y).get("minimum_purchase"))) {
+                            double percent = Double.parseDouble(String.valueOf(Double.parseDouble(promos.get(y).get("percentage_discount")) / 100.0f));
+                            double percent_off = cart_total * percent;
+                            map.put("promo_id", promos.get(y).get("promo_id"));
+                            map.put("promo_type", "percentage_discount");
+                            map.put("promo_value", String.valueOf(percent_off));
+                        }
+                    } else if (Double.parseDouble(promos.get(y).get("peso_discount")) > 0) {
+                        if (cart_total >= Double.parseDouble(promos.get(y).get("minimum_purchase"))) {
+                            map.put("promo_id", promos.get(y).get("promo_id"));
+                            map.put("promo_type", "peso_discount");
+
+                            if (promos.get(y).get("is_every").equals("1")) {
+                                int discount_times = (int) ((int) cart_total / Double.parseDouble(promos.get(y).get("minimum_purchase")));
+                                double peso_off = discount_times * Double.parseDouble(promos.get(y).get("peso_discount"));
+                                map.put("promo_value", String.valueOf(peso_off));
+                            } else
+                                map.put("promo_value", String.valueOf(promos.get(y).get("peso_discount")));
+                        }
+                    } else {
+                        map.put("promo_value", String.valueOf(0));
+                    }
 
                     new_items.add(map);
                 }
@@ -236,8 +272,10 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         for (int x = 0; x < items.size(); x++) {
             HashMap<String, String> map = items.get(x);
-            map.put("promo_id", "");
+            map.put("promo_id", "0");
             map.put("promo_type", "");
+            map.put("promo_value", "0");
+            map.put("promo_free_product_qty", "0");
             items.set(x, map);
         }
 
@@ -253,15 +291,18 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             JSONObject obj_for_server;
 
             for (int x = 0; x < objects.size(); x++) {
-                hash.put("quantity", String.valueOf(objects.get(x).get("quantity")));
-                hash.put("id", String.valueOf(objects.get(x).get("basket_id")));
+                hash.put("quantity", objects.get(x).get("quantity"));
+                hash.put("id", objects.get(x).get("basket_id"));
+                hash.put("promo_id", objects.get(x).get("promo_id"));
+                hash.put("promo_type", objects.get(x).get("promo_type"));
+                hash.put("promo_value", objects.get(x).get("promo_value"));
+                hash.put("promo_free_product_qty", objects.get(x).get("promo_free_product_qty"));
                 obj_for_server = new JSONObject(hash);
                 master_arr.put(obj_for_server);
             }
 
             final JSONObject json_to_be_passed = new JSONObject();
-            json_to_be_passed.put("baskets", master_arr);
-            json_to_be_passed.put("success", 1);
+            json_to_be_passed.put("jsobj", master_arr);
 
             HashMap<String, String> params = new HashMap();
             params.put("table", "baskets");
@@ -269,17 +310,15 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             params.put("action", "multiple_update_for_basket");
             params.put("jsobj", json_to_be_passed.toString());
 
-            Log.d("responsible", json_to_be_passed+"");
-
-            order_model.setJson_to_be_passed(json_to_be_passed);
+            Log.d("a_jsobj", json_to_be_passed.toString());
 
             PostRequest.send(ShoppingCartActivity.this, params, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
+                    Log.d("response_sc", response + "");
                     try {
                         int success = response.getInt("success");
                         if (success == 1) {
-
                             if (check == 1) {
                                 if (order_model.isValid()) {
                                     Intent intent = new Intent(ShoppingCartActivity.this, PromosDiscounts.class);

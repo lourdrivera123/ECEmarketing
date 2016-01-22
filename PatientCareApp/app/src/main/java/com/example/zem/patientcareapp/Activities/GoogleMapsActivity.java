@@ -362,11 +362,12 @@ public class GoogleMapsActivity extends AppCompatActivity implements GoogleApiCl
     }
 
     void save(){
-        if (opc.saveSelectedBranch(order_model)) {
-            redirect();
-        } else {
-            Snackbar.make(root, "Cannot Save Branch", Snackbar.LENGTH_SHORT).show();
-        }
+//        if () {
+        opc.saveSelectedBranchOnline(order_model);
+//            redirect();
+//        } else {
+//            Snackbar.make(root, "Cannot Save Branch", Snackbar.LENGTH_SHORT).show();
+//        }
     }
 
     void flushBasketOnline(){

@@ -2,10 +2,8 @@ package com.example.zem.patientcareapp.CheckoutModule;
 
 
 import android.support.v7.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,24 +24,21 @@ import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.SettingController;
-import com.example.zem.patientcareapp.Customizations.GlowingText;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Interface.StringRespondListener;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Patient;
 import com.example.zem.patientcareapp.Model.Settings;
+import com.example.zem.patientcareapp.Network.CustomPostRequest;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Customizations.NonScrollListView;
 import com.example.zem.patientcareapp.Network.ListRequestFromCustomURI;
-import com.example.zem.patientcareapp.Network.PaymentRequest;
 import com.example.zem.patientcareapp.Network.StringRequests;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 
 import org.json.JSONException;
-
-import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -124,7 +119,9 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 //        dialog.setMessage("Please wait...");
 //        dialog.setCancelable(false);
 //        dialog.show();
+
         showBeautifulDialog();
+
         String url_raw = "check_basket?patient_id=" + SidebarActivity.getUserID() + "&branch_id=" + order_model.getBranch_id();
         ListRequestFromCustomURI.getJSONobj(this, url_raw, "baskets", new RespondListener<JSONObject>() {
             @Override
@@ -134,7 +131,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     int success = response.getInt("success");
 
                     if (success == 1) {
-                        if(response.getBoolean("basket_quantity_changed")){
+                        if (response.getBoolean("basket_quantity_changed")) {
                             letDialogSleep();
                             orderCancelled();
                         }
@@ -275,13 +272,11 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                     AlertDialog.Builder order_confirmation_dialog = new AlertDialog.Builder(SummaryActivity.this);
                     order_confirmation_dialog.setTitle("Confirmation");
                     order_confirmation_dialog.setMessage("Have you carefully reviewed your order and ready to checkout ?");
-                    order_confirmation_dialog.setPositiveButton("Yes, I'm ready", new DialogInterface.OnClickListener() {
+                    order_confirmation_dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Patient patient = pc.getloginPatient(SidebarActivity.getUname());
-
                             showBeautifulDialog();
-
                             HashMap<String, String> map = new HashMap();
                             map.put("user_id", String.valueOf(SidebarActivity.getUserID()));
                             map.put("recipient_name", order_model.getRecipient_name());
@@ -300,76 +295,69 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
 
                             Log.d("mappings", map.toString());
 
-                            PaymentRequest.send(getBaseContext(), map, new RespondListener<JSONObject>() {
+                            String url = "verify_cash_payment";
+                            CustomPostRequest.send(url, map, new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
+                                            Log.d("b_payresponse", response + "");
                                             try {
                                                 if (response.getBoolean("basket_quantity_changed")) {
                                                     letDialogSleep();
                                                     orderCancelled();
                                                 } else {
+                                                    Log.d("b_check", "true im here");
                                                     //request for orders request
                                                     GetRequest.getJSONobj(getBaseContext(), "get_orders&patient_id=" + SidebarActivity.getUserID(), "orders", "orders_id", new RespondListener<JSONObject>() {
                                                         @Override
                                                         public void getResult(JSONObject response) {
 
+                                                            Log.d("b_get_orders", response + "");
+
                                                             GetRequest.getJSONobj(getBaseContext(), "get_order_details&patient_id=" + SidebarActivity.getUserID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                                                 @Override
                                                                 public void getResult(JSONObject response) {
 
+                                                                    Log.d("b_get_od", response + "");
+
                                                                     GetRequest.getJSONobj(getBaseContext(), "get_order_billings&patient_id=" + SidebarActivity.getUserID(), "billings", "billings_id", new RespondListener<JSONObject>() {
                                                                         @Override
                                                                         public void getResult(JSONObject response) {
-
+                                                                            Log.d("get_ob", response + "");
                                                                             try {
                                                                                 String timestamp_ordered = response.getString("server_timestamp");
 
-                                                                                Intent order_intent = new Intent(getBaseContext(), SidebarActivity.class);
-                                                                                order_intent.putExtra("payment_from", "cod");
-                                                                                order_intent.putExtra("timestamp_ordered", timestamp_ordered);
-                                                                                order_intent.putExtra("select", 5);
-                                                                                startActivity(order_intent);
-                                                                                SummaryActivity.this.finish();
+                                                                                orderCompletedDialog(timestamp_ordered);
 
                                                                             } catch (JSONException e) {
                                                                                 e.printStackTrace();
                                                                             }
                                                                             letDialogSleep();
-
                                                                         }
                                                                     }, new ErrorListener<VolleyError>() {
                                                                         public void getError(VolleyError error) {
                                                                             letDialogSleep();
-                                                                            Log.d("Error", error + "");
-                                                                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                                            Log.d("get_ob_error", error + "");
                                                                         }
                                                                     });
-
                                                                 }
                                                             }, new ErrorListener<VolleyError>() {
                                                                 public void getError(VolleyError error) {
                                                                     letDialogSleep();
-                                                                    Log.d("Error", error + "");
-                                                                    Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                                                    Log.d("b_get_od_error", error + "");
                                                                 }
                                                             });
 
                                                         }
                                                     }, new ErrorListener<VolleyError>() {
                                                         public void getError(VolleyError error) {
+                                                            Log.d("b_get_orders_error", error + "");
                                                             letDialogSleep();
-                                                            Log.d("Error", error + "");
-                                                            Toast.makeText(getBaseContext(), "Couldn't refresh list. Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
 
                                                 }
 
-                                            } catch (
-                                                    Exception e
-                                                    )
-
-                                            {
+                                            } catch (Exception e) {
                                                 System.out.print("src: <SummaryAct> " + e.toString());
                                                 SummaryActivity.this.finish();
                                             }
@@ -386,11 +374,10 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                                             Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
                                         }
                                     }
-
                             );
                         }
                     });
-                    order_confirmation_dialog.setNegativeButton("No, wait I'll check", new DialogInterface.OnClickListener() {
+                    order_confirmation_dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -420,6 +407,26 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         cancelled_order_dialog.show();
+    }
+
+    void orderCompletedDialog(final String timestamp_ordered){
+        AlertDialog.Builder order_completed_dialog = new AlertDialog.Builder(SummaryActivity.this);
+        order_completed_dialog.setTitle("Order Completed");
+        order_completed_dialog.setMessage("Thank you for ordering through Patient Care App! \n " +
+                "We will inform you once we have taken action on your order. \n");
+        order_completed_dialog.setCancelable(false);
+        order_completed_dialog.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent order_intent = new Intent(SummaryActivity.this, SidebarActivity.class);
+                order_intent.putExtra("payment_from", "cod");
+                order_intent.putExtra("timestamp_ordered", timestamp_ordered);
+                order_intent.putExtra("select", 5);
+                startActivity(order_intent);
+                SummaryActivity.this.finish();
+            }
+        });
+        order_completed_dialog.show();
     }
 
     void showBeautifulDialog() {

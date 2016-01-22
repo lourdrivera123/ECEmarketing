@@ -12,7 +12,6 @@ public class OrderModel implements Serializable {
     private int patient_id = 0, branch_id = 0, promo_id = 0;
     private double coupon_discount=0.0, points_discount = 0.0;
     private String recipient_name = "", recipient_address = "", recipient_contactNumber = "", delivery_sched="", mode_of_delivery = "", payment_method = "", action ="", coupon_discount_type="";
-    private JSONObject json_to_be_passed = new JSONObject();
     public OrderModel(){}
 
     public boolean isValid(){
@@ -20,14 +19,6 @@ public class OrderModel implements Serializable {
             return true;
 
         return false;
-    }
-
-    public JSONObject getJson_to_be_passed() {
-        return json_to_be_passed;
-    }
-
-    public void setJson_to_be_passed(JSONObject json_to_be_passed) {
-        this.json_to_be_passed = json_to_be_passed;
     }
 
     public boolean hasSelectedBranch(){

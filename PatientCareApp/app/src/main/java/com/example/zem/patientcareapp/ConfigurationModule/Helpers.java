@@ -9,8 +9,6 @@ import android.database.Cursor;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.RingtoneManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -20,8 +18,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.example.zem.patientcareapp.Controllers.DbHelper;
-import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
@@ -106,7 +102,7 @@ public class Helpers implements View.OnCreateContextMenuListener {
     }
 
     public String get_api_url(String request) {
-        return Constants.GET_API_REQUEST_URL + request;
+        return Constants.API_REQUEST_URL + request;
     }
 
     public String md5(final String s) {

@@ -18,13 +18,13 @@ import java.util.HashMap;
 /**
  * Created by zemskie on 12/11/2015.
  */
-public class PaymentRequest {
+public class CustomPostRequest {
 
-    public static void send(final Context c, final HashMap<String, String> parameters, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
+    public static void send(String custom_url, final HashMap<String, String> parameters, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
         RequestQueue queue;
 
         queue = VolleySingleton.getInstance().getRequestQueue();
-        String url = Constants.PAYMENT_REQUEST_URL;
+        String url = Constants.API_REQUEST_URL+custom_url;
 
         CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, parameters,
                 new Response.Listener<JSONObject>() {
@@ -36,7 +36,7 @@ public class PaymentRequest {
             @Override
             public void onErrorResponse(VolleyError error) {
                 errorlistener.getError(error);
-                Log.d("<PaymentRequest>", error + "");
+                Log.d("<CustomPostRequest>", error + "");
             }
         });
         queue.add(jsObjRequest);
