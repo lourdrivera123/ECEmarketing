@@ -67,7 +67,7 @@ public class LazyAdapter extends BaseAdapter {
         View vi = convertView;
 
         if (list_type.equals("list_of_doctors")) {
-            vi = inflater.inflate(R.layout.list_row, null);
+//            vi = inflater.inflate(R.layout.list_row, null);
 
             TextView title = (TextView) vi.findViewById(R.id.title); // title
             TextView specialty = (TextView) vi.findViewById(R.id.specialty); // artist name

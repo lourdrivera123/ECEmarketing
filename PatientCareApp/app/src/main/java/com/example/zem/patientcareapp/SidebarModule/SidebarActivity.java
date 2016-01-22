@@ -82,8 +82,6 @@ public class SidebarActivity extends AppCompatActivity {
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
 
-        Log.d("sharedpref", sharedpreferences.getString("nameKey", "default"));
-
         dbHelper = new DbHelper(this);
         oc = new OverlayController(this);
         pc = new PatientController(this);

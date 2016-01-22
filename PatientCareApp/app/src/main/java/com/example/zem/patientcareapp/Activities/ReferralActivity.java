@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -21,7 +22,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DoctorController;
@@ -39,10 +39,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by User PC on 8/26/2015.
- */
-
 public class ReferralActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextWatcher, AdapterView.OnItemClickListener {
     ArrayList<HashMap<String, String>> hashOfUsers, hashOfDoctors;
     ArrayList<String> tempReferrals;
@@ -56,7 +52,7 @@ public class ReferralActivity extends AppCompatActivity implements View.OnClickL
     int check;
 
     RadioButton other, radioReferredBy, ignoreInfo, useInfo;
-    LinearLayout linearUsernamePassword;
+    LinearLayout linearUsernamePassword, root;
     EditText referredBy, specifyOthers, autoUname, autoPassword;
     ListView listOfNames;
     Button continueBtn, continueBtn2;
@@ -88,6 +84,7 @@ public class ReferralActivity extends AppCompatActivity implements View.OnClickL
         cpd_id = 0;
 
         other = (RadioButton) findViewById(R.id.other);
+        root = (LinearLayout) findViewById(R.id.root);
         radioReferredBy = (RadioButton) findViewById(R.id.radioReferredBy);
         referredBy = (EditText) findViewById(R.id.referredBy);
         specifyOthers = (EditText) findViewById(R.id.specifyOthers);
@@ -146,7 +143,7 @@ public class ReferralActivity extends AppCompatActivity implements View.OnClickL
                         } catch (Exception e) {
                             check += 1;
                             Log.d("ReferralActivity", e + "");
-                            Toast.makeText(getBaseContext(), "User not found", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "User not found", Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 } else if (other.isChecked()) {
@@ -263,22 +260,21 @@ public class ReferralActivity extends AppCompatActivity implements View.OnClickL
                                                 startActivity(intent);
                                                 ReferralActivity.this.finish();
                                             } else
-                                                Toast.makeText(getBaseContext(), "The credentials provided have already been used", Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(root, "These credentials have already been used", Snackbar.LENGTH_SHORT).show();
                                         } else
-                                            Toast.makeText(getBaseContext(), "Invalid credentials", Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(root, "Invalid credentials", Snackbar.LENGTH_SHORT).show();
                                     } else
-                                        Toast.makeText(getBaseContext(), "Incorrect Username/Password", Toast.LENGTH_SHORT).show();
+                                        Snackbar.make(root, "Incorrect username/password", Snackbar.LENGTH_SHORT).show();
                                 } catch (JSONException e) {
-                                    Toast.makeText(ReferralActivity.this, e + "", Toast.LENGTH_SHORT).show();
                                     Log.d("ReferralAct0", e + "");
+                                    Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                                 }
                                 dialog_1.dismiss();
                             }
                         }, new ErrorListener<VolleyError>() {
                             public void getError(VolleyError error) {
                                 dialog_1.dismiss();
-                                Log.d("ReferralAct1", error + "");
-                                Toast.makeText(ReferralActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -393,8 +389,7 @@ public class ReferralActivity extends AppCompatActivity implements View.OnClickL
             }
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
-                Log.d("ReferralAct2", error + "");
-                Toast.makeText(getBaseContext(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });

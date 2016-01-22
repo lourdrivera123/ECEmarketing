@@ -93,6 +93,8 @@ public class OrderPreferenceController extends DbHelper {
         else if (order_model.getAction().equals("update"))
             hashMap.put("action", "update");
 
+        d("orderprefhash", hashMap + "");
+
         send("saveBranchPreference", hashMap, new RespondListener<JSONObject>() {
             @Override
             public void getResult(JSONObject response) {

@@ -3,16 +3,8 @@
     android:id="@+id/rel_layout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_selector"
     android:orientation="horizontal"
-    android:paddingTop="5dp">
-
-    <ImageView
-        android:id="@+id/recordSource"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:src="@mipmap/src_clinic" />
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +16,6 @@
             android:id="@+id/record_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
             android:gravity="right"
             android:text="02/23/1995"
             android:textColor="#5B9A68"
@@ -35,11 +26,9 @@
             android:id="@+id/doctor_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
             android:text="Dr. Zemiel Asma"
             android:textColor="#040404"
-            android:textSize="15dip"
-            android:textStyle="bold"
+            android:textSize="15sp"
             android:typeface="sans" />
 
         <TextView
@@ -47,10 +36,47 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="1dip"
-            android:text="Findings sa doctor"
+            android:layout_marginTop="5dp"
+            android:text="Findings: Migraine"
             android:textColor="#343434"
-            android:textSize="10dip" />
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medicine:"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp">
+
+                <TextView
+                    android:id="@+id/medicine"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="Biogesic Paracetamol"
+                    android:textColor="#343434"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/dosage"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="(Twice a day for 1 month)"
+                    android:textColor="#343434"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

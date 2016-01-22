@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/toolbar"
     android:orientation="vertical">
-
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@+id/selected_product_toolbar"
-        android:background="@drawable/shadow_toolbar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,7 +13,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -29,13 +24,14 @@
                 android:gravity="center"
                 android:text="No records found"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white"
                 android:visibility="gone" />
 
             <ListView
                 android:id="@+id/list_of_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:choiceMode="multipleChoice" />
+                android:background="@android:drawable/dialog_holo_light_frame" />
         </LinearLayout>
 
         <LinearLayout
@@ -47,8 +43,8 @@
 
             <ImageButton
                 android:id="@+id/add_record"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:background="@drawable/circle_selector"
                 android:src="@mipmap/ic_action" />
         </LinearLayout>
