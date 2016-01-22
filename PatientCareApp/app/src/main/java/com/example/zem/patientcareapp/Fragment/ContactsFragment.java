@@ -2,10 +2,10 @@ package com.example.zem.patientcareapp.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
@@ -38,22 +36,23 @@ import java.util.HashMap;
 public class ContactsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     public static Spinner address_region, address_province, address_city_municipality, address_barangay;
     EditText optional_address_line, address_street, email, tel_no, cell_no;
+    LinearLayout root;
+
     DbHelper dbhelper;
     PatientController pc;
+    Patient patient;
+    Intent intent;
 
     public static ArrayList<HashMap<String, String>> hashOfBarangays, hashOfProvinces, hashOfMunicipalities, hashOfRegions;
     ArrayList<String> listOfRegions, listOfProvinces, listOfMunicipalities, listOfBarangays;
     ArrayAdapter<String> regions_adapter, provinces_adapter, municipalities_adapter, barangays_adapter;
-    Patient patient;
-    Intent intent;
-//    LinearLayout progressCircleLayout;
 
     public static String barangay_id;
     public static AppCompatDialog pDialog;
     AlertDialog.Builder builder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contacts_fragment, container, false);
 
         address_street = (EditText) rootView.findViewById(R.id.address_street);
@@ -65,7 +64,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         address_barangay = (Spinner) rootView.findViewById(R.id.address_barangay);
         address_city_municipality = (Spinner) rootView.findViewById(R.id.address_city_municipality);
         address_province = (Spinner) rootView.findViewById(R.id.address_province);
-//        progressCircleLayout = (LinearLayout) rootView.findViewById(R.id.progressCircleLayout);
+        root = (LinearLayout) rootView.findViewById(R.id.root);
 
         hashOfRegions = new ArrayList();
         listOfRegions = new ArrayList();
@@ -148,9 +147,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
         }, new ErrorListener<VolleyError>() {
             public void getError(VolleyError error) {
                 closeprogress();
-                Log.d("<ContactsFragment>", error + "");
-                Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-
+                Snackbar.make(container, "Network error", Snackbar.LENGTH_SHORT).show();
             }
         });
         address_region.setOnItemSelectedListener(this);
@@ -233,9 +230,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
                             closeprogress();
-                            Log.d("<ContactsFragment>", error + "");
-                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
-
+                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -258,7 +253,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     address_city_municipality.setAdapter(municipalities_adapter);
                 } else {
                     showprogress();
-                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_municipalities&province_id=" + province_server_id, "municipalities",  new RespondListener<JSONObject>() {
+                    ListOfPatientsRequest.getJSONobj(getActivity(), "get_municipalities&province_id=" + province_server_id, "municipalities", new RespondListener<JSONObject>() {
                         @Override
                         public void getResult(JSONObject response) {
                             try {
@@ -305,8 +300,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
                             closeprogress();
-                            Log.d("<ContactsFragment>", error + "");
-                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -376,8 +370,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemSele
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
                             closeprogress();
-                            Log.d("<ContactsFragment>", error + "");
-                            Toast.makeText(getActivity(), "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }

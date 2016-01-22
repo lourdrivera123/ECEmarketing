@@ -29,9 +29,9 @@ public class PatientRecordController extends DbHelper {
             RECORDS_FINDINGS = "findings",
             RECORDS_DATE = "record_date";
 
-      // SQL to create "patient_records"
+    // SQL to create "patient_records"
     public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
-                TBL_PATIENT_RECORDS, AI_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_CLINIC_ID, RECORDS_DOCTOR_NAME, RECORDS_CLINIC_NAME, PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, CREATED_AT, UPDATED_AT, DELETED_AT);
+            TBL_PATIENT_RECORDS, AI_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_CLINIC_ID, RECORDS_DOCTOR_NAME, RECORDS_CLINIC_NAME, PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public PatientRecordController(Context context) {
         super(context);
@@ -57,9 +57,8 @@ public class PatientRecordController extends DbHelper {
         values.put(UPDATED_AT, record.getUpdated_at());
         values.put(DELETED_AT, record.getDeleted_at());
 
-        if (request.equals("insert")) {
+        if (request.equals("insert"))
             rowID = sql_db.insert(TBL_PATIENT_RECORDS, null, values);
-        }
 
         sql_db.close();
         return rowID > 0;
@@ -117,5 +116,5 @@ public class PatientRecordController extends DbHelper {
 
         return deleted_record_ID;
     }
-    
+
 }

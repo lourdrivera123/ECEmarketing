@@ -387,7 +387,7 @@ public class EditTabsActivity extends AppCompatActivity implements ViewPager.OnP
         if (s_email.equals(""))
             email.setError("Field required");
         else if (!isEmailValid(s_email))
-            email.setError("Please input email");
+            email.setError("Please input a valid email");
         else {
             patient.setEmail(s_email);
             count++;

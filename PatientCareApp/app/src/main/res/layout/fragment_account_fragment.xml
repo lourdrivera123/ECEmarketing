@@ -131,23 +131,15 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <Button
+                android:id="@+id/btn_save"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".1"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/btn_save"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/gradient_button"
-                    android:text="Save"
-                    android:textColor="@color/white"
-                    android:clickable="true"
-                    android:drawableRight="@mipmap/ic_next"/>
-            </LinearLayout>
-
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient_button"
+                android:clickable="true"
+                android:drawableRight="@mipmap/ic_next"
+                android:text="Save"
+                android:textColor="@color/white" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

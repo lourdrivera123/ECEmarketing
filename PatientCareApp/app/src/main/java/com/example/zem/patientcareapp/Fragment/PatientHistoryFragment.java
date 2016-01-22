@@ -1,32 +1,23 @@
 package com.example.zem.patientcareapp.Fragment;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,7 +28,8 @@ import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.PatientRecordController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
+import com.example.zem.patientcareapp.Model.PatientRecord;
+import com.example.zem.patientcareapp.Network.ListRequestFromCustomURI;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.Activities.SaveMedicalRecordActivity;
@@ -49,7 +41,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class PatientHistoryFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     ListView list_of_history;
@@ -58,19 +49,17 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     LinearLayout root;
 
     ArrayList<HashMap<String, String>> hashHistory;
-    ArrayList<String> medRecords;
+    ArrayList<String> medRecords, arrayOfRecords;
     ArrayList<Integer> selectedList;
-    ArrayList<String> arrayOfRecords;
 
-    private int nr = 0;
     private SelectionAdapter mAdapter;
-
     public int view_record_id = 0;
 
     DbHelper dbHelper;
     PatientRecordController prc;
     Helpers helpers;
     Dialog dialog;
+    Dialog dialog2;
     ProgressDialog progress;
 
     @Override
@@ -98,98 +87,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             list_of_history.setVisibility(View.GONE);
         }
 
-        list_of_history.setOnItemClickListener(this);
-        add_record.setOnClickListener(this);
-
-        mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, R.id.doctor_name, medRecords);
+        mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, medRecords);
         list_of_history.setAdapter(mAdapter);
 
-        list_of_history.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        list_of_history.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                mAdapter.clearSelection();
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                nr = 0;
-                MenuInflater inflater = getActivity().getMenuInflater();
-                inflater.inflate(R.menu.multiple_delete_menu, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.item_delete:
-                        selectedList.addAll(mAdapter.getCurrentCheckedPosition());
-                        final int no_of_records = selectedList.size();
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                        dialog.setTitle("Delete?");
-
-                        if (no_of_records == 1) {
-                            dialog.setMessage(no_of_records + " record will be deleted");
-                        } else if (no_of_records > 1) {
-                            dialog.setMessage(no_of_records + " records will be deleted");
-                        }
-
-                        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                for (int x = (selectedList.size() - 1); x >= 0; x--) {
-                                    int pos = selectedList.get(x);
-                                    mAdapter.remove(pos);
-                                }
-                                selectedList.clear();
-                                if (hashHistory.size() == 0) {
-                                    noResults.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        });
-
-                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.create().show();
-
-                        nr = 0;
-                        mAdapter.clearSelection();
-                        mode.finish();
-                        return true;
-                }
-                return false;
-            }
-
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if (checked) {
-                    nr++;
-                    mAdapter.setNewSelection(position, true);
-                } else {
-                    nr--;
-                    mAdapter.removeSelection(position);
-                }
-                mode.setTitle(nr + "selected");
-            }
-        });
-
-        list_of_history.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                list_of_history.setItemChecked(position, !mAdapter.isPositionChecked(position));
-                return false;
-            }
-        });
-
+        list_of_history.setOnItemClickListener(this);
+        add_record.setOnClickListener(this);
         return rootView;
     }
 
@@ -214,7 +116,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        final Dialog dialog2 = new Dialog(getActivity());
+                        dialog2 = new Dialog(getActivity());
                         dialog2.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog2.setContentView(R.layout.get_clinic_record);
                         dialog2.show();
@@ -239,16 +141,16 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
                                     String uname = username.getText().toString();
                                     String pword = password.getText().toString();
-                                    String url = "get_clinic_records&username=" + uname + "&password=" + pword + "&patient_id=" + SidebarActivity.getUserID();
+                                    String url = "db/get.php?q=get_clinic_records&username=" + uname + "&password=" + pword + "&patient_id=" + SidebarActivity.getUserID();
 
-                                    ListOfPatientsRequest.getJSONobj(getActivity(), url, "records", new RespondListener<JSONObject>() {
+                                    ListRequestFromCustomURI.getJSONobj(getActivity(), url, "records", new RespondListener<JSONObject>() {
                                         @Override
                                         public void getResult(JSONObject response) {
                                             try {
                                                 int success = response.getInt("success");
-                                                int hasRecord = response.getInt("has_record");
 
                                                 if (success == 1) {
+                                                    int hasRecord = response.getInt("has_record");
                                                     JSONArray json_mysql = response.getJSONArray("records");
 
                                                     if (hasRecord == 1)
@@ -267,6 +169,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                         @Override
                                         public void getError(VolleyError e) {
                                             progress.dismiss();
+                                            Log.d("patientHistoryFrag1", e + "");
                                             Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                         }
                                     });
@@ -294,48 +197,51 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         try {
             JSONObject object = array.getJSONObject(0);
 
-            HashMap<String, String> map = new HashMap();
+            final HashMap<String, String> map = new HashMap();
             map.put("table", "patient_records");
             map.put("request", "crud");
             map.put("action", "insert");
-            map.put("clinic_patient_record_id", String.valueOf(object.getInt("clinic_patients_record_id")));
+            map.put("clinic_patient_record_id", object.getString("cpr_id"));
             map.put("patient_id", String.valueOf(SidebarActivity.getUserID()));
             map.put("doctor_id", String.valueOf(object.getInt("doctor_id")));
             map.put("clinic_id", String.valueOf(object.getInt("clinic_id")));
             map.put("complaints", object.getString("complaints"));
             map.put("findings", object.getString("findings"));
             map.put("record_date", object.getString("record_date"));
-            map.put("note", object.getString("note"));
 
             PostRequest.send(getActivity(), map, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
                     try {
                         int success = response.getInt("success");
-                        Log.d("response 2", response + "");
-
                         if (success == 1) {
                             int last_inserted_id = response.getInt("last_inserted_id");
 
-                            ArrayList<HashMap<String, String>> arrayOfTreatments = new ArrayList();
+                            PatientRecord pr = new PatientRecord();
+                            pr.setRecordID(last_inserted_id);
+                            pr.setPatientID(SidebarActivity.getUserID());
+                            pr.setDoctorID(Integer.parseInt(map.get("doctor_id")));
+                            pr.setClinicID(Integer.parseInt(map.get("clinic_id")));
+                            pr.setComplaints(map.get("complaints"));
+                            pr.setFindings(map.get("findings"));
+                            pr.setDate(map.get("record_date"));
+
+                            if (prc.savePatientRecord(pr, "insert")) {
+
+                            }
 
                             JSONArray master_arr = new JSONArray();
 
                             for (int x = 0; x < array.length(); x++) {
                                 JSONObject obj = array.getJSONObject(x);
                                 HashMap<String, String> hash = new HashMap();
+                                String dosage = obj.getString("frequency") + " for " + obj.getString("duration") + " - " + obj.getString("route");
 
-                                hash.put("patient_record_id", String.valueOf(last_inserted_id));
-                                hash.put("medicine_id", String.valueOf(obj.getInt("medicine_id")));
-                                hash.put("no_generics", String.valueOf(obj.getInt("no_generics")));
-                                hash.put("quantity", String.valueOf(obj.getInt("quantity")));
-                                hash.put("route", obj.getString("route"));
-                                hash.put("frequency", obj.getString("frequency"));
-                                hash.put("refills", String.valueOf(obj.getInt("refills")));
-                                hash.put("duration", String.valueOf(obj.getInt("duration")));
-                                hash.put("duration_type", String.valueOf(obj.getInt("duration_type")));
+                                hash.put("patient_records_id", String.valueOf(last_inserted_id));
+                                hash.put("medicine_name", obj.getString("med_name"));
+                                hash.put("generic_name", "");
+                                hash.put("dosage", dosage);
 
-                                arrayOfTreatments.add(hash);
                                 JSONObject obj_for_server = new JSONObject(hash);
                                 master_arr.put(obj_for_server);
                             }
@@ -344,7 +250,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                             json_to_be_passed.put("json_treatments", master_arr);
 
                             HashMap<String, String> hash = new HashMap();
-                            hash.put("table", "treatments");
+                            hash.put("table", "patient_treatments");
                             hash.put("request", "crud");
                             hash.put("action", "multiple_insert");
                             hash.put("jsobj", json_to_be_passed.toString());
@@ -353,16 +259,18 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                 @Override
                                 public void getResult(JSONObject response) {
                                     progress.dismiss();
+
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
                                     progress.dismiss();
+                                    Log.d("patientHistoryFrag2", error + "");
                                     Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                 }
                             });
                         }
                     } catch (Exception e) {
-                        Log.d("ptnt_history1", e + "");
+                        Log.d("patientHistoryFrag3", e + "");
                         Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                     }
                     progress.dismiss();
@@ -370,71 +278,34 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
                     progress.dismiss();
+                    Log.d("patientHistoryFrag", error + "");
                     Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        dialog2.dismiss();
     }
 
-    private class SelectionAdapter extends ArrayAdapter<String> {
+    private class SelectionAdapter extends ArrayAdapter {
+        TextView dosage, medicine, findings, record_date, doctor;
         private HashMap<Integer, Boolean> mSelection = new HashMap();
 
-        public SelectionAdapter(Context context, int resource, int textViewResourceId, ArrayList<String> objects) {
-            super(context, resource, textViewResourceId, objects);
-        }
-
-        public void setNewSelection(int position, boolean value) {
-            mSelection.put(position, value);
-            notifyDataSetChanged();
-        }
-
-        public boolean isPositionChecked(int position) {
-            Boolean result = mSelection.get(position);
-            return result == null ? false : result;
-        }
-
-        public Set<Integer> getCurrentCheckedPosition() {
-            return mSelection.keySet();
-        }
-
-        public void remove(int position) {
-//            int recordID = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
-//            if (dbHelper.deletePatientRecord(recordID) > 0) {
-//                if (dbHelper.deleteTreatmentByRecordID(recordID) > 0) {
-//                    medRecords.remove(position);
-//                    hashHistory.remove(position);
-//                    mAdapter.notifyDataSetChanged();
-//                } else
-//                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-//            } else
-//                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
-        }
-
-        public void removeSelection(int position) {
-            mSelection.remove(position);
-            notifyDataSetChanged();
-        }
-
-
-        public void clearSelection() {
-            mSelection = new HashMap();
-            mAdapter.notifyDataSetChanged();
+        public SelectionAdapter(Context context, int resource, ArrayList<String> objects) {
+            super(context, resource, objects);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = super.getView(position, convertView, parent);
-            Drawable d = getResources().getDrawable(R.drawable.list_selector);
-            v.setBackgroundDrawable(d);
 
-            TextView record_date = (TextView) v.findViewById(R.id.record_date);
-            TextView findings = (TextView) v.findViewById(R.id.findings);
-            TextView doctor = (TextView) v.findViewById(R.id.doctor_name);
-            ImageView recordSource = (ImageView) v.findViewById(R.id.recordSource);
-
-            recordSource.setVisibility(View.GONE);
+            record_date = (TextView) v.findViewById(R.id.record_date);
+            findings = (TextView) v.findViewById(R.id.findings);
+            doctor = (TextView) v.findViewById(R.id.doctor_name);
+            medicine = (TextView) v.findViewById(R.id.medicine);
+            dosage = (TextView) v.findViewById(R.id.dosage);
 
             doctor.setText("Dr. " + hashHistory.get(position).get(PatientRecordController.RECORDS_DOCTOR_NAME));
             doctor.setTag(position);
