@@ -44,6 +44,7 @@ import java.util.Map;
 
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 import static android.support.design.widget.Snackbar.make;
+import static android.util.Log.d;
 import static com.example.zem.patientcareapp.Network.GetRequest.getJSONobj;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
-                                                Log.d("orders error", error + "");
+                                                d("orders error", error + "");
                                                 make(root, "Network error", LENGTH_SHORT).show();
                                             }
                                         });
@@ -206,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         getJSONobj(getBaseContext(), "get_order_details&patient_id=" + syncedPatient.getServerID(), "order_details", "order_details_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
+                                                d("fuck response", response + "");
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
@@ -217,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         getJSONobj(getBaseContext(), "get_consultations&patient_id=" + syncedPatient.getServerID(), "consultations", "consultation_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
-
+                                                d("mainactivity response", response + "");
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
@@ -278,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     pDialog.dismiss();
                                 }
                             } catch (JSONException e) {
-                                Log.d("try catch error", e + "");
+                                d("try catch error", e + "");
                             }
                         }
                     }, new Response.ErrorListener() {

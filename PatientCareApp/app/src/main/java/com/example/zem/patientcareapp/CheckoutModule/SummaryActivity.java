@@ -129,6 +129,7 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                 try {
                     Log.d("response_fs", response + "");
                     int success = response.getInt("success");
+                    final JSONArray json_mysql = response.getJSONArray("baskets");
 
                     if (success == 1) {
                         if (response.getBoolean("basket_quantity_changed")) {
@@ -136,55 +137,84 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
                             orderCancelled();
                         }
 
-                        JSONArray json_mysql = response.getJSONArray("baskets");
+                        if (order_model.getMode_of_delivery().equals("pickup")) {
+                            address_or_branch.setText("Branch to pickup order");
+                            setBranchNameFromServer();
+                        } else {
+                            address_or_branch.setText("Address for delivery");
+                            address_option.setText(order_model.getRecipient_address());
+//                            checkForSettingsUpdate();
 
-                        items = bc.convertFromJson(SummaryActivity.this, json_mysql);
+                            GetRequest.getJSONobj(getBaseContext(), "get_settings", "settings", "serverID", new RespondListener<JSONObject>() {
+                                @Override
+                                public void getResult(JSONObject response) {
+                                    items = bc.convertFromJson(SummaryActivity.this, json_mysql);
 
-                        for (HashMap<String, String> item : items) {
-                            String promo_type = item.get("promo_type");
-                            double item_subtotal_value = Double.parseDouble(item.get("item_subtotal"));
-                            double peso_discount = Double.parseDouble(item.get("peso_discount"));
-                            double percentage_discount = Double.parseDouble(item.get("percentage_discount"));
-                            double computed_discount = 0;
+                                    for (HashMap<String, String> item : items) {
+                                        String promo_type = item.get("promo_type");
+                                        double item_subtotal_value = Double.parseDouble(item.get("item_subtotal"));
+                                        double peso_discount = Double.parseDouble(item.get("peso_discount"));
+                                        double percentage_discount = Double.parseDouble(item.get("percentage_discount"));
+                                        double computed_discount = 0;
 
-                            if(promo_type.equals("peso_discount"))
-                                computed_discount = item_subtotal_value - peso_discount;
-                            else if(promo_type.equals("percentage_discount"))
-                                computed_discount = item_subtotal_value - percentage_discount;
-                            else
-                                computed_discount = item_subtotal_value;
+                                        if(promo_type.equals("peso_discount"))
+                                            computed_discount = item_subtotal_value - peso_discount;
+                                        else if(promo_type.equals("percentage_discount"))
+                                            computed_discount = item_subtotal_value - percentage_discount;
+                                        else
+                                            computed_discount = item_subtotal_value;
 
-                            totalAmount = totalAmount + computed_discount;
-                        }
+                                        totalAmount = totalAmount + computed_discount;
+                                    }
 
-                        double coupon_discount = order_model.getCoupon_discount();
+                                    double coupon_discount = order_model.getCoupon_discount();
 
-                        if (order_model.getCoupon_discount_type().equals("percentage_discount")) {
-                            Log.d("converted_percentage", totalAmount * (coupon_discount / 100) + "");
-                            coupon_discount = totalAmount * (coupon_discount / 100);
-                        }
+                                    if (order_model.getCoupon_discount_type().equals("percentage_discount")) {
+                                        Log.d("converted_percentage", totalAmount * (coupon_discount / 100) + "");
+                                        coupon_discount = totalAmount * (coupon_discount / 100);
+                                    }
 
-                        double points_discount = order_model.getPoints_discount();
-                        discounted_total = totalAmount - points_discount - coupon_discount;
-
-                        /* discounts and total block*/
-                        if (coupon_discount == 0.0)
-                            coupon_layout.setVisibility(View.GONE);
-
-                        if (points_discount == 0.0)
-                            points_layout.setVisibility(View.GONE);
-
-                        if (coupon_discount == 0.0 && points_discount == 0.0)
-                            subtotal_layout.setVisibility(View.GONE);
-
-                        amount_subtotal.setText("\u20B1 " + String.valueOf(totalAmount));
-                        amount_of_coupon_discount.setText("\u20B1 " + String.format("%.2f", coupon_discount));
-                        amount_of_points_discount.setText("\u20B1 " + String.format("%.2f", points_discount));
-                        total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
+                                    double points_discount = order_model.getPoints_discount();
+                                    discounted_total = totalAmount - points_discount - coupon_discount;
 
                         /* discounts and total block*/
-                        SummaryAdapter adapter = new SummaryAdapter(SummaryActivity.this, items);
-                        order_summary.setAdapter(adapter);
+                                    if (coupon_discount == 0.0)
+                                        coupon_layout.setVisibility(View.GONE);
+
+                                    if (points_discount == 0.0)
+                                        points_layout.setVisibility(View.GONE);
+
+                                    if (coupon_discount == 0.0 && points_discount == 0.0)
+                                        subtotal_layout.setVisibility(View.GONE);
+
+                                    amount_subtotal.setText("\u20B1 " + String.valueOf(totalAmount));
+                                    amount_of_coupon_discount.setText("\u20B1 " + String.format("%.2f", coupon_discount));
+                                    amount_of_points_discount.setText("\u20B1 " + String.format("%.2f", points_discount));
+                                    total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
+
+                                    settings = sc.getAllSettings();
+                                    delivery_charge_layout.setVisibility(View.VISIBLE);
+                                    if (order_model.getCoupon_discount_type().equals("free_delivery")) {
+                                        delivery_charge.setTextColor(getResources().getColor(R.color.ColorPrimary));
+                                        delivery_charge.setText("Free");
+                                    } else {
+                                        delivery_charge.setText("₱ " + settings.getDelivery_charge());
+                                        delivery_charge_val = settings.getDelivery_charge();
+                                        discounted_total += delivery_charge_val;
+                                        total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
+                                    }
+
+                                    /* discounts and total block*/
+                                    SummaryAdapter adapter = new SummaryAdapter(SummaryActivity.this, items);
+                                    order_summary.setAdapter(adapter);
+                                }
+                            }, new ErrorListener<VolleyError>() {
+                                public void getError(VolleyError error) {
+                                    Snackbar.make(root, "Please check network connection.", Snackbar.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+
                     }
                 } catch (Exception e) {
                     Toast.makeText(SummaryActivity.this, e + "", Toast.LENGTH_SHORT).show();
@@ -198,14 +228,6 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        if (order_model.getMode_of_delivery().equals("pickup")) {
-            address_or_branch.setText("Branch to pickup order");
-            setBranchNameFromServer();
-        } else {
-            address_or_branch.setText("Address for delivery");
-            address_option.setText(order_model.getRecipient_address());
-            checkForSettingsUpdate();
-        }
         order_receiving_option.setText(order_model.getMode_of_delivery());
         recipient_option.setText(order_model.getRecipient_name());
         payment_option.setText(helper.decodePaymentCode(order_model.getPayment_method(), order_model.getMode_of_delivery()));
@@ -243,28 +265,28 @@ public class SummaryActivity extends AppCompatActivity implements View.OnClickLi
         return super.onOptionsItemSelected(item);
     }
 
-    public void checkForSettingsUpdate() {
-        GetRequest.getJSONobj(getBaseContext(), "get_settings", "settings", "serverID", new RespondListener<JSONObject>() {
-            @Override
-            public void getResult(JSONObject response) {
-                settings = sc.getAllSettings();
-                delivery_charge_layout.setVisibility(View.VISIBLE);
-                if (order_model.getCoupon_discount_type().equals("free_delivery")) {
-                    delivery_charge.setTextColor(getResources().getColor(R.color.ColorPrimary));
-                    delivery_charge.setText("Free");
-                } else {
-                    delivery_charge.setText("₱ " + settings.getDelivery_charge());
-                    delivery_charge_val = settings.getDelivery_charge();
-                    discounted_total += delivery_charge_val;
-                    total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
-                }
-            }
-        }, new ErrorListener<VolleyError>() {
-            public void getError(VolleyError error) {
-                Snackbar.make(root, "Please check network connection.", Snackbar.LENGTH_LONG).show();
-            }
-        });
-    }
+//    public void checkForSettingsUpdate() {
+//        GetRequest.getJSONobj(getBaseContext(), "get_settings", "settings", "serverID", new RespondListener<JSONObject>() {
+//            @Override
+//            public void getResult(JSONObject response) {
+//                settings = sc.getAllSettings();
+//                delivery_charge_layout.setVisibility(View.VISIBLE);
+//                if (order_model.getCoupon_discount_type().equals("free_delivery")) {
+//                    delivery_charge.setTextColor(getResources().getColor(R.color.ColorPrimary));
+//                    delivery_charge.setText("Free");
+//                } else {
+//                    delivery_charge.setText("₱ " + settings.getDelivery_charge());
+//                    delivery_charge_val = settings.getDelivery_charge();
+//                    discounted_total += delivery_charge_val;
+//                    total_amount.setText("\u20B1 " + String.format("%.2f", discounted_total));
+//                }
+//            }
+//        }, new ErrorListener<VolleyError>() {
+//            public void getError(VolleyError error) {
+//                Snackbar.make(root, "Please check network connection.", Snackbar.LENGTH_LONG).show();
+//            }
+//        });
+//    }
 
     @Override
     public void onClick(View v) {

@@ -177,7 +177,6 @@ public class PromosDiscounts extends AppCompatActivity implements View.OnClickLi
 
                         promos_map.put("product_applicability", obj.getString("product_applicability"));
                         promos_map.put("minimum_purchase", obj.getString("minimum_purchase_amount"));
-                        promos_map.put("quantity_required", obj.getString("quantity_required"));
 
                         //additional common data
                         promos_map.put("promo_id", obj.getString("id"));
