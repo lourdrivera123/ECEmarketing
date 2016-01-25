@@ -4,18 +4,24 @@ import java.util.ArrayList;
 
 import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.zem.patientcareapp.Activities.ShoppingCartActivity;
@@ -44,6 +51,12 @@ import com.example.zem.patientcareapp.ImageGallery.ImageHelper;
 import com.example.zem.patientcareapp.Activities.MainActivity;
 import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.adapter.NavDrawerListAdapter;
+import com.example.zem.patientcareapp.gcm.gcmquickstart.QuickstartPreferences;
+import com.example.zem.patientcareapp.gcm.gcmquickstart.RegistrationIntentService;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
+import static android.util.Log.d;
 
 /**
  * Created by Zem on 7/16/2015.
@@ -73,11 +86,42 @@ public class SidebarActivity extends AppCompatActivity {
     static DbHelper dbHelper;
     static PatientController pc;
     OverlayController oc;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String TAG = "SidebarActivity";
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sidebar_layout);
+
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+//                mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
+                d("mainactivity",  "oneceive");
+                SharedPreferences sp =
+                        PreferenceManager.getDefaultSharedPreferences(context);
+                boolean sentToken = sp
+                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                if (sentToken) {
+                    d("mainactivity",  "senttoken");
+
+                    showdl("senttoken");
+                } else {
+                    d("mainactivity",  "errortoken");
+
+                    showdl("error");
+                }
+            }
+        };
+
+        if (checkPlayServices()) {
+            d("gcm_reg", "reg ba ?");
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
 
         sharedpreferences = getSharedPreferences(MainActivity.MyPREFERENCES, Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
@@ -169,6 +213,36 @@ public class SidebarActivity extends AppCompatActivity {
         }
     }
 
+    void showdl(String msg){
+        AlertDialog.Builder order_completed_dialog = new AlertDialog.Builder(SidebarActivity.this);
+        order_completed_dialog.setTitle("Connection status");
+        order_completed_dialog.setMessage(msg);
+        order_completed_dialog.setCancelable(false);
+        order_completed_dialog.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        order_completed_dialog.show();
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
     public static String getUname() {
         uname = sharedpreferences.getString(MainActivity.name, "DEFAULT");
         return uname;
@@ -185,6 +259,20 @@ public class SidebarActivity extends AppCompatActivity {
 
         return userID;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
+    }
+
 
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override

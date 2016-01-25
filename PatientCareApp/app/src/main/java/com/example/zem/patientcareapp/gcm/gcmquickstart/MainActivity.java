@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 
@@ -59,19 +59,23 @@ public class MainActivity extends AppCompatActivity {
                 boolean sentToken = sharedPreferences
                         .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 if (sentToken) {
-                    mInformationTextView.setText(getString(R.string.gcm_send_message));
+                    mInformationTextView.setText("Token retrieved and sent to server! You can now use gcmsender to\n" +
+                            "        send downstream messages to this app.");
                 } else {
-                    mInformationTextView.setText(getString(R.string.token_error_message));
+                    mInformationTextView.setText("An error occurred while either fetching the InstanceID token,\n" +
+                            "        sending the fetched token to the server or subscribing to the PubSub topic. Please try\n" +
+                            "        running the sample again.");
                 }
             }
         };
-        mInformationTextView = (TextView) findViewById(R.id.informationTextView);
 
         if (checkPlayServices()) {
             // Start IntentService to register this application with GCM.
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+        mInformationTextView = (TextView) findViewById(R.id.informationTextView);
+
     }
 
     @Override
@@ -86,15 +90,6 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
     }
-
-
-*/
-/**
-     * Check the device to make sure it has the Google Play Services APK. If
-     * it doesn't, display a dialog that allows users to download the APK from
-     * the Google Play Store or enable it in the device's system settings.
-     *//*
-
 
     private boolean checkPlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
@@ -113,4 +108,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-*/
