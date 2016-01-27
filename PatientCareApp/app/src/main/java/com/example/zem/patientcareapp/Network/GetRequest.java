@@ -15,9 +15,6 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 
 import org.json.JSONObject;
 
-/**
- * Created by Zem on 8/3/2015.
- */
 public class GetRequest {
 
     public static void getJSONobj(final Context c, final String q, final String table_name, final String table_id, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {
@@ -28,7 +25,6 @@ public class GetRequest {
         queue = VolleySingleton.getInstance().getRequestQueue();
         helpers = new Helpers();
         upc = new UpdateController(c);
-        final String url = helpers.get_url(q, table_name);
 
         JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q, table_name), null, new Response.Listener<JSONObject>() {
             @Override

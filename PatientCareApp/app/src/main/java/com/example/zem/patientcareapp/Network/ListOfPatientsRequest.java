@@ -14,9 +14,6 @@ import com.example.zem.patientcareapp.Interface.RespondListener;
 
 import org.json.JSONObject;
 
-/**
- * Created by User PC on 8/15/2015.
- */
 public class ListOfPatientsRequest {
 
     public static void getJSONobj(final Context c, final String q, String table_name, final RespondListener<JSONObject> listener, final ErrorListener<VolleyError> errorlistener) {

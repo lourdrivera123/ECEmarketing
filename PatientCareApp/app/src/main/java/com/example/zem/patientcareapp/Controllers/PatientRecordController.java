@@ -10,9 +10,6 @@ import com.example.zem.patientcareapp.Model.PatientRecord;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Zem on 11/23/2015.
- */
 public class PatientRecordController extends DbHelper {
 
     DbHelper dbhelper;
@@ -21,6 +18,7 @@ public class PatientRecordController extends DbHelper {
     //PATIENT_RECORDS TABLE
     public static final String TBL_PATIENT_RECORDS = "patient_records",
             SERVER_RECORDS_ID = "record_id",
+            SERVER_CPR_ID = "clinic_patient_record_id",
             RECORDS_DOCTOR_ID = "doctor_id",
             RECORDS_CLINIC_ID = "clinic_id",
             RECORDS_DOCTOR_NAME = "doctor_name",
@@ -30,8 +28,8 @@ public class PatientRecordController extends DbHelper {
             RECORDS_DATE = "record_date";
 
     // SQL to create "patient_records"
-    public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
-            TBL_PATIENT_RECORDS, AI_ID, SERVER_RECORDS_ID, RECORDS_DOCTOR_ID, RECORDS_CLINIC_ID, RECORDS_DOCTOR_NAME, RECORDS_CLINIC_NAME, PATIENT_ID, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, CREATED_AT, UPDATED_AT, DELETED_AT);
+    public static final String CREATE_TABLE = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT )",
+            TBL_PATIENT_RECORDS, AI_ID, SERVER_RECORDS_ID, SERVER_CPR_ID, RECORDS_DOCTOR_ID, RECORDS_CLINIC_ID, RECORDS_DOCTOR_NAME, RECORDS_CLINIC_NAME, RECORDS_COMPLAINT, RECORDS_FINDINGS, RECORDS_DATE, CREATED_AT, UPDATED_AT, DELETED_AT);
 
     public PatientRecordController(Context context) {
         super(context);
@@ -44,15 +42,30 @@ public class PatientRecordController extends DbHelper {
         ContentValues values = new ContentValues();
         long rowID = 0;
 
+        if (record.getDoctorID() > 0 && record.getClinicID() > 0) {
+            String sql = "SELECT d.fname, d.lname, c.name FROM doctors as d inner join clinic_doctor as cd on cd.doctor_id = d.doc_id " +
+                    "inner join clinics as c on c.clinics_id = cd.clinic_id where d.doc_id = " + record.getDoctorID() + " and c.clinics_id = " + record.getClinicID();
+            Cursor cur = sql_db.rawQuery(sql, null);
+
+            if (cur.moveToNext()) {
+                String fullname = cur.getString(cur.getColumnIndex("lname")) + ", " + cur.getString(cur.getColumnIndex("fname"));
+                String clinic = cur.getString(cur.getColumnIndex("name"));
+
+                values.put(RECORDS_DOCTOR_NAME, fullname);
+                values.put(RECORDS_CLINIC_NAME, clinic);
+            }
+        } else {
+            values.put(RECORDS_DOCTOR_NAME, record.getDoctorName());
+            values.put(RECORDS_CLINIC_NAME, record.getClinicName());
+        }
+
+
         values.put(SERVER_RECORDS_ID, record.getRecordID());
-        values.put(PATIENT_ID, record.getPatientID());
         values.put(RECORDS_DOCTOR_ID, record.getDoctorID());
         values.put(RECORDS_CLINIC_ID, record.getClinicID());
         values.put(RECORDS_COMPLAINT, record.getComplaints());
         values.put(RECORDS_FINDINGS, record.getFindings());
         values.put(RECORDS_DATE, record.getDate());
-        values.put(RECORDS_DOCTOR_NAME, record.getDoctorName());
-        values.put(RECORDS_CLINIC_NAME, record.getClinicName());
         values.put(CREATED_AT, record.getCreated_at());
         values.put(UPDATED_AT, record.getUpdated_at());
         values.put(DELETED_AT, record.getDeleted_at());
@@ -64,9 +77,9 @@ public class PatientRecordController extends DbHelper {
         return rowID > 0;
     }
 
-    public ArrayList<HashMap<String, String>> getPatientRecord(int patientID) {
+    public ArrayList<HashMap<String, String>> getPatientRecord() {
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
-        String sql = "select * FROM " + TBL_PATIENT_RECORDS + " WHERE " + PATIENT_ID + " = " + patientID + " ORDER BY " + RECORDS_DATE + " DESC";
+        String sql = "SELECT * FROM " + TBL_PATIENT_RECORDS + " ORDER BY " + RECORDS_DATE + " DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
         ArrayList<HashMap<String, String>> arrayOfRecords = new ArrayList();
         HashMap<String, String> map;
@@ -86,35 +99,4 @@ public class PatientRecordController extends DbHelper {
 
         return arrayOfRecords;
     }
-
-    public PatientRecord getPatientRecordByRecordID(int recordID, int userID) {
-        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
-        String sql = "SELECT * FROM " + TBL_PATIENT_RECORDS + " WHERE " + PATIENT_ID + " = " + userID + " AND " + AI_ID + " = " + recordID;
-        Cursor cur = sql_db.rawQuery(sql, null);
-        cur.moveToFirst();
-        PatientRecord record = new PatientRecord();
-
-        if (cur.getCount() > 0) {
-            record.setDoctorID(cur.getInt(cur.getColumnIndex(RECORDS_DOCTOR_ID)));
-            record.setDoctorName(cur.getString(cur.getColumnIndex(RECORDS_DOCTOR_NAME)));
-            record.setPatientID(cur.getInt(cur.getColumnIndex(PATIENT_ID)));
-            record.setComplaints(cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
-            record.setFindings(cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
-            record.setDate(cur.getString(cur.getColumnIndex(RECORDS_DATE)));
-        }
-
-        cur.close();
-        sql_db.close();
-
-        return record;
-    }
-
-    public long deletePatientRecord(int recordID) {
-        SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
-        long deleted_record_ID = sql_db.delete(TBL_PATIENT_RECORDS, AI_ID + " = " + recordID, null);
-        sql_db.close();
-
-        return deleted_record_ID;
-    }
-
 }

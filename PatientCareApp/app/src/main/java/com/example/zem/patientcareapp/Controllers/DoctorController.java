@@ -11,9 +11,6 @@ import com.example.zem.patientcareapp.Model.Doctor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Zem on 11/23/2015.
- */
 public class DoctorController extends DbHelper {
 
     DbHelper dbhelper;

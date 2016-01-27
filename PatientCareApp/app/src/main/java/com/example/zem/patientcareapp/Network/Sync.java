@@ -207,7 +207,7 @@ public class Sync {
                             } else if (tableName.equals("billings")) {
                                 if (!blc.saveBillings(json_object))
                                     d("sync_0", "wala na save");
-                            } else if (tableName.equals("order_preference")){
+                            } else if (tableName.equals("order_preference")) {
                                 if (!opc.savePreferenceFromJson(json_object))
                                     d("sync_0", "wala na save");
                             }
@@ -286,7 +286,7 @@ public class Sync {
         PatientRecord patient_record = new PatientRecord();
         try {
             patient_record.setRecordID(json_object.getInt("id"));
-            patient_record.setPatientID(json_object.getInt("patient_id"));
+            patient_record.setCpr_id(json_object.getInt("clinic_patient_record_id"));
             patient_record.setComplaints(json_object.getString("complaints"));
             patient_record.setFindings(json_object.getString("findings"));
             patient_record.setDate(json_object.getString("record_date"));
@@ -310,9 +310,11 @@ public class Sync {
             HashMap<String, String> map = new HashMap();
             map.put("treatmentts_id", String.valueOf(json.getInt("id")));
             map.put("patient_records_id", String.valueOf(json.getInt("patient_records_id")));
+            map.put("medicine_id", json.getString("medicine_id"));
             map.put("medicine_name", json.getString("medicine_name"));
             map.put("generic_name", json.getString("generic_name"));
-            map.put("dosage", json.getString("dosage"));
+            map.put("frequency", json.getString("frequency"));
+            map.put("duration", json.getString("duration"));
             listOfTreatments.add(map);
         } catch (Exception e) {
 

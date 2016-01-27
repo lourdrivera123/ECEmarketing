@@ -278,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         getJSONobj(getBaseContext(), "get_patient_records&patient_id=" + syncedPatient.getServerID(), "patient_records", "record_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
+
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
@@ -286,9 +287,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         });
 
                                         //request for patient_treatments
-                                        getJSONobj(getBaseContext(), "get_treatments", "patient_treatments", "treatments_id", new RespondListener<JSONObject>() {
+                                        getJSONobj(getBaseContext(), "get_treatments&patient_id=" + syncedPatient.getServerID(), "patient_treatments", "treatments_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
+
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
@@ -296,10 +298,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             }
                                         });
 
-                                        getJSONobj(getBaseContext(), "get_order_preference&patient_id="+syncedPatient.getServerID(), "order_preference", "server_id", new RespondListener<JSONObject>() {
+
+                                        getJSONobj(getBaseContext(), "get_order_preference&patient_id=" + syncedPatient.getServerID(), "order_preference", "server_id", new RespondListener<JSONObject>() {
                                             @Override
                                             public void getResult(JSONObject response) {
-                                                
+
                                             }
                                         }, new ErrorListener<VolleyError>() {
                                             public void getError(VolleyError error) {
