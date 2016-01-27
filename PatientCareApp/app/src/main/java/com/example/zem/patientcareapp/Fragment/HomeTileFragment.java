@@ -37,6 +37,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import static android.util.Log.d;
+
 public class HomeTileFragment extends Fragment implements View.OnClickListener {
     LinearLayout orderLayout, refillLayout, pointsLayout, prescriptionLayout, consultationLayout;
     TextView notifConsultation;
@@ -97,6 +99,7 @@ public class HomeTileFragment extends Fragment implements View.OnClickListener {
                     } else
                         notifConsultation.setVisibility(View.INVISIBLE);
                 } catch (Exception e) {
+                    Log.d("home1", e+"");
                     Toast.makeText(getActivity(), e + "", Toast.LENGTH_SHORT).show();
                 }
             }

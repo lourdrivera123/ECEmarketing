@@ -49,6 +49,9 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
     ArrayList<HashMap<String, String>> objects;
 
     public static double cart_total_amount;
+    public static double total_savings_value = 0;
+
+    TextView total_savings;
 
     public ShoppingCartAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
         super(context, resource, objects);
@@ -77,6 +80,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         root = (LinearLayout) convertView.findViewById(R.id.root);
         promo_total = (TextView) convertView.findViewById(R.id.promo_total);
         free_item = (TextView) convertView.findViewById(R.id.free_item);
+        total_savings = (TextView) convertView.findViewById(R.id.total_savings);
 
         delete.setTag(position);
         up_btn.setTag(product_quantity);
@@ -158,9 +162,11 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                                 if (final_is_every.equals("1")) {
                                     discounted_total = total_per_item - (discount_times * final_peso);
+                                    total_savings_value += discounted_total;
                                     discounted_amount = total_per_item - discounted_total;
                                 } else {
                                     discounted_total = total_per_item - final_peso;
+                                    total_savings_value += discounted_total;
                                     discounted_amount = final_peso;
                                 }
                             }
@@ -174,6 +180,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                                 discounted_amount = total_per_item * percent_off;
                                 discounted_total = total_per_item - discounted_amount;
+                                total_savings_value += discounted_total;
                             }
                         }
 
@@ -291,6 +298,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                     p_total.setText("Php " + df.format(total_per_item));
                     ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
+                    total_savings.setText("Total Savings: "+df.format(total_savings_value));
 
                     HashMap<String, String> temp = objects.get(position);
                     temp.put("quantity", String.valueOf(lastQty));
@@ -316,6 +324,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                 if (lastQty < 1) {
                     lastQty = 1;
                     ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
+                    total_savings.setText("Total Savings: "+df.format(total_savings_value) );
                 } else {
                     total_per_item = price * lastQty;
                     cart_total_amount = cart_total_amount - price;
@@ -367,6 +376,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                         }
                     }
                     ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
+                    total_savings.setText("Total Savings: Php"+df.format(total_savings_value));
                 }
 
                 txt.setText(lastQty + "");
@@ -379,6 +389,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         });
 
         ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
+        total_savings.setText("Total Savings: Php"+df.format(total_savings_value));
 
         return convertView;
     }
