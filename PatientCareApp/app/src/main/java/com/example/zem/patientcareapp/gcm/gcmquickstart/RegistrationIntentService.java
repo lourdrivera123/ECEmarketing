@@ -23,14 +23,24 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Interface.ErrorListener;
+import com.example.zem.patientcareapp.Interface.RespondListener;
+import com.example.zem.patientcareapp.Network.CustomPostRequest;
 import com.example.zem.patientcareapp.R;
+import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.HashMap;
 
 import static android.util.Log.d;
+import static com.example.zem.patientcareapp.SidebarModule.SidebarActivity.getUserID;
+import static java.lang.System.out;
 
 public class RegistrationIntentService extends IntentService {
 
@@ -91,6 +101,33 @@ public class RegistrationIntentService extends IntentService {
      */
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
+        out.println("token= " +token);
+        out.println("user_id= " + getUserID());
+
+        HashMap<String, String> hashMap = new HashMap();
+        hashMap.put("token", ""+token);
+        hashMap.put("user_id", String.valueOf(getUserID()));
+
+        CustomPostRequest.send("save_user_token", hashMap, new RespondListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                try {
+                    d("RegResponse", response + "");
+                    if(response.getBoolean("success")){
+                        d(TAG, "token saved");
+                    } else {
+                        d(TAG,  "token not saved");
+                    }
+                } catch (Exception e) {
+                    out.println("<save_user_token> request error" + e);
+                }
+            }
+        }, new ErrorListener<VolleyError>() {
+            @Override
+            public void getError(VolleyError error) {
+                out.println("src: <save_user_token>: " + error.toString());
+            }
+        });
     }
 
     /**

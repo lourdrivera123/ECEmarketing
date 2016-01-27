@@ -26,8 +26,17 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.zem.patientcareapp.R;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
 import com.google.android.gms.gcm.GcmListenerService;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
+
+import static android.util.Log.d;
 
 public class MyGcmListenerService extends GcmListenerService {
 
@@ -43,9 +52,9 @@ public class MyGcmListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
+        d("data_bundle", data + "");
+        d(TAG, "From: " + from);
+        d(TAG, "Message: " + data);
 
         if (from.startsWith("/topics/")) {
             // message received from some topic.
@@ -65,17 +74,17 @@ public class MyGcmListenerService extends GcmListenerService {
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
          */
-        sendNotification(message);
+        sendNotification(data);
+//        notifysa(message);
         // [END_EXCLUDE]
     }
     // [END receive_message]
 
-    /**
-     * Create and show a simple notification containing the received GCM message.
-     *
-     * @param message GCM message received.
-     */
-    private void sendNotification(String message) {
+    private void sendNotification(Bundle data) {
+//        d("data_bundle", data.getBundle("message") + "");
+//        d("message_fuck", message + "");
+
+
         Intent intent = new Intent(this, SidebarActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -83,12 +92,26 @@ public class MyGcmListenerService extends GcmListenerService {
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-//                .setSmallIcon(R.drawable.ic_stat_ic_notification)
-                .setContentTitle("GCM Message")
-                .setContentText(message)
-                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.ic_app)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
+
+        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+        inboxStyle.setBigContentTitle("Pharmacy Tree Alert!");
+
+        try {
+            JSONObject json_msg = new JSONObject(data.getString("message"));
+            d("json_obj", json_msg + "");
+            d("json_index_1", json_msg.getString("1"));
+            d("json_length", json_msg.length() + "");
+            for(int i=1; i <= json_msg.length(); i++) { inboxStyle.addLine(json_msg.getString(String.valueOf(i))); }
+
+        } catch (JSONException e) { e.printStackTrace(); }
+
+//        for (int i=0; i < message.length; i++) {
+//            inboxStyle.addLine(message[i]);
+//        }
+        notificationBuilder.setStyle(inboxStyle);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

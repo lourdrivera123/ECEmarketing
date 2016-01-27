@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +20,8 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
@@ -90,10 +93,12 @@ public class SidebarActivity extends AppCompatActivity {
     private static final String TAG = "SidebarActivity";
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sidebar_layout);
+
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -106,12 +111,11 @@ public class SidebarActivity extends AppCompatActivity {
                         .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 if (sentToken) {
                     d("mainactivity",  "senttoken");
-
-                    showdl("senttoken");
+//                    showdl("senttoken");
                 } else {
                     d("mainactivity",  "errortoken");
 
-                    showdl("error");
+//                    showdl("error");
                 }
             }
         };

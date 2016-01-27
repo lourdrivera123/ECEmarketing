@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.patient_login);
 
-
-
         login_toolbar = (Toolbar) findViewById(R.id.login_toolbar);
         setSupportActionBar(login_toolbar);
         getSupportActionBar().setTitle("PatientCare");
