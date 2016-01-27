@@ -18,10 +18,6 @@ import com.example.zem.patientcareapp.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Dexter B. on 5/4/2015.
- */
-
 public class LazyAdapter extends BaseAdapter {
     public static int quantity = 0;
     public static double price = 0;
@@ -67,16 +63,16 @@ public class LazyAdapter extends BaseAdapter {
         View vi = convertView;
 
         if (list_type.equals("list_of_doctors")) {
-//            vi = inflater.inflate(R.layout.list_row, null);
+            vi = inflater.inflate(R.layout.list_item_doctors_fragment, null);
 
-            TextView title = (TextView) vi.findViewById(R.id.title); // title
+            TextView doctor_name = (TextView) vi.findViewById(R.id.doctor_name); // title
             TextView specialty = (TextView) vi.findViewById(R.id.specialty); // artist name
 
             HashMap<String, String> doctor;
             doctor = data.get(position);
 
             // Setting all values in listview
-            title.setText(doctor.get("fullname"));
+            doctor_name.setText(doctor.get("fullname"));
             specialty.setText(doctor.get("name"));
         } else if (list_type.equals("ready_for_checkout_items")) {
             vi = inflater.inflate(R.layout.checkout_list_item, null);
@@ -92,7 +88,6 @@ public class LazyAdapter extends BaseAdapter {
             itemQuantity = (TextView) vi.findViewById(R.id.item_quantity);
             itemIsApproved = (TextView) vi.findViewById(R.id.item_is_approved);
 
-            // Do the fucking stuffs here
             double price, total_amount;
             int quantity, qtyPerPacking, packingCount, isApproved;
             String unit, packing;

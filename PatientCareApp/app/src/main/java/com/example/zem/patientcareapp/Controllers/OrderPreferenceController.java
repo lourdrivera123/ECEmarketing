@@ -105,7 +105,7 @@ public class OrderPreferenceController extends DbHelper {
         ContentValues values = new ContentValues();
 
         try {
-            values.put(ORDER_PREFERENCES_PATIENT_ID, jobject.getInt("id"));
+            values.put(ORDER_PREFERENCES_PATIENT_ID, jobject.getInt("patient_id"));
         values.put(ORDER_PREFERENCES_RECIPIENT_NAME, jobject.getString(ORDER_PREFERENCES_RECIPIENT_NAME));
         values.put(ORDER_PREFERENCES_RECIPIENT_ADDRESS, jobject.getString(ORDER_PREFERENCES_RECIPIENT_ADDRESS));
         values.put(ORDER_PREFERENCES_RECIPIENT_NUMBER, jobject.getString(ORDER_PREFERENCES_RECIPIENT_NUMBER));

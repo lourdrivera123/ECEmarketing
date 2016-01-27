@@ -2,16 +2,13 @@ package com.example.zem.patientcareapp.Model;
 
 import java.io.Serializable;
 
-/**
- * Created by User PC on 5/22/2015.
- */
 public class PatientRecord implements Serializable {
 
     public PatientRecord() {
 
     }
 
-    int patientID = 0, doctorID = 0, record_id = 0, clinicID = 0;
+    int doctorID = 0, record_id = 0, clinicID = 0, cpr_id = 0;
 
     String complaints = "", findings = "", date = "", doctorName = "", clinicName = "", created_at = "", updated_at = "", deleted_at = "";
 
@@ -19,12 +16,16 @@ public class PatientRecord implements Serializable {
         this.record_id = record_id;
     }
 
-    public void setPatientID(int patientID) {
-        this.patientID = patientID;
-    }
-
     public void setComplaints(String complaints) {
         this.complaints = complaints;
+    }
+
+    public int getCpr_id() {
+        return cpr_id;
+    }
+
+    public void setCpr_id(int cpr_id) {
+        this.cpr_id = cpr_id;
     }
 
     public void setFindings(String findings) {
@@ -64,10 +65,6 @@ public class PatientRecord implements Serializable {
     }
 
     //GETTER
-    public int getPatientID() {
-        return patientID;
-    }
-
     public int getRecordID() {
         return record_id;
     }

@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
+import android.support.multidex.MultiDexApplication;
 
 import com.example.zem.patientcareapp.ConfigurationModule.Config;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -14,7 +15,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 /**
  * Created by Zem on 7/9/2015.
  */
-public class PatientCareApplication extends Application {
+public class PatientCareApplication extends MultiDexApplication {
 
     public static PatientCareApplication sInstance;
 

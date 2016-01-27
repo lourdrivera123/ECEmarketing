@@ -69,7 +69,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         prc = new PatientRecordController(getActivity());
         helpers = new Helpers();
 
-        hashHistory = prc.getPatientRecord(SidebarActivity.getUserID());
+        hashHistory = prc.getPatientRecord();
         medRecords = new ArrayList();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
@@ -97,11 +97,11 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        view_record_id = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
-
-        Intent view_record = new Intent(getActivity(), SaveMedicalRecordActivity.class);
-        view_record.putExtra("viewRecord", view_record_id);
-        startActivity(view_record);
+//        view_record_id = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
+//
+//        Intent view_record = new Intent(getActivity(), SaveMedicalRecordActivity.class);
+//        view_record.putExtra("viewRecord", view_record_id);
+//        startActivity(view_record);
     }
 
     @Override
@@ -217,18 +217,13 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                         if (success == 1) {
                             int last_inserted_id = response.getInt("last_inserted_id");
 
-                            PatientRecord pr = new PatientRecord();
+                            final PatientRecord pr = new PatientRecord();
                             pr.setRecordID(last_inserted_id);
-                            pr.setPatientID(SidebarActivity.getUserID());
                             pr.setDoctorID(Integer.parseInt(map.get("doctor_id")));
                             pr.setClinicID(Integer.parseInt(map.get("clinic_id")));
                             pr.setComplaints(map.get("complaints"));
                             pr.setFindings(map.get("findings"));
                             pr.setDate(map.get("record_date"));
-
-                            if (prc.savePatientRecord(pr, "insert")) {
-
-                            }
 
                             JSONArray master_arr = new JSONArray();
 
@@ -238,8 +233,8 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                 String dosage = obj.getString("frequency") + " for " + obj.getString("duration") + " - " + obj.getString("route");
 
                                 hash.put("patient_records_id", String.valueOf(last_inserted_id));
+                                hash.put("medicine_id", obj.getString("medicine_id"));
                                 hash.put("medicine_name", obj.getString("med_name"));
-                                hash.put("generic_name", "");
                                 hash.put("dosage", dosage);
 
                                 JSONObject obj_for_server = new JSONObject(hash);
@@ -255,16 +250,19 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                             hash.put("action", "multiple_insert");
                             hash.put("jsobj", json_to_be_passed.toString());
 
+                            Log.d("jsobj", json_to_be_passed + "");
+
                             PostRequest.send(getActivity(), hash, new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
-                                    progress.dismiss();
-
+                                    if (prc.savePatientRecord(pr, "insert")) {
+                                        progress.dismiss();
+                                        mAdapter.notifyDataSetChanged();
+                                    }
                                 }
                             }, new ErrorListener<VolleyError>() {
                                 public void getError(VolleyError error) {
                                     progress.dismiss();
-                                    Log.d("patientHistoryFrag2", error + "");
                                     Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                                 }
                             });
@@ -291,15 +289,16 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
     private class SelectionAdapter extends ArrayAdapter {
         TextView dosage, medicine, findings, record_date, doctor;
-        private HashMap<Integer, Boolean> mSelection = new HashMap();
+        LayoutInflater inflater;
 
         public SelectionAdapter(Context context, int resource, ArrayList<String> objects) {
             super(context, resource, objects);
+            inflater = LayoutInflater.from(context);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View v = super.getView(position, convertView, parent);
+            View v = inflater.inflate(R.layout.listview_history_views, parent, false);
 
             record_date = (TextView) v.findViewById(R.id.record_date);
             findings = (TextView) v.findViewById(R.id.findings);
@@ -307,15 +306,12 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             medicine = (TextView) v.findViewById(R.id.medicine);
             dosage = (TextView) v.findViewById(R.id.dosage);
 
-            doctor.setText("Dr. " + hashHistory.get(position).get(PatientRecordController.RECORDS_DOCTOR_NAME));
+            doctor.setText(hashHistory.get(position).get(PatientRecordController.RECORDS_DOCTOR_NAME));
             doctor.setTag(position);
             record_date.setText(hashHistory.get(position).get(PatientRecordController.RECORDS_DATE));
             record_date.setTag(position);
             findings.setText(hashHistory.get(position).get(PatientRecordController.RECORDS_FINDINGS));
             findings.setTag(position);
-
-            if (mSelection.get(position) != null)
-                v.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
 
             return v;
         }

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,9 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
@@ -45,9 +46,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-/**
- * Created by User PC on 11/18/2015.
- */
 
 public class SaveMedicalRecordActivity extends AppCompatActivity implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener {
     Toolbar medRecord_toolbar;
@@ -55,6 +53,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
     ListView list_of_treatments;
     AutoCompleteTextView search_doctor, search_clinic;
     TextView add_treatment;
+    LinearLayout root;
 
     static int view_record_id = 0;
     String request;
@@ -87,6 +86,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
         complaint = (EditText) findViewById(R.id.complaint);
         diagnosis = (EditText) findViewById(R.id.diagnosis);
         add_treatment = (TextView) findViewById(R.id.add_treatment);
+        root = (LinearLayout) findViewById(R.id.root);
 
         medRecord_toolbar = (Toolbar) findViewById(R.id.medRecord_toolbar);
         setSupportActionBar(medRecord_toolbar);
@@ -200,7 +200,6 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                         search_clinic.setError("Field required");
                 } else {
                     record = new PatientRecord();
-                    record.setPatientID(SidebarActivity.getUserID());
                     record.setComplaints(s_complaint);
                     record.setFindings(s_diagnosis);
                     record.setDate(s_date);
@@ -241,18 +240,17 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                                     int last_inserted_id = response.getInt("last_inserted_id");
                                     record.setRecordID(last_inserted_id);
                                     insertTreatments(last_inserted_id, record);
-                                } else
-                                    Toast.makeText(SaveMedicalRecordActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
+                                }
                             } catch (JSONException e) {
-                                Toast.makeText(SaveMedicalRecordActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                                Log.d("saveMedRecord1", e + "");
+                                Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                             }
                             pDialog.dismiss();
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
                             pDialog.dismiss();
-                            Log.d("SaveMedRecord0", error + "");
-                            Toast.makeText(SaveMedicalRecordActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -358,15 +356,10 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                 String s_medicine = search_medicine.getText().toString();
 
                 if (s_generic_name.equals("") || s_dosage.equals("") || s_medicine.equals("")) {
-                    if (s_generic_name.equals("")) {
-                        generic_name.setError("Field required");
-                    }
-                    if (s_medicine.equals("")) {
+                    if (s_medicine.equals(""))
                         search_medicine.setError("Field required");
-                    }
-                    if (s_dosage.equals("")) {
+                    if (s_dosage.equals(""))
                         dosage.setError("Field required");
-                    }
                 } else {
                     HashMap<String, String> map = new HashMap();
                     map.put("medicine_name", s_medicine);
@@ -432,26 +425,26 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
 
                                 if (ptc.savePatientTreatments(newTreatments, "insert")) {
                                     SaveMedicalRecordActivity.this.finish();
-                                    Toast.makeText(SaveMedicalRecordActivity.this, "Successfully saved", Toast.LENGTH_LONG).show();
+                                    Snackbar.make(root, "Saved successfully", Snackbar.LENGTH_SHORT).show();
                                 } else
-                                    Toast.makeText(SaveMedicalRecordActivity.this, "Unable to save treatments", Toast.LENGTH_SHORT).show();
+                                    Snackbar.make(root, "Unable to save treatments", Snackbar.LENGTH_SHORT).show();
                             } else
-                                Toast.makeText(getBaseContext(), "Unable to save record.", Toast.LENGTH_SHORT).show();
-                        } else
-                            Toast.makeText(SaveMedicalRecordActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(root, "Unable to save record", Snackbar.LENGTH_SHORT).show();
+                        }
                     } catch (Exception e) {
-                        Toast.makeText(SaveMedicalRecordActivity.this, e + "", Toast.LENGTH_SHORT).show();
+                        Log.d("saveMedRecord2", e + "");
+                        Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                     }
                 }
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
                     pDialog.dismiss();
-                    Log.d("SaveMedRecord1", error + "");
-                    Toast.makeText(SaveMedicalRecordActivity.this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
         } catch (Exception e) {
-            Toast.makeText(SaveMedicalRecordActivity.this, e + "", Toast.LENGTH_SHORT).show();
+            Log.d("saveMedRecord3", e + "");
+            Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
         }
     }
 }
