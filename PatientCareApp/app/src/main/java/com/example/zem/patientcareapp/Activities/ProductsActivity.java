@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp.Activities;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +32,6 @@ import com.android.volley.toolbox.Volley;
 import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
-import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Interface.StringRespondListener;
@@ -73,7 +71,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
     Helpers helpers;
     RequestQueue queue;
     static DbHelper db;
-    static ProductController pc;
     BasketController bc;
     static OverlayController oc;
     OrderPreferenceController opc;
@@ -111,7 +108,6 @@ public class ProductsActivity extends AppCompatActivity implements AdapterView.O
         getSupportActionBar().setTitle(null);
 
         db = new DbHelper(this);
-        pc = new ProductController(this);
         bc = new BasketController();
         oc = new OverlayController(this);
         queue = Volley.newRequestQueue(this);
