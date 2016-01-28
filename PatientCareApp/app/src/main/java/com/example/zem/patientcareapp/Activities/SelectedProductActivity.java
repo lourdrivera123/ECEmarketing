@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp.Activities;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,7 +27,6 @@ import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OrderPreferenceController;
-import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.ImageGallery.CirclePageIndicator;
 import com.example.zem.patientcareapp.Controllers.PatientController;
 import com.example.zem.patientcareapp.Model.OrderModel;
@@ -50,10 +48,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by User PC on 7/25/2015.
- */
-
 public class SelectedProductActivity extends AppCompatActivity implements View.OnClickListener {
     int get_productID = 0, temp_qty = 1, qtyPerPacking = 1, available_qty = 0;
     public static int is_resumed = 0;
@@ -71,7 +65,6 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
     Handler handler;
     DbHelper dbhelper;
     PatientController ptc;
-    ProductController pc;
     OrderPreferenceController opc;
     OrderModel order_model;
 
@@ -92,7 +85,6 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
 
         handler = new Handler();
         dbhelper = new DbHelper(this);
-        pc = new ProductController(this);
         ptc = new PatientController(this);
         opc = new OrderPreferenceController(this);
         helpers = new Helpers();
@@ -100,7 +92,6 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
 
         order_model = opc.getOrderPreference();
 
-        pc = new ProductController(this);
 
         prod_name = (TextView) findViewById(R.id.prod_name);
         prod_generic = (TextView) findViewById(R.id.prod_generic);
@@ -196,11 +187,11 @@ public class SelectedProductActivity extends AppCompatActivity implements View.O
 
             case R.id.add_qty:
                 if(temp_qty < available_qty){
-                temp_qty += 1;
-                add_qty.setImageResource(R.drawable.ic_plus_dead);
-                prod_price.setText("Php " + (temp_qty * product.getPrice()));
-                qty_cart.setText("" + temp_qty);
-                prod_unit.setText("1 " + product.getPacking() + " x " + temp_qty + "(" + (temp_qty * product.getQtyPerPacking()) + " " + product.getUnit() + ")");
+                    temp_qty += 1;
+                    add_qty.setImageResource(R.drawable.ic_plus_dead);
+                    prod_price.setText("Php " + (temp_qty * product.getPrice()));
+                    qty_cart.setText("" + temp_qty);
+                    prod_unit.setText("1 " + product.getPacking() + " x " + temp_qty + "(" + (temp_qty * product.getQtyPerPacking()) + " " + product.getUnit() + ")");
 
                     handler.postDelayed(new Runnable() {
                         @Override
