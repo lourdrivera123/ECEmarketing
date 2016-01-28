@@ -49,9 +49,8 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
     ArrayList<HashMap<String, String>> objects;
 
     public static double cart_total_amount;
-    public static double total_savings_value = 0;
+    public static double total_savings_value;
 
-    TextView total_savings;
 
     public ShoppingCartAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
         super(context, resource, objects);
@@ -62,6 +61,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         helpers = new Helpers();
         dbHelper = new DbHelper(context);
         cart_total_amount = 0.0;
+        total_savings_value = 0.0;
     }
 
     @Override
@@ -80,7 +80,6 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
         root = (LinearLayout) convertView.findViewById(R.id.root);
         promo_total = (TextView) convertView.findViewById(R.id.promo_total);
         free_item = (TextView) convertView.findViewById(R.id.free_item);
-        total_savings = (TextView) convertView.findViewById(R.id.total_savings);
 
         delete.setTag(position);
         up_btn.setTag(product_quantity);
@@ -162,12 +161,12 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                                 if (final_is_every.equals("1")) {
                                     discounted_total = total_per_item - (discount_times * final_peso);
-                                    total_savings_value += discounted_total;
                                     discounted_amount = total_per_item - discounted_total;
+                                    total_savings_value += discounted_amount;
                                 } else {
                                     discounted_total = total_per_item - final_peso;
-                                    total_savings_value += discounted_total;
                                     discounted_amount = final_peso;
+                                    total_savings_value += discounted_total;
                                 }
                             }
                         } else if (final_percentage > 0 && final_is_every.equals("0")) {
@@ -180,7 +179,7 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                                 discounted_amount = total_per_item * percent_off;
                                 discounted_total = total_per_item - discounted_amount;
-                                total_savings_value += discounted_total;
+                                total_savings_value += discounted_amount;
                             }
                         }
 
@@ -290,15 +289,15 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                                 }
                             }
 
-                            txt_promo.setText("Php " + df.format(temp_prod_discount));
+                            txt_promo.setText("₱ " + df.format(temp_prod_discount));
                         } else
                             cart_total_amount = cart_total_amount + price;
                     } else if (final_qty_required1 == 0 && final_min_purchase1 == 0)
                         cart_total_amount = cart_total_amount + price;
 
                     p_total.setText("Php " + df.format(total_per_item));
-                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
-                    total_savings.setText("Total Savings: "+df.format(total_savings_value));
+                    ShoppingCartActivity.total_amount.setText("Total amount is ₱" + df.format(cart_total_amount));
+                    ShoppingCartActivity.total_savings.setText("You saved ₱" + df.format(total_savings_value));
 
                     HashMap<String, String> temp = objects.get(position);
                     temp.put("quantity", String.valueOf(lastQty));
@@ -323,8 +322,8 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
 
                 if (lastQty < 1) {
                     lastQty = 1;
-                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
-                    total_savings.setText("Total Savings: "+df.format(total_savings_value) );
+                    ShoppingCartActivity.total_amount.setText("Total amount is ₱" + df.format(cart_total_amount));
+                    ShoppingCartActivity.total_savings.setText("You saved ₱" + df.format(total_savings_value));
                 } else {
                     total_per_item = price * lastQty;
                     cart_total_amount = cart_total_amount - price;
@@ -375,8 +374,8 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
                             txt_promo.setText("Php " + df.format(discounted_temp_total));
                         }
                     }
-                    ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
-                    total_savings.setText("Total Savings: Php"+df.format(total_savings_value));
+                    ShoppingCartActivity.total_amount.setText("Total amount is ₱" + df.format(cart_total_amount));
+                    ShoppingCartActivity.total_savings.setText("You saved ₱" + df.format(total_savings_value));
                 }
 
                 txt.setText(lastQty + "");
@@ -388,8 +387,8 @@ public class ShoppingCartAdapter extends ArrayAdapter implements View.OnClickLis
             }
         });
 
-        ShoppingCartActivity.total_amount.setText("Php " + df.format(cart_total_amount));
-        total_savings.setText("Total Savings: Php"+df.format(total_savings_value));
+        ShoppingCartActivity.total_amount.setText("Total amount is ₱" + df.format(cart_total_amount));
+        ShoppingCartActivity.total_savings.setText("You saved ₱" + df.format(total_savings_value));
 
         return convertView;
     }

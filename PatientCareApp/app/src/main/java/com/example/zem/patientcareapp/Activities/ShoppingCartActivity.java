@@ -39,12 +39,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static android.util.Log.d;
+
 public class ShoppingCartActivity extends AppCompatActivity implements View.OnClickListener {
     Toolbar myToolBar;
     ListView lisOfItems;
     LinearLayout root;
     TextView proceed_to_checkout;
     public static TextView total_amount;
+    public static TextView total_savings;
     OrderPreferenceController opc;
 
     ShoppingCartAdapter adapter;
@@ -52,6 +55,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     OrderModel order_model;
     public static AppCompatDialog pDialog;
     AlertDialog.Builder builder;
+    TextView no_items_label;
 
     public ArrayList<HashMap<String, String>> items = new ArrayList();
     public ArrayList<HashMap<String, String>> items1 = new ArrayList();
@@ -64,9 +68,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         myToolBar = (Toolbar) findViewById(R.id.myToolBar);
         lisOfItems = (ListView) findViewById(R.id.lisOfItems);
+        no_items_label = (TextView) findViewById(R.id.no_items_label);
         root = (LinearLayout) findViewById(R.id.root);
         total_amount = (TextView) findViewById(R.id.total_amount);
         proceed_to_checkout = (TextView) findViewById(R.id.proceed_to_checkout);
+        total_savings = (TextView) findViewById(R.id.total_savings);
 
         bc = new BasketController();
         opc = new OrderPreferenceController(getBaseContext());
@@ -129,6 +135,12 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                                     cartQuantityUpdated();
                                 }
                                 JSONArray json_mysql = response.getJSONArray("baskets");
+                                d("baskets_json", json_mysql + "");
+
+                                if(json_mysql.length() == 0){
+                                        lisOfItems.setVisibility(View.GONE);
+                                        no_items_label.setVisibility(View.VISIBLE);
+                                }
                                 items = bc.convertFromJson(ShoppingCartActivity.this, json_mysql);
                                 items1.addAll(items);
                                 adapter = new ShoppingCartAdapter(ShoppingCartActivity.this, R.layout.item_shopping_cart, items);
@@ -310,12 +322,12 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             params.put("action", "multiple_update_for_basket");
             params.put("jsobj", json_to_be_passed.toString());
 
-            Log.d("a_jsobj", json_to_be_passed.toString());
+            d("a_jsobj", json_to_be_passed.toString());
 
             PostRequest.send(ShoppingCartActivity.this, params, new RespondListener<JSONObject>() {
                 @Override
                 public void getResult(JSONObject response) {
-                    Log.d("response_sc", response + "");
+                    d("response_sc", response + "");
                     try {
                         int success = response.getInt("success");
                         if (success == 1) {

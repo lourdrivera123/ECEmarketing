@@ -90,27 +90,26 @@ public class MyGcmListenerService extends GcmListenerService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_app)
                 .setSound(defaultSoundUri)
+                .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
 
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        inboxStyle.setBigContentTitle("Pharmacy Tree Alert!");
-
         try {
             JSONObject json_msg = new JSONObject(data.getString("message"));
             d("json_obj", json_msg + "");
-            d("json_index_1", json_msg.getString("1"));
-            d("json_length", json_msg.length() + "");
-            for(int i=1; i <= json_msg.length(); i++) { inboxStyle.addLine(json_msg.getString(String.valueOf(i))); }
+            d("json_obj_title", data.getString("title") + "");
+
+            inboxStyle.setBigContentTitle(data.getString("title"));
+
+            for (int i = 1; i <= json_msg.length(); i++) { inboxStyle.addLine(json_msg.getString(String.valueOf(i))); }
 
         } catch (JSONException e) { e.printStackTrace(); }
 
-//        for (int i=0; i < message.length; i++) {
-//            inboxStyle.addLine(message[i]);
-//        }
         notificationBuilder.setStyle(inboxStyle);
 
         NotificationManager notificationManager =
