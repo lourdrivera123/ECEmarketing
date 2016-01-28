@@ -31,13 +31,18 @@
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
 
                 <EditText
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
+                    android:textSize="13sp"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false"
                     android:hint="Date" />
 
                 <AutoCompleteTextView
@@ -48,7 +53,7 @@
                     android:hint="Doctor"
                     android:paddingBottom="0dip"
                     android:paddingTop="0dip"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <AutoCompleteTextView
                     android:id="@+id/search_clinic"
@@ -59,7 +64,7 @@
                     android:hint="Clinic"
                     android:paddingBottom="0dip"
                     android:paddingTop="0dip"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -70,6 +75,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
+                        android:textSize="13sp"
                         android:text="Complaint:" />
 
                     <EditText
@@ -84,7 +90,7 @@
                         android:maxLines="5"
                         android:minLines="2"
                         android:scrollbars="vertical"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -96,6 +102,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
+                        android:textSize="13sp"
                         android:text="Diagnosis:" />
 
                     <EditText
@@ -110,7 +117,7 @@
                         android:maxLines="5"
                         android:minLines="2"
                         android:scrollbars="vertical"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -123,6 +130,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
+                        android:textSize="13sp"
                         android:text="Treatment:" />
 
                     <TextView
@@ -130,6 +138,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".7"
+                        android:textSize="13sp"
                         android:background="?android:attr/selectableItemBackground"
                         android:text="+ Add treatment" />
                 </LinearLayout>
@@ -139,6 +148,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/d10"
             android:layout_weight="1">
 
             <ListView

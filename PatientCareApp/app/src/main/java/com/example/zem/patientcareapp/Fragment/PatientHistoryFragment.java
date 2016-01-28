@@ -68,10 +68,8 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         View rootView = inflater.inflate(R.layout.fragment_patient_records, container, false);
 
         dbHelper = new DbHelper(getActivity());
-        prc = new PatientRecordController(getActivity());
         ptc = new PatientTreatmentsController(getActivity());
         helpers = new Helpers();
-        hashHistory = prc.getPatientRecord();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
 
@@ -80,17 +78,24 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         list_of_history = (ListView) rootView.findViewById(R.id.list_of_history);
         root = (LinearLayout) rootView.findViewById(R.id.root);
 
-        if (hashHistory.size() == 0) {
-            noResults.setVisibility(View.VISIBLE);
-            list_of_history.setVisibility(View.GONE);
-        }
+        list_of_history.setOnItemClickListener(this);
+        add_record.setOnClickListener(this);
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        prc = new PatientRecordController(getActivity());
+        hashHistory = prc.getPatientRecord();
 
         mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, hashHistory);
         list_of_history.setAdapter(mAdapter);
 
-        list_of_history.setOnItemClickListener(this);
-        add_record.setOnClickListener(this);
-        return rootView;
+        if (hashHistory.size() == 0) {
+            noResults.setVisibility(View.VISIBLE);
+            list_of_history.setVisibility(View.GONE);
+        }
+        super.onResume();
     }
 
     @Override
@@ -151,9 +156,10 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                                     int hasRecord = response.getInt("has_record");
                                                     JSONArray json_mysql = response.getJSONArray("records");
 
-                                                    if (hasRecord == 1)
-                                                        Snackbar.make(root, "NAA NAKA ANI NGA RECORD", Snackbar.LENGTH_SHORT).show();
-                                                    else
+                                                    if (hasRecord == 1) {
+                                                        dialog2.dismiss();
+                                                        Snackbar.make(root, "Record already exists", Snackbar.LENGTH_SHORT).show();
+                                                    }else
                                                         insertHistory(json_mysql);
                                                 } else
                                                     Snackbar.make(root, "Invalid credentials", Snackbar.LENGTH_SHORT).show();
@@ -182,6 +188,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                     @Override
                     public void onClick(View v) {
                         startActivity(new Intent(getActivity(), SaveMedicalRecordActivity.class));
+                        getActivity().finish();
                         dialog.dismiss();
                     }
                 });
@@ -268,7 +275,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
                                         if (prc.savePatientRecord(pr, "insert")) {
                                             if (ptc.savePatientTreatments(array_treatments, "insert")) {
-                                                updateReceiptsList();
+                                                updateList();
                                                 progress.dismiss();
                                             }
                                         }
@@ -304,7 +311,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         dialog2.dismiss();
     }
 
-    void updateReceiptsList() {
+    void updateList() {
         noResults.setVisibility(View.GONE);
         list_of_history.setVisibility(View.VISIBLE);
 
@@ -315,7 +322,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     }
 
     private class SelectionAdapter extends ArrayAdapter {
-        TextView dosage, medicine, findings, record_date, doctor;
+        TextView record_date, doctor, clinic;
         LayoutInflater inflater;
         ArrayList<HashMap<String, String>> objects;
 
@@ -330,14 +337,12 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             View v = inflater.inflate(R.layout.listview_history_views, parent, false);
 
             record_date = (TextView) v.findViewById(R.id.record_date);
-            findings = (TextView) v.findViewById(R.id.findings);
             doctor = (TextView) v.findViewById(R.id.doctor_name);
-            medicine = (TextView) v.findViewById(R.id.medicine);
-            dosage = (TextView) v.findViewById(R.id.dosage);
+            clinic = (TextView) v.findViewById(R.id.clinic);
 
-            doctor.setText(objects.get(position).get(PatientRecordController.RECORDS_DOCTOR_NAME));
-            record_date.setText(objects.get(position).get(PatientRecordController.RECORDS_DATE));
-            findings.setText(objects.get(position).get(PatientRecordController.RECORDS_FINDINGS));
+            doctor.setText(objects.get(position).get("doctor_name"));
+            record_date.setText(objects.get(position).get("record_date"));
+            clinic.setText(objects.get(position).get("clinic_name"));
 
             return v;
         }

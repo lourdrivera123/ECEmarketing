@@ -38,15 +38,7 @@
                 android:paddingBottom="0dip"
                 android:paddingLeft="0dip"
                 android:paddingTop="0dip"
-                android:textSize="15sp" />
-
-            <EditText
-                android:id="@+id/generic_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:hint="Generic name"
-                android:textSize="15sp" />
+                android:textSize="13sp" />
 
             <EditText
                 android:id="@+id/dosage"
@@ -60,19 +52,19 @@
                 android:maxLines="5"
                 android:minLines="2"
                 android:scrollbars="vertical"
-                android:textSize="15sp" />
+                android:textSize="13sp" />
         </LinearLayout>
     </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/d10">
+        android:layout_marginTop="@dimen/d20">
 
         <Button
             android:id="@+id/save_treatment"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:background="@drawable/button_selector"
@@ -82,7 +74,7 @@
         <Button
             android:id="@+id/cancel_treatment"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="5dp"
             android:layout_weight="1"
             android:background="@drawable/button_selector"

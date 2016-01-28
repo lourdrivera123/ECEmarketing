@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -20,7 +21,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Activities.ProductsActivity;
@@ -50,6 +51,7 @@ import java.util.HashMap;
 
 public class TrialPrescriptionFragment extends Fragment implements View.OnClickListener {
     GridView gridView;
+    RelativeLayout root;
     ImageButton add_pres;
 
     public static ArrayList<HashMap<String, String>> uploadsByUser;
@@ -75,6 +77,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
 
         gridView = (GridView) rootView.findViewById(R.id.gridView);
         add_pres = (ImageButton) rootView.findViewById(R.id.add_pres);
+        root = (RelativeLayout) rootView.findViewById(R.id.root);
 
         patientID = SidebarActivity.getUserID();
         arrayOfPrescriptions = refreshPrescriptionList();
@@ -82,7 +85,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
         add_pres.setOnClickListener(this);
 
         arrayOfPrescriptions = refreshPrescriptionList();
-        imgAdapter = new ImageAdapter(getActivity(), R.layout.item_grid_image, arrayOfPrescriptions);
+        imgAdapter = new ImageAdapter(getActivity(), arrayOfPrescriptions);
         gridView.setAdapter(imgAdapter);
         gridView.setOnCreateContextMenuListener(this);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -100,7 +103,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
         ProductsActivity.is_finish = 0;
         SelectedProductActivity.is_resumed = 0;
         arrayOfPrescriptions = refreshPrescriptionList();
-        gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
+        gridView.setAdapter(new ImageAdapter(getActivity(), arrayOfPrescriptions));
         super.onResume();
     }
 
@@ -146,25 +149,24 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
                                 if (success == 1) {
                                     if (ppc.deletePrescriptionByServerID(serverID)) {
                                         arrayOfPrescriptions = refreshPrescriptionList();
-                                        gridView.setAdapter(new ImageAdapter(getActivity(), 0, arrayOfPrescriptions));
-                                    } else {
-                                        Toast.makeText(getActivity(), "Sorry, we can't delete your item right now. Please try again later.", Toast.LENGTH_SHORT).show();
-                                    }
+                                        gridView.setAdapter(new ImageAdapter(getActivity(), arrayOfPrescriptions));
+                                    } else
+                                        Snackbar.make(root, "Sorry, we can't delete your item right now", Snackbar.LENGTH_SHORT).show();
                                 } else if (success == 2) {
                                     pdialog.dismiss();
-                                    Toast.makeText(getActivity(), "Cannot delete a prescription that is used for an order.", Toast.LENGTH_LONG).show();
+                                    Snackbar.make(root, "You are not allowed to delete this prescription", Snackbar.LENGTH_SHORT).show();
                                 }
                             } catch (Exception e) {
-                                System.out.print("src: <TrialPrescriptionFragment>");
-                                Toast.makeText(getActivity(), "Server error occurred", Toast.LENGTH_SHORT).show();
+                                Log.d("trialpres1", e + "");
+                                Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                             }
                             pdialog.dismiss();
                         }
                     }, new ErrorListener<VolleyError>() {
                         public void getError(VolleyError error) {
                             pdialog.dismiss();
-                            Log.d("error sa pag delete", error + "");
-                            Toast.makeText(getActivity(), "Couldn't delete item. Please check your Internet connection", Toast.LENGTH_LONG).show();
+                            Log.d("trialpres2", error + "");
+                            Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -194,7 +196,7 @@ public class TrialPrescriptionFragment extends Fragment implements View.OnClickL
         private LayoutInflater inflater;
         private DisplayImageOptions options;
 
-        public ImageAdapter(Context context, int resource, ArrayList<String> uploadsByUser) {
+        public ImageAdapter(Context context, ArrayList<String> uploadsByUser) {
             super(context, R.layout.item_grid_image, uploadsByUser);
 
             inflater = LayoutInflater.from(context);

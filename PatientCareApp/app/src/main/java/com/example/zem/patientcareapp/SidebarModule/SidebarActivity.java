@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.res.Configuration;
@@ -43,6 +44,8 @@ import com.example.zem.patientcareapp.AlarmModule.AlarmService;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.OverlayController;
 import com.example.zem.patientcareapp.Controllers.PatientController;
+import com.example.zem.patientcareapp.Controllers.PatientRecordController;
+import com.example.zem.patientcareapp.Controllers.PatientTreatmentsController;
 import com.example.zem.patientcareapp.Fragment.HomeTileFragment;
 import com.example.zem.patientcareapp.Fragment.ListOfDoctorsFragment;
 import com.example.zem.patientcareapp.Fragment.MessagesFragment;
@@ -82,12 +85,15 @@ public class SidebarActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
+    LinearLayout root;
     ImageView img_first, sideBar_overlay;
     Toolbar myToolBar;
 
     static com.example.zem.patientcareapp.Model.Patient patient;
     static DbHelper dbHelper;
     static PatientController pc;
+    PatientRecordController prc;
+    PatientTreatmentsController ptc;
     OverlayController oc;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "SidebarActivity";
@@ -99,6 +105,10 @@ public class SidebarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sidebar_layout);
 
+        prc = new PatientRecordController(this);
+        ptc = new PatientTreatmentsController(this);
+
+        root = (LinearLayout) findViewById(R.id.root);
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -357,10 +367,16 @@ public class SidebarActivity extends AppCompatActivity {
 //                fragment = new HomeTileFragment();
 //                break;
             case 8:
-                editor.clear();
-                editor.commit();
-                startActivity(new Intent(this, MainActivity.class));
-                SidebarActivity.this.finish();
+                if(prc.deleteAllRecords()) {
+                    if(ptc.deleteTreatments()) {
+                        editor.clear();
+                        editor.commit();
+                        startActivity(new Intent(this, MainActivity.class));
+                        SidebarActivity.this.finish();
+                    } else
+                        Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
+                } else
+                    Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
                 break;
             default:
                 break;

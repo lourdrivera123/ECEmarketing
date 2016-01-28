@@ -1,7 +1,6 @@
 package com.example.zem.patientcareapp.Network;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.zem.patientcareapp.Controllers.BillingController;
@@ -23,7 +22,6 @@ import com.example.zem.patientcareapp.Controllers.PatientPrescriptionController;
 import com.example.zem.patientcareapp.Controllers.PatientRecordController;
 import com.example.zem.patientcareapp.Controllers.PatientTreatmentsController;
 import com.example.zem.patientcareapp.Controllers.ProductCategoryController;
-import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Controllers.ProductSubCategoryController;
 import com.example.zem.patientcareapp.Controllers.PromoController;
 import com.example.zem.patientcareapp.Controllers.SettingController;
@@ -60,6 +58,7 @@ import static android.util.Log.d;
 /**
  * Created by Dexter B. on 5/11/2015.
  */
+
 public class Sync {
 
     JSONArray json_array_mysql = null;
@@ -69,7 +68,6 @@ public class Sync {
 
     String tableName, tableId;
     DbHelper dbHelper;
-    ProductController pc;
     DoctorController doctor_controller;
     SpecialtyController sp;
     SubSpecialtyController ssp;
@@ -101,7 +99,6 @@ public class Sync {
         context = c;
 
         dbHelper = new DbHelper(context);
-        pc = new ProductController(context);
         sp = new SpecialtyController(context);
         ssp = new SubSpecialtyController(context);
         pcc = new ProductCategoryController(context);
@@ -308,7 +305,7 @@ public class Sync {
 
         try {
             HashMap<String, String> map = new HashMap();
-            map.put("treatmentts_id", String.valueOf(json.getInt("id")));
+            map.put("treatments_id", String.valueOf(json.getInt("id")));
             map.put("patient_records_id", String.valueOf(json.getInt("patient_records_id")));
             map.put("medicine_id", json.getString("medicine_id"));
             map.put("medicine_name", json.getString("medicine_name"));

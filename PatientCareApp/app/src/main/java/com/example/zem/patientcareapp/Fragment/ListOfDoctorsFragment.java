@@ -18,7 +18,7 @@ import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Activities.DoctorActivity;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
-import com.example.zem.patientcareapp.adapter.LazyAdapter;
+import com.example.zem.patientcareapp.adapter.ListOfDoctorsAdapter;
 import com.example.zem.patientcareapp.Network.VolleySingleton;
 import com.example.zem.patientcareapp.R;
 
@@ -41,7 +41,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
     DbHelper dbHelper;
     DoctorController doctor_controller;
     RequestQueue queue;
-    LazyAdapter adapter;
+    ListOfDoctorsAdapter adapter;
     Helpers helpers;
 
     View root_view;
@@ -77,7 +77,7 @@ public class ListOfDoctorsFragment extends Fragment implements TextWatcher, Adap
 
         arrayOfSearchDoctors.addAll(doctor_items);
 
-        adapter = new LazyAdapter(getActivity(), doctor_items, "list_of_doctors");
+        adapter = new ListOfDoctorsAdapter(getActivity(), R.layout.list_item_doctors_fragment, doctor_items);
         list_of_doctors = (ListView) rootView.findViewById(R.id.list_of_doctors);
         list_of_doctors.setAdapter(adapter);
 
