@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.zem.patientcareapp.Model.PatientRecord;
 
@@ -87,17 +88,23 @@ public class PatientRecordController extends DbHelper {
 
         while (cur.moveToNext()) {
             map = new HashMap();
-            map.put(AI_ID, String.valueOf(cur.getInt(cur.getColumnIndex(AI_ID))));
-            map.put(RECORDS_COMPLAINT, cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
-            map.put(RECORDS_FINDINGS, cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
-            map.put(RECORDS_DATE, cur.getString(cur.getColumnIndex(RECORDS_DATE)));
-            map.put(RECORDS_DOCTOR_NAME, cur.getString(cur.getColumnIndex(RECORDS_DOCTOR_NAME)));
-            map.put(RECORDS_DOCTOR_ID, String.valueOf(cur.getInt(cur.getColumnIndex(RECORDS_DOCTOR_ID))));
+            map.put("record_id", String.valueOf(cur.getInt(cur.getColumnIndex(SERVER_RECORDS_ID))));
+            map.put("record_date", cur.getString(cur.getColumnIndex(RECORDS_DATE)));
+            map.put("doctor_name", cur.getString(cur.getColumnIndex(RECORDS_DOCTOR_NAME)));
+            map.put("clinic_name", cur.getString(cur.getColumnIndex(RECORDS_CLINIC_NAME)));
             arrayOfRecords.add(map);
         }
+
         cur.close();
         sql_db.close();
 
         return arrayOfRecords;
+    }
+
+    public boolean deleteAllRecords() {
+        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        long id = db.delete(TBL_PATIENT_RECORDS, null, null);
+
+        return id > 0;
     }
 }
