@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -29,10 +30,8 @@ import com.example.zem.patientcareapp.Controllers.DoctorController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Controllers.PatientRecordController;
 import com.example.zem.patientcareapp.Controllers.PatientTreatmentsController;
-import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
-import com.example.zem.patientcareapp.Model.Medicine;
 import com.example.zem.patientcareapp.Model.PatientRecord;
 import com.example.zem.patientcareapp.Network.PostRequest;
 import com.example.zem.patientcareapp.R;
@@ -46,31 +45,28 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-
 public class SaveMedicalRecordActivity extends AppCompatActivity implements View.OnClickListener, CalendarDatePickerDialogFragment.OnDateSetListener {
     Toolbar medRecord_toolbar;
-    EditText date, complaint, diagnosis, generic_name;
+    EditText date, complaint, diagnosis;
     ListView list_of_treatments;
     AutoCompleteTextView search_doctor, search_clinic;
     TextView add_treatment;
     LinearLayout root;
 
-    static int view_record_id = 0;
     String request;
     int doctor_id = 0, clinic_id = 0;
 
     ArrayList<HashMap<String, String>> arrayOfDoctors, treatments_items, arrayOfClinics;
-    ArrayList<String> listOfDoctors, listOfClinics, listOfTreatments, listOfMedicines;
+    ArrayList<String> listOfDoctors, listOfClinics, listOfTreatments;
 
     Menu menu;
     ProgressDialog pDialog;
-    ArrayAdapter search_doctor_adapter, search_clinics_adapter, treatmentsAdapter, medicineAdapter;
+    ArrayAdapter search_doctor_adapter, search_clinics_adapter, treatmentsAdapter;
 
     DbHelper db;
     PatientRecord record;
     DoctorController doctor_controller;
     ClinicController cc;
-    ProductController pc;
     PatientRecordController prc;
     PatientTreatmentsController ptc;
 
@@ -93,13 +89,9 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setTitle("New Record");
 
-        Intent intent = getIntent();
-        view_record_id = intent.getIntExtra("viewRecord", 0);
-
         db = new DbHelper(this);
         cc = new ClinicController(this);
         doctor_controller = new DoctorController(this);
-        pc = new ProductController(this);
         prc = new PatientRecordController(this);
         ptc = new PatientTreatmentsController(this);
 
@@ -149,34 +141,13 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
-        if (view_record_id > 0)
-            getMenuInflater().inflate(R.menu.update_options_menu, menu);
-        else
-            getMenuInflater().inflate(R.menu.save_and_cancel, menu);
+        getMenuInflater().inflate(R.menu.save_and_cancel, menu);
 
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (view_record_id > 0) {
-            switch (item.getItemId()) {
-                case R.id.edit:
-                    MenuItem menuEdit = menu.findItem(R.id.edit);
-                    menuEdit.setEnabled(false).setVisible(false);
-                    getSupportActionBar().setTitle("Update Record");
-                    getMenuInflater().inflate(R.menu.save_and_cancel, menu);
-
-                    date.setEnabled(true);
-                    search_doctor.setEnabled(true);
-                    complaint.setEnabled(true);
-                    diagnosis.setEnabled(true);
-                    list_of_treatments.setEnabled(true);
-                    add_treatment.setVisibility(View.VISIBLE);
-                    break;
-            }
-        }
-
         switch (item.getItemId()) {
             case R.id.save:
                 String s_date = date.getText().toString();
@@ -207,11 +178,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                     record.setClinicID(clinic_id);
                     record.setDoctorName(s_doctor);
                     record.setClinicName(s_clinic);
-
-                    if (view_record_id > 0) { //FOR UPDATING RECORD
-                        request = "update";
-                    } else //FOR ADDING NEW RECORD
-                        request = "insert";
+                    request = "insert";
 
                     pDialog = new ProgressDialog(this);
                     pDialog.setMessage("Please wait...");
@@ -240,6 +207,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                                     int last_inserted_id = response.getInt("last_inserted_id");
                                     record.setRecordID(last_inserted_id);
                                     insertTreatments(last_inserted_id, record);
+                                    SaveMedicalRecordActivity.this.finish();
                                 }
                             } catch (JSONException e) {
                                 Log.d("saveMedRecord1", e + "");
@@ -308,34 +276,22 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_new_treatment);
-        dialog.show();
 
-        generic_name = (EditText) dialog.findViewById(R.id.generic_name);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+
         final EditText dosage = (EditText) dialog.findViewById(R.id.dosage);
         final AutoCompleteTextView search_medicine = (AutoCompleteTextView) dialog.findViewById(R.id.search_medicine);
         Button save_treatment = (Button) dialog.findViewById(R.id.save_treatment);
         Button cancel_treatment = (Button) dialog.findViewById(R.id.cancel_treatment);
 
-        listOfMedicines = pc.getMedicine();
-
-        medicineAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listOfMedicines);
-        search_medicine.setAdapter(medicineAdapter);
         search_medicine.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item_clicked = parent.getItemAtPosition(position).toString();
-                String medicine;
-                Medicine med;
 
-                if (item_clicked.contains("(")) {
-                    int indexOfUnit = item_clicked.indexOf("(");
-                    medicine = item_clicked.substring(0, indexOfUnit).trim();
-                } else {
-                    medicine = parent.getItemAtPosition(position).toString();
-                }
-
-                med = pc.getSpecificMedicine(medicine);
-                generic_name.setText(med.getGeneric_name());
             }
         });
 
@@ -351,11 +307,10 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
         save_treatment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s_generic_name = generic_name.getText().toString();
                 String s_dosage = dosage.getText().toString();
                 String s_medicine = search_medicine.getText().toString();
 
-                if (s_generic_name.equals("") || s_dosage.equals("") || s_medicine.equals("")) {
+                if (s_dosage.equals("") || s_medicine.equals("")) {
                     if (s_medicine.equals(""))
                         search_medicine.setError("Field required");
                     if (s_dosage.equals(""))
@@ -363,7 +318,6 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                 } else {
                     HashMap<String, String> map = new HashMap();
                     map.put("medicine_name", s_medicine);
-                    map.put("generic_name", s_generic_name);
                     map.put("dosage", s_dosage);
                     treatments_items.add(map);
                     listOfTreatments.add(s_medicine + " - " + s_dosage);
@@ -376,6 +330,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
     }
 
     public void insertTreatments(final int last_inserted_id, final PatientRecord record) {
+
         try {
             JSONArray master_arr = new JSONArray();
 
@@ -383,9 +338,9 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                 HashMap<String, String> hash = new HashMap();
 
                 hash.put("patient_records_id", String.valueOf(last_inserted_id));
+                hash.put("medicine_id", "0");
                 hash.put("medicine_name", treatments_items.get(x).get("medicine_name"));
-                hash.put("generic_name", treatments_items.get(x).get("generic_name"));
-                hash.put("dosage", treatments_items.get(x).get("dosage"));
+                hash.put("frequency", treatments_items.get(x).get("dosage"));
 
                 JSONObject obj_for_server = new JSONObject(hash);
                 master_arr.put(obj_for_server);
@@ -404,33 +359,30 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
                 @Override
                 public void getResult(JSONObject response) {
                     try {
-                        int success = response.getInt("success");
-                        Log.d("response", response + "");
+                        if (prc.savePatientRecord(record, "insert")) {
+                            int start_id = response.getInt("last_inserted_id");
+                            ArrayList<HashMap<String, String>> newTreatments = new ArrayList();
 
-                        if (success == 1) {
-                            if (prc.savePatientRecord(record, "insert")) {
-                                int start_id = response.getInt("last_inserted_id");
-                                ArrayList<HashMap<String, String>> newTreatments = new ArrayList();
+                            for (int x = 0; x < treatments_items.size(); x++) {
+                                HashMap<String, String> map = new HashMap();
+                                map.put("patient_records_id", String.valueOf(last_inserted_id));
+                                map.put("treatments_id", String.valueOf(start_id));
+                                map.put("medicine_name", treatments_items.get(x).get("medicine_name"));
+                                map.put("frequency", treatments_items.get(x).get("dosage"));
+                                newTreatments.add(x, map);
+                                start_id = start_id + 1;
+                            }
 
-                                for (int x = 0; x < treatments_items.size(); x++) {
-                                    HashMap<String, String> map = new HashMap();
-                                    map.put("patient_records_id", String.valueOf(last_inserted_id));
-                                    map.put("treatments_id", String.valueOf(start_id));
-                                    map.put("medicine_name", treatments_items.get(x).get("medicine_name"));
-                                    map.put("generic_name", treatments_items.get(x).get("generic_name"));
-                                    map.put("dosage", treatments_items.get(x).get("dosage"));
-                                    newTreatments.add(x, map);
-                                    start_id = start_id + 1;
-                                }
-
-                                if (ptc.savePatientTreatments(newTreatments, "insert")) {
-                                    SaveMedicalRecordActivity.this.finish();
-                                    Snackbar.make(root, "Saved successfully", Snackbar.LENGTH_SHORT).show();
-                                } else
-                                    Snackbar.make(root, "Unable to save treatments", Snackbar.LENGTH_SHORT).show();
+                            if (ptc.savePatientTreatments(newTreatments, "insert")) {
+                                Intent intent = new Intent(SaveMedicalRecordActivity.this, SidebarActivity.class);
+                                intent.putExtra("select", 4);
+                                startActivity(intent);
+                                SaveMedicalRecordActivity.this.finish();
+                                Snackbar.make(root, "Saved successfully", Snackbar.LENGTH_SHORT).show();
                             } else
-                                Snackbar.make(root, "Unable to save record", Snackbar.LENGTH_SHORT).show();
-                        }
+                                Snackbar.make(root, "Unable to save treatments", Snackbar.LENGTH_SHORT).show();
+                        } else
+                            Snackbar.make(root, "Unable to save record", Snackbar.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Log.d("saveMedRecord2", e + "");
                         Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
@@ -439,6 +391,7 @@ public class SaveMedicalRecordActivity extends AppCompatActivity implements View
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
                     pDialog.dismiss();
+                    Log.d("saveMedRecord4", error + "");
                     Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
