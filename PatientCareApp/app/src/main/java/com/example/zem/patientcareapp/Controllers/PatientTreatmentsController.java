@@ -45,7 +45,7 @@ public class PatientTreatmentsController extends DbHelper {
             val.put(TREATMENTS_MEDICINE_NAME, listOfTreatments.get(x).get("medicine_name"));
             val.put(TREATMENTS_FREQUENCY, listOfTreatments.get(x).get("frequency"));
             val.put(TREATMENTS_DURATION, listOfTreatments.get(x).get("duration"));
-            val.put(TREATMENTS_DURATION_TYPE, listOfTreatments.get(x).get("frequency"));
+            val.put(TREATMENTS_DURATION_TYPE, listOfTreatments.get(x).get("duration_type"));
 
             if (request.equals("insert"))
                 rowID = sql_db.insert(TBL_PATIENT_TREATMENTS, null, val);
@@ -53,5 +53,12 @@ public class PatientTreatmentsController extends DbHelper {
 
         sql_db.close();
         return rowID > 0;
+    }
+
+    public boolean deleteTreatments() {
+        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        long id = db.delete(TBL_PATIENT_TREATMENTS, null, null);
+
+        return id > 0;
     }
 }
