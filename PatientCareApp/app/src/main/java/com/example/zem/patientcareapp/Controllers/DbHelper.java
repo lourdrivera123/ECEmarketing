@@ -47,7 +47,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(PatientController.CREATE_TABLE);
         db.execSQL(ProductCategoryController.CREATE_TABLE);
         db.execSQL(ProductSubCategoryController.CREATE_TABLE);
-        db.execSQL(ProductController.CREATE_TABLE);
         db.execSQL(DosageController.CREATE_TABLE);
         db.execSQL(PatientRecordController.CREATE_TABLE);
         db.execSQL(ClinicController.CREATE_TABLE);
@@ -73,7 +72,6 @@ public class DbHelper extends SQLiteOpenHelper {
         insertTableNamesToUpdates(DoctorController.TBL_DOCTORS, db);
         insertTableNamesToUpdates(SpecialtyController.TBL_SPECIALTIES, db);
         insertTableNamesToUpdates(SubSpecialtyController.TBL_SUB_SPECIALTIES, db);
-        insertTableNamesToUpdates(ProductController.TBL_PRODUCTS, db);
         insertTableNamesToUpdates(ProductCategoryController.TBL_PRODUCT_CATEGORIES, db);
         insertTableNamesToUpdates(ProductSubCategoryController.TBL_PRODUCT_SUBCATEGORIES, db);
         insertTableNamesToUpdates(DosageController.TBL_DOSAGE, db);
