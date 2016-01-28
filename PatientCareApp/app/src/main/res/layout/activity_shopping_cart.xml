@@ -61,41 +61,48 @@
             android:id="@+id/checkout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".1"
-            android:orientation="horizontal">
-            
+            android:layout_weight=".2"
+            android:orientation="vertical"
+            android:background="@android:drawable/dialog_holo_dark_frame">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".5"
+                android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/total_amount"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:background="@drawable/gradient_button"
                     android:gravity="center"
                     android:padding="5dp"
                     android:textColor="@color/white"
                     android:text="---"/>
 
-            <TextView
-                android:id="@+id/total_savings"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                <TextView
+                    android:id="@+id/total_savings"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="----"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/proceed_to_checkout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight=".5"
-                android:background="@drawable/gradient_button_reverse"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="----"
+                android:background="@drawable/gradient_button"
+                android:clickable="true"
+                android:drawableRight="@mipmap/ic_next"
+                android:text="Proceed to Checkout"
                 android:textColor="@color/white" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/proceed_to_checkout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".1"
-            android:background="@drawable/gradient_button"
-            android:clickable="true"
-            android:drawableRight="@mipmap/ic_next"
-            android:text="Proceed to Checkout"
-            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>
