@@ -30,16 +30,16 @@ public class BasketController {
 
                 HashMap<String, String> map = new HashMap();
                 map.put("item_subtotal", String.valueOf(item_subtotal));
-                map.put(ProductController.SERVER_PRODUCT_ID, String.valueOf(obj.getInt("id")));
+                map.put("product_id", String.valueOf(obj.getInt("id")));
                 map.put("basket_id", String.valueOf(obj.getInt("basket_id")));
-                map.put(ProductController.PRODUCT_NAME, obj.getString("name"));
-                map.put(ProductController.PRODUCT_PRICE, String.valueOf(obj.getDouble("price")));
+                map.put("name", obj.getString("name"));
+                map.put("price", String.valueOf(obj.getDouble("price")));
                 map.put("quantity", String.valueOf(obj.getInt("quantity")));
-                map.put(ProductController.PRODUCT_UNIT, obj.getString("unit"));
-                map.put(ProductController.PRODUCT_SKU, obj.getString("sku"));
-                map.put(ProductController.PRODUCT_PACKING, obj.getString("packing"));
-                map.put(ProductController.PRODUCT_QTY_PER_PACKING, String.valueOf(obj.getInt("qty_per_packing")));
-                map.put(ProductController.PRODUCT_PRESCRIPTION_REQUIRED, String.valueOf(obj.getInt("prescription_required")));
+                map.put("unit", obj.getString("unit"));
+                map.put("sku", obj.getString("sku"));
+                map.put("packing", obj.getString("packing"));
+                map.put("qty_per_packing", String.valueOf(obj.getInt("qty_per_packing")));
+                map.put("prescription_required", String.valueOf(obj.getInt("prescription_required")));
                 map.put("prescription_id", String.valueOf(obj.getInt("prescription_id")));
                 map.put("is_approved", String.valueOf(obj.getInt("is_approved")));
                 map.put("available_quantity", obj.getString("available_quantity"));
