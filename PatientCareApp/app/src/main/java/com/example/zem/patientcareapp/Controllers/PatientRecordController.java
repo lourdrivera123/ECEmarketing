@@ -61,6 +61,7 @@ public class PatientRecordController extends DbHelper {
 
 
         values.put(SERVER_RECORDS_ID, record.getRecordID());
+        values.put(SERVER_CPR_ID, record.getCpr_id());
         values.put(RECORDS_DOCTOR_ID, record.getDoctorID());
         values.put(RECORDS_CLINIC_ID, record.getClinicID());
         values.put(RECORDS_COMPLAINT, record.getComplaints());

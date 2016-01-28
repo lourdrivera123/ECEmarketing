@@ -26,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.PatientRecordController;
+import com.example.zem.patientcareapp.Controllers.PatientTreatmentsController;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Model.PatientRecord;
@@ -49,14 +50,14 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     LinearLayout root;
 
     ArrayList<HashMap<String, String>> hashHistory;
-    ArrayList<String> medRecords, arrayOfRecords;
+    ArrayList<String> arrayOfRecords;
     ArrayList<Integer> selectedList;
 
     private SelectionAdapter mAdapter;
-    public int view_record_id = 0;
 
     DbHelper dbHelper;
     PatientRecordController prc;
+    PatientTreatmentsController ptc;
     Helpers helpers;
     Dialog dialog;
     Dialog dialog2;
@@ -65,17 +66,14 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_patient_records, container, false);
+
         dbHelper = new DbHelper(getActivity());
         prc = new PatientRecordController(getActivity());
+        ptc = new PatientTreatmentsController(getActivity());
         helpers = new Helpers();
-
         hashHistory = prc.getPatientRecord();
-        medRecords = new ArrayList();
         arrayOfRecords = new ArrayList();
         selectedList = new ArrayList();
-
-        for (int x = 0; x < hashHistory.size(); x++)
-            medRecords.add(hashHistory.get(x).get(PatientRecordController.RECORDS_DOCTOR_NAME));
 
         add_record = (ImageButton) rootView.findViewById(R.id.add_record);
         noResults = (TextView) rootView.findViewById(R.id.noResults);
@@ -87,7 +85,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             list_of_history.setVisibility(View.GONE);
         }
 
-        mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, medRecords);
+        mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, hashHistory);
         list_of_history.setAdapter(mAdapter);
 
         list_of_history.setOnItemClickListener(this);
@@ -219,26 +217,30 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
                             final PatientRecord pr = new PatientRecord();
                             pr.setRecordID(last_inserted_id);
+                            pr.setCpr_id(Integer.parseInt(map.get("clinic_patient_record_id")));
                             pr.setDoctorID(Integer.parseInt(map.get("doctor_id")));
                             pr.setClinicID(Integer.parseInt(map.get("clinic_id")));
                             pr.setComplaints(map.get("complaints"));
                             pr.setFindings(map.get("findings"));
                             pr.setDate(map.get("record_date"));
 
-                            JSONArray master_arr = new JSONArray();
+                            final JSONArray master_arr = new JSONArray();
+                            final ArrayList<HashMap<String, String>> array_treatments = new ArrayList();
 
                             for (int x = 0; x < array.length(); x++) {
                                 JSONObject obj = array.getJSONObject(x);
                                 HashMap<String, String> hash = new HashMap();
-                                String dosage = obj.getString("frequency") + " for " + obj.getString("duration") + " - " + obj.getString("route");
 
                                 hash.put("patient_records_id", String.valueOf(last_inserted_id));
                                 hash.put("medicine_id", obj.getString("medicine_id"));
                                 hash.put("medicine_name", obj.getString("med_name"));
-                                hash.put("dosage", dosage);
+                                hash.put("frequency", obj.getString("frequency"));
+                                hash.put("duration", obj.getString("duration"));
+                                hash.put("duration_type", obj.getString("duration_type"));
 
                                 JSONObject obj_for_server = new JSONObject(hash);
                                 master_arr.put(obj_for_server);
+                                array_treatments.add(hash);
                             }
 
                             JSONObject json_to_be_passed = new JSONObject();
@@ -250,14 +252,32 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                             hash.put("action", "multiple_insert");
                             hash.put("jsobj", json_to_be_passed.toString());
 
-                            Log.d("jsobj", json_to_be_passed + "");
-
                             PostRequest.send(getActivity(), hash, new RespondListener<JSONObject>() {
                                 @Override
                                 public void getResult(JSONObject response) {
-                                    if (prc.savePatientRecord(pr, "insert")) {
-                                        progress.dismiss();
-                                        mAdapter.notifyDataSetChanged();
+                                    try {
+                                        int start_server_id = response.getInt("last_inserted_id");
+
+                                        for (int x = 0; x < array_treatments.size(); x++) {
+                                            HashMap<String, String> map = array_treatments.get(x);
+                                            map.put("treatments_id", String.valueOf(start_server_id));
+
+                                            array_treatments.set(x, map);
+                                            start_server_id += 1;
+                                        }
+
+                                        if (prc.savePatientRecord(pr, "insert")) {
+                                            if (ptc.savePatientTreatments(array_treatments, "insert")) {
+                                                updateReceiptsList();
+//                                                hashHistory = prc.getPatientRecord();
+//                                                mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, hashHistory);
+//                                                list_of_history.setAdapter(mAdapter);
+                                                progress.dismiss();
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        Log.d("patientHistoryFrag4", e + "");
+                                        Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
                                     }
                                 }
                             }, new ErrorListener<VolleyError>() {
@@ -276,7 +296,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             }, new ErrorListener<VolleyError>() {
                 public void getError(VolleyError error) {
                     progress.dismiss();
-                    Log.d("patientHistoryFrag", error + "");
+                    Log.d("patientHistoryFrag2", error + "");
                     Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
                 }
             });
@@ -287,13 +307,26 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         dialog2.dismiss();
     }
 
+    void updateReceiptsList() {
+        noResults.setVisibility(View.GONE);
+        list_of_history.setVisibility(View.VISIBLE);
+
+        hashHistory.clear();
+        hashHistory = prc.getPatientRecord();
+        Log.d("hashHistory", hashHistory + "");
+        mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, hashHistory);
+        list_of_history.setAdapter(mAdapter);
+    }
+
     private class SelectionAdapter extends ArrayAdapter {
         TextView dosage, medicine, findings, record_date, doctor;
         LayoutInflater inflater;
+        ArrayList<HashMap<String, String>> objects;
 
-        public SelectionAdapter(Context context, int resource, ArrayList<String> objects) {
+        public SelectionAdapter(Context context, int resource, ArrayList<HashMap<String, String>> objects) {
             super(context, resource, objects);
             inflater = LayoutInflater.from(context);
+            this.objects = objects;
         }
 
         @Override
@@ -306,12 +339,9 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
             medicine = (TextView) v.findViewById(R.id.medicine);
             dosage = (TextView) v.findViewById(R.id.dosage);
 
-            doctor.setText(hashHistory.get(position).get(PatientRecordController.RECORDS_DOCTOR_NAME));
-            doctor.setTag(position);
-            record_date.setText(hashHistory.get(position).get(PatientRecordController.RECORDS_DATE));
-            record_date.setTag(position);
-            findings.setText(hashHistory.get(position).get(PatientRecordController.RECORDS_FINDINGS));
-            findings.setTag(position);
+            doctor.setText(objects.get(position).get(PatientRecordController.RECORDS_DOCTOR_NAME));
+            record_date.setText(objects.get(position).get(PatientRecordController.RECORDS_DATE));
+            findings.setText(objects.get(position).get(PatientRecordController.RECORDS_FINDINGS));
 
             return v;
         }
