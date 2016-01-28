@@ -269,9 +269,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                         if (prc.savePatientRecord(pr, "insert")) {
                                             if (ptc.savePatientTreatments(array_treatments, "insert")) {
                                                 updateReceiptsList();
-//                                                hashHistory = prc.getPatientRecord();
-//                                                mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, hashHistory);
-//                                                list_of_history.setAdapter(mAdapter);
                                                 progress.dismiss();
                                             }
                                         }
@@ -313,7 +310,6 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
 
         hashHistory.clear();
         hashHistory = prc.getPatientRecord();
-        Log.d("hashHistory", hashHistory + "");
         mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, hashHistory);
         list_of_history.setAdapter(mAdapter);
     }

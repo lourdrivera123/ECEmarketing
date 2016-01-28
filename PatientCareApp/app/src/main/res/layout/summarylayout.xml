@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/toolbar"
-    android:id="@+id/root">
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/myToolBar"
@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:divider="@color/partner_toolbar"
                     android:dividerHeight="1dp"
-                    android:padding="16dp"/>
+                    android:padding="16dp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -61,10 +61,10 @@
                     android:background="@color/ColorPrimary" />
 
                 <LinearLayout
+                    android:id="@+id/footer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:id="@+id/footer"
                     android:padding="16dp">
 
                     <LinearLayout
@@ -210,6 +210,43 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:id="@+id/total_savings_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/label_total_savings"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight=".5"
+                            android:gravity="center"
+                            android:text="You will save \u20b1 --"
+                            android:textSize="15sp"
+                            android:textColor="#2d2d2d"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/expected_points_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/label_expected_points"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight=".5"
+                            android:gravity="center"
+                            android:text="You will receive -- points upon order."
+                            android:textSize="14sp"
+                            android:textColor="#2d2d2d"/>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <Button
@@ -237,14 +274,14 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight=".7"
                         android:paddingBottom="16dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"
                         android:paddingTop="16dp"
                         android:text="Order Preference"
                         android:textColor="#2b2b2b"
-                        android:textSize="16sp"
-                        android:layout_weight=".7"/>
+                        android:textSize="16sp" />
 
                     <Button
                         android:id="@+id/change_id"
@@ -267,8 +304,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="16dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -333,7 +370,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight=".5"
                             android:text="Recipient Name"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/recipient_option"
@@ -360,7 +397,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight=".5"
                             android:text="Recipient Contact #"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/recipient_contact_number"
@@ -387,7 +424,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight=".5"
                             android:text="Payment Method"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/payment_option"
