@@ -15,7 +15,6 @@
             <option value="$PROJECT_DIR$/httpcore-4.3.1" />
             <option value="$PROJECT_DIR$/httpmime-4.3.1" />
             <option value="$PROJECT_DIR$/universal-image-loader-1.9.4" />
-            <option value="$PROJECT_DIR$/volley" />
           </set>
         </option>
       </GradleProjectSettings>

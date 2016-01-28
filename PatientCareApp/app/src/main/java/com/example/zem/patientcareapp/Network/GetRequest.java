@@ -26,7 +26,7 @@ public class GetRequest {
         helpers = new Helpers();
         upc = new UpdateController(c);
 
-        JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q, table_name), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_url(q, table_name), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Sync sync = new Sync();

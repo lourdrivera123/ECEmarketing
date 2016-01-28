@@ -25,7 +25,7 @@ public class ListRequestFromCustomURI {
         queue = VolleySingleton.getInstance().getRequestQueue();
         helpers = new Helpers();
 
-        JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_api_url(q), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest doctor_request = new JsonObjectRequest(Request.Method.GET, helpers.get_api_url(q), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 listener.getResult(response);

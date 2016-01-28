@@ -30,7 +30,7 @@ public class GetRequestFromCustomURI {
         upc = new UpdateController(c);
 //        final String url = helpers.get_api_url(q, table_name);
 
-        JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_api_url(q), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonrequest = new JsonObjectRequest(Request.Method.GET, helpers.get_api_url(q), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Sync sync = new Sync();
