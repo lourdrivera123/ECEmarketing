@@ -312,9 +312,9 @@ public class Sync {
             map.put("patient_records_id", String.valueOf(json.getInt("patient_records_id")));
             map.put("medicine_id", json.getString("medicine_id"));
             map.put("medicine_name", json.getString("medicine_name"));
-            map.put("generic_name", json.getString("generic_name"));
             map.put("frequency", json.getString("frequency"));
             map.put("duration", json.getString("duration"));
+            map.put("duration_type", json.getString("duration_type"));
             listOfTreatments.add(map);
         } catch (Exception e) {
 
