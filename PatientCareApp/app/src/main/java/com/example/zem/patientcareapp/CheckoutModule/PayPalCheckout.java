@@ -21,16 +21,13 @@ import com.example.zem.patientcareapp.Controllers.BasketController;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.Activities.MainActivity;
 import com.example.zem.patientcareapp.Controllers.PatientController;
-import com.example.zem.patientcareapp.Controllers.ProductController;
 import com.example.zem.patientcareapp.Model.OrderModel;
 import com.example.zem.patientcareapp.Model.Patient;
-import com.example.zem.patientcareapp.Fragment.OrdersFragment;
 import com.example.zem.patientcareapp.Interface.ErrorListener;
 import com.example.zem.patientcareapp.Interface.RespondListener;
 import com.example.zem.patientcareapp.Network.GetRequest;
 import com.example.zem.patientcareapp.Network.ListOfPatientsRequest;
 import com.example.zem.patientcareapp.SidebarModule.SidebarActivity;
-import com.example.zem.patientcareapp.adapter.LazyAdapter;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalItem;
 import com.paypal.android.sdk.payments.PayPalPayment;
@@ -208,11 +205,11 @@ public class PayPalCheckout extends Activity {
                         ArrayList<HashMap<String, String>> items = bc.convertFromJson(PayPalCheckout.this, json_mysql);
 
                         for (HashMap<String, String> item : items) {
-                            price = Double.parseDouble(item.get(ProductController.PRODUCT_PRICE));
+                            price = Double.parseDouble(item.get("price"));
                             double quantity = Double.parseDouble(item.get("quantity"));
                             double total = price * quantity;
-                            name = item.get(ProductController.PRODUCT_NAME);
-                            sku = item.get(ProductController.PRODUCT_SKU);
+                            name = item.get("name");
+                            sku = item.get("sku");
 
                             PayPalItem paypal_item = new PayPalItem(name, 1, new BigDecimal(String.format("%.2f", total)), Config.DEFAULT_CURRENCY, sku);
                             productsInCart.add(paypal_item);
