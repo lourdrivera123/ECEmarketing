@@ -59,6 +59,17 @@ public class PatientTreatmentsController extends DbHelper {
         SQLiteDatabase db = dbhelper.getWritableDatabase();
         long id = db.delete(TBL_PATIENT_TREATMENTS, null, null);
 
+        db.close();
+
+        return id > 0;
+    }
+
+    public boolean deleteTreatmentsByRecordID(int record_id) {
+        SQLiteDatabase db = getWritableDatabase();
+        long id = db.delete(TBL_PATIENT_TREATMENTS, TREATMENTS_PATIENT_RECORDS_ID + " = " + record_id, null);
+
+        db.close();
+
         return id > 0;
     }
 }
