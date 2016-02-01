@@ -114,7 +114,7 @@ public class PatientConsultationFragment extends Fragment implements View.OnClic
         final int pos = menuInfo.position;
 
         try {
-            int checker = 0;
+            int checker;
 
             Date dateNow = format.parse(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH));
             Date consultDate = format.parse(listOfAllConsultations.get(pos).get("date"));

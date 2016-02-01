@@ -3,13 +3,17 @@ package com.example.zem.patientcareapp.Fragment;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -23,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.example.zem.patientcareapp.Activities.ViewPatientRecordActivity;
 import com.example.zem.patientcareapp.Controllers.DbHelper;
 import com.example.zem.patientcareapp.ConfigurationModule.Helpers;
 import com.example.zem.patientcareapp.Controllers.PatientRecordController;
@@ -79,6 +84,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         root = (LinearLayout) rootView.findViewById(R.id.root);
 
         list_of_history.setOnItemClickListener(this);
+        list_of_history.setOnCreateContextMenuListener(this);
         add_record.setOnClickListener(this);
         return rootView;
     }
@@ -86,7 +92,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onResume() {
         prc = new PatientRecordController(getActivity());
-        hashHistory = prc.getPatientRecord();
+        hashHistory = prc.getAllPatientRecords();
 
         mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, hashHistory);
         list_of_history.setAdapter(mAdapter);
@@ -99,12 +105,77 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.delete_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final int pos = menuInfo.position;
+
+        AlertDialog.Builder confirmationDialog = new AlertDialog.Builder(getActivity());
+        confirmationDialog.setTitle("Are you sure you want to delete this record?");
+        confirmationDialog.setNegativeButton("No", null);
+        confirmationDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final int record_id = Integer.parseInt(hashHistory.get(pos).get("record_id"));
+
+                Log.d("record_id", record_id + "");
+
+                HashMap<String, String> hashMap = new HashMap();
+                hashMap.put("table", "patient_records");
+                hashMap.put("request", "crud");
+                hashMap.put("action", "delete");
+                hashMap.put("id", String.valueOf(record_id));
+
+                final ProgressDialog pdialog = new ProgressDialog(getActivity());
+                pdialog.setCancelable(false);
+                pdialog.setMessage("Loading...");
+                pdialog.show();
+
+                PostRequest.send(getActivity(), hashMap, new RespondListener<JSONObject>() {
+                    @Override
+                    public void getResult(JSONObject response) {
+                        try {
+                            int success = response.getInt("success");
+
+                            if (success == 1) {
+                                if (prc.deleteRecord(record_id) && ptc.deleteTreatmentsByRecordID(record_id)) {
+                                    hashHistory.remove(pos);
+                                    mAdapter.notifyDataSetChanged();
+                                    Snackbar.make(root, "Record has been deleted", Snackbar.LENGTH_SHORT).show();
+                                } else
+                                    Snackbar.make(root, "Error occurred", Snackbar.LENGTH_SHORT).show();
+                            } else
+                                Snackbar.make(root, "Server error occurred", Snackbar.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            Snackbar.make(root, e + "", Snackbar.LENGTH_SHORT).show();
+                        }
+                        pdialog.dismiss();
+                    }
+                }, new ErrorListener<VolleyError>() {
+                    public void getError(VolleyError error) {
+                        pdialog.dismiss();
+                        Snackbar.make(root, "Network error", Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        confirmationDialog.show();
+
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        view_record_id = Integer.parseInt(hashHistory.get(position).get(dbHelper.AI_ID));
-//
-//        Intent view_record = new Intent(getActivity(), SaveMedicalRecordActivity.class);
-//        view_record.putExtra("viewRecord", view_record_id);
-//        startActivity(view_record);
+        int view_record_id = Integer.parseInt(hashHistory.get(position).get("record_id"));
+
+        Intent view_record = new Intent(getActivity(), ViewPatientRecordActivity.class);
+        view_record.putExtra("record_id", view_record_id);
+        startActivity(view_record);
     }
 
     @Override
@@ -159,7 +230,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
                                                     if (hasRecord == 1) {
                                                         dialog2.dismiss();
                                                         Snackbar.make(root, "Record already exists", Snackbar.LENGTH_SHORT).show();
-                                                    }else
+                                                    } else
                                                         insertHistory(json_mysql);
                                                 } else
                                                     Snackbar.make(root, "Invalid credentials", Snackbar.LENGTH_SHORT).show();
@@ -316,7 +387,7 @@ public class PatientHistoryFragment extends Fragment implements AdapterView.OnIt
         list_of_history.setVisibility(View.VISIBLE);
 
         hashHistory.clear();
-        hashHistory = prc.getPatientRecord();
+        hashHistory = prc.getAllPatientRecords();
         mAdapter = new SelectionAdapter(getActivity(), R.layout.listview_history_views, hashHistory);
         list_of_history.setAdapter(mAdapter);
     }

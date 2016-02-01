@@ -79,7 +79,7 @@ public class PatientRecordController extends DbHelper {
         return rowID > 0;
     }
 
-    public ArrayList<HashMap<String, String>> getPatientRecord() {
+    public ArrayList<HashMap<String, String>> getAllPatientRecords() {
         SQLiteDatabase sql_db = dbhelper.getWritableDatabase();
         String sql = "SELECT * FROM " + TBL_PATIENT_RECORDS + " ORDER BY " + RECORDS_DATE + " DESC";
         Cursor cur = sql_db.rawQuery(sql, null);
@@ -101,9 +101,47 @@ public class PatientRecordController extends DbHelper {
         return arrayOfRecords;
     }
 
+    public ArrayList<HashMap<String, String>> getSpecPatientRecord(int record_id) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "SELECT pr.*, pt.* FROM " + TBL_PATIENT_RECORDS + " AS pr INNER JOIN " + PatientTreatmentsController.TBL_PATIENT_TREATMENTS + " as pt on pr." + SERVER_RECORDS_ID + " = pt." + PatientTreatmentsController.TREATMENTS_PATIENT_RECORDS_ID
+                + " WHERE pr." + SERVER_RECORDS_ID + " = " + record_id;
+        Cursor cur = db.rawQuery(sql, null);
+        ArrayList<HashMap<String, String>> array = new ArrayList();
+
+        while (cur.moveToNext()) {
+            HashMap<String, String> map = new HashMap();
+            map.put("record_id", String.valueOf(record_id));
+            map.put("doctor_name", cur.getString(cur.getColumnIndex(RECORDS_DOCTOR_NAME)));
+            map.put("clinic_name", cur.getString(cur.getColumnIndex(RECORDS_CLINIC_NAME)));
+            map.put("record_date", cur.getString(cur.getColumnIndex(RECORDS_DATE)));
+            map.put("complaints", cur.getString(cur.getColumnIndex(RECORDS_COMPLAINT)));
+            map.put("findings", cur.getString(cur.getColumnIndex(RECORDS_FINDINGS)));
+            map.put("medicine_name", cur.getString(cur.getColumnIndex("medicine_name")));
+            map.put("frequency", cur.getString(cur.getColumnIndex("frequency")));
+            array.add(map);
+        }
+
+        cur.close();
+        db.close();
+
+        return array;
+    }
+
+
     public boolean deleteAllRecords() {
         SQLiteDatabase db = dbhelper.getWritableDatabase();
         long id = db.delete(TBL_PATIENT_RECORDS, null, null);
+
+        db.close();
+
+        return id > 0;
+    }
+
+    public boolean deleteRecord(int record_id) {
+        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        long id = db.delete(TBL_PATIENT_RECORDS, SERVER_RECORDS_ID + " = " + record_id, null);
+
+        db.close();
 
         return id > 0;
     }
